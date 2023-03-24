@@ -1,3 +1,17 @@
-const Hello = () => <h1>Hello from React!</h1>;
 
-export default Hello;
+function App() {
+    return (
+            <ProductSupportApp />
+    );
+}
+
+function ProductSupportApp() {
+    return (
+        <h1>
+            ciao
+        </h1>
+    );
+}
+
+
+export default App;
