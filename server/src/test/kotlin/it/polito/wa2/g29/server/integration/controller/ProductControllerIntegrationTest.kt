@@ -23,6 +23,7 @@ class ProductControllerIntegrationTest : AbstractTestcontainersTest() {
 
     @BeforeEach
     fun setup() {
+        productRepository.deleteAll()
         TestProductUtils.insertProducts(productRepository)
     }
 
