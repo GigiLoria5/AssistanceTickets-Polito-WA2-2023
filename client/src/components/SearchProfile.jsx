@@ -1,11 +1,16 @@
 import {Button, Form} from "react-bootstrap";
 
 
-function SarchUser(props){
+
+function SearchProfile(props){
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        props.getProfile()
+    }
     return(
-        <Form>
+        <Form className="mt-3" onSubmit={handleSubmit}>
             <Form.Group className="mb-3" controlId="formBasicEmail">
-                <Form.Label>Email address</Form.Label>
+                <Form.Label>Search user</Form.Label>
                 <Form.Control type="email" placeholder="Enter email"></Form.Control>
                 <Form.Text>Insert an existing email</Form.Text>
             </Form.Group>
@@ -13,4 +18,4 @@ function SarchUser(props){
         </Form>
     )
 }
-export default SarchUser
+export default SearchProfile

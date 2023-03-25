@@ -1,6 +1,6 @@
 import {useEffect, useState} from 'react';
 import Products from "./components/Products";
-import Users from "./components/Users";
+import Profiles from "./components/Profiles";
 import {Row, Col, Spinner, Button,Container} from "react-bootstrap";
 
 function App() {
@@ -11,9 +11,14 @@ function App() {
 
 function ProductSupportApp() {
     const [productView, setProductView] = useState(true);  // no user is logged in when app loads
+    const [profile,setProfile] = useState({});
+
+    function getProfile() {
+        setProfile({email:"mock@gmail.com", name:"mock", surname:"supermock", number:"123"})
+    }
 
     return (
-        <Container>
+        <Container className='mt-3'>
         <Row>
 
             <Button className="roundedButton" variant="outline-danger" onClick={() => setProductView(productView=>!productView)}>
@@ -29,7 +34,7 @@ function ProductSupportApp() {
                     productView ?
                         <Products/>
                         :
-                        <Users/>
+                        <Profiles getProfile={getProfile} profile={profile}/>
 
                 }
             </Row>
