@@ -3,6 +3,7 @@ import Products from "./components/Products";
 import Profiles from "./components/Profiles";
 import {Row, Col, Spinner, Button,Container} from "react-bootstrap";
 
+
 function App() {
     return (
         <ProductSupportApp/>
@@ -13,9 +14,11 @@ function ProductSupportApp() {
     const [productView, setProductView] = useState(true);  // no user is logged in when app loads
     const [profile,setProfile] = useState({});
 
+
     function getProfile() {
         setProfile({email:"mock@gmail.com", name:"mock", surname:"supermock", number:"123"})
     }
+
 
     return (
         <Container className='mt-3'>
@@ -35,6 +38,7 @@ function ProductSupportApp() {
                         <Products/>
                         :
                         <Profiles getProfile={getProfile} profile={profile}/>
+
 
                 }
             </Row>
