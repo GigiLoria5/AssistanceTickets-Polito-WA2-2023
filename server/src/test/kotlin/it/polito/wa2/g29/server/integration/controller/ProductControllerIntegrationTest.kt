@@ -58,4 +58,53 @@ class ProductControllerIntegrationTest : AbstractTestcontainersTest() {
             .andExpect { jsonPath("$[*].price").exists() }
             .andExpect { jsonPath("$[*].weight").exists() }
     }
+
+    /////////////////////////////////////////////////////////////////////
+    ////// GET /API/products/{productId}
+    /////////////////////////////////////////////////////////////////////
+
+    @Test
+    fun getProductById() {
+        val product = TestProductUtils.products[0]
+        mockMvc
+            .get("/API/products/${product.productId}")
+            .andExpect { status { isOk() } }
+            .andExpect { content().contentType(MediaType.APPLICATION_JSON) }
+            .andExpect { jsonPath("$.productId").value(product.productId) }
+            .andExpect { jsonPath("$.asin").value(product.asin) }
+            .andExpect { jsonPath("$.brand").value(product.brand) }
+            .andExpect { jsonPath("$.category").value(product.category) }
+            .andExpect { jsonPath("$.manufacturerNumber").value(product.manufacturerNumber) }
+            .andExpect { jsonPath("$.name").value(product.name) }
+            .andExpect { jsonPath("$.price").value(product.price) }
+            .andExpect { jsonPath("$.weight").value(product.weight) }
+    }
+
+    @Test
+    fun getProductByIdNotFound() {
+        mockMvc
+            .get("/API/products/99999999")
+            .andExpect { status { isNotFound() } }
+    }
+
+    @Test
+    fun getProductByIdNegative() {
+        mockMvc
+            .get("/API/products/-1")
+            .andExpect { status { isUnprocessableEntity() } }
+    }
+
+    @Test
+    fun getProductByIdZero() {
+        mockMvc
+            .get("/API/products/0")
+            .andExpect { status { isUnprocessableEntity() } }
+    }
+
+    @Test
+    fun getProductByIdWrongType() {
+        mockMvc
+            .get("/API/products/pippo")
+            .andExpect { status { isUnprocessableEntity() } }
+    }
 }

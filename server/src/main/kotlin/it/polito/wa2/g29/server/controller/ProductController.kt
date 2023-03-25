@@ -22,7 +22,7 @@ class ProductController(
         return productService.getAllProducts()
     }
 
-    //GET /API/products/{productId} -- details of product {productId} or fail if it does not exist
+    // GET /API/products/{productId} -- details of product {productId} or fail if it does not exist
     @GetMapping("/products/{productId}")
     fun getProductById(@PathVariable @Valid @Min(1) productId: Int): ProductDTO {
         return productService.getProductById(productId)
