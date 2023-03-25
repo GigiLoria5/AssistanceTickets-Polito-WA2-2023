@@ -1,12 +1,14 @@
 package it.polito.wa2.g29.server.integration.service
 
 import it.polito.wa2.g29.server.dto.toDTO
+import it.polito.wa2.g29.server.exception.ProductNotFoundException
 import it.polito.wa2.g29.server.integration.AbstractTestcontainersTest
 import it.polito.wa2.g29.server.repository.ProductRepository
 import it.polito.wa2.g29.server.service.ProductService
 import it.polito.wa2.g29.server.utils.TestProductUtils
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 
 class ProductServiceIntegrationTest : AbstractTestcontainersTest() {
@@ -45,6 +47,26 @@ class ProductServiceIntegrationTest : AbstractTestcontainersTest() {
         assert(products.size == expectedProducts.size)
         expectedProducts.forEach {
             products.contains(it.toDTO())
+        }
+    }
+
+    /////////////////////////////////////////////////////////////////////
+    ////// getProductById
+    /////////////////////////////////////////////////////////////////////
+
+    @Test
+    fun getProductById() {
+        val expectedProduct = TestProductUtils.products[0]
+
+        val actualProductDTO = productService.getProductById(expectedProduct.productId)
+
+        assert(actualProductDTO == expectedProduct.toDTO())
+    }
+
+    @Test
+    fun getProductByIdNotFound() {
+        assertThrows<ProductNotFoundException> {
+            productService.getProductById(99999999)
         }
     }
 }
