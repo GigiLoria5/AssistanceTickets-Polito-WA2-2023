@@ -47,10 +47,9 @@ effective way to receive support for their electronic devices.
    ```
    cd server
    docker-compose up -d
-   docker exec -it <name-of-the-database-container> psql -U postgres -W -c "CREATE DATABASE assistance_tickets;"
+   docker exec -it pg_container psql -U postgres -W -c "CREATE DATABASE assistance_tickets;"
    ```
-   Replace `<name-of-the-database-container>` with the name of the PostgreSQL container. You can find the name by
-   running `docker ps`. When you run the command, you will be asked for the password of the database user, which in this
+   When you run the command, you will be asked for the password of the database, which in this
    case is `p4ssw0rd`. Enter it and press enter.
 2. Build and start the server:
    ```
