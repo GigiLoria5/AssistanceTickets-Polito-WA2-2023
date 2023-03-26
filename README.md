@@ -56,17 +56,8 @@ effective way to receive support for their electronic devices.
    ./gradlew build
    ./gradlew bootRun
    ```
-3. Navigate to the `client` directory and install the dependencies:
-   ```
-   cd ../client
-   npm install
-   ```
-4. Start the client:
-   ```
-   npm start
-   ```
 
-The application will be available at `http://localhost:3000/` and already contains some predefined data. See the
+The application will be available at `http://localhost:8080/` and already contains some predefined data. See the
 client [documentation](client/README.md) for the specific routes available.
 
 ## Contributing
