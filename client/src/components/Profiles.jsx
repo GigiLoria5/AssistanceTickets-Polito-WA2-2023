@@ -8,11 +8,17 @@ import ProfileAPI from "../ProfileAPI";
 function Profiles(props) {
     const [profile,setProfile] = useState({});
     const [isFormVisible,setIsFormVisible] = useState(false);
+    const [error,setError]= useState('');
 
     function getProfileByEmail(email) {
         ProfileAPI.getProfileByEmail(email)
             .then((profile) => setProfile(profile))
-            .catch(err=>console.log(err))
+            .catch(err=>setError(err.error))
+    }
+    function addProfile(newProfile){
+        ProfileAPI.addProfile(newProfile)
+            .then(()=>setError(''))
+            .catch(err=>setError(err.error))
     }
     const changeVisible = () => {
         setIsFormVisible(isFormVisible=>!isFormVisible)
@@ -22,7 +28,7 @@ function Profiles(props) {
         <>
         {
             isFormVisible ?
-                <FormProfile changeVisible={changeVisible}/>
+                <FormProfile changeVisible={changeVisible} addProfile={addProfile}/>
                 :
                 <Container style={{maxWidth: "75%"}}>
                     <Row>

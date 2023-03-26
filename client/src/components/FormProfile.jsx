@@ -1,8 +1,27 @@
 import {Form, Button} from "react-bootstrap";
+import {useState} from "react";
+
+
 
 function FormProfile(props){
+    const [errorMsg,setErrorMsg] = useState('');
+
+    const [name,setName] = useState('');
+    const[surname,setSurname] = useState('');
+    const[phoneNumber,setPhoneNumber] = useState('');
+    const[address,setAddress] = useState('');
+    const[city,setCity] = useState('');
+    const[nation,setNation] = useState('');
+
+    const handleSubmit = (event) => {
+        // TODO: fare controlli sul form
+        event.preventDefault();
+
+        // TODO: creare oggetto Profile tramite classe
+
+    }
     return(
-        <Form>
+        <Form onSubmit={handleSubmit}>
             <Form.Group className="mb-3" controlId="formBasicEmail">
                 <Form.Label>Email address</Form.Label>
                 <Form.Control type="email" placeholder="Enter email" />
@@ -39,7 +58,7 @@ function FormProfile(props){
             </Form.Group>
 
             <Button  variant="primary" type="submit">
-                Submit
+                Add
             </Button>
             <Button variant="secondary" onClick={props.changeVisible}>Cancel</Button>
         </Form>
