@@ -2,6 +2,7 @@ import {useEffect, useState} from 'react';
 import Products from "./components/Products";
 import Profiles from "./components/Profiles";
 import {Row, Col, Spinner, Button,Container} from "react-bootstrap";
+import ProfileAPI from "./ProfileAPI";
 
 
 function App() {
@@ -12,14 +13,6 @@ function App() {
 
 function ProductSupportApp() {
     const [productView, setProductView] = useState(true);  // no user is logged in when app loads
-    const [profile,setProfile] = useState({});
-
-
-    function getProfile() {
-        setProfile({email:"mock@gmail.com", name:"mock", surname:"supermock", number:"123"})
-    }
-
-
     return (
         <Container className='mt-3'>
         <Row>
@@ -37,7 +30,7 @@ function ProductSupportApp() {
                     productView ?
                         <Products/>
                         :
-                        <Profiles getProfile={getProfile} profile={profile}/>
+                        <Profiles/>
 
 
                 }

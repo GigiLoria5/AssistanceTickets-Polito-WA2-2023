@@ -3,10 +3,18 @@ import SearchProfile from "./SearchProfile";
 import DisplayProfile from "./DisplayProfile";
 import FormProfile from "./FormProfile";
 import {useState} from "react";
+import ProfileAPI from "../ProfileAPI";
 
 function Profiles(props) {
+    const [profile,setProfile] = useState({});
     const [isFormVisible,setIsFormVisible] = useState(false);
-    const handleClick = () => {
+
+    function getProfileByEmail(email) {
+        ProfileAPI.getProfileByEmail(email)
+            .then((profile) => setProfile(profile))
+            .catch(err=>console.log(err))
+    }
+    const changeVisible = () => {
         setIsFormVisible(isFormVisible=>!isFormVisible)
     }
 
@@ -14,20 +22,20 @@ function Profiles(props) {
         <>
         {
             isFormVisible ?
-                <FormProfile/>
+                <FormProfile changeVisible={changeVisible}/>
                 :
                 <Container style={{maxWidth: "75%"}}>
                     <Row>
                         <Col>
-                            <SearchProfile getProfile={props.getProfile}></SearchProfile>
+                            <SearchProfile getProfileByEmail={getProfileByEmail}></SearchProfile>
                         </Col>
                         <Col>
-                            {'email' in props.profile && <DisplayProfile profile={props.profile}/>}
+                            {'id' in profile && <DisplayProfile profile={profile}/>}
                         </Col>
                     </Row>
 
                     <Row className="mt-3 mx-auto" style={{maxWidth: "25%"}}>
-                        <Button onClick={handleClick}>Add new profile</Button>
+                        <Button onClick={changeVisible}>Add new profile</Button>
                     </Row>
                 </Container>
 
