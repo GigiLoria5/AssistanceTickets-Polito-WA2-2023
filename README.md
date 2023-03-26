@@ -3,10 +3,26 @@
 This is a system for managing assistance tickets developed during the Web Applications II course of the Master's degree
 in Computer Engineering at the Polytechnic of Turin.
 
-## Purpose
+## Overall Idea
 
-The purpose of this system is to allow customers of electronic goods to manage assistance tickets. The system can be
-used by customers, technicians, and managers, each with their specific functionalities.
+The purpose of this system is to provide a ticketing portal for customers of electronic goods who have purchased an
+(extra) warranty. The ticketing system allows customers to request assistance or information for their purchased
+devices.
+
+* **Customers** must register on the platform using a unique identifier provided with their purchase receipt.
+  After registration, customers can log in and raise problems.
+* **Technicians** are responsible for reviewing and resolving the
+  problems of customers. They are assigned problems based on their skills and expertise, and may provide assistance
+  through the platform or other means, depending on the service level agreement.
+* **Administrators** have the ability to modify
+  the system configuration, create new professional users (cashiers and technicians), and handle customer complaints
+  about
+  the service received.
+* **Cashiers** are responsible for adding the warranty option to the customer's purchase and printing a
+  one-time code associated with the device on the receipt for later registration.
+
+This system is designed to streamline the assistance ticketing process, providing customers with a more efficient and
+effective way to receive support for their electronic devices.
 
 ## Technologies Used
 
@@ -34,7 +50,7 @@ used by customers, technicians, and managers, each with their specific functiona
    docker exec -it <name-of-the-database-container> psql -U postgres -W -c "CREATE DATABASE assistance_tickets;"
    ```
    Replace `<name-of-the-database-container>` with the name of the PostgreSQL container. You can find the name by
-   running docker ps. When you run the command, you will be asked for the password of the database user, which in this
+   running `docker ps`. When you run the command, you will be asked for the password of the database user, which in this
    case is `p4ssw0rd`. Enter it and press enter.
 2. Build and start the server:
    ```
@@ -51,8 +67,8 @@ used by customers, technicians, and managers, each with their specific functiona
    npm start
    ```
 
-The application will be available at `http://localhost:3000/`. See the client [documentation](client/README.md) for the
-specific routes available.
+The application will be available at `http://localhost:3000/` and already contains some predefined data. See the
+client [documentation](client/README.md) for the specific routes available.
 
 ## Contributing
 
