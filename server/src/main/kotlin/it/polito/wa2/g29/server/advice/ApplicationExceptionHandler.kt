@@ -1,6 +1,7 @@
 package it.polito.wa2.g29.server.advice
 
 import it.polito.wa2.g29.server.exception.ProductNotFoundException
+import it.polito.wa2.g29.server.exception.ProfileNotFoundException
 import it.polito.wa2.g29.server.utils.ErrorMessage
 import jakarta.validation.ConstraintViolationException
 import org.springframework.core.Ordered
@@ -17,7 +18,7 @@ import kotlin.Exception
 @RestControllerAdvice
 class ApplicationExceptionHandler {
     // 404 - Not Found
-    @ExceptionHandler(value = [ProductNotFoundException::class])
+    @ExceptionHandler(value = [ProductNotFoundException::class, ProfileNotFoundException::class])
     fun handleNotFoundException(exception: Exception): ResponseEntity<Unit> {
         return ResponseEntity(HttpStatus.NOT_FOUND)
     }
