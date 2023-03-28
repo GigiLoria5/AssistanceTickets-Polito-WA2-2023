@@ -3,7 +3,7 @@ import SearchProfile from "./SearchProfile";
 import DisplayProfile from "./DisplayProfile";
 import FormProfile from "./FormProfile";
 import {useState} from "react";
-import ProfileAPI from "../ProfileAPI";
+import API from "../API";
 
 function Profiles(props) {
     const [profile,setProfile] = useState({});
@@ -11,12 +11,12 @@ function Profiles(props) {
     const [error,setError]= useState('');
 
     function getProfileByEmail(email) {
-        ProfileAPI.getProfileByEmail(email)
+        API.getProfileByEmail(email)
             .then((profile) => setProfile(profile))
             .catch(err=>setError(err.error))
     }
     function addProfile(newProfile){
-        ProfileAPI.addProfile(newProfile)
+        API.addProfile(newProfile)
             .then(()=>setError(''))
             .catch(err=>setError(err.error))
     }

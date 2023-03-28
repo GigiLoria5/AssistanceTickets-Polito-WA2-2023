@@ -1,23 +1,24 @@
 import {Form, Button} from "react-bootstrap";
 import {useState} from "react";
+import {Profile} from "../utils/Profile";
 
 
 
 function FormProfile(props){
     const [errorMsg,setErrorMsg] = useState('');
-
+    const [email,setEmail] = useState('');
     const [name,setName] = useState('');
     const[surname,setSurname] = useState('');
     const[phoneNumber,setPhoneNumber] = useState('');
     const[address,setAddress] = useState('');
     const[city,setCity] = useState('');
-    const[nation,setNation] = useState('');
+    const[country,setCountry] = useState('');
 
     const handleSubmit = (event) => {
         // TODO: fare controlli sul form
         event.preventDefault();
-
-        // TODO: creare oggetto Profile tramite classe
+        const newProfile= new Profile(email,name,surname,phoneNumber,address,city,country);
+        props.addProfile(newProfile);
 
     }
     return(
@@ -43,7 +44,7 @@ function FormProfile(props){
             </Form.Group>
 
             <Form.Group className="mb-3" >
-                <Form.Label>Nation</Form.Label>
+                <Form.Label>Country</Form.Label>
                 <Form.Control placeholder="Nation" />
             </Form.Group>
 

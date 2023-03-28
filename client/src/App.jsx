@@ -2,7 +2,6 @@ import {useEffect, useState} from 'react';
 import Products from "./components/Products";
 import Profiles from "./components/Profiles";
 import {Row, Col, Spinner, Button,Container} from "react-bootstrap";
-import ProfileAPI from "./ProfileAPI";
 
 
 function App() {

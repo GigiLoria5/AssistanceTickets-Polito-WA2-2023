@@ -1,4 +1,5 @@
 const {Product} = require("./utils/Product");
+import {Profile} from "./utils/Profile";
 const APIURL = new URL('http://localhost:8080/API/');
 
 
@@ -39,5 +40,36 @@ async function searchProduct(productId) {
     });
 }
 
-const API = {getAllProducts, searchProduct};
+//Profile API
+
+async function getProfileByEmail(email){
+    const response = await fetch(new URL('profiles/' + email, APIURL), {credentials:'include'})
+    const profile =  await response.json()
+    if(response.ok)
+        return profile
+    else
+        throw profile
+}
+
+function addProfile(profile){
+    return new Promise((resolve,reject) => {
+        fetch(new URL('profiles/',APIURL), {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(new Profile(profile.email,profile.name,profile.surname,profile.phone,profile.address,profile.city,profile.country))
+        }).then(async (response)=> {
+            if(response.ok){
+                resolve(null);
+            } else {
+                reject({error: 'server error ${response.status}'})
+            }
+        }).catch(()=> reject({error:"cannot communicate withe the server"}));
+    });
+}
+
+
+const API = {getAllProducts, searchProduct,getProfileByEmail,addProfile};
 export default API;
