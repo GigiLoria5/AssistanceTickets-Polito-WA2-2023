@@ -35,7 +35,7 @@
     - Response: `200 OK` (success)
     - Error responses: `404 Not Found` (productId not found), `422 Unprocessable Entity` (validation of productId
       failed) or `500 Internal Server Error` (generic error)
-    - Response body: An object containing productId, asin, brand, category, manufacturer_number, name, price and
+    - Response body: An object containing productId, asin, brand, category, manufacturerNumber, name, price and
       weight (expressed in kg) of the requested product or error message in case of error
 
       ```
@@ -58,7 +58,7 @@
     - Response: `200 OK` (success)
     - Error responses: `404 Not Found` (email not found), `422 Unprocessable Entity` (validation of email failed) or
       `500 Internal Server Error` (generic error)
-    - Response body: An object containing id, email, phone_number, surname, phone_number, address, city and country of the
+    - Response body: An object containing id, email, name, surname, phoneNumber, address, city and country of the
       requested user or error message in case of error
 
       ```
@@ -67,7 +67,7 @@
           "email": "johngreen@group.com",
           "name": "John",
           "surname": "Green",
-          "phone_number": "3466281644",
+          "phoneNumber": "3466281644",
           "address": "Corso Duca degli Abruzzi, 24",
           "city": "Turin",
           "country": "Italy",
@@ -77,14 +77,14 @@
 - POST /API/profiles
 
     - Description: Allows to create a profile
-    - Request body: email, name, surname, phone_number, address, city and country of the profile
+    - Request body: email, name, surname, phoneNumber, address, city and country of the profile
 
       ```
       {
         "email": "johngreen@group.com",
         "name": "John",
         "surname": "Green",
-        "phone_number": "3466281644",
+        "phoneNumber": "3466281644",
         "address": "Corso Duca degli Abruzzi, 24",
         "city": "Turin",
         "country": "Italy"
@@ -111,7 +111,7 @@
 
       ```
       {
-        "phone_number": "3395224124"
+        "phoneNumber": "3395224124"
       }
       ```
 
