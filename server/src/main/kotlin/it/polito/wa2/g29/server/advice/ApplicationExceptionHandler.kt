@@ -39,7 +39,6 @@ class ApplicationExceptionHandler {
     @ExceptionHandler(Exception::class)
     fun handleGenericException(exception: Exception): ResponseEntity<ErrorMessage> {
         val errorMessage = ErrorMessage("an error occur, please retry")
-        println("Exception type: " + exception.javaClass.name)
         return ResponseEntity(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR)
     }
 }

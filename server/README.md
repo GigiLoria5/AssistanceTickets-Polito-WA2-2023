@@ -58,7 +58,7 @@
     - Response: `200 OK` (success)
     - Error responses: `404 Not Found` (email not found), `422 Unprocessable Entity` (validation of email failed) or
       `500 Internal Server Error` (generic error)
-    - Response body: An object containing id, email, name, surname, phone_number, address, city and nation of the
+    - Response body: An object containing id, email, phone_number, surname, phone_number, address, city and country of the
       requested user or error message in case of error
 
       ```
@@ -67,27 +67,27 @@
           "email": "johngreen@group.com",
           "name": "John",
           "surname": "Green",
-          "phoneNumber": "3466281644",
+          "phone_number": "3466281644",
           "address": "Corso Duca degli Abruzzi, 24",
           "city": "Turin",
-          "nation": "Italy",
+          "country": "Italy",
       }
       ```
 
 - POST /API/profiles
 
     - Description: Allows to create a profile
-    - Request body: email, name, surname, phoneNumber, address, city and nation of the profile
+    - Request body: email, name, surname, phone_number, address, city and country of the profile
 
       ```
       {
         "email": "johngreen@group.com",
         "name": "John",
         "surname": "Green",
-        "phoneNumber": "3466281644",
+        "phone_number": "3466281644",
         "address": "Corso Duca degli Abruzzi, 24",
         "city": "Turin",
-        "nation": "Italy"
+        "country": "Italy"
       }
       ```
 
@@ -111,7 +111,7 @@
 
       ```
       {
-        "phoneNumber": "3395224124"
+        "phone_number": "3395224124"
       }
       ```
 

@@ -33,7 +33,6 @@ abstract class AbstractTestcontainersTest {
         @BeforeAll
         internal fun setUp() {
             container.start()
-            println("Container Started")
         }
     }
 }
