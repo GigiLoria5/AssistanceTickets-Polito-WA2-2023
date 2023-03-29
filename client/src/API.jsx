@@ -43,12 +43,21 @@ async function searchProduct(productId) {
 //Profile API
 
 async function getProfileByEmail(email){
-    const response = await fetch(new URL('profiles/' + email, APIURL), {credentials:'include'})
-    const profile =  await response.json()
-    if(response.ok)
-        return profile
-    else
-        throw profile
+    return new Promise((resolve, reject) => {
+        fetch(new URL(`profiles/${email}`, APIURL), {credentials: 'include'})
+            .then(async (response) => {
+                if (response.ok) {
+                    const profile = await response.json();
+                    resolve({id:profile.id,email:profile.email,name:profile.name,surname:profile.surname,phoneNumber:profile.phoneNumber,address:profile.address,city:profile.city,country:profile.country});
+                }
+                else {
+                    reject({error: `server error ${response.status}`})
+                }
+            })
+            .catch(() => {
+                reject({error: "Cannot communicate with the server."})
+            });
+    });
 }
 
 function addProfile(profile){
@@ -59,7 +68,7 @@ function addProfile(profile){
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(new Profile(profile.email,profile.name,profile.surname,profile.phone,profile.address,profile.city,profile.country))
+            body: JSON.stringify(new Profile(profile.email,profile.name,profile.surname,profile.phoneNumber,profile.address,profile.city,profile.country))
         }).then(async (response)=> {
             if(response.ok){
                 resolve(null);

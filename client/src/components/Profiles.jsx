@@ -12,7 +12,7 @@ function Profiles(props) {
 
     function getProfileByEmail(email) {
         API.getProfileByEmail(email)
-            .then((profile) => setProfile(profile))
+            .then((prof) => setProfile(prof))
             .catch(err=>setError(err.error))
     }
     function addProfile(newProfile){
