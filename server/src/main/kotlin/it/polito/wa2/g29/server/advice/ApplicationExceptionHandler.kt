@@ -1,5 +1,6 @@
 package it.polito.wa2.g29.server.advice
 
+import it.polito.wa2.g29.server.exception.DuplicateProfileException
 import it.polito.wa2.g29.server.exception.ProductNotFoundException
 import it.polito.wa2.g29.server.exception.ProfileNotFoundException
 import it.polito.wa2.g29.server.utils.ErrorMessage
@@ -21,6 +22,13 @@ class ApplicationExceptionHandler {
     @ExceptionHandler(value = [ProductNotFoundException::class, ProfileNotFoundException::class])
     fun handleNotFoundException(exception: Exception): ResponseEntity<Unit> {
         return ResponseEntity(HttpStatus.NOT_FOUND)
+    }
+
+    // 409 - Conflict
+    @ExceptionHandler(value = [DuplicateProfileException::class])
+    fun handleDuplicateException(exception: Exception): ResponseEntity<ErrorMessage> {
+        val errorMessage = ErrorMessage("creation of new instance failed because of a duplicate")
+        return ResponseEntity(errorMessage, HttpStatus.CONFLICT)
     }
 
     /*
