@@ -1,4 +1,4 @@
-import {Button, Card} from "react-bootstrap";
+import {Alert, Button, Card} from "react-bootstrap";
 
 function DisplayProfile(props){
     const {id,email,name,surname,phoneNumber,address,city,country}= props.profile;

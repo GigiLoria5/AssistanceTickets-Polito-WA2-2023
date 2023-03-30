@@ -51,7 +51,7 @@ async function getProfileByEmail(email){
                     resolve({id:profile.id,email:profile.email,name:profile.name,surname:profile.surname,phoneNumber:profile.phoneNumber,address:profile.address,city:profile.city,country:profile.country});
                 }
                 else {
-                    reject({error: `server error ${response.status}`})
+                    reject({error: `server error ${response.errorMessage}`})
                 }
             })
             .catch(() => {
@@ -62,7 +62,7 @@ async function getProfileByEmail(email){
 
 function addProfile(profile){
     return new Promise((resolve,reject) => {
-        fetch(new URL('profiles/',APIURL), {
+        fetch(new URL('profiles',APIURL), {
             method: 'POST',
             credentials: 'include',
             headers: {
@@ -73,7 +73,8 @@ function addProfile(profile){
             if(response.ok){
                 resolve(null);
             } else {
-                reject({error: 'server error ${response.status}'})
+                const errorBody = await response.json();
+                reject({ error: `Server error: ${errorBody.errorMessage}` });
             }
         }).catch(()=> reject({error:"cannot communicate withe the server"}));
     });
