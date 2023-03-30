@@ -3,16 +3,17 @@ package it.polito.wa2.g29.server.dto
 import it.polito.wa2.g29.server.model.Profile
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.Null
 
 data class ProfileDTO(
-    val profileId: Int?,
+    @field:Null val profileId: Int?,
     @field:Email @field:NotBlank val email: String?,
-    @field:NotBlank val name: String?,
-    @field:NotBlank val surname: String?,
-    @field:NotBlank val phoneNumber: String?,
-    @field:NotBlank val address: String?,
-    @field:NotBlank val city: String?,
-    @field:NotBlank val country: String?
+    @field:NotBlank var name: String?,
+    @field:NotBlank var surname: String?,
+    @field:NotBlank var phoneNumber: String?,
+    @field:NotBlank var address: String?,
+    @field:NotBlank var city: String?,
+    @field:NotBlank var country: String?
 )
 
 fun Profile.toDTO(): ProfileDTO {
