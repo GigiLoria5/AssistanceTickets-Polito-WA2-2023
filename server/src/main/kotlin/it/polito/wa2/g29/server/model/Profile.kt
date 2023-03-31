@@ -11,20 +11,20 @@ class Profile {
     @Column(name = "profile_id")
     var profileId: Int? = null
 
-    var email: String? = ""
+    var email: String = ""
 
-    var name: String? = ""
+    var name: String = ""
 
-    var surname: String? = ""
+    var surname: String = ""
 
     @Column(name = "phone_number")
-    var phoneNumber: String? = ""
+    var phoneNumber: String = ""
 
-    var address: String? = ""
+    var address: String = ""
 
-    var city: String? = ""
+    var city: String = ""
 
-    var country: String? = ""
+    var country: String = ""
 }
 
 fun ProfileDTO.toEntity(): Profile {

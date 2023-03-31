@@ -1,7 +1,6 @@
 package it.polito.wa2.g29.server.controller
 
 import it.polito.wa2.g29.server.dto.ProfileDTO
-import it.polito.wa2.g29.server.dto.ProfilePutDTO
 import it.polito.wa2.g29.server.service.ProfileService
 import jakarta.validation.Valid
 import jakarta.validation.constraints.Email
@@ -34,19 +33,16 @@ class ProfileController(
     // POST /API/profiles -- create a new profile or fail if some field is missing, or is not valid, or in case of duplicates
     @PostMapping("/profiles")
     @ResponseStatus(HttpStatus.CREATED)
-    fun createProfile(@RequestBody @Valid p: ProfileDTO?) {
-        if (p != null)
-            profileService.createProfile(p)
+    fun createProfile(@RequestBody @Valid profile: ProfileDTO) {
+        profileService.createProfile(profile)
     }
 
     // PUT /API/profiles/{email} -- modify a user profile {email} or fail if it does not exist
     @PutMapping("/profiles/{email}")
     @ResponseStatus(HttpStatus.OK)
-    fun modifyProfile(@RequestBody @Valid @NotNull newProfile: ProfilePutDTO?,
+    fun modifyProfile(@RequestBody @Valid @NotNull newProfile: ProfileDTO,
                       @PathVariable @Valid @NotNull @Email email: String) {
 
-        val oldProfile = profileService.getProfileByEmail(email)
-        if (newProfile != null)
-            profileService.modifyProfile(oldProfile, newProfile)
+        profileService.modifyProfile(email, newProfile)
     }
 }

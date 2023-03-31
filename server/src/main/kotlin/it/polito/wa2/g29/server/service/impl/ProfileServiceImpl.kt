@@ -1,11 +1,8 @@
 package it.polito.wa2.g29.server.service.impl
 
 import it.polito.wa2.g29.server.dto.ProfileDTO
-import it.polito.wa2.g29.server.dto.ProfilePutDTO
-import it.polito.wa2.g29.server.dto.allFieldsAreNullOrBlank
 import it.polito.wa2.g29.server.dto.toDTO
 import it.polito.wa2.g29.server.exception.DuplicateProfileException
-import it.polito.wa2.g29.server.exception.MissingFieldException
 import it.polito.wa2.g29.server.exception.ProfileNotFoundException
 import it.polito.wa2.g29.server.model.toEntity
 import it.polito.wa2.g29.server.repository.ProfileRepository
@@ -22,38 +19,28 @@ class ProfileServiceImpl(
     }
 
     override fun createProfile(profileDTO: ProfileDTO) {
-        if (profileRepository.findProfileByEmail(profileDTO.email.orEmpty()) != null)
-            throw DuplicateProfileException("creation of a new profile failed, this email has already been used")
-        if (profileRepository.findProfileByPhoneNumber(profileDTO.phoneNumber.orEmpty()) != null)
-            throw DuplicateProfileException("creation of a new profile failed, this phone number has already been used")
+        if (profileRepository.findProfileByEmail(profileDTO.email) != null)
+            throw DuplicateProfileException("a profile with the same email already exists")
+        if (profileRepository.findProfileByPhoneNumber(profileDTO.phoneNumber) != null)
+            throw DuplicateProfileException("a profile with the same phone number already exists")
 
         val profile = profileDTO.toEntity()
         profileRepository.save(profile)
     }
 
-    override fun modifyProfile(old: ProfileDTO, new: ProfilePutDTO) {
-        if (new.allFieldsAreNullOrBlank())
-            throw MissingFieldException("nothing to update")
+    override fun modifyProfile(email: String, newProfile: ProfileDTO) {
 
-        if (!new.phoneNumber.isNullOrBlank()) {
-            if (profileRepository.findProfileByPhoneNumber(new.phoneNumber) != null)
-                throw DuplicateProfileException("update of a profile failed, this phone number has already been used")
-            old.phoneNumber = new.phoneNumber
-        }
+        val oldProfile = profileRepository.findProfileByEmail(email) ?: throw ProfileNotFoundException()
 
-        if (!new.name.isNullOrBlank())
-            old.name = new.name
-        if (!new.surname.isNullOrBlank())
-            old.surname = new.surname
-        if (!new.address.isNullOrBlank())
-            old.address = new.address
+        if (newProfile.email != oldProfile.email && profileRepository.findProfileByEmail(newProfile.email) != null)
+            throw DuplicateProfileException("a profile with the same email already exists")
+        if (newProfile.phoneNumber != oldProfile.phoneNumber && profileRepository.findProfileByPhoneNumber(newProfile.phoneNumber) != null)
+            throw DuplicateProfileException("a profile with the same phone number already exists")
 
-        if (!new.city.isNullOrBlank())
-            old.city = new.city
-        if (!new.country.isNullOrBlank())
-            old.country = new.country
+        newProfile.profileId = oldProfile.profileId
 
-        val profile = old.toEntity()
+        val profile = newProfile.toEntity()
         profileRepository.save(profile)
+
     }
 }

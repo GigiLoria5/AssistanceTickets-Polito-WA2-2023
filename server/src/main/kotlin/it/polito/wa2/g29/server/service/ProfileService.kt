@@ -1,7 +1,6 @@
 package it.polito.wa2.g29.server.service
 
 import it.polito.wa2.g29.server.dto.ProfileDTO
-import it.polito.wa2.g29.server.dto.ProfilePutDTO
 
 interface ProfileService {
 
@@ -9,5 +8,5 @@ interface ProfileService {
 
     fun createProfile(profileDTO: ProfileDTO)
 
-    fun modifyProfile(old: ProfileDTO, new: ProfilePutDTO)
+    fun modifyProfile(email: String, newProfile: ProfileDTO)
 }

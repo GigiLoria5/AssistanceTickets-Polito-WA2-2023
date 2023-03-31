@@ -58,16 +58,16 @@
     - Response: `200 OK` (success)
     - Error responses: `404 Not Found` (email not found), `422 Unprocessable Entity` (validation of email failed) or
       `500 Internal Server Error` (generic error)
-    - Response body: An object containing id, email, name, surname, phoneNumber, address, city and country of the
+    - Response body: An object containing profileId, email, name, surname, phoneNumber, address, city and country of the
       requested user or error message in case of error
 
       ```
       {
-          "id": "1",
+          "profileId": "1",
           "email": "johngreen@group.com",
           "name": "John",
           "surname": "Green",
-          "phoneNumber": "3466281644",
+          "phoneNumber": "346-628-1644",
           "address": "Corso Duca degli Abruzzi, 24",
           "city": "Turin",
           "country": "Italy",
@@ -84,7 +84,7 @@
         "email": "johngreen@group.com",
         "name": "John",
         "surname": "Green",
-        "phoneNumber": "3466281644",
+        "phoneNumber": "346-628-1644",
         "address": "Corso Duca degli Abruzzi, 24",
         "city": "Turin",
         "country": "Italy"
@@ -92,8 +92,8 @@
       ```
 
     - Response: `201 Created` (success)
-    - Error responses: `422 Unprocessable Entity` (validation of request body failed or email already exists or
-      phoneNumber already exists) or `500 Internal Server Error` (generic error)
+    - Error responses: `409 Conflict` (email already exists or phoneNumber already exists), `422 Unprocessable Entity` 
+      (validation of request body failed) or `500 Internal Server Error` (generic error)
     - Response body: An error message in case of error
 
       ```
@@ -107,21 +107,27 @@
 
     - Description: Allows to update information of an existing profile
     - Request parameter: email of the user profile to update
-    - Request body: field/s of the user profile to be updated
+    - Request body: email, name, surname, phoneNumber, address, city and country of the profile to be updated
 
       ```
       {
-        "phoneNumber": "3395224124"
+        "email": "johnatan@group.com",
+        "name": "John",
+        "surname": "Green",
+        "phoneNumber": "316-312-2442",
+        "address": "Corso Einaudi, 16",
+        "city": "Turin",
+        "country": "Italy"
       }
       ```
 
     - Response: `200 OK` (success)
-    - Error responses: `404 Not Found` (email not found), `422 Unprocessable Entity` (validation of request body or
-      email failed) or `500 Internal Server Error` (generic error)
+    - Error responses: `404 Not Found` (email not found), `409 Conflict` (email already exists or phoneNumber already
+      exists), `422 Unprocessable Entity` (validation of request body or email failed) or `500 Internal Server Error` (generic error)
     - Response body: An error message in case of error
 
       ```
       {
-        "errorMessage": "a profile with the same phoneNumber already exists"
+        "errorMessage": "a profile with the same email already exists"
       }
       ```
