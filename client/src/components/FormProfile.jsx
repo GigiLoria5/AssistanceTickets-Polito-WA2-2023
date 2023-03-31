@@ -6,22 +6,34 @@ import {Profile} from "../utils/Profile";
 
 function FormProfile(props){
     const [errorMsg,setErrorMsg] = useState('');
-    const [email,setEmail] = useState('');
-    const [name,setName] = useState('');
-    const[surname,setSurname] = useState('');
-    const[phoneNumber,setPhoneNumber] = useState('');
-    const[address,setAddress] = useState('');
-    const[city,setCity] = useState('');
-    const[country,setCountry] = useState('');
+    const [email,setEmail] = useState(props.profile ? props.profile.email : '');
+    const [name,setName] = useState(props.profile ? props.profile.name : '');
+    const[surname,setSurname] = useState(props.profile ? props.profile.surname : '');
+    const[phoneNumber,setPhoneNumber] = useState(props.profile ? props.profile.phoneNumber : '');
+    const[address,setAddress] = useState(props.profile ? props.profile.address: '');
+    const[city,setCity] = useState(props.profile ? props.profile.city : '');
+    const[country,setCountry] = useState(props.profile ? props.profile.country : '');
 
     function validateEmail(input){
         const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
         return emailPattern.test(input);
     }
-    function validatePhone(input) {
-        const regex = /^[0-9+-]+$/;
-        return regex.test(input);
+    const handlePhoneChange = (event) => {
+        let inputPhoneNumber = event.target.value;
+        inputPhoneNumber = inputPhoneNumber.replace(/[^0-9]/g, '');
+        inputPhoneNumber = inputPhoneNumber.replace(/(\d{3})(\d{1,3})?(\d{1,4})?/, (match, p1, p2, p3) => {
+            let phoneNumber = p1;
+            if (p2) {
+                phoneNumber += '-' + p2;
+            }
+            if (p3) {
+                phoneNumber += '-' + p3;
+            }
+            return phoneNumber;
+        });
+        setPhoneNumber(inputPhoneNumber);
     }
+
     const checkEmpty = (input) => input.trim().length===0;
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -36,8 +48,6 @@ function FormProfile(props){
             setErrorMsg("Surname can't be empty")
         else if(checkEmpty(phoneNumber))
             setErrorMsg("Phone number can't be empty")
-        else if(!validatePhone(phoneNumber))
-            setErrorMsg("Phone number must be only (0-9,+,-)")
         else if(checkEmpty(address))
             setErrorMsg("Address can't be empty")
         else if(checkEmpty(city))
@@ -46,53 +56,74 @@ function FormProfile(props){
             setErrorMsg("Country can't be empty")
         else {
             const newProfile = new Profile(email, name, surname, phoneNumber, address, city, country);
-            props.addProfile(newProfile);
+
+            if(props.changeEditMode) {
+                props.changeEditMode();
+                props.addProfile(newProfile,props.profile.email)
+            }
+            else
+                props.addProfile(newProfile);
+
             props.changeVisible();
         }
     }
+
+    const handleCancel = () =>{
+        props.changeVisible();
+        if(props.changeEditMode)
+            props.changeEditMode();
+    }
     return(
         <>
-        {errorMsg ? <Alert variant='danger' onClose={() => setErrorMsg('')}  className="roundedError" dismissible>{errorMsg}</Alert> : false}
-        <Form onSubmit={handleSubmit}>
-            <Form.Group className="mb-3" controlId="formBasicEmail">
-                <Form.Label>Email address</Form.Label>
-                <Form.Control type="email" onChange={ev=>setEmail(ev.target.value)}/>
-            </Form.Group>
-            <Form.Group className="mb-3" >
-                <Form.Label>Name</Form.Label>
-                <Form.Control onChange={ev=>setName(ev.target.value)}/>
-            </Form.Group>
+            {props.changeEditMode ? <h1>Edit profile</h1> : <h1>Add profile</h1>}
+            {errorMsg ? <Alert variant='danger' onClose={() => setErrorMsg('')}  className="roundedError" dismissible>{errorMsg}</Alert> : false}
+            <Form onSubmit={handleSubmit}>
+                <Form.Group className="mb-3" controlId="formBasicEmail">
+                    <Form.Label>Email address</Form.Label>
+                    <Form.Control value={email} placeholder="johngreen@group.com" type="email" onChange={ev=>setEmail(ev.target.value)} required/>
+                </Form.Group>
+                <Form.Group className="mb-3" >
+                    <Form.Label>Name</Form.Label>
+                    <Form.Control value={name} placeholder="John" onChange={ev=>setName(ev.target.value)} required/>
+                </Form.Group>
 
-            <Form.Group className="mb-3" >
-                <Form.Label>Surname</Form.Label>
-                <Form.Control onChange={ev=>setSurname(ev.target.value)}/>
-            </Form.Group>
+                <Form.Group className="mb-3" >
+                    <Form.Label>Surname</Form.Label>
+                    <Form.Control value={surname} placeholder="Green" onChange={ev=>setSurname(ev.target.value)} required/>
+                </Form.Group>
 
-            <Form.Group className="mb-3" >
-                <Form.Label>Phone number</Form.Label>
-                <Form.Control maxLength={15} onChange={ev=>setPhoneNumber(ev.target.value)}/>
-            </Form.Group>
+                <Form.Group className="mb-3" >
+                    <Form.Label>Phone number</Form.Label>
+                    <Form.Control
+                        type="tel"
+                        placeholder="346-628-1644"
+                        maxLength={12}
+                        onChange={handlePhoneChange}
+                        value={phoneNumber}
+                        required
+                    />
+                </Form.Group>
 
-            <Form.Group className="mb-3" >
-                <Form.Label>Country</Form.Label>
-                <Form.Control onChange={ev=>setCountry(ev.target.value)}/>
-            </Form.Group>
+                <Form.Group className="mb-3" >
+                    <Form.Label>Country</Form.Label>
+                    <Form.Control value={country} placeholder="Italy"  onChange={ev=>setCountry(ev.target.value)} required/>
+                </Form.Group>
 
-            <Form.Group className="mb-3" >
-                <Form.Label>City</Form.Label>
-                <Form.Control  onChange={ev=>setCity(ev.target.value)}/>
-            </Form.Group>
+                <Form.Group className="mb-3" >
+                    <Form.Label>City</Form.Label>
+                    <Form.Control value={city} placeholder="Turin"  onChange={ev=>setCity(ev.target.value)} required/>
+                </Form.Group>
 
-            <Form.Group className="mb-3" >
-                <Form.Label>Address</Form.Label>
-                <Form.Control  onChange={ev=>setAddress(ev.target.value)}/>
-            </Form.Group>
+                <Form.Group className="mb-3" >
+                    <Form.Label>Address</Form.Label>
+                    <Form.Control value={address} placeholder="Corso Duca degli Abruzzi, 24" onChange={ev=>setAddress(ev.target.value)} required/>
+                </Form.Group>
 
-            <Button  variant="primary" type="submit">
-                Add
-            </Button>
-            <Button variant="secondary" onClick={props.changeVisible}>Cancel</Button>
-        </Form>
+                <Button  variant="primary" type="submit">
+                    Submit
+                </Button>
+                <Button variant="secondary" onClick={handleCancel}>Cancel</Button>
+            </Form>
         </>
     );
 }

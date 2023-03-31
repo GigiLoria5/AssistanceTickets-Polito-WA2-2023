@@ -17,6 +17,7 @@ const ErrorPopup = ({error,resetError}) => {
     )
 }
 function Profiles(props) {
+    const [editMode,setEditMode] = useState(false);
     const [profile,setProfile] = useState({});
     const [isFormVisible,setIsFormVisible] = useState(false);
     const [error,setError]= useState('');
@@ -30,12 +31,23 @@ function Profiles(props) {
             .catch(err=>setError(err.error))
     }
     function addProfile(newProfile){
+        setProfile({});
         API.addProfile(newProfile)
+            .then(()=>setError('Success'))
+            .catch(err=>setError(err.error))
+    }
+
+    function updateProfile(newProfile,email){
+        setProfile({});
+        API.updateProfile(newProfile,email)
             .then(()=>setError('Success'))
             .catch(err=>setError(err.error))
     }
     const changeVisible = () => {
         setIsFormVisible(isFormVisible=>!isFormVisible)
+    }
+    const changeEditMode = () =>{
+        setEditMode(editMode => !editMode);
     }
     const resetError = () => {
         setError('');
@@ -47,7 +59,13 @@ function Profiles(props) {
         <>
         {
             isFormVisible ?
-                <FormProfile changeVisible={changeVisible} addProfile={addProfile}/>
+                <>
+                    {editMode ?
+                        <FormProfile changeVisible={changeVisible} addProfile={updateProfile} profile={profile} changeEditMode={changeEditMode}/>
+                        :
+                        <FormProfile changeVisible={changeVisible} addProfile={addProfile}/>
+                    }
+                </>
                 :
                 <Container style={{maxWidth: "75%"}}>
                     {error ? <ErrorPopup error={error} resetError={resetError}/> : null}
@@ -56,7 +74,7 @@ function Profiles(props) {
                             <SearchProfile getProfileByEmail={getProfileByEmail}></SearchProfile>
                         </Col>
                         <Col>
-                            {'id' in profile && <DisplayProfile profile={profile}/>}
+                            {'id' in profile && <DisplayProfile profile={profile} changeEditMode={changeEditMode} changeVisible={changeVisible}/>}
                         </Col>
                     </Row>
 
