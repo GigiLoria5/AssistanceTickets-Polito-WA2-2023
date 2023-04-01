@@ -13,8 +13,6 @@ class ProfileRepositoryIntegrationTest: AbstractTestcontainersTest() {
 
     @BeforeEach
     fun setup() {
-        println("Pippo")
-        println(profileRepository.findAll().size)
         profileRepository.deleteAll()
         TestProfileUtils.insertProfiles(profileRepository)
     }
@@ -25,12 +23,12 @@ class ProfileRepositoryIntegrationTest: AbstractTestcontainersTest() {
 
     @Test
     fun findByProfileByEmail() {
-        val expectedProfile = TestProfileUtils.profiles[0]
+        val expectedProfile = profileRepository.findAll()[0]
 
         val actualProfile = profileRepository.findProfileByEmail(expectedProfile.email)
 
         assert(actualProfile != null)
-        assert(actualProfile?.email == expectedProfile.email)
+        assert(actualProfile == expectedProfile)
     }
 
     @Test
@@ -48,12 +46,12 @@ class ProfileRepositoryIntegrationTest: AbstractTestcontainersTest() {
 
     @Test
     fun findByProfileByPhoneNumber() {
-        val expectedProfile = TestProfileUtils.profiles[0]
+        val expectedProfile = profileRepository.findAll()[0]
 
         val actualProfile = profileRepository.findProfileByPhoneNumber(expectedProfile.phoneNumber)
 
         assert(actualProfile != null)
-        assert(actualProfile?.phoneNumber == expectedProfile.phoneNumber)
+        assert(actualProfile == expectedProfile)
     }
 
     @Test

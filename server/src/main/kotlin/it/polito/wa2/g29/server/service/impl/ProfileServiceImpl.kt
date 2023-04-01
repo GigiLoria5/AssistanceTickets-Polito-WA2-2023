@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service
 @Service
 class ProfileServiceImpl(
     private val profileRepository: ProfileRepository
-) : ProfileService{
+) : ProfileService {
     override fun getProfileByEmail(email: String): ProfileDTO {
         val profile = profileRepository.findProfileByEmail(email) ?: throw ProfileNotFoundException()
         return profile.toDTO()
@@ -29,7 +29,6 @@ class ProfileServiceImpl(
     }
 
     override fun modifyProfile(email: String, newProfile: ProfileDTO) {
-
         val oldProfile = profileRepository.findProfileByEmail(email) ?: throw ProfileNotFoundException()
 
         if (newProfile.email != oldProfile.email && profileRepository.findProfileByEmail(newProfile.email) != null)
@@ -41,6 +40,5 @@ class ProfileServiceImpl(
 
         val profile = newProfile.toEntity()
         profileRepository.save(profile)
-
     }
 }
