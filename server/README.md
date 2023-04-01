@@ -15,7 +15,7 @@
       [
           ...,
           {
-            "productId": "5",
+            "productId": 5,
             "asin": "B001AVRD62",
             "brand": "Yamaha",
             "category": "Surround Speakers",
@@ -40,7 +40,7 @@
 
       ```
       {
-          "productId": "61",
+          "productId": 61,
           "asin": "B06XSGYCHC",
           "brand": "Siriusxm",
           "category": "Satellite Radio",
@@ -63,7 +63,7 @@
 
       ```
       {
-          "profileId": "1",
+          "profileId": 1,
           "email": "johngreen@group.com",
           "name": "John",
           "surname": "Green",

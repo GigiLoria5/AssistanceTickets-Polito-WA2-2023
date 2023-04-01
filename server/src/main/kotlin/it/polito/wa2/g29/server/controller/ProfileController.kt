@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController
 class ProfileController(
     private val profileService: ProfileService
 ) {
-
     // GET /API/profiles/{email} -- details of profiles {email} or fail if it does not exist
     @GetMapping("/profiles/{email}")
     @ResponseStatus(HttpStatus.OK)
@@ -42,7 +41,6 @@ class ProfileController(
     @ResponseStatus(HttpStatus.OK)
     fun modifyProfile(@RequestBody @Valid @NotNull newProfile: ProfileDTO,
                       @PathVariable @Valid @NotNull @Email email: String) {
-
         profileService.modifyProfile(email, newProfile)
     }
 }

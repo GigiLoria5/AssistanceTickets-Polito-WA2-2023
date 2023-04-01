@@ -41,12 +41,12 @@ class ProductServiceIntegrationTest : AbstractTestcontainersTest() {
     fun getAllProducts() {
         val expectedProducts = TestProductUtils.products
 
-        val products = productService.getAllProducts()
+        val actualProducts = productService.getAllProducts()
 
-        assert(products.isNotEmpty())
-        assert(products.size == expectedProducts.size)
+        assert(actualProducts.isNotEmpty())
+        assert(actualProducts.size == expectedProducts.size)
         expectedProducts.forEach {
-            products.contains(it.toDTO())
+            actualProducts.contains(it.toDTO())
         }
     }
 
