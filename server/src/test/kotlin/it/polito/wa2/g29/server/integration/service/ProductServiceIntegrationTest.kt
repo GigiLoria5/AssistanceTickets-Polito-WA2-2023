@@ -56,11 +56,11 @@ class ProductServiceIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     fun getProductById() {
-        val expectedProduct = TestProductUtils.products[0]
+        val expectedProductDTO = productRepository.findAll()[0].toDTO()
 
-        val actualProductDTO = productService.getProductById(expectedProduct.productId)
+        val actualProductDTO = productService.getProductById(expectedProductDTO.productId)
 
-        assert(actualProductDTO == expectedProduct.toDTO())
+        assert(actualProductDTO == expectedProductDTO)
     }
 
     @Test
