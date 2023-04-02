@@ -92,7 +92,7 @@
       ```
 
     - Response: `201 Created` (success)
-    - Error responses: `409 Conflict` (email already exists or phoneNumber already exists), `422 Unprocessable Entity` 
+    - Error responses: `409 Conflict` (email already exists or phoneNumber already exists), `422 Unprocessable Entity`
       (validation of request body failed) or `500 Internal Server Error` (generic error)
     - Response body: An error message in case of error
 
@@ -123,11 +123,12 @@
 
     - Response: `200 OK` (success)
     - Error responses: `404 Not Found` (email not found), `409 Conflict` (email already exists or phoneNumber already
-      exists), `422 Unprocessable Entity` (validation of request body or email failed) or `500 Internal Server Error` (generic error)
+      exists), `422 Unprocessable Entity` (validation of request body or email failed) or `500 Internal Server Error` (
+      generic error)
     - Response body: An error message in case of error
 
       ```
       {
-        "errorMessage": "a profile with the same email already exists"
+        "errorMessage": "a profile with the same phoneNumber already exists"
       }
       ```
