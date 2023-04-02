@@ -1,5 +1,6 @@
 package it.polito.wa2.g29.server.utils
 
+import it.polito.wa2.g29.server.dto.ProfileDTO
 import it.polito.wa2.g29.server.model.Profile
 import it.polito.wa2.g29.server.repository.ProfileRepository
 
@@ -23,6 +24,17 @@ object TestProfileUtils {
             city = "Turin"
             country = "Italy"
         },
+    )
+
+    val newProfileDTO = ProfileDTO(
+        profileId = null,
+        email = "new_mail@test.com",
+        name = "NewName",
+        surname = "NewSurname",
+        phoneNumber = "333-333-3333",
+        address = "NewAddress",
+        city = "NewCity",
+        country = "NewCountry"
     )
 
     fun insertProfiles(profileRepository: ProfileRepository) {

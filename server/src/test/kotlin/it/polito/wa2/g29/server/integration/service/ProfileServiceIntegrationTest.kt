@@ -51,10 +51,10 @@ class ProfileServiceIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     fun createProfile() {
-        val newProfileDTO = TestProfileUtils.profiles[0].toDTO().copy().apply {
-            email = "new_mail@test.com"
+        val newProfileDTO = TestProfileUtils.profiles[0].toDTO().copy(
+            email = "new_mail@test.com",
             phoneNumber = "333-333-3333"
-        }
+        )
 
         profileService.createProfile(newProfileDTO)
 
@@ -63,9 +63,9 @@ class ProfileServiceIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     fun createProfileDuplicateEmail() {
-        val newProfileDTO = TestProfileUtils.profiles[0].toDTO().copy().apply {
+        val newProfileDTO = TestProfileUtils.profiles[0].toDTO().copy(
             phoneNumber = "333-333-3333"
-        }
+        )
 
         assertThrows<DuplicateProfileException> {
             profileService.createProfile(newProfileDTO)
@@ -74,9 +74,9 @@ class ProfileServiceIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     fun createProfileDuplicatePhoneNumber() {
-        val newProfileDTO = TestProfileUtils.profiles[0].toDTO().copy().apply {
+        val newProfileDTO = TestProfileUtils.profiles[0].toDTO().copy(
             email = "new_mail@test.com"
-        }
+        )
 
         assertThrows<DuplicateProfileException> {
             profileService.createProfile(newProfileDTO)
@@ -90,10 +90,10 @@ class ProfileServiceIntegrationTest : AbstractTestcontainersTest() {
     @Test
     fun modifyProfilePartial() {
         val oldProfileDTO = TestProfileUtils.profiles[0].toDTO()
-        val newProfileDTO = oldProfileDTO.copy().apply {
-            email = "new_mail@test.com"
+        val newProfileDTO = oldProfileDTO.copy(
+            email = "new_mail@test.com",
             phoneNumber = "333-333-3333"
-        }
+        )
 
         profileService.modifyProfile(oldProfileDTO.email, newProfileDTO)
 
@@ -111,15 +111,15 @@ class ProfileServiceIntegrationTest : AbstractTestcontainersTest() {
     @Test
     fun modifyProfileComplete() {
         val oldProfileDTO = TestProfileUtils.profiles[0].toDTO()
-        val newProfileDTO = oldProfileDTO.copy().apply {
-            email = "new_mail@test.com"
-            name = "NewName"
-            surname = "NewSurname"
-            phoneNumber = "333-333-3333"
-            address = "NewAddress"
-            city = "NewCity"
+        val newProfileDTO = oldProfileDTO.copy(
+            email = "new_mail@test.com",
+            name = "NewName",
+            surname = "NewSurname",
+            phoneNumber = "333-333-3333",
+            address = "NewAddress",
+            city = "NewCity",
             country = "NewCountry"
-        }
+        )
 
         profileService.modifyProfile(oldProfileDTO.email, newProfileDTO)
 
@@ -137,14 +137,14 @@ class ProfileServiceIntegrationTest : AbstractTestcontainersTest() {
     @Test
     fun modifyProfileCompleteSameEmail() {
         val oldProfileDTO = TestProfileUtils.profiles[0].toDTO()
-        val newProfileDTO = oldProfileDTO.copy().apply {
-            name = "NewName"
-            surname = "NewSurname"
-            phoneNumber = "333-333-3333"
-            address = "NewAddress"
-            city = "NewCity"
+        val newProfileDTO = oldProfileDTO.copy(
+            name = "NewName",
+            surname = "NewSurname",
+            phoneNumber = "333-333-3333",
+            address = "NewAddress",
+            city = "NewCity",
             country = "NewCountry"
-        }
+        )
 
         profileService.modifyProfile(oldProfileDTO.email, newProfileDTO)
 
@@ -162,14 +162,14 @@ class ProfileServiceIntegrationTest : AbstractTestcontainersTest() {
     @Test
     fun modifyProfileCompleteSamePhoneNumber() {
         val oldProfileDTO = TestProfileUtils.profiles[0].toDTO()
-        val newProfileDTO = oldProfileDTO.copy().apply {
-            email = "new_mail@test.com"
-            name = "NewName"
-            surname = "NewSurname"
-            address = "NewAddress"
-            city = "NewCity"
+        val newProfileDTO = oldProfileDTO.copy(
+            email = "new_mail@test.com",
+            name = "NewName",
+            surname = "NewSurname",
+            address = "NewAddress",
+            city = "NewCity",
             country = "NewCountry"
-        }
+        )
 
         profileService.modifyProfile(oldProfileDTO.email, newProfileDTO)
 
@@ -187,13 +187,13 @@ class ProfileServiceIntegrationTest : AbstractTestcontainersTest() {
     @Test
     fun modifyProfileCompleteSameEmailAndPhoneNumber() {
         val oldProfileDTO = TestProfileUtils.profiles[0].toDTO()
-        val newProfileDTO = oldProfileDTO.copy().apply {
-            name = "NewName"
-            surname = "NewSurname"
-            address = "NewAddress"
-            city = "NewCity"
+        val newProfileDTO = oldProfileDTO.copy(
+            name = "NewName",
+            surname = "NewSurname",
+            address = "NewAddress",
+            city = "NewCity",
             country = "NewCountry"
-        }
+        )
 
         profileService.modifyProfile(oldProfileDTO.email, newProfileDTO)
 
@@ -211,9 +211,9 @@ class ProfileServiceIntegrationTest : AbstractTestcontainersTest() {
     @Test
     fun modifyProfileEmailNotFound() {
         val oldProfileDTO = TestProfileUtils.profiles[0].toDTO()
-        val newProfileDTO = oldProfileDTO.copy().apply {
+        val newProfileDTO = oldProfileDTO.copy(
             phoneNumber = "333-333-3333"
-        }
+        )
 
         assertThrows<ProfileNotFoundException> {
             profileService.modifyProfile("non_existing_email@fake.com", newProfileDTO)
@@ -223,9 +223,9 @@ class ProfileServiceIntegrationTest : AbstractTestcontainersTest() {
     @Test
     fun modifyProfileDuplicateEmail() {
         val oldProfileDTO = TestProfileUtils.profiles[0].toDTO()
-        val newProfileDTO = oldProfileDTO.copy().apply {
+        val newProfileDTO = oldProfileDTO.copy(
             email = TestProfileUtils.profiles[1].email
-        }
+        )
 
         assertThrows<DuplicateProfileException> {
             profileService.modifyProfile(oldProfileDTO.email, newProfileDTO)
@@ -235,9 +235,9 @@ class ProfileServiceIntegrationTest : AbstractTestcontainersTest() {
     @Test
     fun modifyProfileDuplicatePhoneNumber() {
         val oldProfileDTO = TestProfileUtils.profiles[0].toDTO()
-        val newProfileDTO = oldProfileDTO.copy().apply {
+        val newProfileDTO = oldProfileDTO.copy(
             phoneNumber = TestProfileUtils.profiles[1].phoneNumber
-        }
+        )
 
         assertThrows<DuplicateProfileException> {
             profileService.modifyProfile(oldProfileDTO.email, newProfileDTO)
