@@ -7,12 +7,14 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 class ProductControllerIntegrationTest : AbstractTestcontainersTest() {
     @Autowired
@@ -66,7 +68,7 @@ class ProductControllerIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     fun getProductById() {
-        val product = TestProductUtils.products[0]
+        val product = productRepository.findAll()[0]
         mockMvc
             .get("/API/products/${product.productId}")
             .andExpect { status { isOk() } }

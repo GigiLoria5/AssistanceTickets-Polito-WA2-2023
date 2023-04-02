@@ -7,12 +7,10 @@ import org.springframework.test.context.DynamicPropertySource
 import org.springframework.test.context.jdbc.Sql
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.junit.jupiter.Container
-import org.testcontainers.junit.jupiter.Testcontainers
 import org.testcontainers.utility.DockerImageName
 
-@Testcontainers
 @Sql(scripts = ["classpath:schema.sql"])
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest
 abstract class AbstractTestcontainersTest {
     companion object {
         @Container
@@ -33,7 +31,6 @@ abstract class AbstractTestcontainersTest {
         @BeforeAll
         internal fun setUp() {
             container.start()
-            println("Container Started")
         }
     }
 }

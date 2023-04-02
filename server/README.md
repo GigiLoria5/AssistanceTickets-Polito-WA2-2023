@@ -15,7 +15,7 @@
       [
           ...,
           {
-            "productId": "5",
+            "productId": 5,
             "asin": "B001AVRD62",
             "brand": "Yamaha",
             "category": "Surround Speakers",
@@ -35,12 +35,12 @@
     - Response: `200 OK` (success)
     - Error responses: `404 Not Found` (productId not found), `422 Unprocessable Entity` (validation of productId
       failed) or `500 Internal Server Error` (generic error)
-    - Response body: An object containing productId, asin, brand, category, manufacturer_number, name, price and
+    - Response body: An object containing productId, asin, brand, category, manufacturerNumber, name, price and
       weight (expressed in kg) of the requested product or error message in case of error
 
       ```
       {
-          "productId": "61",
+          "productId": 61,
           "asin": "B06XSGYCHC",
           "brand": "Siriusxm",
           "category": "Satellite Radio",
@@ -58,26 +58,26 @@
     - Response: `200 OK` (success)
     - Error responses: `404 Not Found` (email not found), `422 Unprocessable Entity` (validation of email failed) or
       `500 Internal Server Error` (generic error)
-    - Response body: An object containing id, email, name, surname, phone_number, address, city and nation of the
+    - Response body: An object containing profileId, email, name, surname, phoneNumber, address, city and country of the
       requested user or error message in case of error
 
       ```
       {
-          "id": "1",
+          "profileId": 1,
           "email": "johngreen@group.com",
           "name": "John",
           "surname": "Green",
           "phoneNumber": "3466281644",
           "address": "Corso Duca degli Abruzzi, 24",
           "city": "Turin",
-          "nation": "Italy",
+          "country": "Italy",
       }
       ```
 
 - POST /API/profiles
 
     - Description: Allows to create a profile
-    - Request body: email, name, surname, phoneNumber, address, city and nation of the profile
+    - Request body: email, name, surname, phoneNumber, address, city and country of the profile
 
       ```
       {
@@ -87,13 +87,13 @@
         "phoneNumber": "3466281644",
         "address": "Corso Duca degli Abruzzi, 24",
         "city": "Turin",
-        "nation": "Italy"
+        "country": "Italy"
       }
       ```
 
     - Response: `201 Created` (success)
-    - Error responses: `422 Unprocessable Entity` (validation of request body failed or email already exists or
-      phoneNumber already exists) or `500 Internal Server Error` (generic error)
+    - Error responses: `409 Conflict` (email already exists or phoneNumber already exists), `422 Unprocessable Entity`
+      (validation of request body failed) or `500 Internal Server Error` (generic error)
     - Response body: An error message in case of error
 
       ```
@@ -107,17 +107,24 @@
 
     - Description: Allows to update information of an existing profile
     - Request parameter: email of the user profile to update
-    - Request body: field/s of the user profile to be updated
+    - Request body: email, name, surname, phoneNumber, address, city and country of the profile to be updated
 
       ```
       {
-        "phoneNumber": "3395224124"
+        "email": "johnatan@group.com",
+        "name": "John",
+        "surname": "Green",
+        "phoneNumber": "3163122442",
+        "address": "Corso Einaudi, 16",
+        "city": "Turin",
+        "country": "Italy"
       }
       ```
 
     - Response: `200 OK` (success)
-    - Error responses: `404 Not Found` (email not found), `422 Unprocessable Entity` (validation of request body or
-      email failed) or `500 Internal Server Error` (generic error)
+    - Error responses: `404 Not Found` (email not found), `409 Conflict` (email already exists or phoneNumber already
+      exists), `422 Unprocessable Entity` (validation of request body or email failed) or `500 Internal Server Error` (
+      generic error)
     - Response body: An error message in case of error
 
       ```
