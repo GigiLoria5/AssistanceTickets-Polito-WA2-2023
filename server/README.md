@@ -67,7 +67,7 @@
           "email": "johngreen@group.com",
           "name": "John",
           "surname": "Green",
-          "phoneNumber": "346-628-1644",
+          "phoneNumber": "3466281644",
           "address": "Corso Duca degli Abruzzi, 24",
           "city": "Turin",
           "country": "Italy",
@@ -84,7 +84,7 @@
         "email": "johngreen@group.com",
         "name": "John",
         "surname": "Green",
-        "phoneNumber": "346-628-1644",
+        "phoneNumber": "3466281644",
         "address": "Corso Duca degli Abruzzi, 24",
         "city": "Turin",
         "country": "Italy"
@@ -114,7 +114,7 @@
         "email": "johnatan@group.com",
         "name": "John",
         "surname": "Green",
-        "phoneNumber": "316-312-2442",
+        "phoneNumber": "3163122442",
         "address": "Corso Einaudi, 16",
         "city": "Turin",
         "country": "Italy"
