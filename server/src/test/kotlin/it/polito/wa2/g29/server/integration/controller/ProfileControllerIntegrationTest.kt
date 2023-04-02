@@ -112,7 +112,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     fun getProfileEmailNotValidManyAt() {
-        val email = "#@%^%#\$@#\$@#.com"
+        val email = "@%^%#\$@#\$@#.com"
         mockMvc
             .get("/API/profiles/$email")
             .andExpect { status { isUnprocessableEntity() } }
@@ -143,7 +143,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
     fun createProfileDuplicateEmail() {
         val newProfileDTO = TestProfileUtils.profiles[0].toDTO().copy(
             profileId = null,
-            phoneNumber = "999-999-9999"
+            phoneNumber = "9999999999"
         )
 
         val mapper = ObjectMapper()
@@ -374,7 +374,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
     @Test
     fun createProfileInvalidPhoneNumberFormat() {
         val newProfileDTO = TestProfileUtils.newProfileDTO.copy(
-            phoneNumber = "3333333333"
+            phoneNumber = "333-3333333"
         )
 
         val mapper = ObjectMapper()
@@ -458,7 +458,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
         val oldProfileDTO = TestProfileUtils.profiles[0].toDTO()
         val newProfileDTO = oldProfileDTO.copy(
             profileId = null,
-            phoneNumber = "444-444-4444"
+            phoneNumber = "4444444444"
         )
 
         val mapper = ObjectMapper()

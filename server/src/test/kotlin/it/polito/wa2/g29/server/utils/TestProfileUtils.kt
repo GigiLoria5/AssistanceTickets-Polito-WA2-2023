@@ -10,7 +10,7 @@ object TestProfileUtils {
             email = "email1@wa2.it"
             name = "Shadow"
             surname = "Deighton"
-            phoneNumber = "646-200-7344"
+            phoneNumber = "6462007344"
             address = "4 Pepper Wood Street"
             city = "Humble"
             country = "United States"
@@ -19,7 +19,7 @@ object TestProfileUtils {
             email = "email2@wa2.it"
             name = "John"
             surname = "Kerner"
-            phoneNumber = "330-551-6835"
+            phoneNumber = "3305516835"
             address = "Corso Duca degli Abruzzi, 24"
             city = "Turin"
             country = "Italy"
@@ -31,7 +31,7 @@ object TestProfileUtils {
         email = "new_mail@test.com",
         name = "NewName",
         surname = "NewSurname",
-        phoneNumber = "333-333-3333",
+        phoneNumber = "3333333333",
         address = "NewAddress",
         city = "NewCity",
         country = "NewCountry"

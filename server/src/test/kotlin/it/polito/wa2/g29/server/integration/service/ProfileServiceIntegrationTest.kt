@@ -52,8 +52,9 @@ class ProfileServiceIntegrationTest : AbstractTestcontainersTest() {
     @Test
     fun createProfile() {
         val newProfileDTO = TestProfileUtils.profiles[0].toDTO().copy(
+            profileId = null,
             email = "new_mail@test.com",
-            phoneNumber = "333-333-3333"
+            phoneNumber = "3333333333"
         )
 
         profileService.createProfile(newProfileDTO)
@@ -64,7 +65,7 @@ class ProfileServiceIntegrationTest : AbstractTestcontainersTest() {
     @Test
     fun createProfileDuplicateEmail() {
         val newProfileDTO = TestProfileUtils.profiles[0].toDTO().copy(
-            phoneNumber = "333-333-3333"
+            phoneNumber = "3333333333"
         )
 
         assertThrows<DuplicateProfileException> {
@@ -92,7 +93,7 @@ class ProfileServiceIntegrationTest : AbstractTestcontainersTest() {
         val oldProfileDTO = TestProfileUtils.profiles[0].toDTO()
         val newProfileDTO = oldProfileDTO.copy(
             email = "new_mail@test.com",
-            phoneNumber = "333-333-3333"
+            phoneNumber = "3333333333"
         )
 
         profileService.modifyProfile(oldProfileDTO.email, newProfileDTO)

@@ -1,20 +1,19 @@
 package it.polito.wa2.g29.server.dto
 
 import it.polito.wa2.g29.server.model.Profile
-import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Null
 import jakarta.validation.constraints.Pattern
 
 data class ProfileDTO(
     @field:Null var profileId: Int?,
-    @field:Email @field:NotBlank var email: String,
-    @field:NotBlank var name: String,
-    @field:NotBlank var surname: String,
-    @field:NotBlank @field:Pattern(regexp = "([0-9]{3}-[0-9]{3}-[0-9]{4})") var phoneNumber: String,
-    @field:NotBlank var address: String,
-    @field:NotBlank var city: String,
-    @field:NotBlank var country: String
+    @field:NotBlank @field:Pattern(regexp = "([a-z0-9._]+@[a-z0-9.-]+\\.[a-z]{2,3})") val email: String,
+    @field:NotBlank @field:Pattern(regexp = "([a-zA-Z]+)") val name: String,
+    @field:NotBlank @field:Pattern(regexp = "([a-zA-Z]+)") val surname: String,
+    @field:NotBlank @field:Pattern(regexp = "([0-9]{10})") val phoneNumber: String,
+    @field:NotBlank val address: String,
+    @field:NotBlank val city: String,
+    @field:NotBlank val country: String
 )
 
 fun Profile.toDTO(): ProfileDTO {
