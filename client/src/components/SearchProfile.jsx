@@ -22,7 +22,7 @@ function SearchProfile(props){
         <Form className="mt-3" onSubmit={handleSubmit}>
             {errorMessage ? <Alert variant='danger' onClose={() => setErrorMessage('')} dismissible >{errorMessage}</Alert> : false}
             <Form.Group className="mb-3" controlId="formBasicEmail">
-                <Form.Label>Search user</Form.Label>
+                <Form.Label>Search profile</Form.Label>
                 <Form.Control type="email" placeholder="Enter email" onChange={ev => setEmail(ev.target.value)}></Form.Control>
                 <Form.Text>Insert an existing email</Form.Text>
             </Form.Group>

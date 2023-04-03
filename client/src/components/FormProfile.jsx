@@ -15,23 +15,8 @@ function FormProfile(props){
     const[country,setCountry] = useState(props.profile ? props.profile.country : '');
 
     function validateEmail(input){
-        const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+        const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,3}$/;
         return emailPattern.test(input);
-    }
-    const handlePhoneChange = (event) => {
-        let inputPhoneNumber = event.target.value;
-        inputPhoneNumber = inputPhoneNumber.replace(/[^0-9]/g, '');
-        inputPhoneNumber = inputPhoneNumber.replace(/(\d{3})(\d{1,3})?(\d{1,4})?/, (match, p1, p2, p3) => {
-            let phoneNumber = p1;
-            if (p2) {
-                phoneNumber += '-' + p2;
-            }
-            if (p3) {
-                phoneNumber += '-' + p3;
-            }
-            return phoneNumber;
-        });
-        setPhoneNumber(inputPhoneNumber);
     }
 
     const checkEmpty = (input) => input.trim().length===0;
@@ -96,9 +81,9 @@ function FormProfile(props){
                     <Form.Label>Phone number</Form.Label>
                     <Form.Control
                         type="tel"
-                        placeholder="346-628-1644"
-                        maxLength={12}
-                        onChange={handlePhoneChange}
+                        placeholder="3466281644"
+                        maxLength={10}
+                        onChange={ev=>setPhoneNumber(ev.target.value)}
                         value={phoneNumber}
                         required
                     />
