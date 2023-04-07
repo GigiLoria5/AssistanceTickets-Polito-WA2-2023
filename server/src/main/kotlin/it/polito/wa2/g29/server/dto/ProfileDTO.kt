@@ -8,8 +8,8 @@ import jakarta.validation.constraints.Pattern
 data class ProfileDTO(
     @field:Null var profileId: Int?,
     @field:NotBlank @field:Pattern(regexp = "([a-z0-9._]+@[a-z0-9.-]+\\.[a-z]{2,3})") val email: String,
-    @field:NotBlank @field:Pattern(regexp = "([a-zA-Z]+)") val name: String,
-    @field:NotBlank @field:Pattern(regexp = "([a-zA-Z]+)") val surname: String,
+    @field:NotBlank @field:Pattern(regexp = "([A-Za-z ]+[.'-]{0,1}[A-Za-z ]*)") val name: String,
+    @field:NotBlank @field:Pattern(regexp = "([A-Za-z ]+[.'-]{0,1}[A-Za-z ]*)") val surname: String,
     @field:NotBlank @field:Pattern(regexp = "([0-9]{10})") val phoneNumber: String,
     @field:NotBlank val address: String,
     @field:NotBlank val city: String,
