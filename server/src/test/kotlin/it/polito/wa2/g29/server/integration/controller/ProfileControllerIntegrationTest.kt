@@ -140,7 +140,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
     }
 
     @Test
-    fun createProfileValidFirstNameWithSpaces() {
+    fun createProfileValidNameWithSpaces() {
         val newProfileDTO = TestProfileUtils.newProfileDTO.copy(
             name = "John Paul"
         )
@@ -158,7 +158,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
     }
 
     @Test
-    fun createProfileValidFirstNameWithHyphen() {
+    fun createProfileValidNameWithHyphen() {
         val newProfileDTO = TestProfileUtils.newProfileDTO.copy(
             name = "Mary-Jane"
         )
@@ -176,7 +176,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
     }
 
     @Test
-    fun createProfileValidFirstNameWithApostrophe() {
+    fun createProfileValidNameWithApostrophe() {
         val newProfileDTO = TestProfileUtils.newProfileDTO.copy(
             name = "O'Connor"
         )
@@ -194,7 +194,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
     }
 
     @Test
-    fun createProfileValidFirstNameWithPeriod() {
+    fun createProfileValidNameWithPeriod() {
         val newProfileDTO = TestProfileUtils.newProfileDTO.copy(
             name = "John Jr."
         )
@@ -212,7 +212,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
     }
 
     @Test
-    fun createProfileValidFirstSurnameWithSpaces() {
+    fun createProfileValidSurnameWithSpaces() {
         val newProfileDTO = TestProfileUtils.newProfileDTO.copy(
             surname = "Van der Meer"
         )
@@ -230,7 +230,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
     }
 
     @Test
-    fun createProfileValidFirstSurnameWithHyphen() {
+    fun createProfileValidSurnameWithHyphen() {
         val newProfileDTO = TestProfileUtils.newProfileDTO.copy(
             surname = "Kim-Lee"
         )
@@ -248,7 +248,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
     }
 
     @Test
-    fun createProfileValidFirstSurnameWithApostrophe() {
+    fun createProfileValidSurnameWithApostrophe() {
         val newProfileDTO = TestProfileUtils.newProfileDTO.copy(
             surname = "O'Reilly"
         )
@@ -266,7 +266,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
     }
 
     @Test
-    fun createProfileValidFirstSurnameWithPeriod() {
+    fun createProfileValidSurnameWithPeriod() {
         val newProfileDTO = TestProfileUtils.newProfileDTO.copy(
             surname = "Santos Jr."
         )
@@ -478,6 +478,86 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
     }
 
     @Test
+    fun createProfileInvalidNameStartingWithSpace() {
+        val newProfileDTO = TestProfileUtils.newProfileDTO.copy(
+            name = " John"
+        )
+
+        val mapper = ObjectMapper()
+        val jsonBody = mapper.writeValueAsString(newProfileDTO)
+
+        mockMvc
+            .perform(
+                post("/API/profiles")
+                    .content(jsonBody)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isUnprocessableEntity)
+            .andExpect { jsonPath("$.errorMessage").exists() }
+
+    }
+
+    @Test
+    fun createProfileInvalidNameEndingWithSpace() {
+        val newProfileDTO = TestProfileUtils.newProfileDTO.copy(
+            name = "John "
+        )
+
+        val mapper = ObjectMapper()
+        val jsonBody = mapper.writeValueAsString(newProfileDTO)
+
+        mockMvc
+            .perform(
+                post("/API/profiles")
+                    .content(jsonBody)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isUnprocessableEntity)
+            .andExpect { jsonPath("$.errorMessage").exists() }
+
+    }
+
+    @Test
+    fun createProfileInvalidNameEndingWithSpaceAndSpecialCharacters() {
+        val newProfileDTO = TestProfileUtils.newProfileDTO.copy(
+            name = "John - "
+        )
+
+        val mapper = ObjectMapper()
+        val jsonBody = mapper.writeValueAsString(newProfileDTO)
+
+        mockMvc
+            .perform(
+                post("/API/profiles")
+                    .content(jsonBody)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isUnprocessableEntity)
+            .andExpect { jsonPath("$.errorMessage").exists() }
+
+    }
+
+    @Test
+    fun createProfileInvalidNameEndingWithSpecialCharacterWithoutFollowingLetters() {
+        val newProfileDTO = TestProfileUtils.newProfileDTO.copy(
+            name = "John -"
+        )
+
+        val mapper = ObjectMapper()
+        val jsonBody = mapper.writeValueAsString(newProfileDTO)
+
+        mockMvc
+            .perform(
+                post("/API/profiles")
+                    .content(jsonBody)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isUnprocessableEntity)
+            .andExpect { jsonPath("$.errorMessage").exists() }
+
+    }
+
+    @Test
     fun createProfileInvalidNameWrongField() {
         val newProfileDTO = TestProfileUtils.newProfileDTO.copy(
             name = "test_mail@fake.com"
@@ -535,7 +615,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
     }
 
     @Test
-    fun createProfileInvalidSurnameWithConsecutiveSpecialCh() {
+    fun createProfileInvalidSurnameWithConsecutiveSpecialChar() {
         val newProfileDTO = TestProfileUtils.newProfileDTO.copy(
             surname = "Doe'-.Smith"
         )
@@ -554,7 +634,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
     }
 
     @Test
-    fun createProfileInvalidSurnameWithInvalidCharacterCom() {
+    fun createProfileInvalidSurnameWithInvalidCharacterCombination() {
         val newProfileDTO = TestProfileUtils.newProfileDTO.copy(
             surname = "Do.n-Smi'th"
         )
@@ -573,7 +653,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
     }
 
     @Test
-    fun createProfileInvalidSurnameWithInvalidCharacterSequ() {
+    fun createProfileInvalidSurnameWithInvalidCharacterSequence() {
         val newProfileDTO = TestProfileUtils.newProfileDTO.copy(
             surname = "Doe .--n"
         )
@@ -589,6 +669,86 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
             )
             .andExpect(status().isUnprocessableEntity)
             .andExpect { jsonPath("$.errorMessage").exists() }
+    }
+
+    @Test
+    fun createProfileInvalidSurnameStartingWithSpace() {
+        val newProfileDTO = TestProfileUtils.newProfileDTO.copy(
+            surname = " Smith"
+        )
+
+        val mapper = ObjectMapper()
+        val jsonBody = mapper.writeValueAsString(newProfileDTO)
+
+        mockMvc
+            .perform(
+                post("/API/profiles")
+                    .content(jsonBody)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isUnprocessableEntity)
+            .andExpect { jsonPath("$.errorMessage").exists() }
+
+    }
+
+    @Test
+    fun createProfileInvalidSurnameEndingWithSpace() {
+        val newProfileDTO = TestProfileUtils.newProfileDTO.copy(
+            surname = "Smith "
+        )
+
+        val mapper = ObjectMapper()
+        val jsonBody = mapper.writeValueAsString(newProfileDTO)
+
+        mockMvc
+            .perform(
+                post("/API/profiles")
+                    .content(jsonBody)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isUnprocessableEntity)
+            .andExpect { jsonPath("$.errorMessage").exists() }
+
+    }
+
+    @Test
+    fun createProfileInvalidSurnameEndingWithSpaceAndSpecialCharacters() {
+        val newProfileDTO = TestProfileUtils.newProfileDTO.copy(
+            surname = "Smith - "
+        )
+
+        val mapper = ObjectMapper()
+        val jsonBody = mapper.writeValueAsString(newProfileDTO)
+
+        mockMvc
+            .perform(
+                post("/API/profiles")
+                    .content(jsonBody)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isUnprocessableEntity)
+            .andExpect { jsonPath("$.errorMessage").exists() }
+
+    }
+
+    @Test
+    fun createProfileInvalidSurnameEndingWithSpecialCharacterWithoutFollowingLetters() {
+        val newProfileDTO = TestProfileUtils.newProfileDTO.copy(
+            surname = "Smith -"
+        )
+
+        val mapper = ObjectMapper()
+        val jsonBody = mapper.writeValueAsString(newProfileDTO)
+
+        mockMvc
+            .perform(
+                post("/API/profiles")
+                    .content(jsonBody)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isUnprocessableEntity)
+            .andExpect { jsonPath("$.errorMessage").exists() }
+
     }
 
     @Test
