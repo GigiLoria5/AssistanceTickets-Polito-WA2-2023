@@ -140,6 +140,150 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
     }
 
     @Test
+    fun createProfileValidFirstNameWithSpaces() {
+        val newProfileDTO = TestProfileUtils.newProfileDTO.copy(
+            name = "John Paul"
+        )
+
+        val mapper = ObjectMapper()
+        val jsonBody = mapper.writeValueAsString(newProfileDTO)
+
+        mockMvc
+            .perform(
+                post("/API/profiles")
+                    .content(jsonBody)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isCreated)
+    }
+
+    @Test
+    fun createProfileValidFirstNameWithHyphen() {
+        val newProfileDTO = TestProfileUtils.newProfileDTO.copy(
+            name = "Mary-Jane"
+        )
+
+        val mapper = ObjectMapper()
+        val jsonBody = mapper.writeValueAsString(newProfileDTO)
+
+        mockMvc
+            .perform(
+                post("/API/profiles")
+                    .content(jsonBody)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isCreated)
+    }
+
+    @Test
+    fun createProfileValidFirstNameWithApostrophe() {
+        val newProfileDTO = TestProfileUtils.newProfileDTO.copy(
+            name = "O'Connor"
+        )
+
+        val mapper = ObjectMapper()
+        val jsonBody = mapper.writeValueAsString(newProfileDTO)
+
+        mockMvc
+            .perform(
+                post("/API/profiles")
+                    .content(jsonBody)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isCreated)
+    }
+
+    @Test
+    fun createProfileValidFirstNameWithPeriod() {
+        val newProfileDTO = TestProfileUtils.newProfileDTO.copy(
+            name = "John Jr."
+        )
+
+        val mapper = ObjectMapper()
+        val jsonBody = mapper.writeValueAsString(newProfileDTO)
+
+        mockMvc
+            .perform(
+                post("/API/profiles")
+                    .content(jsonBody)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isCreated)
+    }
+
+    @Test
+    fun createProfileValidFirstSurnameWithSpaces() {
+        val newProfileDTO = TestProfileUtils.newProfileDTO.copy(
+            surname = "Van der Meer"
+        )
+
+        val mapper = ObjectMapper()
+        val jsonBody = mapper.writeValueAsString(newProfileDTO)
+
+        mockMvc
+            .perform(
+                post("/API/profiles")
+                    .content(jsonBody)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isCreated)
+    }
+
+    @Test
+    fun createProfileValidFirstSurnameWithHyphen() {
+        val newProfileDTO = TestProfileUtils.newProfileDTO.copy(
+            surname = "Kim-Lee"
+        )
+
+        val mapper = ObjectMapper()
+        val jsonBody = mapper.writeValueAsString(newProfileDTO)
+
+        mockMvc
+            .perform(
+                post("/API/profiles")
+                    .content(jsonBody)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isCreated)
+    }
+
+    @Test
+    fun createProfileValidFirstSurnameWithApostrophe() {
+        val newProfileDTO = TestProfileUtils.newProfileDTO.copy(
+            surname = "O'Reilly"
+        )
+
+        val mapper = ObjectMapper()
+        val jsonBody = mapper.writeValueAsString(newProfileDTO)
+
+        mockMvc
+            .perform(
+                post("/API/profiles")
+                    .content(jsonBody)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isCreated)
+    }
+
+    @Test
+    fun createProfileValidFirstSurnameWithPeriod() {
+        val newProfileDTO = TestProfileUtils.newProfileDTO.copy(
+            surname = "Santos Jr."
+        )
+
+        val mapper = ObjectMapper()
+        val jsonBody = mapper.writeValueAsString(newProfileDTO)
+
+        mockMvc
+            .perform(
+                post("/API/profiles")
+                    .content(jsonBody)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isCreated)
+    }
+
+    @Test
     fun createProfileDuplicateEmail() {
         val newProfileDTO = TestProfileUtils.profiles[0].toDTO().copy(
             profileId = null,
