@@ -29,12 +29,12 @@ object TestProfileUtils {
     val newProfileDTO = ProfileDTO(
         profileId = null,
         email = "new_mail@test.com",
-        name = "NewName",
-        surname = "NewSurname",
+        name = "Name",
+        surname = "Surname",
         phoneNumber = "3333333333",
-        address = "NewAddress",
-        city = "NewCity",
-        country = "NewCountry"
+        address = "New Address",
+        city = "New City",
+        country = "New Country"
     )
 
     fun insertProfiles(profileRepository: ProfileRepository) {
