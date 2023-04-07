@@ -1,3 +1,6 @@
 ## React Client Application Routes
 
-- Route `/....` : _description_
+- Route `/`: the main page of the web application
+- Route `/products`: product management page
+- Route `/profiles`: profiles management page
+
