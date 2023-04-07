@@ -51,7 +51,7 @@ effective way to receive support for their electronic devices.
    ```
    When you run the command, you will be asked for the password of the database, which in this
    case is `p4ssw0rd`. Enter it and press enter.
-2. Build and start the server:
+2. Build and start the server by running the ServerApplication.kt file or with the following commands:
    ```
    ./gradlew build
    ./gradlew bootRun

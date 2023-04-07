@@ -2,7 +2,7 @@
 
 ## API
 
-- GET /API/products/
+- GET `/API/products/`
 
     - Description: Allows to obtain all products within the system
     - Request body: _None_
@@ -28,7 +28,7 @@
       ]
       ```
 
-- GET /API/products/{productId}
+- GET `/API/products/{productId}`
 
     - Description: Allows to obtain all the information of a single product
     - Request parameter: productId of the requested product
@@ -51,7 +51,7 @@
       }
       ```
 
-- GET /API/profiles/{email}
+- GET `/API/profiles/{email}`
 
     - Description: Allows to obtain all the information of a single profile
     - Request parameter: email of the requested user profile
@@ -74,7 +74,7 @@
       }
       ```
 
-- POST /API/profiles
+- POST `/API/profiles`
 
     - Description: Allows to create a profile
     - Request body: email, name, surname, phoneNumber, address, city and country of the profile
@@ -103,7 +103,7 @@
       ```
 
 
-- PUT /API/profiles/{email}
+- PUT `/API/profiles/{email}`
 
     - Description: Allows to update information of an existing profile
     - Request parameter: email of the user profile to update
