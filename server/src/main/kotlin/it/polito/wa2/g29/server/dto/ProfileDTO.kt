@@ -20,7 +20,7 @@ data class ProfileDTO(
         const val EMAIL_PATTERN = ".+@([^.]+\\.)+[a-z]*\$"
         const val NAME_PATTERN = "([A-Za-z][a-z]*)+([ '\\-][A-Za-z]+)*[/.']?"
         const val PHONE_NUMBER_PATTERN = "([0-9]{10})"
-        const val ADDRESS_PATTERN = "[0-9A-Za-z]+\\s*([a-zA-Z0-9]+([\\s,\\-][a-zA-Z0-9]+)*)(\\s*#\\d+)?"
+        const val ADDRESS_PATTERN = "^[0-9A-Za-z]+([^0-9A-Za-z]{0,2}[a-zA-Z0-9]+)*\$"
         const val CITY_PATTERN = "[a-zA-Z]+([ \\-][a-zA-Z]+)*\$"
         const val COUNTRY_PATTERN = "[a-zA-Z]+( [a-zA-Z]+)*\$"
     }

@@ -25,25 +25,6 @@ class Profile {
     var city: String = ""
 
     var country: String = ""
-
-    override fun equals(other: Any?): Boolean {
-        if (other == null || other !is Profile) return false
-        return profileId == other.profileId && email == other.email && name == other.name
-                && surname == other.surname && phoneNumber == other.phoneNumber && address == other.address
-                && city == other.city && country == other.country
-    }
-
-    override fun hashCode(): Int {
-        var result = profileId ?: 0
-        result = 31 * result + email.hashCode()
-        result = 31 * result + name.hashCode()
-        result = 31 * result + surname.hashCode()
-        result = 31 * result + phoneNumber.hashCode()
-        result = 31 * result + address.hashCode()
-        result = 31 * result + city.hashCode()
-        result = 31 * result + country.hashCode()
-        return result
-    }
 }
 
 fun ProfileDTO.toEntity(): Profile {

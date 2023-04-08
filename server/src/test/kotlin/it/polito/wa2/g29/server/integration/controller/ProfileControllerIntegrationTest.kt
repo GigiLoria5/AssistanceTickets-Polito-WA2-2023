@@ -207,7 +207,8 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
             "1011 Pine Ave Unit B",
             "1213 Maple Blvd #200",
             "1415 Cedar Ln Building A",
-            "1617 Birch Ct Building 2"
+            "1617 Birch Ct Building 2",
+            "Corso Duca degli Abruzzi, 24"
         )
 
         for (address in validAddresses) {
