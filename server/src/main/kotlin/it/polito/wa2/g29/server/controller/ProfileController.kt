@@ -3,6 +3,7 @@ package it.polito.wa2.g29.server.controller
 import it.polito.wa2.g29.server.dto.ProfileDTO
 import it.polito.wa2.g29.server.service.ProfileService
 import jakarta.validation.Valid
+import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Pattern
@@ -26,22 +27,24 @@ class ProfileController(
     // GET /API/profiles/{email} -- details of profiles {email} or fail if it does not exist
     @GetMapping("/profiles/{email}")
     @ResponseStatus(HttpStatus.OK)
-    fun getProfileByEmail(@PathVariable @Valid @NotBlank @Pattern(regexp = "([a-z0-9._]+@[a-z0-9.-]+\\.[a-z]{2,3})") email: String): ProfileDTO {
+    fun getProfileByEmail(@PathVariable @NotBlank @Email @Pattern(regexp = ProfileDTO.EMAIL_PATTERN) email: String): ProfileDTO {
         return profileService.getProfileByEmail(email)
     }
 
     // POST /API/profiles -- create a new profile or fail if some field is missing, or is not valid, or in case of duplicates
     @PostMapping("/profiles")
     @ResponseStatus(HttpStatus.CREATED)
-    fun createProfile(@RequestBody @Valid profile: ProfileDTO) {
+    fun createProfile(@RequestBody @Valid @NotNull profile: ProfileDTO) {
         profileService.createProfile(profile)
     }
 
     // PUT /API/profiles/{email} -- modify a user profile {email} or fail if it does not exist
     @PutMapping("/profiles/{email}")
     @ResponseStatus(HttpStatus.OK)
-    fun modifyProfile(@RequestBody @Valid @NotNull newProfile: ProfileDTO,
-                      @PathVariable @Valid @NotBlank @Pattern(regexp = "([a-z0-9._]+@[a-z0-9.-]+\\.[a-z]{2,3})") email: String) {
+    fun modifyProfile(
+        @RequestBody @Valid @NotNull newProfile: ProfileDTO,
+        @PathVariable @NotBlank @Email @Pattern(regexp = ProfileDTO.EMAIL_PATTERN) email: String
+    ) {
         profileService.modifyProfile(email, newProfile)
     }
 }

@@ -1,5 +1,6 @@
 package it.polito.wa2.g29.server.integration.repository
 
+import it.polito.wa2.g29.server.dto.toDTO
 import it.polito.wa2.g29.server.integration.AbstractTestcontainersTest
 import it.polito.wa2.g29.server.repository.ProfileRepository
 import it.polito.wa2.g29.server.utils.TestProfileUtils
@@ -7,7 +8,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
-class ProfileRepositoryIntegrationTest: AbstractTestcontainersTest() {
+class ProfileRepositoryIntegrationTest : AbstractTestcontainersTest() {
     @Autowired
     private lateinit var profileRepository: ProfileRepository
 
@@ -28,7 +29,9 @@ class ProfileRepositoryIntegrationTest: AbstractTestcontainersTest() {
         val actualProfile = profileRepository.findProfileByEmail(expectedProfile.email)
 
         assert(actualProfile != null)
-        assert(actualProfile == expectedProfile)
+        if (actualProfile != null) {
+            assert(actualProfile.toDTO() == expectedProfile.toDTO())
+        }
     }
 
     @Test
@@ -51,7 +54,9 @@ class ProfileRepositoryIntegrationTest: AbstractTestcontainersTest() {
         val actualProfile = profileRepository.findProfileByPhoneNumber(expectedProfile.phoneNumber)
 
         assert(actualProfile != null)
-        assert(actualProfile == expectedProfile)
+        if (actualProfile != null) {
+            assert(actualProfile.toDTO() == expectedProfile.toDTO())
+        }
     }
 
     @Test
