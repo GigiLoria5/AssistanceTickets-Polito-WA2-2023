@@ -15,30 +15,53 @@ function FormProfile(props){
     const[country,setCountry] = useState(props.profile ? props.profile.country : '');
 
     function validateEmail(input){
-        const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,3}$/;
+        const emailPattern = /.+@([^.]+\.)+[a-z]*$/;
         return emailPattern.test(input);
     }
 
-    const checkEmpty = (input) => input.trim().length===0;
+    function validateName(input){
+        const namePattern = /([A-Za-z][a-z]*)+([ '\\-][A-Za-z]+)*[/.']?$/;
+        return namePattern.test(input);
+    }
+
+
+    function validatePhone(input){
+        const phonePattern = /([0-9]{10})/;
+        return phonePattern.test(input);
+    }
+
+    function validateAddress(input){
+        const addressPatten = /^[0-9A-Za-z]+([^0-9A-Za-z]{0,2}[a-zA-Z0-9]+)*$/;
+        return addressPatten.test(input);
+    }
+
+    function validateCity(input){
+        const cityPattern =/[a-zA-Z]+([ \\-][a-zA-Z]+)*$/;
+        return cityPattern.test(input);
+    }
+
+    function validateCountry(input){
+        const countryPattern = /[a-zA-Z]+( [a-zA-Z]+)*$/;
+        return countryPattern.test(input);
+    }
+
     const handleSubmit = (event) => {
         event.preventDefault();
 
         if(!validateEmail(email))
             setErrorMsg("Email format not valid")
-        else if(checkEmpty(email))
-            setErrorMsg("Email can't be empty")
-        else if(checkEmpty(name))
-            setErrorMsg("Name can't be empty")
-        else if(checkEmpty(surname))
-            setErrorMsg("Surname can't be empty")
-        else if(checkEmpty(phoneNumber))
-            setErrorMsg("Phone number can't be empty")
-        else if(checkEmpty(address))
-            setErrorMsg("Address can't be empty")
-        else if(checkEmpty(city))
-            setErrorMsg("City can't be empty")
-        else if(checkEmpty(country))
-            setErrorMsg("Country can't be empty")
+        else if(!validateName(name))
+            setErrorMsg("Name format not valid")
+        else if(!validateName(surname))
+            setErrorMsg("Surname format not valid")
+        else if(!validatePhone(phoneNumber))
+            setErrorMsg("Phone number format not valid")
+        else if(!validateAddress(address))
+            setErrorMsg("Address format not valid")
+        else if(!validateCity(city))
+            setErrorMsg("City format not valid")
+        else if(!validateCountry(country))
+            setErrorMsg("Country format not valid")
         else {
             const newProfile = new Profile(email, name, surname, phoneNumber, address, city, country);
 
