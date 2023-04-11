@@ -20,7 +20,11 @@ jobs:
           distribution: 'adopt'
 
       - name: Grant execute permission
-        run: chmod +x gradlew
+        run: |
+          cd server
+          chmod +x gradlew
 
       - name: Build and test
-        run: cd server; ./gradlew test
+        run: |
+          cd server
+          ./gradlew test
