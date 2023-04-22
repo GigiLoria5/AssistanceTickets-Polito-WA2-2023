@@ -62,7 +62,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
         mockMvc
             .get("/API/profiles/$email")
             .andExpect { status { isNotFound() } }
-            .andExpect { jsonPath("$.errorMessage").doesNotExist() }
+            .andExpect { jsonPath("$.error").doesNotExist() }
     }
 
     @Test
@@ -92,7 +92,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
             mockMvc
                 .get("/API/profiles/$email")
                 .andExpect { status { isUnprocessableEntity() } }
-                .andExpect { jsonPath("$.errorMessage").exists() }
+                .andExpect { jsonPath("$.error").exists() }
         }
     }
 
@@ -322,7 +322,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
                     .contentType(MediaType.APPLICATION_JSON)
             )
             .andExpect(status().isConflict)
-            .andExpect { jsonPath("$.errorMessage").exists() }
+            .andExpect { jsonPath("$.error").exists() }
     }
 
     @Test
@@ -342,7 +342,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
                     .contentType(MediaType.APPLICATION_JSON)
             )
             .andExpect(status().isConflict)
-            .andExpect { jsonPath("$.errorMessage").exists() }
+            .andExpect { jsonPath("$.error").exists() }
     }
 
     @Test
@@ -359,7 +359,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
                     .contentType(MediaType.APPLICATION_JSON)
             )
             .andExpect(status().isUnprocessableEntity)
-            .andExpect { jsonPath("$.errorMessage").exists() }
+            .andExpect { jsonPath("$.error").exists() }
     }
 
     @Test
@@ -382,7 +382,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
                     .contentType(MediaType.APPLICATION_JSON)
             )
             .andExpect(status().isUnprocessableEntity)
-            .andExpect { jsonPath("$.errorMessage").exists() }
+            .andExpect { jsonPath("$.error").exists() }
     }
 
     @Test
@@ -429,7 +429,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
                         .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isUnprocessableEntity)
-                .andExpect { jsonPath("$.errorMessage").exists() }
+                .andExpect { jsonPath("$.error").exists() }
         }
     }
 
@@ -468,7 +468,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
                         .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isUnprocessableEntity)
-                .andExpect { jsonPath("$.errorMessage").exists() }
+                .andExpect { jsonPath("$.error").exists() }
         }
     }
 
@@ -506,7 +506,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
                         .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isUnprocessableEntity)
-                .andExpect { jsonPath("$.errorMessage").exists() }
+                .andExpect { jsonPath("$.error").exists() }
         }
     }
 
@@ -531,7 +531,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
                         .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isUnprocessableEntity)
-                .andExpect { jsonPath("$.errorMessage").exists() }
+                .andExpect { jsonPath("$.error").exists() }
         }
     }
 
@@ -562,7 +562,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
                         .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isUnprocessableEntity)
-                .andExpect { jsonPath("$.errorMessage").exists() }
+                .andExpect { jsonPath("$.error").exists() }
         }
     }
 
@@ -602,7 +602,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
                         .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isUnprocessableEntity)
-                .andExpect { jsonPath("$.errorMessage").exists() }
+                .andExpect { jsonPath("$.error").exists() }
         }
     }
 
@@ -640,7 +640,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
                         .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isUnprocessableEntity)
-                .andExpect { jsonPath("$.errorMessage").exists() }
+                .andExpect { jsonPath("$.error").exists() }
         }
     }
 
@@ -801,7 +801,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
                     .contentType(MediaType.APPLICATION_JSON)
             )
             .andExpect(status().isUnprocessableEntity)
-            .andExpect { jsonPath("$.errorMessage").exists() }
+            .andExpect { jsonPath("$.error").exists() }
     }
 
     @Test
@@ -821,7 +821,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
                     .contentType(MediaType.APPLICATION_JSON)
             )
             .andExpect(status().isUnprocessableEntity)
-            .andExpect { jsonPath("$.errorMessage").exists() }
+            .andExpect { jsonPath("$.error").exists() }
     }
 
     @Test
@@ -841,7 +841,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
                     .contentType(MediaType.APPLICATION_JSON)
             )
             .andExpect(status().isUnprocessableEntity)
-            .andExpect { jsonPath("$.errorMessage").exists() }
+            .andExpect { jsonPath("$.error").exists() }
     }
 
     @Test
@@ -861,7 +861,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
                     .contentType(MediaType.APPLICATION_JSON)
             )
             .andExpect(status().isUnprocessableEntity)
-            .andExpect { jsonPath("$.errorMessage").exists() }
+            .andExpect { jsonPath("$.error").exists() }
     }
 
     @Test
@@ -881,7 +881,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
                     .contentType(MediaType.APPLICATION_JSON)
             )
             .andExpect(status().isUnprocessableEntity)
-            .andExpect { jsonPath("$.errorMessage").exists() }
+            .andExpect { jsonPath("$.error").exists() }
     }
 
     @Test
@@ -898,7 +898,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
                     .contentType(MediaType.APPLICATION_JSON)
             )
             .andExpect(status().isUnprocessableEntity)
-            .andExpect { jsonPath("$.errorMessage").exists() }
+            .andExpect { jsonPath("$.error").exists() }
     }
 
     @Test
@@ -922,6 +922,6 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
                     .contentType(MediaType.APPLICATION_JSON)
             )
             .andExpect(status().isUnprocessableEntity)
-            .andExpect { jsonPath("$.errorMessage").exists() }
+            .andExpect { jsonPath("$.error").exists() }
     }
 }
