@@ -8,7 +8,7 @@ class Chat(
     @OneToOne
     @MapsId
     val ticket: Ticket
-) : EntityBase<Long>() {
+) : EntityBase<Int>() {
     @OneToMany(mappedBy = "chat")
     var messages: Set<Message> = mutableSetOf()
 }

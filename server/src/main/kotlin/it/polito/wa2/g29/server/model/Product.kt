@@ -13,4 +13,4 @@ class Product(
     var name: String,
     var price: Float,
     var weight: Float,
-) : EntityBase<Long>()
+) : EntityBase<Int>()

@@ -11,4 +11,4 @@ class Attachment(
     var type: AttachmentType,
     @ManyToOne
     var message: Message
-) : EntityBase<Long>()
+) : EntityBase<Int>()

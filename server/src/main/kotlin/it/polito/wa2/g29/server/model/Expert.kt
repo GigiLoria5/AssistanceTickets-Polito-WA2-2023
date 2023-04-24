@@ -10,4 +10,4 @@ class Expert(
     var surname: String,
     var email: String,
     // var expertises: Set<Expertise> = setOf()
-) : EntityBase<Long>()
+) : EntityBase<Int>()

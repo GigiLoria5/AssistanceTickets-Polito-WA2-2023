@@ -14,7 +14,7 @@ class Message(
     var chat: Chat,
     @ManyToOne
     var expert: Expert?
-) : EntityBase<Long>() {
+) : EntityBase<Int>() {
     @OneToMany(mappedBy = "message")
     var attachments: Set<Attachment> = mutableSetOf()
 

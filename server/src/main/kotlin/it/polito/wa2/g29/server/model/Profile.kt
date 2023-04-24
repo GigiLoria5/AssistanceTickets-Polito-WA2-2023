@@ -14,8 +14,21 @@ class Profile(
     var address: String,
     var city: String,
     var country: String
-) : EntityBase<Long>()
+) : EntityBase<Int>() {
+
+    fun update(newProfile: ProfileDTO) {
+        email = newProfile.email
+        name = newProfile.name
+        surname = newProfile.surname
+        phoneNumber = newProfile.phoneNumber
+        address = newProfile.address
+        city = newProfile.city
+        country = newProfile.country
+    }
+    
+}
 
 fun ProfileDTO.toEntity(): Profile {
     return Profile(email, name, surname, phoneNumber, address, city, country)
 }
+
