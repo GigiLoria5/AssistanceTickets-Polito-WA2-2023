@@ -7,26 +7,18 @@ import org.springframework.data.annotation.CreatedDate
 
 @Table
 @Entity(name = "messages")
-class Message {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var messageId: Int = 0
-
+class Message(
+    var sender: UserType,
+    var content: String,
     @ManyToOne
-    @JoinColumn(name = "chat_id")
-    var chat: Chat? = null
-
-    var sender: UserType? = null
-
+    var chat: Chat,
     @ManyToOne
-    @JoinColumn(name = "expert_id")
-    var expert: Expert? = null
-
-    var content: String = ""
-
+    var expert: Expert?
+) : EntityBase<Long>() {
     @OneToMany(mappedBy = "message")
-    var attachments: Set<Attachment>? = null
+    var attachments: Set<Attachment> = mutableSetOf()
 
     @CreatedDate
-    var time: Long = 0
+    @Column(updatable = false, nullable = false)
+    var time: Long = System.currentTimeMillis()
 }

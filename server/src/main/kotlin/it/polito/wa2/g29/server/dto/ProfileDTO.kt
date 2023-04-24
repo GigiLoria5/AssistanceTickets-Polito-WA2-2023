@@ -7,7 +7,7 @@ import jakarta.validation.constraints.Null
 import jakarta.validation.constraints.Pattern
 
 data class ProfileDTO(
-    @field:Null var profileId: Int?,
+    @field:Null var profileId: Long?,
     @field:NotBlank @field:Email @field:Pattern(regexp = EMAIL_PATTERN) val email: String,
     @field:NotBlank @field:Pattern(regexp = NAME_PATTERN) val name: String,
     @field:NotBlank @field:Pattern(regexp = NAME_PATTERN) val surname: String,
@@ -27,5 +27,5 @@ data class ProfileDTO(
 }
 
 fun Profile.toDTO(): ProfileDTO {
-    return ProfileDTO(profileId, email, name, surname, phoneNumber, address, city, country)
+    return ProfileDTO(id, email, name, surname, phoneNumber, address, city, country)
 }

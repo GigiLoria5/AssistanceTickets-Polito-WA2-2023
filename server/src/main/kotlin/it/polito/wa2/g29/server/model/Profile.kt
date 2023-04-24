@@ -5,37 +5,17 @@ import jakarta.persistence.*
 
 @Entity
 @Table(name = "profiles")
-class Profile {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "profile_id")
-    var profileId: Int? = null
-
-    var email: String = ""
-
-    var name: String = ""
-
-    var surname: String = ""
-
+class Profile(
+    var email: String,
+    var name: String,
+    var surname: String,
     @Column(name = "phone_number")
-    var phoneNumber: String = ""
-
-    var address: String = ""
-
-    var city: String = ""
-
-    var country: String = ""
-}
+    var phoneNumber: String,
+    var address: String,
+    var city: String,
+    var country: String
+) : EntityBase<Long>()
 
 fun ProfileDTO.toEntity(): Profile {
-    val profile = Profile()
-    profile.profileId = this.profileId
-    profile.email = this.email
-    profile.name = this.name
-    profile.surname = this.surname
-    profile.phoneNumber = this.phoneNumber
-    profile.address = this.address
-    profile.city = this.city
-    profile.country = this.country
-    return profile
+    return Profile(email, name, surname, phoneNumber, address, city, country)
 }

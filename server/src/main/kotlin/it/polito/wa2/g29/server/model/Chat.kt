@@ -4,15 +4,11 @@ import jakarta.persistence.*
 
 @Entity
 @Table(name = "chats")
-class Chat {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var chatId: Int = 0
-
+class Chat(
     @OneToOne
-    @JoinColumn(name = "ticket_id")
-    var ticket: Ticket? = null
-
+    @MapsId
+    val ticket: Ticket
+) : EntityBase<Long>() {
     @OneToMany(mappedBy = "chat")
-    var messages: Set<Message> = setOf()
+    var messages: Set<Message> = mutableSetOf()
 }

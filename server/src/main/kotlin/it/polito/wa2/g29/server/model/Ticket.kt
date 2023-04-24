@@ -9,37 +9,28 @@ import org.springframework.data.annotation.LastModifiedDate
 
 @Entity
 @Table(name = "tickets")
-class Ticket {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var ticketId: Int? = null
-
-    var title: String = ""
-
-    var description: String = ""
+class Ticket(
+    var title: String,
+    var description: String,
+    @ManyToOne
+    var product: Product?,
+    @ManyToOne
+    var customer: Profile?,
+) : EntityBase<Long>() {
+    var status: TicketStatus = TicketStatus.OPEN
+    var priorityLevel: TicketPriority? = null
 
     @ManyToOne
-    @JoinColumn(name = "product_id")
-    var product: Product? = null
-
-    @ManyToOne
-    @JoinColumn(name = "profile_id")
-    var customer: Profile? = null
-
-    @ManyToOne
-    @JoinColumn(name = "expert_id")
     var expert: Expert? = null
 
     @OneToOne(mappedBy = "ticket")
     var chat: Chat? = null
 
-    var status: TicketStatus = TicketStatus.OPEN
-
-    var priorityLevel: TicketPriority? = null
-
     @CreatedDate
-    var createdAt: Long = 0
+    @Column(updatable = false, nullable = false)
+    var createdAt: Long = System.currentTimeMillis()
 
     @LastModifiedDate
-    var lastModifiedAt: Long = 0
+    @Column(nullable = false)
+    var lastModifiedAt: Long = createdAt
 }
