@@ -347,7 +347,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     fun createProfileBlankFields() {
-        val newProfileDTO = Profile().toDTO()
+        val newProfileDTO = Profile("", "", "", "", "", "", "").toDTO()
 
         val mapper = ObjectMapper()
         val jsonBody = mapper.writeValueAsString(newProfileDTO)

@@ -70,10 +70,10 @@ class ProductControllerIntegrationTest : AbstractTestcontainersTest() {
     fun getProductById() {
         val product = productRepository.findAll()[0]
         mockMvc
-            .get("/API/products/${product.productId}")
+            .get("/API/products/${product.id}")
             .andExpect { status { isOk() } }
             .andExpect { content().contentType(MediaType.APPLICATION_JSON) }
-            .andExpect { jsonPath("$.productId").value(product.productId) }
+            .andExpect { jsonPath("$.productId").value(product.id) }
             .andExpect { jsonPath("$.asin").value(product.asin) }
             .andExpect { jsonPath("$.brand").value(product.brand) }
             .andExpect { jsonPath("$.category").value(product.category) }
