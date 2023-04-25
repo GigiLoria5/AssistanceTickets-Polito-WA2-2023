@@ -6,13 +6,19 @@ import jakarta.persistence.*
 @Entity
 @Table(name = "profiles")
 class Profile(
+    @Column(nullable = false, unique = true)
     var email: String,
+    @Column(nullable = false)
     var name: String,
+    @Column(nullable = false)
     var surname: String,
-    @Column(name = "phone_number")
+    @Column(name = "phone_number", nullable = false)
     var phoneNumber: String,
+    @Column(nullable = false)
     var address: String,
+    @Column(nullable = false)
     var city: String,
+    @Column(nullable = false)
     var country: String
 ) : EntityBase<Int>() {
 
@@ -25,7 +31,7 @@ class Profile(
         city = newProfile.city
         country = newProfile.country
     }
-    
+
 }
 
 fun ProfileDTO.toEntity(): Profile {
