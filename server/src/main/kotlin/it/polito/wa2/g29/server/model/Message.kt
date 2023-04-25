@@ -5,8 +5,8 @@ import jakarta.persistence.*
 import org.springframework.data.annotation.CreatedDate
 
 
-@Table
-@Entity(name = "messages")
+@Entity
+@Table(name = "messages")
 class Message(
     var sender: UserType,
     var content: String,

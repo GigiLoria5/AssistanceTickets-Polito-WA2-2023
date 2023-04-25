@@ -1,6 +1,7 @@
 package it.polito.wa2.g29.server.model
 
 import jakarta.persistence.Entity
+import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
 
 @Entity
@@ -9,5 +10,11 @@ class Expert(
     var name: String,
     var surname: String,
     var email: String,
-    // var expertises: Set<Expertise> = setOf()
-) : EntityBase<Int>()
+    @OneToMany
+     var expertiseSkills: MutableSet<ExpertiseSkillLevel> = mutableSetOf()
+) : EntityBase<Int>(){
+
+    fun addExpertiseSkill(e: ExpertiseSkillLevel){
+        expertiseSkills.add(e)
+    }
+}
