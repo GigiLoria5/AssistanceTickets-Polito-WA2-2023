@@ -56,7 +56,12 @@ A ticket can be **CLOSED** from any state (except if it is already closed). Once
    ```
    When you run the command, you will be asked for the password of the database, which in this
    case is `p4ssw0rd`. Enter it and press enter.
-2. Build and start the server by running the ServerApplication.kt file or with the following commands:
+2. If this is the first time you are running the application, open the application.properties file located in the server/src/main/resources directory and set the following property:
+   ```
+   spring.jpa.hibernate.ddl-auto=create
+   ```
+   This will create the necessary tables in the database. If you have already run the application before, set the property to `validate` instead to avoid recreating the tables.
+3. Build and start the server by running the ServerApplication.kt file or with the following commands:
    ```
    ./gradlew build
    ./gradlew bootRun
