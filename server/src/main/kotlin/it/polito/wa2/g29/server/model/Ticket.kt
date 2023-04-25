@@ -13,9 +13,9 @@ class Ticket(
     var title: String,
     var description: String,
     @ManyToOne
-    var product: Product?,
+    var product: Product,
     @ManyToOne
-    var customer: Profile?,
+    var customer: Profile,
 ) : EntityBase<Int>() {
     var status: TicketStatus = TicketStatus.OPEN
     var priorityLevel: TicketPriority? = null
