@@ -20,6 +20,9 @@ class Expert(
     @OneToMany(mappedBy = "expert")
     var messages: MutableSet<Message> = mutableSetOf()
 
+    @OneToMany(mappedBy = "currentExpert")
+    var ticketChanges: MutableSet<TicketChange> = mutableSetOf()
+
     fun addExpertiseSkill(e: ExpertiseSkillLevel){
         expertiseSkillLevels.add(e)
     }

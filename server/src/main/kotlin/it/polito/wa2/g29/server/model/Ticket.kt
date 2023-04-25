@@ -26,6 +26,9 @@ class Ticket(
     @OneToMany(mappedBy = "ticket")
     var messages: MutableSet<Message> = mutableSetOf()
 
+    @OneToMany(mappedBy = "ticket")
+    var ticketChanges: MutableSet<TicketChange> = mutableSetOf()
+
     @CreatedDate
     @Column(updatable = false, nullable = false)
     var createdAt: Long = System.currentTimeMillis()
