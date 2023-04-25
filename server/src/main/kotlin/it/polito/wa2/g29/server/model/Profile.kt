@@ -22,6 +22,9 @@ class Profile(
     var country: String
 ) : EntityBase<Int>() {
 
+    @OneToMany(mappedBy = "customer")
+    var tickets: MutableSet<Ticket> = mutableSetOf()
+
     fun update(newProfile: ProfileDTO) {
         email = newProfile.email
         name = newProfile.name

@@ -11,7 +11,7 @@ class Message(
     var sender: UserType,
     var content: String,
     @ManyToOne
-    var chat: Chat,
+    var ticket: Ticket,
     @ManyToOne
     var expert: Expert?
 ) : EntityBase<Int>() {

@@ -23,8 +23,8 @@ class Ticket(
     @ManyToOne
     var expert: Expert? = null
 
-    @OneToOne(mappedBy = "ticket")
-    var chat: Chat? = null
+    @OneToMany(mappedBy = "ticket")
+    var messages: MutableSet<Message> = mutableSetOf()
 
     @CreatedDate
     @Column(updatable = false, nullable = false)
