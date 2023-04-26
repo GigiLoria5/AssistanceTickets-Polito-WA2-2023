@@ -20,7 +20,7 @@ class TicketChange(
     @Column(updatable = false)
     var description: String,
     @Column(updatable = false, nullable = false)
-    var modifiedBy: UserType, //aggiunto usertype manager
+    var changedBy: UserType
 
 ) : EntityBase<Int>() {
 

@@ -1,16 +1,16 @@
 package it.polito.wa2.g29.server.model
 
 import it.polito.wa2.g29.server.enums.Expertise
-import it.polito.wa2.g29.server.enums.SkillLevel
+import it.polito.wa2.g29.server.enums.Level
 import jakarta.persistence.*
 
 
 @Entity
-@Table(name = "expertises_skill_levels")
+@Table(name = "skills")
 
-class ExpertiseSkillLevel(
+class Skill(
 
     var expertise: Expertise,
-    var skillLevel: SkillLevel
+    var level: Level
 
 ) : EntityBase<Int>()
