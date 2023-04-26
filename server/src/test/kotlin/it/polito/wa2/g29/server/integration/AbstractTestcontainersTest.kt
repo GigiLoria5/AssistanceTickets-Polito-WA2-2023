@@ -2,15 +2,15 @@ package it.polito.wa2.g29.server.integration
 
 import org.junit.jupiter.api.BeforeAll
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
-import org.springframework.test.context.jdbc.Sql
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.utility.DockerImageName
 
-@Sql(scripts = ["classpath:schema.sql"])
 @SpringBootTest
+@ActiveProfiles("test")
 abstract class AbstractTestcontainersTest {
     companion object {
         @Container

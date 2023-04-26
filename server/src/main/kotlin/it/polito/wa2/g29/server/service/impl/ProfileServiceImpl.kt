@@ -29,16 +29,16 @@ class ProfileServiceImpl(
     }
 
     override fun modifyProfile(email: String, newProfile: ProfileDTO) {
-        val oldProfile = profileRepository.findProfileByEmail(email) ?: throw ProfileNotFoundException()
+        val profile = profileRepository.findProfileByEmail(email) ?: throw ProfileNotFoundException()
 
-        if (newProfile.email != oldProfile.email && profileRepository.findProfileByEmail(newProfile.email) != null)
+        if (newProfile.email != profile.email && profileRepository.findProfileByEmail(newProfile.email) != null)
             throw DuplicateProfileException("a profile with the same email already exists")
-        if (newProfile.phoneNumber != oldProfile.phoneNumber && profileRepository.findProfileByPhoneNumber(newProfile.phoneNumber) != null)
+        if (newProfile.phoneNumber != profile.phoneNumber && profileRepository.findProfileByPhoneNumber(newProfile.phoneNumber) != null)
             throw DuplicateProfileException("a profile with the same phone number already exists")
 
-        newProfile.profileId = oldProfile.profileId
+        newProfile.profileId = profile.id
 
-        val profile = newProfile.toEntity()
+        profile.update(newProfile)
         profileRepository.save(profile)
     }
 }

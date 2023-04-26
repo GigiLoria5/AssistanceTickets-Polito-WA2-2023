@@ -74,7 +74,7 @@ function addProfile(profile){
                 resolve(null);
             } else {
                 const errorBody = await response.json();
-                reject({ error: `Server error: ${errorBody.errorMessage}` });
+                reject({ error: `Server error: ${errorBody.error}` });
             }
         }).catch(()=> reject({error:"cannot communicate withe the server"}));
     });
@@ -93,7 +93,7 @@ function updateProfile(profile,email){
                 resolve(null);
             } else {
                 const errorBody = await response.json();
-                reject({ error: `Server error: ${errorBody.errorMessage}` });
+                reject({ error: `Server error: ${errorBody.error}` });
             }
         }).catch(()=> reject({error:"cannot communicate withe the server"}));
     });

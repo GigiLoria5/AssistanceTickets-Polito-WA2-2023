@@ -4,24 +4,19 @@ import jakarta.persistence.*
 
 @Entity
 @Table(name = "products")
-class Product {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "product_id")
-    var productId: Int = 0
-
-    var asin: String = ""
-
-    var brand: String = ""
-
-    var category: String = ""
-
-    @Column(name = "manufacturer_number")
-    var manufacturerNumber: String = ""
-
-    var name: String = ""
-
-    var price: Float = 0.0F
-
-    var weight: Float = 0.0F
-}
+class Product(
+    @Column(nullable = false, unique = true)
+    var asin: String,
+    @Column(nullable = false)
+    var brand: String,
+    @Column(nullable = false)
+    var category: String,
+    @Column(name = "manufacturer_number", nullable = false)
+    var manufacturerNumber: String,
+    @Column(nullable = false)
+    var name: String,
+    @Column(nullable = false)
+    var price: Float,
+    @Column(nullable = false)
+    var weight: Float,
+) : EntityBase<Int>()

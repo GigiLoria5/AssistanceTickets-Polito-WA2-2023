@@ -6,24 +6,24 @@ import it.polito.wa2.g29.server.repository.ProfileRepository
 
 object TestProfileUtils {
     val profiles = listOf(
-        Profile().apply {
-            email = "email1@wa2.it"
-            name = "Shadow"
-            surname = "Deighton"
-            phoneNumber = "6462007344"
-            address = "4 Pepper Wood Street"
-            city = "Humble"
+        Profile(
+            email = "email1@wa2.it",
+            name = "Shadow",
+            surname = "Deighton",
+            phoneNumber = "6462007344",
+            address = "4 Pepper Wood Street",
+            city = "Humble",
             country = "United States"
-        },
-        Profile().apply {
-            email = "email2@wa2.it"
-            name = "John"
-            surname = "Kerner"
-            phoneNumber = "3305516835"
-            address = "Corso Duca degli Abruzzi, 24"
-            city = "Turin"
+        ),
+        Profile(
+            email = "email2@wa2.it",
+            name = "John",
+            surname = "Kerner",
+            phoneNumber = "3305516835",
+            address = "Corso Duca degli Abruzzi, 24",
+            city = "Turin",
             country = "Italy"
-        },
+        ),
     )
 
     val newProfileDTO = ProfileDTO(
@@ -40,4 +40,5 @@ object TestProfileUtils {
     fun insertProfiles(profileRepository: ProfileRepository) {
         profileRepository.saveAll(profiles)
     }
+
 }
