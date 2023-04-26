@@ -390,7 +390,7 @@
 
     - Description: Allows to start the progress of an "OPEN"/"REOPENED" ticket by assigning it to an expert and setting a
       priority level. Upon successful completion of the request, the ticket status will be "IN_PROGRESS"
-    - Request body: the id of the assigned expert, the priority level of the ticket and description. 
+    - Request body: the id of the assigned expert, the priority level of the ticket and an optional description. 
 
       ```
       {
@@ -415,7 +415,7 @@
 - PUT `/API/tickets/{ticketId}/stop`
 
     - Description: Allows to stop an "IN_PROGRESS" ticket. Upon successful completion of the request, the ticket status will be "OPEN"
-    - Request body: changedBy and description.
+    - Request body: changedBy and an optional description.
 
       ```
       {
@@ -438,7 +438,7 @@
 - PUT `/API/tickets/{ticketId}/resolve`
 
     - Description: Allows to set a not closed ticket as resolved. Upon successful completion of the request, the ticket status will be "RESOLVED"
-    - Request body: changedBy and description.
+    - Request body: changedBy and an optional description.
 
       ```
       {
@@ -484,12 +484,12 @@
 - PUT `/API/tickets/{ticketId}/close`
 
     - Description: Allows to close any ticket. Upon successful completion of the request, the ticket status will be "CLOSED"
-    - Request body: changedBy and description.
+    - Request body: changedBy and an optional description.
 
       ```
       {
         "changedBy":"CUSTOMER"
-        "description": "I encountered the same issue again after the ticket was closed."
+        "description": ""
       }
       ```   
       
