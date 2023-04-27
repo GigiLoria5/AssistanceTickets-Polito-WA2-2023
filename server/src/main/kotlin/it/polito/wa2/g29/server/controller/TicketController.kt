@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController
 class TicketController(
     private val ticketService: TicketService
 ) {
-    // GET /API/tickets/ -- list all registered tickets in the DB
+    // GET /API/tickets/ -- list all tickets in the DB
     @GetMapping("/tickets")
     fun getAllTickets(): List<TicketDTO> {
         return ticketService.getAllTickets()
@@ -24,7 +24,7 @@ class TicketController(
 
     // GET /API/tickets/{ticketId} -- details of ticket {ticketId} or fail if it does not exist
     @GetMapping("/tickets/{ticketId}")
-    fun getProductById(@PathVariable @Valid @Min(1) ticketId: Int): TicketDTO {
+    fun getTicketById(@PathVariable @Valid @Min(1) ticketId: Int): TicketDTO {
         return ticketService.getTicketById(ticketId)
     }
 }

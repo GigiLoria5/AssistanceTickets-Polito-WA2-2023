@@ -215,6 +215,35 @@
     ]
     ```
 
+- GET `/API/experts/{expertId}/tickets`
+
+    - Description: Allows to obtain the list of tickets assigned to an expert
+    - Request body: _None_
+    - Response: `200 OK` (success)
+    - Error responses: `404 Not Found` (expertId not found), `422 Unprocessable Entity` (validation of
+      expertId failed) or `500 Internal Server Error` (generic error)
+    - Response body: An array of objects (sorted by status, priorityLevel and lastModifiedAt) for each containing ticketId, description, productId, customerId, expertId, totalExchangedMessages, status, priorityLevel, createdAt and lastModifiedAt.
+      An error message in case of error
+      ```
+      [
+          ...,
+          {
+            "ticketId": 21,
+            "title": "Microwave not heating food",
+            "description": "I've tried using my microwave multiple times, but it's not heating up my food. The light turns on and the plate rotates, but the food stays cold.",
+            "productId": 2,
+            "customerId": 3,
+            "expertId": 2,
+            "totalExchangedMessages": 32,
+            "status": "RESOLVED",
+            "priorityLevel": "MEDIUM",
+            "createdAt": 1682092233,
+            "lastModifiedAt": 168211444
+          },
+          ...
+      ]
+      ```
+
 ### Tickets
 
 - GET `/API/tickets`
@@ -264,36 +293,6 @@
             "createdAt": 1682087637,
             "lastModifiedAt": 1682087637
           },
-          ...
-      ]
-      ```
-
-- GET `/API/tickets/{expertId}`
-
-    - Description: Allows to obtain the list of tickets assigned to an expert
-    - Request body: _None_
-    - Response: `200 OK` (success)
-    - Error responses: `404 Not Found` (expertId not found), `422 Unprocessable Entity` (validation of
-      expertId failed) or `500 Internal Server Error` (generic error)
-    - Response body: An array of objects, for each containing ticketId, description, productId, customerId,
-      expertId, totalExchangedMessages, status, priorityLevel, createdAt and lastModifiedAt.
-      An error message in case of error
-      ```
-      [
-          ...,
-          {
-            "ticketId": 21,
-            "title": "Microwave not heating food",
-            "description": "I've tried using my microwave multiple times, but it's not heating up my food. The light turns on and the plate rotates, but the food stays cold.",
-            "productId": 2,
-            "customerId": 3,
-            "expertId": 2,
-            "totalExchangedMessages": 32,
-            "status": "RESOLVED",
-            "priorityLevel": "MEDIUM",
-            "createdAt": 1682092233,
-            "lastModifiedAt": 168211444
-          }
           ...
       ]
       ```

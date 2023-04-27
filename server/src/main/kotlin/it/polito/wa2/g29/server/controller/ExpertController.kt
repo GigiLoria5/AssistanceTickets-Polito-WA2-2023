@@ -1,6 +1,7 @@
 package it.polito.wa2.g29.server.controller
 
 import it.polito.wa2.g29.server.dto.ExpertDTO
+import it.polito.wa2.g29.server.dto.TicketDTO
 import it.polito.wa2.g29.server.service.ExpertService
 import jakarta.validation.Valid
 import jakarta.validation.constraints.Min
@@ -22,5 +23,11 @@ class ExpertController(private val expertService: ExpertService) {
     @GetMapping("/experts/{expertId}")
     fun getExpertById(@PathVariable @Valid @Min(1) expertId: Int): ExpertDTO? {
         return expertService.getExpertById(expertId)
+    }
+
+    // GET /API/experts/{expertId}/tickets -- list all tickets assigned to an expert {expertId} or fail if it does not exist
+    @GetMapping("/experts/{expertId}/tickets")
+    fun getAllTicketsByExpertId(@PathVariable @Valid @Min(1) expertId: Int): List<TicketDTO> {
+        return expertService.getAllTicketsByExpertId(expertId)
     }
 }

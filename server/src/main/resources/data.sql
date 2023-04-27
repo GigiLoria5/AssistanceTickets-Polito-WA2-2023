@@ -2735,7 +2735,7 @@ VALUES (1681426902680, 'SOL REPUBLIC - Amps Air Bluetooth Earbuds connection iss
 INSERT INTO tickets (created_at, title, description, last_modified_at, priority_level, status, customer_id, expert_id,
                      product_id)
 VALUES (1679526902680, 'SOL REPUBLIC - Amps Air Bluetooth Earbuds battery issue',
-        'My SOL REPUBLIC - Amps Air Bluetooth Earbuds battery is draining too quickly', 1680526902680, 'LOW',
+        'My SOL REPUBLIC - Amps Air Bluetooth Earbuds battery is draining too quickly', 1680526902680, 'MEDIUM',
         'IN_PROGRESS', 65, 5, 278);
 
 INSERT INTO tickets (created_at, title, description, last_modified_at, priority_level, status, customer_id, expert_id,
