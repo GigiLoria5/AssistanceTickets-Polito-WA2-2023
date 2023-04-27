@@ -13,24 +13,20 @@ class Expert(
     var country: String,
     var city: String,
     @OneToMany(mappedBy = "expert")
-     var skills: MutableSet<Skill> = mutableSetOf()
-) : EntityBase<Int>(){
+    var skills: MutableSet<Skill>
+) : EntityBase<Int>() {
 
     @OneToMany(mappedBy = "expert")
-    var tickets: MutableSet<Ticket> = mutableSetOf()
+    var tickets = mutableSetOf<Ticket>()
 
     @OneToMany(mappedBy = "expert")
-    var messages: MutableSet<Message> = mutableSetOf()
+    var messages = mutableSetOf<Message>()
 
     @OneToMany(mappedBy = "currentExpert")
-    var ticketChanges: MutableSet<TicketChange> = mutableSetOf()
+    var ticketChanges = mutableSetOf<TicketChange>()
 
-    fun addSkill(s: Skill){
-        s.expert=this;
-        skills.add(s)
-    }
-    fun addMessage(m: Message){
-        m.expert=this;
+    fun addMessage(m: Message) {
+        m.expert = this
         messages.add(m)
     }
 }

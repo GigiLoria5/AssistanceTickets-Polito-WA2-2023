@@ -16,9 +16,7 @@ data class SkillDTO(
     val level: String
 )
 
-
 fun Expert.toDTO(): ExpertDTO {
-    return ExpertDTO(
-        id,name,surname,email,
-        skills=skills.map{SkillDTO(expertise = it.expertise.name,level=it.level.name  )  })
+    val skillDTOs = skills.map { SkillDTO(expertise = it.expertise.toString(), level = it.level.toString()) }
+    return ExpertDTO(id, name, surname, email, skills = skillDTOs)
 }
