@@ -7,8 +7,10 @@ import jakarta.persistence.*
 @Entity
 @Table(name = "skills")
 class Skill(
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     var expertise: Expertise,
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     var level: Level,
     @ManyToOne

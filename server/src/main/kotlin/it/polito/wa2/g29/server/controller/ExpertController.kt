@@ -15,12 +15,12 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class ExpertController(private val expertService: ExpertService) {
     @GetMapping("/experts")
-    fun getAllExperts(): List<ExpertDTO>{
+    fun getAllExperts(): List<ExpertDTO> {
         return expertService.getAllExperts()
     }
 
-//    @GetMapping("/experts/{expertId}")
-//    fun getExpertById(@PathVariable @Valid @Min(1) expertId: String): ExpertDTO? {
-//        return expertService.getExpertById(expertId)
-//    }
+    @GetMapping("/experts/{expertId}")
+    fun getExpertById(@PathVariable @Valid @Min(1) expertId: Int): ExpertDTO? {
+        return expertService.getExpertById(expertId)
+    }
 }
