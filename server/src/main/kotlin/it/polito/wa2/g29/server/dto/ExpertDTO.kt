@@ -1,6 +1,7 @@
 package it.polito.wa2.g29.server.dto
 
 import it.polito.wa2.g29.server.model.Expert
+import it.polito.wa2.g29.server.model.Skill
 
 
 data class ExpertDTO(
@@ -16,7 +17,11 @@ data class SkillDTO(
     val level: String
 )
 
+fun Skill.toDTO(): SkillDTO {
+    return SkillDTO(expertise = expertise.toString(), level = level.toString())
+}
+
 fun Expert.toDTO(): ExpertDTO {
-    val skillDTOs = skills.map { SkillDTO(expertise = it.expertise.toString(), level = it.level.toString()) }
+    val skillDTOs = skills.map { it.toDTO() }
     return ExpertDTO(id, name, surname, email, skills = skillDTOs)
 }
