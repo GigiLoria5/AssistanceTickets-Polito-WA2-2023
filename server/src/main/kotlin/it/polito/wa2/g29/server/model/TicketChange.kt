@@ -1,4 +1,5 @@
 package it.polito.wa2.g29.server.model
+
 import it.polito.wa2.g29.server.enums.TicketStatus
 import it.polito.wa2.g29.server.enums.UserType
 import jakarta.persistence.*
@@ -18,7 +19,7 @@ class TicketChange(
     @JoinColumn(updatable = false)
     var currentExpert: Expert?,
     @Column(updatable = false)
-    var description: String,
+    var description: String?,
     @Column(updatable = false, nullable = false)
     var changedBy: UserType
 
