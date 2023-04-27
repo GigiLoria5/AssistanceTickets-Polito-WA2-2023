@@ -11,6 +11,8 @@ import jakarta.persistence.*
 class Skill(
 
     var expertise: Expertise,
-    var level: Level
+    var level: Level,
+    @ManyToOne
+    var expert: Expert
 
 ) : EntityBase<Int>()

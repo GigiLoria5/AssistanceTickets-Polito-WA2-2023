@@ -10,7 +10,9 @@ class Expert(
     var name: String,
     var surname: String,
     var email: String,
-    @OneToMany
+    var country: String,
+    var city: String,
+    @OneToMany(mappedBy = "expert")
      var skills: MutableSet<Skill> = mutableSetOf()
 ) : EntityBase<Int>(){
 
@@ -23,7 +25,12 @@ class Expert(
     @OneToMany(mappedBy = "currentExpert")
     var ticketChanges: MutableSet<TicketChange> = mutableSetOf()
 
-    fun addSkill(e: Skill){
-        skills.add(e)
+    fun addSkill(s: Skill){
+        s.expert=this;
+        skills.add(s)
+    }
+    fun addMessage(m: Message){
+        m.expert=this;
+        messages.add(m)
     }
 }

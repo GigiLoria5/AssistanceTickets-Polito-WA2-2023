@@ -2501,3 +2501,36 @@ insert into profiles (email, name, surname, phone_number, address, city, country
 insert into profiles (email, name, surname, phone_number, address, city, country) values ('gpickworth2p@tuttocitta.it', 'Guillermo', 'Pickworth', '6824668458', '7 Farwell Road', 'Fort Worth', 'United States');
 insert into profiles (email, name, surname, phone_number, address, city, country) values ('hvenour2q@livejournal.com', 'Hi', 'Venour', '3366276183', '6683 Forster Crossing', 'High Point', 'United States');
 insert into profiles (email, name, surname, phone_number, address, city, country) values ('rpinkerton2r@ocn.ne.jp', 'Robb', 'Pinkerton', '2565077130', '93 Thierer Alley', 'Huntsville', 'United States');
+
+-- experts
+insert into experts (name, surname, email, country, city) values ('Nicolea', 'Wimpenny', 'nwimpenny0@rediff.com', 'United States', 'Greensboro');
+insert into experts (name, surname, email, country, city) values ('Luigi', 'Fulbrook', 'lfulbrook1@gnu.org', 'United States', 'Kansas City');
+insert into experts (name, surname, email, country, city) values ('Flynn', 'Fishbie', 'ffishbie2@flickr.com', 'United States', 'Las Vegas');
+insert into experts (name, surname, email, country, city) values ('Sean', 'Artz', 'sartz3@aol.com', 'United States', 'Cincinnati');
+insert into experts (name, surname, email, country, city) values ('Barr', 'Bowering', 'bbowering4@vistaprint.com', 'United States', 'Rochester');
+insert into experts (name, surname, email, country, city) values ('Noel', 'Bage', 'nbage5@house.gov', 'United States', 'New Bedford');
+insert into experts (name, surname, email, country, city) values ('Tillie', 'Rival', 'trival6@cnbc.com', 'United States', 'West Palm Beach');
+insert into experts (name, surname, email, country, city) values ('Kellia', 'Rubin', 'krubin7@edublogs.org', 'United States', 'Burbank');
+insert into experts (name, surname, email, country, city) values ('Denys', 'MacKibbon', 'dmackibbon8@huffingtonpost.com', 'United States', 'Clearwater');
+insert into experts (name, surname, email, country, city) values ('Abagael', 'Guard', 'aguard9@cnbc.com', 'United States', 'Scottsdale');
+
+-- skills
+
+insert into skills (expertise, level, expert_id) values (4, 1, 1);
+insert into skills (expertise, level, expert_id) values (4, 4, 2);
+insert into skills (expertise, level, expert_id) values (3, 4, 3);
+insert into skills (expertise, level, expert_id) values (1, 4, 4);
+insert into skills (expertise, level, expert_id) values (2, 5, 5);
+insert into skills (expertise, level, expert_id) values (2, 1, 6);
+insert into skills (expertise, level, expert_id) values (4, 2, 7);
+insert into skills (expertise, level, expert_id) values (2, 3, 8);
+insert into skills (expertise, level, expert_id) values (2, 5, 9);
+insert into skills (expertise, level, expert_id) values (2, 1, 10);
+
+insert into skills (expertise, level, expert_id) values (3, 1, 1);
+insert into skills (expertise, level, expert_id) values (2, 4, 2);
+insert into skills (expertise, level, expert_id) values (1, 4, 3);
+insert into skills (expertise, level, expert_id) values (2, 4, 4);
+insert into skills (expertise, level, expert_id) values (3, 5, 5);
+
+
