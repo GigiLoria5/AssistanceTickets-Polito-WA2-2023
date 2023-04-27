@@ -1,6 +1,7 @@
 package it.polito.wa2.g29.server.advice
 
 import it.polito.wa2.g29.server.exception.DuplicateProfileException
+import it.polito.wa2.g29.server.exception.ExpertNotFoundException
 import it.polito.wa2.g29.server.exception.ProductNotFoundException
 import it.polito.wa2.g29.server.exception.ProfileNotFoundException
 import it.polito.wa2.g29.server.utils.ErrorMessage
@@ -20,7 +21,7 @@ import kotlin.Exception
 @RestControllerAdvice
 class ApplicationExceptionHandler {
     // 404 - Not Found
-    @ExceptionHandler(value = [ProductNotFoundException::class, ProfileNotFoundException::class])
+    @ExceptionHandler(value = [ProductNotFoundException::class, ProfileNotFoundException::class, ExpertNotFoundException::class])
     fun handleNotFoundException(exception: Exception): ResponseEntity<Unit> {
         return ResponseEntity(HttpStatus.NOT_FOUND)
     }
@@ -49,7 +50,7 @@ class ApplicationExceptionHandler {
     // 500 - Generic Error
     @ExceptionHandler(Exception::class)
     fun handleGenericException(exception: Exception): ResponseEntity<ErrorMessage> {
-        val errorMessage = ErrorMessage("an error occur, please retry")
+        val errorMessage = ErrorMessage(exception.message.orEmpty())
         return ResponseEntity(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR)
     }
 }

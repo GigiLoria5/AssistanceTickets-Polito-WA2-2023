@@ -1,5 +1,6 @@
 package it.polito.wa2.g29.server.model
 
+import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
@@ -7,10 +8,15 @@ import jakarta.persistence.Table
 @Entity
 @Table(name = "experts")
 class Expert(
+    @Column(nullable = false)
     var name: String,
+    @Column(nullable = false)
     var surname: String,
+    @Column(nullable = false)
     var email: String,
+    @Column(nullable = false)
     var country: String,
+    @Column(nullable = false)
     var city: String,
     @OneToMany(mappedBy = "expert")
     var skills: MutableSet<Skill>
