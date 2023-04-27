@@ -163,6 +163,8 @@
             "name": "Gino",
             "surname": "Fastdio",
             "email": "gino.fastidio@expert.org",
+            "country": "Italy",
+            "city": "Naples",
             "skills": [
                         ..., 
                         { 
@@ -192,6 +194,8 @@
         "name": "Ambra",
         "surname": "Grigia",
         "email": "a.grigia@expert.org",
+        "country": "Italy",
+        "city": "Turin",
         "skills": [
                     ..., 
                     {
