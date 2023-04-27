@@ -38,28 +38,32 @@ class ProductControllerIntegrationTest : AbstractTestcontainersTest() {
         productRepository.deleteAll()
         mockMvc
             .get("/API/products")
-            .andExpect { status { isOk() } }
-            .andExpect { content().contentType(MediaType.APPLICATION_JSON) }
-            .andExpect { jsonPath("$").isArray }
-            .andExpect { jsonPath("$").isEmpty }
+            .andExpectAll {
+                status { isOk() }
+                content().contentType(MediaType.APPLICATION_JSON)
+                jsonPath("$").isArray
+                jsonPath("$").isEmpty
+            }
     }
 
     @Test
     fun getAllProducts() {
         mockMvc
             .get("/API/products")
-            .andExpect { status { isOk() } }
-            .andExpect { content().contentType(MediaType.APPLICATION_JSON) }
-            .andExpect { jsonPath("$").isArray }
-            .andExpect { jsonPath("$").isNotEmpty }
-            .andExpect { jsonPath("$[*].productId").exists() }
-            .andExpect { jsonPath("$[*].asin").exists() }
-            .andExpect { jsonPath("$[*].brand").exists() }
-            .andExpect { jsonPath("$[*].category").exists() }
-            .andExpect { jsonPath("$[*].manufacturerNumber").exists() }
-            .andExpect { jsonPath("$[*].name").exists() }
-            .andExpect { jsonPath("$[*].price").exists() }
-            .andExpect { jsonPath("$[*].weight").exists() }
+            .andExpectAll {
+                status { isOk() }
+                content().contentType(MediaType.APPLICATION_JSON)
+                jsonPath("$").isArray
+                jsonPath("$").isNotEmpty
+                jsonPath("$[*].productId").exists()
+                jsonPath("$[*].asin").exists()
+                jsonPath("$[*].brand").exists()
+                jsonPath("$[*].category").exists()
+                jsonPath("$[*].manufacturerNumber").exists()
+                jsonPath("$[*].name").exists()
+                jsonPath("$[*].price").exists()
+                jsonPath("$[*].weight").exists()
+            }
     }
 
     /////////////////////////////////////////////////////////////////////
@@ -71,16 +75,18 @@ class ProductControllerIntegrationTest : AbstractTestcontainersTest() {
         val product = productRepository.findAll()[0]
         mockMvc
             .get("/API/products/${product.id}")
-            .andExpect { status { isOk() } }
-            .andExpect { content().contentType(MediaType.APPLICATION_JSON) }
-            .andExpect { jsonPath("$.productId").value(product.id) }
-            .andExpect { jsonPath("$.asin").value(product.asin) }
-            .andExpect { jsonPath("$.brand").value(product.brand) }
-            .andExpect { jsonPath("$.category").value(product.category) }
-            .andExpect { jsonPath("$.manufacturerNumber").value(product.manufacturerNumber) }
-            .andExpect { jsonPath("$.name").value(product.name) }
-            .andExpect { jsonPath("$.price").value(product.price) }
-            .andExpect { jsonPath("$.weight").value(product.weight) }
+            .andExpectAll {
+                status { isOk() }
+                content().contentType(MediaType.APPLICATION_JSON)
+                jsonPath("$.productId").value(product.id)
+                jsonPath("$.asin").value(product.asin)
+                jsonPath("$.brand").value(product.brand)
+                jsonPath("$.category").value(product.category)
+                jsonPath("$.manufacturerNumber").value(product.manufacturerNumber)
+                jsonPath("$.name").value(product.name)
+                jsonPath("$.price").value(product.price)
+                jsonPath("$.weight").value(product.weight)
+            }
     }
 
     @Test

@@ -42,9 +42,9 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
         val expectedProfile = TestProfileUtils.profiles[0]
         mockMvc
             .get("/API/profiles/${expectedProfile.email}")
-            .andExpect { status { isOk() } }
-            .andExpect { content().contentType(MediaType.APPLICATION_JSON) }
             .andExpectAll {
+                status { isOk() }
+                content().contentType(MediaType.APPLICATION_JSON)
                 jsonPath("$[*].profileId").exists()
                 jsonPath("$[*].email").value(expectedProfile.email)
                 jsonPath("$[*].name").value(expectedProfile.name)
@@ -61,8 +61,10 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
         val email = "non_existing_email@fake.com"
         mockMvc
             .get("/API/profiles/$email")
-            .andExpect { status { isNotFound() } }
-            .andExpect { jsonPath("$.error").doesNotExist() }
+            .andExpectAll {
+                status { isNotFound() }
+                jsonPath("$.error").doesNotExist()
+            }
     }
 
     @Test
