@@ -16,8 +16,10 @@ class TicketChange(
     @JoinColumn(updatable = false, nullable = false)
     var ticket: Ticket,
     @Column(updatable = false, nullable = false)
+    @Enumerated(EnumType.STRING)
     var oldStatus: TicketStatus,
     @Column(updatable = false, nullable = false)
+    @Enumerated(EnumType.STRING)
     var newStatus: TicketStatus,
     @ManyToOne
     @JoinColumn(updatable = false)
@@ -25,6 +27,7 @@ class TicketChange(
     @Column(updatable = false)
     var description: String?,
     @Column(updatable = false, nullable = false)
+    @Enumerated(EnumType.STRING)
     var changedBy: UserType
 
 ) : EntityBase<Int>() {
