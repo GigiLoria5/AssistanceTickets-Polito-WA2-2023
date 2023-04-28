@@ -2706,4 +2706,123 @@ values ('COMPUTER', 'EXPERT', 9);
 insert into skills (expertise, level, expert_id)
 values ('COMPUTER', 'BEGINNER', 10);
 
+-- tickets
+INSERT INTO tickets (created_at, title, description, last_modified_at, priority_level, status, customer_id, expert_id,
+                     product_id)
+VALUES (1682616982680, 'Can''t install Sanus VLF410B1 mount',
+        'I''m trying to install the Sanus VLF410B1 mount for my TV, but I can''t seem to get it to work', 1682616982680,
+        null, 'OPEN', 1, null, 1);
 
+INSERT INTO tickets (created_at, title, description, last_modified_at, priority_level, status, customer_id, expert_id,
+                     product_id)
+VALUES (1582616982680, 'Boytone BT-210F sound issues',
+        'I''m having trouble with the sound on my Boytone BT-210F stereo system, it''s not playing any audio',
+        1582616982680, null, 'OPEN', 51, null, 2);
+
+INSERT INTO tickets (created_at, title, description, last_modified_at, priority_level, status, customer_id, expert_id,
+                     product_id)
+VALUES (1612616982680, 'DENAQ DQ-PA3032U-5525 adapter not charging',
+        'My DENAQ DQ-PA3032U-5525 adapter is not charging my Toshiba laptop, it''s plugged in but not working',
+        1612616982680, null, 'OPEN', 12, null, 3);
+
+INSERT INTO tickets (created_at, title, description, last_modified_at, priority_level, status, customer_id, expert_id,
+                     product_id)
+VALUES (1681426902680, 'SOL REPUBLIC - Amps Air Bluetooth Earbuds connection issue',
+        'I''m having trouble connecting my SOL REPUBLIC - Amps Air Bluetooth Earbuds to my phone', 1681526902680, 'LOW',
+        'IN_PROGRESS', 44, 3, 277);
+
+INSERT INTO tickets (created_at, title, description, last_modified_at, priority_level, status, customer_id, expert_id,
+                     product_id)
+VALUES (1679526902680, 'SOL REPUBLIC - Amps Air Bluetooth Earbuds battery issue',
+        'My SOL REPUBLIC - Amps Air Bluetooth Earbuds battery is draining too quickly', 1680526902680, 'MEDIUM',
+        'IN_PROGRESS', 65, 5, 278);
+
+INSERT INTO tickets (created_at, title, description, last_modified_at, priority_level, status, customer_id, expert_id,
+                     product_id)
+VALUES (1681016982680, 'Kicker Bullfrog Jump speaker not turning on',
+        'My Kicker Bullfrog Jump speaker won''t turn on anymore', 1681116982680, 'HIGH', 'IN_PROGRESS', 6, 5, 279);
+
+INSERT INTO tickets (created_at, title, description, last_modified_at, priority_level, status, customer_id, expert_id,
+                     product_id)
+VALUES (1673586015516, 'Hauppauge - WinTV-dualHD Cordcutter driver issue',
+        'I cannot get my Hauppauge - WinTV-dualHD Cordcutter to work, it seems to be a driver issue', 1677487264681,
+        'HIGH', 'RESOLVED', 23, 8, 275);
+
+INSERT INTO tickets (created_at, title, description, last_modified_at, priority_level, status, customer_id, expert_id,
+                     product_id)
+VALUES (1674024324147, 'Yamaha - Natural Sound 5 outdoor speakers not working',
+        'My Yamaha - Natural Sound 5 outdoor speakers suddenly stopped working', 1677065479943, 'MEDIUM', 'RESOLVED',
+        13, 9, 276);
+
+INSERT INTO tickets (created_at, title, description, last_modified_at, priority_level, status, customer_id, expert_id,
+                     product_id)
+VALUES (1664855274686, 'Issue with Acer 15.6 Chromebook',
+        'My Acer 15.6 Chromebook CB5-571-C4G4 is not turning on. I have tried charging it but nothing seems to work.',
+        1672386059292, 'MEDIUM', 'CLOSED', 12, 5, 635);
+
+INSERT INTO tickets (created_at, title, description, last_modified_at, priority_level, status, customer_id, expert_id,
+                     product_id)
+VALUES (1666955083652, 'Sony home theater system not working',
+        'I purchased a Sony - 5.1-Ch. 3D / Smart Blu-ray Home Theater System (BDVE3100) but it is not working. The sound is not coming out from the speakers. Please help.',
+        1672450855038, 'HIGH', 'CLOSED', 93, 8, 640);
+
+INSERT INTO tickets (created_at, title, description, last_modified_at, priority_level, status, customer_id, expert_id,
+                     product_id)
+VALUES (1667082377012, 'Netgear Powerline Wifi not working',
+        'I recently purchased Netgear Powerline 1000 Mbps Wifi (PLW1000-100NAS) but I am not able to connect to the internet through it. The LED lights are blinking but there is no internet. Please assist.',
+        1672890571523, 'LOW', 'CLOSED', 81, 7, 637);
+
+INSERT INTO tickets (created_at, title, description, last_modified_at, priority_level, status, customer_id, expert_id,
+                     product_id)
+VALUES (1670664805413, 'Issues with Logitech iPad Slim Folio keyboard',
+        'I am experiencing problems with my Logitech iPad Slim Folio keyboard. It is not connecting via Bluetooth to my iPad 5th generation. Please help me resolve this issue.',
+        1773830274473, 'HIGH', 'REOPENED', 28, 8, 796);
+
+INSERT INTO tickets (created_at, title, description, last_modified_at, priority_level, status, customer_id, expert_id,
+                     product_id)
+VALUES (1703019801326, 'Dash cam not recording rear camera footage',
+        'My Cobra CDR895D dash cam is not recording footage from the rear camera. I have checked all connections and settings but the issue persists. Please provide assistance.',
+        1755808548965, 'MEDIUM', 'REOPENED', 44, 7, 797);
+
+INSERT INTO tickets (created_at, title, description, last_modified_at, priority_level, status, customer_id, expert_id,
+                     product_id)
+VALUES (1691498758279, 'Netgear CM700 modem not connecting to internet',
+        'My Netgear CM700 modem is not connecting to the internet. I have restarted it multiple times, but it does not seem to resolve the issue. Please help me troubleshoot this problem.',
+        1751388016898, 'LOW', 'REOPENED', 24, 9, 798);
+
+-- Ticket 1
+INSERT INTO messages(sender, content, ticket_id, expert_id, time)
+VALUES ('CUSTOMER', 'Ciao, ho bisogno di assistenza per il mio ordine.', 4, NULL, 1640856000);
+INSERT INTO messages(sender, content, ticket_id, expert_id, time)
+VALUES ('EXPERT', 'Buongiorno, in cosa posso aiutarti?', 4, 3, 1640856120);
+INSERT INTO messages(sender, content, ticket_id, expert_id, time)
+VALUES ('CUSTOMER', 'Ho ricevuto un prodotto danneggiato, cosa posso fare?', 4, NULL, 1640856200);
+INSERT INTO messages(sender, content, ticket_id, expert_id, time)
+VALUES ('EXPERT', 'Mi dispiace per linconveniente, puoi mandarmi una foto del prodotto?', 4, 3, 1640856260);
+INSERT INTO messages(sender, content, ticket_id, expert_id, time)
+VALUES ('CUSTOMER', 'Eccola qui.', 4, NULL, 1640856340);
+INSERT INTO messages(sender, content, ticket_id, expert_id, time)
+VALUES ('EXPERT', 'Grazie, possiamo organizzare un reso o una sostituzione.', 4, 3, 1640856400);
+INSERT INTO messages(sender, content, ticket_id, expert_id, time)
+VALUES ('CUSTOMER', 'Preferirei una sostituzione, grazie.', 4, NULL, 1640856460);
+INSERT INTO messages(sender, content, ticket_id, expert_id, time)
+VALUES ('EXPERT', 'Va bene, ti faremo sapere quando il nuovo prodotto sarà in viaggio.', 4, 3, 1640856520);
+
+-- Ticket 2
+INSERT INTO messages(sender, content, ticket_id, expert_id, time)
+VALUES ('CUSTOMER', 'Buongiorno, vorrei sapere come funziona il vostro servizio di assistenza.', 5, NULL, 1640870400);
+INSERT INTO messages(sender, content, ticket_id, expert_id, time)
+VALUES ('EXPERT',
+        'Ciao, il nostro servizio di assistenza è a disposizione per qualsiasi problema tu abbia con il tuo ordine.', 5,
+        5, 1640870520);
+INSERT INTO messages(sender, content, ticket_id, expert_id, time)
+VALUES ('CUSTOMER', 'Grazie, avevo dei dubbi riguardo al mio ordine. Ho visto che non è stato ancora spedito.', 5, NULL,
+        1640870580);
+INSERT INTO messages(sender, content, ticket_id, expert_id, time)
+VALUES ('EXPERT',
+        'Hai ragione, ci sono stati dei ritardi nella produzione. Ti confermo che il tuo ordine verrà spedito entro la fine della settimana.',
+        5, 5, 1640870640);
+INSERT INTO messages(sender, content, ticket_id, expert_id, time)
+VALUES ('CUSTOMER', 'Ok, grazie per informazione.', 5, NULL, 1640870700);
+INSERT INTO messages(sender, content, ticket_id, expert_id, time)
+VALUES ('EXPERT', 'Di nulla, siamo qui per aiutarti.', 5, 5, 1640870760);
