@@ -198,13 +198,13 @@
     - Response: `200 OK` (success)
     - Error responses: `404 Not Found` (expertId not found), `422 Unprocessable Entity` (validation of
       expertId failed) or `500 Internal Server Error` (generic error)
-    - Response body: An array of objects, for each containing ticketId, expertId, oldStatus, newStatus, changedBy, description and time. An error message in case of error
+    - Response body: An array of objects, sorted by time descending, for each containing ticketId, currentExpertId, oldStatus, newStatus, changedBy, description and time. An error message in case of error
     ```
     [
         ...,
         {
           "ticketId": 49,
-          "expertId": 25,
+          "currentExpertId": 25,
           "oldStatus": "RESOLVED",
           "newStatus": "CLOSED",
           "changedBy":"EXPERT",
@@ -331,13 +331,13 @@
     - Response: `200 OK` (success)
     - Error responses: `404 Not Found` (ticketId not found), `422 Unprocessable Entity` (validation of
       ticketId failed) or `500 Internal Server Error` (generic error)
-    - Response body: An array of objects, for each containing ticketId, expertId, oldStatus, newStatus, description, changedBy and time. An error message in case of error
+    - Response body: An array of objects, sorted by time descending,  for each containing ticketId, currentExpertId, oldStatus, newStatus, description, changedBy and time. An error message in case of error
       ```
       [
           ...,
           {
             "ticketId": 49,
-            "expertId": 25,
+            "currentExpertId": 25,
             "oldStatus": "RESOLVED",
             "newStatus": "CLOSED",
             "changedBy":"EXPERT",
@@ -347,12 +347,12 @@
           ...,
           {
             "ticketId": 49,
-            "expertId": 25,
+            "currentExpertId": 25,
             "oldStatus": "RESOLVED",
             "newStatus": "REOPENED",
             "changedBy":"CUSTOMER",
             "description":"Issue has not been solved",
-            "time": 1882293244
+            "time": 1482293244
           }
 
           ...
