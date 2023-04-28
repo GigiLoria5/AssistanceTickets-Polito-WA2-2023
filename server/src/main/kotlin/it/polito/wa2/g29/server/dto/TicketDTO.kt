@@ -1,7 +1,10 @@
 package it.polito.wa2.g29.server.dto
 
-import it.polito.wa2.g29.server.model.*
-import jakarta.validation.constraints.*
+import it.polito.wa2.g29.server.model.Ticket
+import jakarta.validation.constraints.Min
+import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.NotNull
+import jakarta.validation.constraints.Null
 
 
 data class TicketDTO(
@@ -26,6 +29,19 @@ data class NewTicketDTO(
     @field:NotBlank
     val title: String,
     @field:NotBlank val description: String
+)
+
+data class TicketIdDTO(
+    val ticketId: Int
+)
+
+data class StartTicketDTO(
+    @field:NotNull @field:Min(1)
+    val expertId: Int,
+    @field:NotNull //I don't know how to validate the enum correspondance with an annotation.
+    val priorityLevel: String,
+    @field:Null
+    val description: String?
 )
 
 fun Ticket.toDTO(): TicketDTO {

@@ -1,8 +1,6 @@
 package it.polito.wa2.g29.server.controller
 
-import it.polito.wa2.g29.server.dto.NewTicketDTO
-import it.polito.wa2.g29.server.dto.TicketChangeDTO
-import it.polito.wa2.g29.server.dto.TicketDTO
+import it.polito.wa2.g29.server.dto.*
 import it.polito.wa2.g29.server.service.TicketService
 import jakarta.validation.Valid
 import jakarta.validation.constraints.Min
@@ -38,7 +36,17 @@ class TicketController(
     // POST /API/tickets -- create a new ticket or fail if some field is missing, or is not valid, or does not has correspondence or in case of duplicates
     @PostMapping("/tickets")
     @ResponseStatus(HttpStatus.CREATED)
-    fun createTicket(@RequestBody @Valid @NotNull ticket: NewTicketDTO) {
-        ticketService.createTicket(ticket)
+    fun createTicket(@RequestBody @Valid @NotNull ticket: NewTicketDTO):TicketIdDTO {
+        return ticketService.createTicket(ticket)
+    }
+
+    // PUT /API/tickets/{ticketId}/start -Allows to start the progress of an "OPEN"/"REOPENED" ticket. The ticket status will be "IN_PROGRESS"
+    @PutMapping("/tickets/{ticketId}/start")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun startTicket(
+        @PathVariable @Valid @Min(1) ticketId: Int,
+        @RequestBody @Valid @NotNull ticketData: StartTicketDTO
+    ) {
+        ticketService.startTicket(ticketId,ticketData)
     }
 }
