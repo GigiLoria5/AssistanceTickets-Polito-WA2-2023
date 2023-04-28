@@ -198,7 +198,7 @@
     - Response: `200 OK` (success)
     - Error responses: `404 Not Found` (expertId not found), `422 Unprocessable Entity` (validation of
       expertId failed) or `500 Internal Server Error` (generic error)
-    - Response body: An array of objects, for each containing ticketId, expertId, oldStatus, newStatus, description and time. An error message in case of error
+    - Response body: An array of objects, for each containing ticketId, expertId, oldStatus, newStatus, changedBy, description and time. An error message in case of error
     ```
     [
         ...,
@@ -207,7 +207,7 @@
           "expertId": 25,
           "oldStatus": "RESOLVED",
           "newStatus": "CLOSED",
-          "modifiedBy":"EXPERT",
+          "changedBy":"EXPERT",
           "description":"",
           "time": 1682092244
         }
@@ -331,7 +331,7 @@
     - Response: `200 OK` (success)
     - Error responses: `404 Not Found` (ticketId not found), `422 Unprocessable Entity` (validation of
       ticketId failed) or `500 Internal Server Error` (generic error)
-    - Response body: An array of objects, for each containing ticketId, expertId, oldStatus, newStatus, description, modifiedBy and time. An error message in case of error
+    - Response body: An array of objects, for each containing ticketId, expertId, oldStatus, newStatus, description, changedBy and time. An error message in case of error
       ```
       [
           ...,
@@ -340,7 +340,7 @@
             "expertId": 25,
             "oldStatus": "RESOLVED",
             "newStatus": "CLOSED",
-            "modifiedBy":"EXPERT",
+            "changedBy":"EXPERT",
             "description":"",
             "time": 1682092244
           },
@@ -350,7 +350,7 @@
             "expertId": 25,
             "oldStatus": "RESOLVED",
             "newStatus": "REOPENED",
-            "modifiedBy":"CUSTOMER",
+            "changedBy":"CUSTOMER",
             "description":"Issue has not been solved",
             "time": 1882293244
           }
