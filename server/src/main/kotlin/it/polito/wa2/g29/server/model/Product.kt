@@ -19,4 +19,7 @@ class Product(
     var price: Float,
     @Column(nullable = false)
     var weight: Float,
-) : EntityBase<Int>()
+) : EntityBase<Int>(){
+    @OneToMany(mappedBy = "product",cascade = [CascadeType.ALL])
+    var tickets: MutableSet<Ticket> = mutableSetOf()
+}

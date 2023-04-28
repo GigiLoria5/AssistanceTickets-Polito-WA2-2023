@@ -29,10 +29,10 @@ class Ticket(
     @ManyToOne
     var expert: Expert? = null
 
-    @OneToMany(mappedBy = "ticket")
+    @OneToMany(mappedBy = "ticket",cascade = [CascadeType.ALL])
     var messages = mutableSetOf<Message>()
 
-    @OneToMany(mappedBy = "ticket")
+    @OneToMany(mappedBy = "ticket",cascade = [CascadeType.ALL])
     var ticketChanges = mutableSetOf<TicketChange>()
 
     @CreatedDate
