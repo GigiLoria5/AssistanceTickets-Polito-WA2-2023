@@ -38,7 +38,7 @@ data class TicketIdDTO(
 data class StartTicketDTO(
     @field:NotNull @field:Min(1)
     val expertId: Int,
-    @field:NotNull //I don't know how to validate the enum correspondance with an annotation.
+    @field:NotBlank //I don't know how to validate the enum correspondance with an annotation.
     val priorityLevel: String,
     @field:Null
     val description: String?

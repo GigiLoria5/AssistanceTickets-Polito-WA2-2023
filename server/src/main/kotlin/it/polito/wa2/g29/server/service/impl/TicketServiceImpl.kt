@@ -59,12 +59,9 @@ class TicketServiceImpl(
     override fun startTicket(ticketId: Int, startTicketDTO: StartTicketDTO) {
 
         val expert = expertRepository.findByIdOrNull(startTicketDTO.expertId) ?: throw ExpertNotFoundException()
-
         //validazione stringa
        // TicketPriority.valueOf(startTicketDTO.priorityLevel)
         val x=TicketPriority.values().map { it.toString() }.contains(startTicketDTO.priorityLevel.uppercase(Locale.getDefault()))
         println(x)
-
     }
-
 }
