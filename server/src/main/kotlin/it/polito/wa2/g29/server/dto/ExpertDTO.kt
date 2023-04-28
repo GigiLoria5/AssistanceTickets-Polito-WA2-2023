@@ -9,6 +9,8 @@ data class ExpertDTO(
     val name: String,
     val surname: String,
     val email: String,
+    val country: String,
+    val city: String,
     val skills: List<SkillDTO>
 )
 
@@ -23,5 +25,5 @@ fun Skill.toDTO(): SkillDTO {
 
 fun Expert.toDTO(): ExpertDTO {
     val skillDTOs = skills.map { it.toDTO() }
-    return ExpertDTO(id, name, surname, email, skills = skillDTOs)
+    return ExpertDTO(id, name, surname, email, country, city, skills = skillDTOs)
 }
