@@ -1,6 +1,7 @@
 package it.polito.wa2.g29.server.dto
 
 import it.polito.wa2.g29.server.model.*
+import jakarta.validation.constraints.*
 
 
 data class TicketDTO(
@@ -15,6 +16,16 @@ data class TicketDTO(
     val priorityLevel: String?,
     val createdAt: Long,
     val lastModifiedAt: Long
+)
+
+data class NewTicketDTO(
+    @field:NotNull @field:Min(1)
+    val customerId: Int,
+    @field:NotNull @field:Min(1)
+    val productId: Int,
+    @field:NotBlank
+    val title: String,
+    @field:NotBlank val description: String
 )
 
 fun Ticket.toDTO(): TicketDTO {

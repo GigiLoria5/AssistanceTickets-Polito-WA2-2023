@@ -24,7 +24,7 @@ class ApplicationExceptionHandler {
     }
 
     // 409 - Conflict
-    @ExceptionHandler(value = [DuplicateProfileException::class])
+    @ExceptionHandler(value = [DuplicateProfileException::class, DuplicateTicketException::class])
     fun handleDuplicateException(exception: Exception): ResponseEntity<ErrorMessage> {
         val errorMessage = ErrorMessage(exception.message.orEmpty())
         return ResponseEntity(errorMessage, HttpStatus.CONFLICT)
