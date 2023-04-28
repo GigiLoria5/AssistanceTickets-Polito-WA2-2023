@@ -7,7 +7,12 @@ import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
 
 @Entity
-@Table(name = "tickets")
+@Table(
+    name = "tickets",
+    uniqueConstraints =
+    [UniqueConstraint(columnNames = arrayOf("product_id","customer_id","created_at"))]
+)
+
 class Ticket(
     @Column(nullable = false)
     var title: String,
@@ -23,20 +28,21 @@ class Ticket(
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     var status: TicketStatus = TicketStatus.OPEN
+
     @Enumerated(EnumType.STRING)
     var priorityLevel: TicketPriority? = null
 
     @ManyToOne
     var expert: Expert? = null
 
-    @OneToMany(mappedBy = "ticket",cascade = [CascadeType.ALL])
+    @OneToMany(mappedBy = "ticket", cascade = [CascadeType.ALL])
     var messages = mutableSetOf<Message>()
 
-    @OneToMany(mappedBy = "ticket",cascade = [CascadeType.ALL])
+    @OneToMany(mappedBy = "ticket", cascade = [CascadeType.ALL])
     var ticketChanges = mutableSetOf<TicketChange>()
 
     @CreatedDate
-    @Column(updatable = false, nullable = false)
+    @Column(updatable = false, nullable = false,name = "created_at")
     var createdAt: Long = System.currentTimeMillis()
 
     @LastModifiedDate

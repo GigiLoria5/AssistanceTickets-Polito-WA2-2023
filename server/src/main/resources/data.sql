@@ -2724,7 +2724,7 @@ INSERT INTO tickets (created_at, title, description, last_modified_at, priority_
                      product_id)
 VALUES (1612616982680, 'DENAQ DQ-PA3032U-5525 adapter not charging',
         'My DENAQ DQ-PA3032U-5525 adapter is not charging my Toshiba laptop, it''s plugged in but not working',
-        1612616982680, null, 'OPEN', 143, null, 3);
+        1612616982680, null, 'OPEN', 12, null, 3);
 
 INSERT INTO tickets (created_at, title, description, last_modified_at, priority_level, status, customer_id, expert_id,
                      product_id)
@@ -2753,7 +2753,7 @@ INSERT INTO tickets (created_at, title, description, last_modified_at, priority_
                      product_id)
 VALUES (1674024324147, 'Yamaha - Natural Sound 5 outdoor speakers not working',
         'My Yamaha - Natural Sound 5 outdoor speakers suddenly stopped working', 1677065479943, 'MEDIUM', 'RESOLVED',
-        130, 9, 276);
+        13, 9, 276);
 
 INSERT INTO tickets (created_at, title, description, last_modified_at, priority_level, status, customer_id, expert_id,
                      product_id)
@@ -2783,7 +2783,7 @@ INSERT INTO tickets (created_at, title, description, last_modified_at, priority_
                      product_id)
 VALUES (1703019801326, 'Dash cam not recording rear camera footage',
         'My Cobra CDR895D dash cam is not recording footage from the rear camera. I have checked all connections and settings but the issue persists. Please provide assistance.',
-        1755808548965, 'MEDIUM', 'REOPENED', 113, 7, 797);
+        1755808548965, 'MEDIUM', 'REOPENED', 44, 7, 797);
 
 INSERT INTO tickets (created_at, title, description, last_modified_at, priority_level, status, customer_id, expert_id,
                      product_id)

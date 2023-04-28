@@ -6,7 +6,11 @@ import jakarta.persistence.*
 import org.springframework.data.annotation.CreatedDate
 
 @Entity
-@Table(name = "tickets_changes")
+@Table(
+    name = "tickets_changes",
+    uniqueConstraints =
+    [UniqueConstraint(columnNames = arrayOf("ticket_id","time"))]
+)
 class TicketChange(
     @ManyToOne
     @JoinColumn(updatable = false, nullable = false)
