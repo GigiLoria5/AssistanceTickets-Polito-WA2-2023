@@ -1,6 +1,10 @@
 package it.polito.wa2.g29.server.controller
 
 import it.polito.wa2.g29.server.dto.*
+import it.polito.wa2.g29.server.dto.ticketDTOs.ChangeTicketStatusGenericDTO
+import it.polito.wa2.g29.server.dto.ticketDTOs.NewTicketDTO
+import it.polito.wa2.g29.server.dto.ticketDTOs.ChangeTicketStatusToStartDTO
+import it.polito.wa2.g29.server.dto.ticketDTOs.NewTicketIdDTO
 import it.polito.wa2.g29.server.enums.TicketStatus
 import it.polito.wa2.g29.server.service.TicketService
 import jakarta.validation.Valid
@@ -42,7 +46,7 @@ class TicketController(
     // POST /API/tickets -- create a new ticket or fail if some field is missing, or is not valid, or does not has correspondence or in case of duplicates
     @PostMapping("/tickets")
     @ResponseStatus(HttpStatus.CREATED)
-    fun createTicket(@RequestBody @Valid @NotNull ticket: NewTicketDTO): TicketIdDTO {
+    fun createTicket(@RequestBody @Valid @NotNull ticket: NewTicketDTO): NewTicketIdDTO {
         return ticketService.createTicket(ticket)
     }
 
@@ -51,7 +55,7 @@ class TicketController(
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun startTicket(
         @PathVariable @Valid @Min(1) ticketId: Int,
-        @RequestBody @Valid @NotNull statusChangeData: StartTicketDTO
+        @RequestBody @Valid @NotNull statusChangeData: ChangeTicketStatusToStartDTO
     ) {
         ticketService.startTicket(ticketId, statusChangeData)
     }
@@ -61,7 +65,7 @@ class TicketController(
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun stopTicket(
         @PathVariable @Valid @Min(1) ticketId: Int,
-        @RequestBody @Valid @NotNull statusChangeData: ChangeTicketStatusDTO
+        @RequestBody @Valid @NotNull statusChangeData: ChangeTicketStatusGenericDTO
     ) {
         //ticketService.stopTicket(ticketId,statusChangeData)
     }

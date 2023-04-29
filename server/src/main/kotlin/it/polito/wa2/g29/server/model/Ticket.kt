@@ -1,6 +1,6 @@
 package it.polito.wa2.g29.server.model
 
-import it.polito.wa2.g29.server.dto.NewTicketDTO
+import it.polito.wa2.g29.server.dto.ticketDTOs.NewTicketDTO
 import it.polito.wa2.g29.server.enums.TicketPriority
 import it.polito.wa2.g29.server.enums.TicketStatus
 import it.polito.wa2.g29.server.enums.UserType

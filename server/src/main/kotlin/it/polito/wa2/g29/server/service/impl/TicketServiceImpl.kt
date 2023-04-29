@@ -1,6 +1,9 @@
 package it.polito.wa2.g29.server.service.impl
 
 import it.polito.wa2.g29.server.dto.*
+import it.polito.wa2.g29.server.dto.ticketDTOs.NewTicketDTO
+import it.polito.wa2.g29.server.dto.ticketDTOs.ChangeTicketStatusToStartDTO
+import it.polito.wa2.g29.server.dto.ticketDTOs.NewTicketIdDTO
 import it.polito.wa2.g29.server.enums.TicketStatus
 import it.polito.wa2.g29.server.enums.UserType
 import it.polito.wa2.g29.server.exception.*
@@ -43,7 +46,7 @@ class TicketServiceImpl(
             .map { it.toDTO() }
     }
 
-    override fun createTicket(newTicketDTO: NewTicketDTO): TicketIdDTO {
+    override fun createTicket(newTicketDTO: NewTicketDTO): NewTicketIdDTO {
         //in this function I try to create a new ticket, and I throw exceptions if it is not possible
         val ticket = newTicketDTO.toEntity(productRepository, profileRepository)
 
@@ -55,11 +58,11 @@ class TicketServiceImpl(
             ) != null
         )
             throw DuplicateTicketException("A not closed ticket with the same customer and product already exists")
-        return TicketIdDTO(ticketRepository.save(ticket).id!!)
+        return NewTicketIdDTO(ticketRepository.save(ticket).id!!)
     }
 
     @Transactional
-    override fun startTicket(ticketId: Int, statusChangeData: StartTicketDTO) {
+    override fun startTicket(ticketId: Int, statusChangeData: ChangeTicketStatusToStartDTO) {
         val ticket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
         val expert = expertRepository.findByIdOrNull(statusChangeData.expertId) ?: throw ExpertNotFoundException()
         ticket.expert = expert
