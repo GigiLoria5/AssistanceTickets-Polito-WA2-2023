@@ -1,7 +1,6 @@
 package it.polito.wa2.g29.server.service.impl
 
 import it.polito.wa2.g29.server.dto.*
-import it.polito.wa2.g29.server.enums.TicketPriority
 import it.polito.wa2.g29.server.enums.TicketStatus
 import it.polito.wa2.g29.server.exception.*
 import it.polito.wa2.g29.server.model.TicketChange
@@ -13,7 +12,6 @@ import it.polito.wa2.g29.server.repository.TicketRepository
 import it.polito.wa2.g29.server.service.TicketService
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
-import java.util.*
 
 @Service
 class TicketServiceImpl(
@@ -59,9 +57,5 @@ class TicketServiceImpl(
     override fun startTicket(ticketId: Int, startTicketDTO: StartTicketDTO) {
 
         val expert = expertRepository.findByIdOrNull(startTicketDTO.expertId) ?: throw ExpertNotFoundException()
-        //validazione stringa
-       // TicketPriority.valueOf(startTicketDTO.priorityLevel)
-        val x=TicketPriority.values().map { it.toString() }.contains(startTicketDTO.priorityLevel.uppercase(Locale.getDefault()))
-        println(x)
     }
 }

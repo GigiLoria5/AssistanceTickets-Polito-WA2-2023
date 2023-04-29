@@ -1,6 +1,8 @@
 package it.polito.wa2.g29.server.dto
 
+import it.polito.wa2.g29.server.enums.TicketPriority
 import it.polito.wa2.g29.server.model.Ticket
+import jakarta.validation.Valid
 import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
@@ -38,8 +40,8 @@ data class TicketIdDTO(
 data class StartTicketDTO(
     @field:NotNull @field:Min(1)
     val expertId: Int,
-    @field:NotBlank //I don't know how to validate the enum correspondance with an annotation.
-    val priorityLevel: String,
+    @field:Valid
+    val priorityLevel: TicketPriority,
     @field:Null
     val description: String?
 )
