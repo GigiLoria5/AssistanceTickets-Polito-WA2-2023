@@ -1,6 +1,7 @@
 package it.polito.wa2.g29.server.dto
 
 import it.polito.wa2.g29.server.enums.TicketPriority
+import it.polito.wa2.g29.server.enums.UserType
 import it.polito.wa2.g29.server.model.Ticket
 import jakarta.validation.Valid
 import jakarta.validation.constraints.Min
@@ -42,6 +43,13 @@ data class StartTicketDTO(
     val expertId: Int,
     @field:Valid
     val priorityLevel: TicketPriority,
+    @field:Null
+    val description: String?
+)
+
+data class ChangeTicketStatusDTO(
+    @field:Valid
+    val changedBy: UserType,
     @field:Null
     val description: String?
 )

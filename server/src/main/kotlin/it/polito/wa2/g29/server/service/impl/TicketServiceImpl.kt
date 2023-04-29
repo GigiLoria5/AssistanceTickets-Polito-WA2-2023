@@ -55,13 +55,13 @@ class TicketServiceImpl(
     }
 
     @Transactional
-    override fun startTicket(ticketId: Int, startTicketDTO: StartTicketDTO) {
+    override fun startTicket(ticketId: Int, statusChangeData: StartTicketDTO) {
         val ticket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
-        val expert = expertRepository.findByIdOrNull(startTicketDTO.expertId) ?: throw ExpertNotFoundException()
+        val expert = expertRepository.findByIdOrNull(statusChangeData.expertId) ?: throw ExpertNotFoundException()
         ticket.expert = expert
-        ticket.priorityLevel = startTicketDTO.priorityLevel
+        ticket.priorityLevel = statusChangeData.priorityLevel
         //In this function i try to create a log, and thrown an exception if it not possible
-        ticket.changeStatus(TicketStatus.IN_PROGRESS, UserType.MANAGER, startTicketDTO.description)
+        ticket.changeStatus(TicketStatus.IN_PROGRESS, UserType.MANAGER, statusChangeData.description)
 
         ticketRepository.save(ticket)
     }

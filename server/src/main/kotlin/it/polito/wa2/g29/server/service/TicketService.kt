@@ -7,5 +7,5 @@ interface TicketService {
     fun getTicketById(ticketId: Int): TicketDTO
     fun getTicketStatusChangesByTicketId(ticketId: Int): List<TicketChangeDTO>
     fun createTicket(newTicketDTO: NewTicketDTO): TicketIdDTO
-    fun startTicket(ticketId: Int,startTicketDTO: StartTicketDTO)
+    fun startTicket(ticketId: Int, statusChangeData: StartTicketDTO)
 }
