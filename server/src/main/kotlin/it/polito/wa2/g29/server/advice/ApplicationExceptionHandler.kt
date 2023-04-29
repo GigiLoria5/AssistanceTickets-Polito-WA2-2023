@@ -38,9 +38,16 @@ class ApplicationExceptionHandler {
      *
      * 422 - Generic Message
      */
-    @ExceptionHandler(value = [ConstraintViolationException::class, MethodArgumentNotValidException::class, HttpMessageNotReadableException::class, MethodArgumentTypeMismatchException::class, NotValidStatusChangeException::class])
+    @ExceptionHandler(value = [ConstraintViolationException::class, MethodArgumentNotValidException::class, HttpMessageNotReadableException::class, MethodArgumentTypeMismatchException::class])
     fun handleValidationFailedException(exception: Exception): ResponseEntity<ErrorMessage> {
         val errorMessage = ErrorMessage("validation of request failed")
+        return ResponseEntity(errorMessage, HttpStatus.UNPROCESSABLE_ENTITY)
+    }
+
+    // 422 - Error message
+    @ExceptionHandler(value = [NotValidStatusChangeException::class])
+    fun handleValidationFailedExceptionWithErrorMessage(exception: Exception): ResponseEntity<ErrorMessage> {
+        val errorMessage = ErrorMessage(exception.message.orEmpty())
         return ResponseEntity(errorMessage, HttpStatus.UNPROCESSABLE_ENTITY)
     }
 

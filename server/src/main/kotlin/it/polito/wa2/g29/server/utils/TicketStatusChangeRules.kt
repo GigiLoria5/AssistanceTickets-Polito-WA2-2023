@@ -35,4 +35,14 @@ object TicketStatusChangeRules {
         println(ticketStatusChangeRules[fromStatus]?.any { it == toStatus })
         return ticketStatusChangeRules[fromStatus]?.any { it == toStatus } ?: false
     }
+
+    fun getTaskToAchieveStatus(targetStatus: TicketStatus): String {
+        return when (targetStatus) {
+            TicketStatus.IN_PROGRESS -> "start"
+            TicketStatus.OPEN -> "stop"
+            TicketStatus.RESOLVED -> "resolve"
+            TicketStatus.REOPENED -> "reopen"
+            TicketStatus.CLOSED -> "close"
+        }
+    }
 }

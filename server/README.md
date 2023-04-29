@@ -407,7 +407,7 @@
 
       ```
       {
-        "error": "could not start the progress of the ticket because it is closed"
+        "error": "Could not start the ticket with id 1 because its current status is 'IN_PROGRESS'"
       }
       ```
 
@@ -430,7 +430,7 @@
 
       ```
       {
-        "error": "impossible to stop the progress of ticket with id 21 because it is closed"
+        "error": "Could not stop the ticket with id 1 because its current status is 'CLOSED'"
       }
       ```
 
@@ -453,7 +453,7 @@
 
       ```
       {
-        "error": "impossible set ticket with id 55 as resolved because it is closed"
+        "error": "Could not resolve the ticket with id 1 because its current status is 'CLOSED'"
       }
       ```
 
@@ -476,7 +476,7 @@
 
       ```
       {
-        "error": "impossible to reopen ticket with id 5 because it is in progress"
+        "error": "Could not reopen the ticket with id 1 because its current status is 'IN_PROGRESS'"
       }
       ```
 
@@ -499,7 +499,7 @@
 
       ```
       {
-        "error": "impossible to close ticket with id 55 because it is already closed"
+        "error": "Could not close the ticket with id 1 because its current status is 'CLOSED'"
       }
       ```
 

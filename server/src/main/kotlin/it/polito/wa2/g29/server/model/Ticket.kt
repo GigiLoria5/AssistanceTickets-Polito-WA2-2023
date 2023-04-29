@@ -62,7 +62,8 @@ class Ticket(
 
     fun changeStatus(newStatus: TicketStatus, changedBy: UserType, description: String?) {
         if (!TicketStatusChangeRules.isValidStatusChange(status, newStatus))
-            throw NotValidStatusChangeException()
+            throw NotValidStatusChangeException("Could not ${TicketStatusChangeRules.getTaskToAchieveStatus(newStatus)} the ticket with id $id because its current status is '$status'")
+
         val oldStatus = status
         status = newStatus
         val ticketChange = TicketChange(this, oldStatus, changedBy, description)
