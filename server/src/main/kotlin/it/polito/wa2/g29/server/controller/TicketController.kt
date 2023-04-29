@@ -1,10 +1,7 @@
 package it.polito.wa2.g29.server.controller
 
 import it.polito.wa2.g29.server.dto.*
-import it.polito.wa2.g29.server.dto.ticketDTOs.ChangeTicketStatusGenericDTO
-import it.polito.wa2.g29.server.dto.ticketDTOs.NewTicketDTO
-import it.polito.wa2.g29.server.dto.ticketDTOs.ChangeTicketStatusToStartDTO
-import it.polito.wa2.g29.server.dto.ticketDTOs.NewTicketIdDTO
+import it.polito.wa2.g29.server.dto.ticketDTOs.*
 import it.polito.wa2.g29.server.enums.TicketStatus
 import it.polito.wa2.g29.server.service.TicketService
 import jakarta.validation.Valid
@@ -55,9 +52,9 @@ class TicketController(
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun startTicket(
         @PathVariable @Valid @Min(1) ticketId: Int,
-        @RequestBody @Valid @NotNull statusChangeData: ChangeTicketStatusToStartDTO
+        @RequestBody @Valid @NotNull statusChangeData: TicketStatusChangeInProgressDTO
     ) {
-        ticketService.startTicket(ticketId, statusChangeData)
+        ticketService.ticketStatusChangeInProgress(ticketId, statusChangeData)
     }
 
     // PUT /API/tickets/{ticketId}/stop -Allows to stop the progress of an "IN_PROGRESS" ticket. The ticket status will be "OPEN"
@@ -65,9 +62,43 @@ class TicketController(
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun stopTicket(
         @PathVariable @Valid @Min(1) ticketId: Int,
-        @RequestBody @Valid @NotNull statusChangeData: ChangeTicketStatusGenericDTO
+        @RequestBody @Valid @NotNull statusChangeData: TicketStatusChangeGenericDTO
     ) {
-        ticketService.stopTicket(ticketId, statusChangeData)
+        ticketService.ticketStatusChangeGeneric(ticketId, TicketStatus.OPEN, statusChangeData)
     }
 
+    // PUT /API/tickets/{ticketId}/resolve -Allows to resolve the progress of an "OPEN"/"REOPENED"/"IN_PROGRESS" ticket. The ticket status will be "RESOLVED"
+    @PutMapping("/tickets/{ticketId}/resolve")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun resolveTicket(
+        @PathVariable @Valid @Min(1) ticketId: Int,
+        @RequestBody @Valid @NotNull statusChangeData: TicketStatusChangeGenericDTO
+    ) {
+        ticketService.ticketStatusChangeGeneric(ticketId, TicketStatus.RESOLVED, statusChangeData)
+    }
+
+    // PUT /API/tickets/{ticketId}/reopen -Allows to reopen a "CLOSED"/"RESOLVED" ticket. The ticket status will be "REOPENED"
+    @PutMapping("/tickets/{ticketId}/reopen")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun reopenTicket(
+        @PathVariable @Valid @Min(1) ticketId: Int,
+        @RequestBody @Valid @NotNull statusChangeData: TicketStatusChangeReopenDTO
+    ) {
+
+        ticketService.ticketStatusChangeGeneric(
+            ticketId,
+            TicketStatus.REOPENED,
+            TicketStatusChangeGenericDTO(statusChangeData.changedBy, statusChangeData.description)
+        )
+    }
+
+    // PUT /API/tickets/{ticketId}/close -Allows to close a "OPEN"/"RESOLVED"/"IN_PROGRESS"/"REOPENED" ticket. The ticket status will be "CLOSED"
+    @PutMapping("/tickets/{ticketId}/close")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun closeTicket(
+        @PathVariable @Valid @Min(1) ticketId: Int,
+        @RequestBody @Valid @NotNull statusChangeData: TicketStatusChangeGenericDTO
+    ) {
+        ticketService.ticketStatusChangeGeneric(ticketId, TicketStatus.CLOSED, statusChangeData)
+    }
 }

@@ -6,7 +6,7 @@ import jakarta.validation.Valid
 import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotNull
 
-data class ChangeTicketStatusToStartDTO(
+data class TicketStatusChangeInProgressDTO(
     @field:NotNull @field:Min(1)
     val expertId: Int,
     @field:Valid

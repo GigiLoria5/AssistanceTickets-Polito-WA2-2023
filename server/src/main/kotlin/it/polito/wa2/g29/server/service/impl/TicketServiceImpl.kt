@@ -1,9 +1,9 @@
 package it.polito.wa2.g29.server.service.impl
 
 import it.polito.wa2.g29.server.dto.*
-import it.polito.wa2.g29.server.dto.ticketDTOs.ChangeTicketStatusGenericDTO
+import it.polito.wa2.g29.server.dto.ticketDTOs.TicketStatusChangeGenericDTO
 import it.polito.wa2.g29.server.dto.ticketDTOs.NewTicketDTO
-import it.polito.wa2.g29.server.dto.ticketDTOs.ChangeTicketStatusToStartDTO
+import it.polito.wa2.g29.server.dto.ticketDTOs.TicketStatusChangeInProgressDTO
 import it.polito.wa2.g29.server.dto.ticketDTOs.NewTicketIdDTO
 import it.polito.wa2.g29.server.enums.TicketStatus
 import it.polito.wa2.g29.server.enums.UserType
@@ -60,8 +60,9 @@ class TicketServiceImpl(
         return NewTicketIdDTO(ticketRepository.save(ticket).id!!)
     }
 
+
     @Transactional
-    override fun startTicket(ticketId: Int, statusChangeData: ChangeTicketStatusToStartDTO) {
+    override fun ticketStatusChangeInProgress(ticketId: Int, statusChangeData: TicketStatusChangeInProgressDTO) {
         val ticket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
         val expert = expertRepository.findByIdOrNull(statusChangeData.expertId) ?: throw ExpertNotFoundException()
         ticket.expert = expert
@@ -71,10 +72,14 @@ class TicketServiceImpl(
         ticketRepository.save(ticket)
     }
 
-    override fun stopTicket(ticketId: Int, statusChangeData: ChangeTicketStatusGenericDTO) {
+    override fun ticketStatusChangeGeneric(
+        ticketId: Int,
+        newStatus: TicketStatus,
+        statusChangeData: TicketStatusChangeGenericDTO
+    ) {
         val ticket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
         //In this function I try to create a status change and its log, and thrown an exception if it not possible
-        ticket.changeStatus(TicketStatus.OPEN, statusChangeData.changedBy, statusChangeData.description)
+        ticket.changeStatus(newStatus, statusChangeData.changedBy, statusChangeData.description)
         ticketRepository.save(ticket)
     }
 }
