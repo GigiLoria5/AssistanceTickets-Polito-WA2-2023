@@ -1,6 +1,7 @@
 package it.polito.wa2.g29.server.service.impl
 
 import it.polito.wa2.g29.server.dto.*
+import it.polito.wa2.g29.server.dto.ticketDTOs.ChangeTicketStatusGenericDTO
 import it.polito.wa2.g29.server.dto.ticketDTOs.NewTicketDTO
 import it.polito.wa2.g29.server.dto.ticketDTOs.ChangeTicketStatusToStartDTO
 import it.polito.wa2.g29.server.dto.ticketDTOs.NewTicketIdDTO
@@ -39,7 +40,6 @@ class TicketServiceImpl(
     }
 
     override fun getTicketStatusChangesByTicketId(ticketId: Int): List<TicketChangeDTO> {
-
         val ticket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
         return ticket.ticketChanges.sortedWith(
             compareByDescending<TicketChange> { it.time })
@@ -49,7 +49,6 @@ class TicketServiceImpl(
     override fun createTicket(newTicketDTO: NewTicketDTO): NewTicketIdDTO {
         //in this function I try to create a new ticket, and I throw exceptions if it is not possible
         val ticket = newTicketDTO.toEntity(productRepository, profileRepository)
-
         //throw an exception if a not closed ticket for the same customer and product already exists
         if (ticketRepository.findTicketByCustomerAndProductAndStatusNot(
                 ticket.customer,
@@ -67,9 +66,15 @@ class TicketServiceImpl(
         val expert = expertRepository.findByIdOrNull(statusChangeData.expertId) ?: throw ExpertNotFoundException()
         ticket.expert = expert
         ticket.priorityLevel = statusChangeData.priorityLevel
-        //In this function i try to create a log, and thrown an exception if it not possible
+        //In this function I try to create a status change and its log, and thrown an exception if it not possible
         ticket.changeStatus(TicketStatus.IN_PROGRESS, UserType.MANAGER, statusChangeData.description)
+        ticketRepository.save(ticket)
+    }
 
+    override fun stopTicket(ticketId: Int, statusChangeData: ChangeTicketStatusGenericDTO) {
+        val ticket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
+        //In this function I try to create a status change and its log, and thrown an exception if it not possible
+        ticket.changeStatus(TicketStatus.OPEN, statusChangeData.changedBy, statusChangeData.description)
         ticketRepository.save(ticket)
     }
 }

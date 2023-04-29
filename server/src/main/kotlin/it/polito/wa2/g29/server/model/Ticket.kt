@@ -64,8 +64,12 @@ class Ticket(
         if (!TicketStatusChangeRules.isValidStatusChange(status, newStatus))
             throw NotValidStatusChangeException("Could not ${TicketStatusChangeRules.getTaskToAchieveStatus(newStatus)} the ticket with id $id because its current status is '$status'")
 
+        if (newStatus == TicketStatus.REOPENED || newStatus == TicketStatus.OPEN)
+            expert = null
+
         val oldStatus = status
         status = newStatus
+
         val ticketChange = TicketChange(this, oldStatus, changedBy, description)
         ticketChanges.add(ticketChange)
     }

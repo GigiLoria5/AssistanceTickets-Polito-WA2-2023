@@ -1,6 +1,7 @@
 package it.polito.wa2.g29.server.service
 
 import it.polito.wa2.g29.server.dto.*
+import it.polito.wa2.g29.server.dto.ticketDTOs.ChangeTicketStatusGenericDTO
 import it.polito.wa2.g29.server.dto.ticketDTOs.NewTicketDTO
 import it.polito.wa2.g29.server.dto.ticketDTOs.ChangeTicketStatusToStartDTO
 import it.polito.wa2.g29.server.dto.ticketDTOs.NewTicketIdDTO
@@ -13,4 +14,5 @@ interface TicketService {
     fun getTicketStatusChangesByTicketId(ticketId: Int): List<TicketChangeDTO>
     fun createTicket(newTicketDTO: NewTicketDTO): NewTicketIdDTO
     fun startTicket(ticketId: Int, statusChangeData: ChangeTicketStatusToStartDTO)
+    fun stopTicket(ticketId: Int, statusChangeData: ChangeTicketStatusGenericDTO)
 }

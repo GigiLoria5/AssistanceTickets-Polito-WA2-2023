@@ -67,7 +67,7 @@ class TicketController(
         @PathVariable @Valid @Min(1) ticketId: Int,
         @RequestBody @Valid @NotNull statusChangeData: ChangeTicketStatusGenericDTO
     ) {
-        //ticketService.stopTicket(ticketId,statusChangeData)
+        ticketService.stopTicket(ticketId, statusChangeData)
     }
 
 }
