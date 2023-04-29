@@ -9,7 +9,6 @@ import java.io.Serializable
 
 @MappedSuperclass
 abstract class EntityBase<T : Serializable> {
-
     companion object {
         private const val serialVersionUID = -43869754L
     }

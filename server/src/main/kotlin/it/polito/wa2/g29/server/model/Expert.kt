@@ -1,29 +1,35 @@
 package it.polito.wa2.g29.server.model
 
-import jakarta.persistence.Entity
-import jakarta.persistence.OneToMany
-import jakarta.persistence.Table
+import jakarta.persistence.*
 
 @Entity
 @Table(name = "experts")
 class Expert(
+    @Column(nullable = false)
     var name: String,
+    @Column(nullable = false)
     var surname: String,
+    @Column(nullable = false)
     var email: String,
-    @OneToMany
-     var skills: MutableSet<Skill> = mutableSetOf()
-) : EntityBase<Int>(){
+    @Column(nullable = false)
+    var country: String,
+    @Column(nullable = false)
+    var city: String,
+    @OneToMany(mappedBy = "expert", cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
+    var skills: MutableSet<Skill>
+) : EntityBase<Int>() {
 
     @OneToMany(mappedBy = "expert")
-    var tickets: MutableSet<Ticket> = mutableSetOf()
+    var tickets = mutableSetOf<Ticket>()
 
     @OneToMany(mappedBy = "expert")
-    var messages: MutableSet<Message> = mutableSetOf()
+    var messages = mutableSetOf<Message>()
 
     @OneToMany(mappedBy = "currentExpert")
-    var ticketChanges: MutableSet<TicketChange> = mutableSetOf()
+    var ticketChanges = mutableSetOf<TicketChange>()
 
-    fun addSkill(e: Skill){
-        skills.add(e)
+    fun addMessage(m: Message) {
+        m.expert = this
+        messages.add(m)
     }
 }
