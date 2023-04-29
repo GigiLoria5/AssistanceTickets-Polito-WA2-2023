@@ -1,6 +1,7 @@
 package it.polito.wa2.g29.server.controller
 
 import it.polito.wa2.g29.server.dto.*
+import it.polito.wa2.g29.server.enums.TicketStatus
 import it.polito.wa2.g29.server.service.TicketService
 import jakarta.validation.Valid
 import jakarta.validation.constraints.Min
@@ -17,8 +18,13 @@ class TicketController(
 ) {
     // GET /API/tickets/ -- list all tickets in the DB
     @GetMapping("/tickets")
-    fun getAllTickets(): List<TicketDTO> {
-        return ticketService.getAllTickets()
+    fun getAllTickets(
+        @RequestParam("status", required = false) status: TicketStatus?
+    ): List<TicketDTO> {
+        return if (status == null)
+            ticketService.getAllTickets()
+        else
+            ticketService.getTicketsByStatus(status)
     }
 
     // GET /API/tickets/{ticketId} -- details of ticket {ticketId} or fail if it does not exist

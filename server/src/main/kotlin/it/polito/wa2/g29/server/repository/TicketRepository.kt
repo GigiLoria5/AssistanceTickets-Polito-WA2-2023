@@ -9,5 +9,7 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface TicketRepository : JpaRepository<Ticket, Int> {
+
+    fun findTicketsByStatus(status: TicketStatus): List<Ticket>
     fun findTicketByCustomerAndProductAndStatusNot(customer: Profile, product: Product, status: TicketStatus): Ticket?
 }

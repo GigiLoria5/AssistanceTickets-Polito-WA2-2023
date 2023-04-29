@@ -26,6 +26,10 @@ class TicketServiceImpl(
         return ticketRepository.findAll().map { it.toDTO() }
     }
 
+    override fun getTicketsByStatus(status: TicketStatus): List<TicketDTO> {
+        return ticketRepository.findTicketsByStatus(status).map { it.toDTO() }
+    }
+
     override fun getTicketById(ticketId: Int): TicketDTO {
         val ticket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
         return ticket.toDTO()
