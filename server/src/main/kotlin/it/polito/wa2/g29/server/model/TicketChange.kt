@@ -3,8 +3,11 @@ package it.polito.wa2.g29.server.model
 import it.polito.wa2.g29.server.enums.TicketStatus
 import it.polito.wa2.g29.server.enums.UserType
 import jakarta.persistence.*
+import org.springframework.data.annotation.CreatedDate
+import org.springframework.data.jpa.domain.support.AuditingEntityListener
 
 @Entity
+@EntityListeners(AuditingEntityListener::class)
 @Table(
     name = "tickets_changes",
     uniqueConstraints =
@@ -32,7 +35,8 @@ class TicketChange(
     @JoinColumn(updatable = false)
     var currentExpert: Expert? = ticket.expert
 
+    @CreatedDate
     @Column(updatable = false, nullable = false)
-    var time: Long = ticket.lastModifiedAt
+    var time: Long = 0
 
 }

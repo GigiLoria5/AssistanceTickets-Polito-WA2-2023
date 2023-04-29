@@ -30,9 +30,6 @@ object TicketStatusChangeRules {
     )
 
     fun isValidStatusChange(fromStatus: TicketStatus, toStatus: TicketStatus): Boolean {
-        //DEBUGGING. TO BE REMOVED
-        println("FROM : ${fromStatus.name}, TO : ${toStatus.name}")
-        println(allowedTicketStatusChanges[fromStatus]?.any { it == toStatus })
         return allowedTicketStatusChanges[fromStatus]?.any { it == toStatus } ?: false
     }
 

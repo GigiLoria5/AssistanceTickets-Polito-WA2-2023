@@ -71,7 +71,10 @@ class Ticket(
         status = newStatus
 
         val ticketChange = TicketChange(this, oldStatus, changedBy, description)
+        println("TICKET TIME $lastModifiedAt TICKETCHANGE TIME ${ticketChange.time}")
         ticketChanges.add(ticketChange)
+        println("TICKET TIME $lastModifiedAt TICKETCHANGE TIME ${ticketChange.time}")
+
     }
 }
 

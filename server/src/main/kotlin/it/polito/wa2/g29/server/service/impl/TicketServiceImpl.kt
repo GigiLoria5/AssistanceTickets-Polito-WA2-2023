@@ -81,5 +81,8 @@ class TicketServiceImpl(
         //In this function I try to create a status change and its log, and thrown an exception if it not possible
         ticket.changeStatus(newStatus, statusChangeData.changedBy, statusChangeData.description)
         ticketRepository.save(ticket)
+        println("TICKET TIME ${ticket.lastModifiedAt}")
+        //TICKETCHANGE TIME IS UPDATED TOO AFTER THE SAVE, BUT IT HAPPENS FEW MILLIS LATER TODO
+
     }
 }
