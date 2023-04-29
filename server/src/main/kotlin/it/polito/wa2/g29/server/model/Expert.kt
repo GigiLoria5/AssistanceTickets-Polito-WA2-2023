@@ -32,4 +32,11 @@ class Expert(
         m.expert = this
         messages.add(m)
     }
+
+    @PreRemove
+    private fun preRemove() {
+        tickets.forEach { it.expert = null }
+        messages.forEach { it.expert = null }
+        ticketChanges.forEach { it.currentExpert = null }
+    }
 }
