@@ -19,17 +19,18 @@ class TicketChange(
     var oldStatus: TicketStatus,
     @Column(updatable = false, nullable = false)
     @Enumerated(EnumType.STRING)
-    var newStatus: TicketStatus,
-    @ManyToOne
-    @JoinColumn(updatable = false)
-    var currentExpert: Expert?,
+    var changedBy: UserType,
     @Column(updatable = false)
-    var description: String?,
-    @Column(updatable = false, nullable = false)
-    @Enumerated(EnumType.STRING)
-    var changedBy: UserType
+    var description: String?
 
 ) : EntityBase<Int>() {
+    @Column(updatable = false, nullable = false)
+    @Enumerated(EnumType.STRING)
+    var newStatus: TicketStatus = ticket.status
+
+    @ManyToOne
+    @JoinColumn(updatable = false)
+    var currentExpert: Expert? = ticket.expert
 
     @Column(updatable = false, nullable = false)
     var time: Long = ticket.lastModifiedAt
