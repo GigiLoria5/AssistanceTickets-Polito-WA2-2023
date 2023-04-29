@@ -3,13 +3,12 @@ package it.polito.wa2.g29.server.model
 import it.polito.wa2.g29.server.enums.TicketStatus
 import it.polito.wa2.g29.server.enums.UserType
 import jakarta.persistence.*
-import org.springframework.data.annotation.CreatedDate
 
 @Entity
 @Table(
     name = "tickets_changes",
     uniqueConstraints =
-    [UniqueConstraint(columnNames = arrayOf("ticket_id","time"))]
+    [UniqueConstraint(columnNames = arrayOf("ticket_id", "time"))]
 )
 class TicketChange(
     @ManyToOne
@@ -32,8 +31,7 @@ class TicketChange(
 
 ) : EntityBase<Int>() {
 
-    @CreatedDate
     @Column(updatable = false, nullable = false)
-    var time: Long = System.currentTimeMillis()
+    var time: Long = ticket.lastModifiedAt
 
 }
