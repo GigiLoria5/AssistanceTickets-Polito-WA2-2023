@@ -4,6 +4,7 @@ import it.polito.wa2.g29.server.dto.ExpertDTO
 import it.polito.wa2.g29.server.dto.TicketChangeDTO
 import it.polito.wa2.g29.server.dto.TicketDTO
 import it.polito.wa2.g29.server.dto.toDTO
+import it.polito.wa2.g29.server.enums.UserType
 import it.polito.wa2.g29.server.exception.ExpertNotFoundException
 import it.polito.wa2.g29.server.model.Ticket
 import it.polito.wa2.g29.server.model.TicketChange
@@ -34,7 +35,8 @@ class ExpertServiceImpl(
 
     override fun getTicketStatusChangesByExpertId(expertId: Int): List<TicketChangeDTO> {
         val expert = expertRepository.findByIdOrNull(expertId) ?: throw ExpertNotFoundException()
-        return expert.ticketChanges.sortedWith(
+        return expert.ticketChanges.filter { it.changedBy == UserType.EXPERT }.sortedWith(
             compareByDescending<TicketChange> { it.time })
-            .map { it.toDTO() }    }
+            .map { it.toDTO() }
+    }
 }
