@@ -25,18 +25,14 @@ class TicketChange(
     var changedBy: UserType,
     @Column(updatable = false)
     var description: String?
-
 ) : EntityBase<Int>() {
     @Column(updatable = false, nullable = false)
     @Enumerated(EnumType.STRING)
     var newStatus: TicketStatus = ticket.status
-
     @ManyToOne
     @JoinColumn(updatable = false)
     var currentExpert: Expert? = ticket.expert
-
     @CreatedDate
     @Column(updatable = false, nullable = false)
     var time: Long = 0
-
 }

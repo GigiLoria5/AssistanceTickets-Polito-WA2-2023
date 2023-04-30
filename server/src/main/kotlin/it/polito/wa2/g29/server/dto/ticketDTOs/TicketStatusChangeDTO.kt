@@ -4,7 +4,7 @@ import it.polito.wa2.g29.server.enums.UserType
 import jakarta.annotation.Nullable
 import jakarta.validation.Valid
 
-data class TicketStatusChangeGenericDTO(
+data class TicketStatusChangeDTO(
     @field:Valid
     val changedBy: UserType,
     @field:Nullable

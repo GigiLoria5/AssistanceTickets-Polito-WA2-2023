@@ -12,7 +12,6 @@ import it.polito.wa2.g29.server.repository.ProfileRepository
 import it.polito.wa2.g29.server.utils.TicketStatusChangeRules
 import jakarta.persistence.*
 import org.springframework.data.annotation.CreatedDate
-import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import org.springframework.data.repository.findByIdOrNull
 
@@ -56,9 +55,13 @@ class Ticket(
     @Column(updatable = false, nullable = false, name = "created_at")
     var createdAt: Long = 0
 
-    @LastModifiedDate
     @Column(nullable = false)
     var lastModifiedAt: Long = createdAt
+
+    @PreUpdate
+    private fun preUpdate() {
+        lastModifiedAt = ticketChanges.maxOf { it.time }
+    }
 
     fun changeStatus(newStatus: TicketStatus, changedBy: UserType, description: String?) {
         if (!TicketStatusChangeRules.isValidStatusChange(status, newStatus))
@@ -70,11 +73,8 @@ class Ticket(
         val oldStatus = status
         status = newStatus
 
-        val ticketChange = TicketChange(this, oldStatus, changedBy, description)
-        println("TICKET TIME $lastModifiedAt TICKETCHANGE TIME ${ticketChange.time}")
-        ticketChanges.add(ticketChange)
-        println("TICKET TIME $lastModifiedAt TICKETCHANGE TIME ${ticketChange.time}")
-
+        val tc = TicketChange(this, oldStatus, changedBy, description)
+        ticketChanges.add(tc)
     }
 }
 
