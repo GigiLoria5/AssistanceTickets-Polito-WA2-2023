@@ -71,6 +71,10 @@ class Ticket(
         status = newStatus
 
         val tc = TicketChange(this, oldStatus, changedBy, description)
+
+        if (newStatus == TicketStatus.REOPENED || newStatus == TicketStatus.OPEN)
+            expert = null
+
         ticketChanges.add(tc)
     }
 }
