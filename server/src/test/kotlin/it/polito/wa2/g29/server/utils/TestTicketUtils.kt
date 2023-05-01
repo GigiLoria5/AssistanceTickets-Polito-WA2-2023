@@ -5,10 +5,10 @@ import it.polito.wa2.g29.server.repository.TicketRepository
 
 object TestTicketUtils {
 
-    val products = TestProductUtils.products
-    val profiles = TestProfileUtils.profiles
+    private val products = TestProductUtils.products
+    private val profiles = TestProfileUtils.profiles
 
-    val tickets = listOf(
+    private val tickets = listOf(
         Ticket(
             title = "Broken airpods",
             description = "My airpods fell and now I can't hear anything",
@@ -23,7 +23,9 @@ object TestTicketUtils {
         )
     )
 
-    fun insertTickets(ticketRepository: TicketRepository) {
-        ticketRepository.saveAll(tickets)
+    fun insertTickets(ticketRepository: TicketRepository): List<Ticket> {
+        val newTickets = tickets.map { Ticket(it.title, it.description, it.product, it.customer) }
+        ticketRepository.saveAll(newTickets)
+        return newTickets
     }
 }
