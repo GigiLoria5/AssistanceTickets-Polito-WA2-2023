@@ -69,7 +69,7 @@
     - Error responses: `404 Not Found` (email not found), `422 Unprocessable Entity` (validation of email failed) or
       `500 Internal Server Error` (generic error)
     - Response body: An object containing profileId, email, name, surname, phoneNumber, address, city, country and
-      tickets (An array of Int, each one representing a created ticket) of the
+      ticketsIds (an array of int, each representing the id of a ticket opened by the user) of the
       requested user. An error message in case of error
 
       ```
@@ -82,7 +82,7 @@
           "address": "Corso Duca degli Abruzzi, 24",
           "city": "Turin",
           "country": "Italy",
-          "tickets": [1,2,3]
+          "ticketsIds": [1, 2, 3]
       }
       ```
 
@@ -213,23 +213,54 @@
     - Response: `200 OK` (success)
     - Error responses: `404 Not Found` (expertId not found), `422 Unprocessable Entity` (validation of
       expertId failed) or `500 Internal Server Error` (generic error)
-    - Response body: An array of objects, for each containing ticketId, expertId, oldStatus, newStatus, description and
-      time. An error message in case of error
+    - Response body: An array of objects, sorted by time descending, for each containing ticketId, currentExpertId,
+      oldStatus, newStatus, changedBy, description and time. An error message in case of error
     ```
     [
         ...,
         {
           "ticketId": 49,
-          "expertId": 25,
+          "currentExpertId": 25,
           "oldStatus": "RESOLVED",
           "newStatus": "CLOSED",
-          "modifiedBy":"EXPERT",
+          "changedBy":"EXPERT",
           "description":"",
           "time": 1682092244
         }
         ...
     ]
     ```
+
+- GET `/API/experts/{expertId}/tickets`
+
+    - Description: Allows to obtain the list of tickets assigned to an expert
+    - Request body: _None_
+    - Response: `200 OK` (success)
+    - Error responses: `404 Not Found` (expertId not found), `422 Unprocessable Entity` (validation of
+      expertId failed) or `500 Internal Server Error` (generic error)
+    - Response body: An array of objects (sorted by status, priorityLevel and lastModifiedAt) for each containing
+      ticketId, description, productId, customerId, expertId, totalExchangedMessages, status, priorityLevel, createdAt
+      and lastModifiedAt.
+      An error message in case of error
+      ```
+      [
+          ...,
+          {
+            "ticketId": 21,
+            "title": "Microwave not heating food",
+            "description": "I've tried using my microwave multiple times, but it's not heating up my food. The light turns on and the plate rotates, but the food stays cold.",
+            "productId": 2,
+            "customerId": 3,
+            "expertId": 2,
+            "totalExchangedMessages": 32,
+            "status": "RESOLVED",
+            "priorityLevel": "MEDIUM",
+            "createdAt": 1682092233,
+            "lastModifiedAt": 168211444
+          },
+          ...
+      ]
+      ```
 
 ### Tickets
 
@@ -284,36 +315,6 @@
       ]
       ```
 
-- GET `/API/tickets/{expertId}`
-
-    - Description: Allows to obtain the list of tickets assigned to an expert
-    - Request body: _None_
-    - Response: `200 OK` (success)
-    - Error responses: `404 Not Found` (expertId not found), `422 Unprocessable Entity` (validation of
-      expertId failed) or `500 Internal Server Error` (generic error)
-    - Response body: An array of objects, for each containing ticketId, description, productId, customerId,
-      expertId, totalExchangedMessages, status, priorityLevel, createdAt and lastModifiedAt.
-      An error message in case of error
-      ```
-      [
-          ...,
-          {
-            "ticketId": 21,
-            "title": "Microwave not heating food",
-            "description": "I've tried using my microwave multiple times, but it's not heating up my food. The light turns on and the plate rotates, but the food stays cold.",
-            "productId": 2,
-            "customerId": 3,
-            "expertId": 2,
-            "totalExchangedMessages": 32,
-            "status": "RESOLVED",
-            "priorityLevel": "MEDIUM",
-            "createdAt": 1682092233,
-            "lastModifiedAt": 168211444
-          }
-          ...
-      ]
-      ```
-
 - GET `/API/tickets/{ticketId}`
 
     - Description: Allows to obtain all the information of a ticket
@@ -348,29 +349,29 @@
     - Response: `200 OK` (success)
     - Error responses: `404 Not Found` (ticketId not found), `422 Unprocessable Entity` (validation of
       ticketId failed) or `500 Internal Server Error` (generic error)
-    - Response body: An array of objects, for each containing ticketId, expertId, oldStatus, newStatus, description,
-      modifiedBy and time. An error message in case of error
+    - Response body: An array of objects, sorted by time descending, for each containing ticketId, currentExpertId,
+      oldStatus, newStatus, description, changedBy and time. An error message in case of error
       ```
       [
           ...,
           {
             "ticketId": 49,
-            "expertId": 25,
+            "currentExpertId": 25,
             "oldStatus": "RESOLVED",
             "newStatus": "CLOSED",
-            "modifiedBy":"EXPERT",
+            "changedBy":"EXPERT",
             "description":"",
             "time": 1682092244
           },
           ...,
           {
             "ticketId": 49,
-            "expertId": 25,
+            "currentExpertId": 25,
             "oldStatus": "RESOLVED",
             "newStatus": "REOPENED",
-            "modifiedBy":"CUSTOMER",
+            "changedBy":"CUSTOMER",
             "description":"Issue has not been solved",
-            "time": 1882293244
+            "time": 1482293244
           }
 
           ...
@@ -426,7 +427,7 @@
 
       ```
       {
-        "error": "could not start the progress of the ticket because it is closed"
+        "error": "Could not start the ticket with id 1 because its current status is 'IN_PROGRESS'"
       }
       ```
 
@@ -450,7 +451,7 @@
 
       ```
       {
-        "error": "impossible to stop the progress of ticket with id 21 because it is closed"
+        "error": "Could not stop the ticket with id 1 because its current status is 'CLOSED'"
       }
       ```
 
@@ -475,7 +476,7 @@
 
       ```
       {
-        "error": "impossible set ticket with id 55 as resolved because it is closed"
+        "error": "Could not resolve the ticket with id 1 because its current status is 'CLOSED'"
       }
       ```
 
@@ -500,7 +501,7 @@
 
       ```
       {
-        "error": "impossible to reopen ticket with id 5 because it is in progress"
+        "error": "Could not reopen the ticket with id 1 because its current status is 'IN_PROGRESS'"
       }
       ```
 
@@ -524,7 +525,7 @@
 
       ```
       {
-        "error": "impossible to close ticket with id 55 because it is already closed"
+        "error": "Could not close the ticket with id 1 because its current status is 'CLOSED'"
       }
       ```
 

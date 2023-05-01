@@ -1,6 +1,7 @@
 package it.polito.wa2.g29.server.dto
 
 import it.polito.wa2.g29.server.model.Profile
+import jakarta.annotation.Nullable
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Null
@@ -15,6 +16,7 @@ data class ProfileDTO(
     @field:NotBlank @field:Pattern(regexp = ADDRESS_PATTERN) val address: String,
     @field:NotBlank @field:Pattern(regexp = CITY_PATTERN) val city: String,
     @field:NotBlank @field:Pattern(regexp = COUNTRY_PATTERN) val country: String,
+    @field:Nullable val ticketsIds: List<Int?>?
 ) {
     companion object {
         const val EMAIL_PATTERN = ".+@([^.]+\\.)+[a-z]*\$"
@@ -27,5 +29,14 @@ data class ProfileDTO(
 }
 
 fun Profile.toDTO(): ProfileDTO {
-    return ProfileDTO(id, email, name, surname, phoneNumber, address, city, country)
+    return ProfileDTO(
+        id,
+        email,
+        name,
+        surname,
+        phoneNumber,
+        address,
+        city,
+        country,
+        tickets.map { it.id }.sortedBy { it })
 }

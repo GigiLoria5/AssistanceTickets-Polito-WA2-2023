@@ -62,8 +62,6 @@ class ExpertServiceIntegrationTest : AbstractTestcontainersTest() {
 
         val actualExpertDTO = expertService.getExpertById(expectedExpertDTO.expertId!!)
 
-        println(expectedExpertDTO)
-        println(actualExpertDTO)
         assert(actualExpertDTO == expectedExpertDTO)
     }
 

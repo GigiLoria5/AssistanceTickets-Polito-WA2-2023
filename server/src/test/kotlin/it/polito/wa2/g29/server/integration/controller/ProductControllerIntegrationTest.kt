@@ -1,6 +1,7 @@
 package it.polito.wa2.g29.server.integration.controller
 
 import it.polito.wa2.g29.server.integration.AbstractTestcontainersTest
+import it.polito.wa2.g29.server.model.Product
 import it.polito.wa2.g29.server.repository.ProductRepository
 import it.polito.wa2.g29.server.utils.TestProductUtils
 import org.junit.jupiter.api.BeforeEach
@@ -22,10 +23,12 @@ class ProductControllerIntegrationTest : AbstractTestcontainersTest() {
     @Autowired
     private lateinit var productRepository: ProductRepository
 
+    lateinit var testProducts: List<Product>
+
     @BeforeEach
     fun setup() {
-        productRepository.deleteAll()
-        TestProductUtils.insertProducts(productRepository)
+        productRepository.deleteAllInBatch()
+        testProducts = TestProductUtils.insertProducts(productRepository)
     }
 
     /////////////////////////////////////////////////////////////////////
@@ -34,7 +37,7 @@ class ProductControllerIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     fun getAllProductsEmpty() {
-        productRepository.deleteAll()
+        productRepository.deleteAllInBatch()
         mockMvc
             .perform(get("/API/products").contentType("application/json"))
             .andExpectAll(
@@ -71,7 +74,7 @@ class ProductControllerIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     fun getProductById() {
-        val product = productRepository.findAll()[0]
+        val product = testProducts[0]
         mockMvc
             .perform(get("/API/products/${product.id}").contentType("application/json"))
             .andExpectAll(

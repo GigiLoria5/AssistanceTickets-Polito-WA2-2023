@@ -22,7 +22,7 @@ class Profile(
     var country: String
 ) : EntityBase<Int>() {
 
-    @OneToMany(mappedBy = "customer")
+    @OneToMany(mappedBy = "customer",cascade = [CascadeType.ALL])
     var tickets: MutableSet<Ticket> = mutableSetOf()
 
     fun update(newProfile: ProfileDTO) {

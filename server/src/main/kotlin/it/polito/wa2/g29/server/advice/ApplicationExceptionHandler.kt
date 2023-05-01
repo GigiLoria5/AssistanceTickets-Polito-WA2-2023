@@ -1,9 +1,6 @@
 package it.polito.wa2.g29.server.advice
 
-import it.polito.wa2.g29.server.exception.DuplicateProfileException
-import it.polito.wa2.g29.server.exception.ExpertNotFoundException
-import it.polito.wa2.g29.server.exception.ProductNotFoundException
-import it.polito.wa2.g29.server.exception.ProfileNotFoundException
+import it.polito.wa2.g29.server.exception.*
 import it.polito.wa2.g29.server.utils.ErrorMessage
 import jakarta.validation.ConstraintViolationException
 import org.springframework.core.Ordered
@@ -21,13 +18,13 @@ import kotlin.Exception
 @RestControllerAdvice
 class ApplicationExceptionHandler {
     // 404 - Not Found
-    @ExceptionHandler(value = [ProductNotFoundException::class, ProfileNotFoundException::class, ExpertNotFoundException::class])
+    @ExceptionHandler(value = [ProductNotFoundException::class, ProfileNotFoundException::class, TicketNotFoundException::class, ExpertNotFoundException::class])
     fun handleNotFoundException(exception: Exception): ResponseEntity<Unit> {
         return ResponseEntity(HttpStatus.NOT_FOUND)
     }
 
     // 409 - Conflict
-    @ExceptionHandler(value = [DuplicateProfileException::class])
+    @ExceptionHandler(value = [DuplicateProfileException::class, DuplicateTicketException::class])
     fun handleDuplicateException(exception: Exception): ResponseEntity<ErrorMessage> {
         val errorMessage = ErrorMessage(exception.message.orEmpty())
         return ResponseEntity(errorMessage, HttpStatus.CONFLICT)
@@ -44,6 +41,13 @@ class ApplicationExceptionHandler {
     @ExceptionHandler(value = [ConstraintViolationException::class, MethodArgumentNotValidException::class, HttpMessageNotReadableException::class, MethodArgumentTypeMismatchException::class])
     fun handleValidationFailedException(exception: Exception): ResponseEntity<ErrorMessage> {
         val errorMessage = ErrorMessage("validation of request failed")
+        return ResponseEntity(errorMessage, HttpStatus.UNPROCESSABLE_ENTITY)
+    }
+
+    // 422 - Error message
+    @ExceptionHandler(value = [NotValidStatusChangeException::class])
+    fun handleValidationFailedExceptionWithErrorMessage(exception: Exception): ResponseEntity<ErrorMessage> {
+        val errorMessage = ErrorMessage(exception.message.orEmpty())
         return ResponseEntity(errorMessage, HttpStatus.UNPROCESSABLE_ENTITY)
     }
 
