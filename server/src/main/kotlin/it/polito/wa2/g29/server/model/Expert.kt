@@ -1,9 +1,6 @@
 package it.polito.wa2.g29.server.model
 
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.OneToMany
-import jakarta.persistence.Table
+import jakarta.persistence.*
 
 @Entity
 @Table(name = "experts")
@@ -18,7 +15,7 @@ class Expert(
     var country: String,
     @Column(nullable = false)
     var city: String,
-    @OneToMany(mappedBy = "expert")
+    @OneToMany(mappedBy = "expert", cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
     var skills: MutableSet<Skill>
 ) : EntityBase<Int>() {
 

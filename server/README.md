@@ -163,10 +163,16 @@
             "name": "Gino",
             "surname": "Fastdio",
             "email": "gino.fastidio@expert.org",
-            "skills": [..., {
-                                           "expertise":"COMPUTER",
-                                           "level":"SKILLED"
-                                           }, ...]
+            "country": "Italy",
+            "city": "Naples",
+            "skills": [
+                        ..., 
+                        { 
+                          "expertise":"COMPUTER",
+                          "level":"SKILLED"
+                        }, 
+                        ...
+                      ]
           },
           ...
       ]
@@ -184,14 +190,20 @@
 
       ```
       {
-        "expertId": 5,
-        "name": "Gino",
-        "surname": "Fastdio",
-        "email": "gino.fastidio@expert.org",
-        "skills": [..., {
-                                        "expertise":"COMPUTER",
-                                        "level":"SKILLED"
-                                        }, ...]      }
+        "expertId": 4,
+        "name": "Ambra",
+        "surname": "Grigia",
+        "email": "a.grigia@expert.org",
+        "country": "Italy",
+        "city": "Turin",
+        "skills": [
+                    ..., 
+                    {
+                      "expertise":"APPLIANCES",
+                      "level":"SPECIALIST"
+                    }, 
+                    ...
+                  ]
       ```
 
 - GET `/API/experts/{expertId}/statusChanges`

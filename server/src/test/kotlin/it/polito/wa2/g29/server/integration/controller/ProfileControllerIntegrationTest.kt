@@ -17,7 +17,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
@@ -53,21 +53,21 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
     fun getProfileWithoutTickets() {
         val expectedProfile = testProfiles[0]
         mockMvc
-            .get("/API/profiles/${expectedProfile.email}")
-            .andExpect { status { isOk() } }
-            .andExpect { content().contentType(MediaType.APPLICATION_JSON) }
-            .andExpectAll {
-                jsonPath("$[*].profileId").exists()
-                jsonPath("$[*].email").value(expectedProfile.email)
-                jsonPath("$[*].name").value(expectedProfile.name)
-                jsonPath("$[*].surname").value(expectedProfile.surname)
-                jsonPath("$[*].phoneNumber").value(expectedProfile.phoneNumber)
-                jsonPath("$[*].address").value(expectedProfile.address)
-                jsonPath("$[*].city").value(expectedProfile.city)
-                jsonPath("$[*].country").value(expectedProfile.country)
-                jsonPath("$[*].ticketIds").isArray
-                jsonPath("$[*].ticketIds").isEmpty
-            }
+            .perform(get("/API/profiles/${expectedProfile.email}").contentType("application/json"))
+            .andExpectAll(
+                status().isOk,
+                content().contentType(MediaType.APPLICATION_JSON),
+                jsonPath("$.profileId").exists(),
+                jsonPath("$.email").value(expectedProfile.email),
+                jsonPath("$.name").value(expectedProfile.name),
+                jsonPath("$.surname").value(expectedProfile.surname),
+                jsonPath("$.phoneNumber").value(expectedProfile.phoneNumber),
+                jsonPath("$.address").value(expectedProfile.address),
+                jsonPath("$.city").value(expectedProfile.city),
+                jsonPath("$.country").value(expectedProfile.country),
+                jsonPath("$.ticketsIds").isArray,
+                jsonPath("$.ticketsIds").isEmpty
+            )
     }
 
     @Test
@@ -81,32 +81,35 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
         profileRepository.save(testProfiles[0])
         val expectedProfile = testProfiles[0]
         mockMvc
-            .get("/API/profiles/${expectedProfile.email}")
-            .andExpect { status { isOk() } }
-            .andExpect { content().contentType(MediaType.APPLICATION_JSON) }
-            .andExpectAll {
-                jsonPath("$[*].profileId").exists()
-                jsonPath("$[*].email").value(expectedProfile.email)
-                jsonPath("$[*].name").value(expectedProfile.name)
-                jsonPath("$[*].surname").value(expectedProfile.surname)
-                jsonPath("$[*].phoneNumber").value(expectedProfile.phoneNumber)
-                jsonPath("$[*].address").value(expectedProfile.address)
-                jsonPath("$[*].city").value(expectedProfile.city)
-                jsonPath("$[*].country").value(expectedProfile.country)
-                jsonPath("$[*].ticketIds").isArray
-                jsonPath("$[*].ticketIds").isNotEmpty
+            .perform(get("/API/profiles/${expectedProfile.email}").contentType("application/json"))
+            .andExpectAll(
+                status().isOk,
+                content().contentType(MediaType.APPLICATION_JSON),
+                jsonPath("$.profileId").exists(),
+                jsonPath("$.email").value(expectedProfile.email),
+                jsonPath("$.name").value(expectedProfile.name),
+                jsonPath("$.surname").value(expectedProfile.surname),
+                jsonPath("$.phoneNumber").value(expectedProfile.phoneNumber),
+                jsonPath("$.address").value(expectedProfile.address),
+                jsonPath("$.city").value(expectedProfile.city),
+                jsonPath("$.country").value(expectedProfile.country),
+                jsonPath("$.ticketsIds").isArray,
+                jsonPath("$.ticketsIds").isNotEmpty
+            ).andDo {
+                ticketRepository.deleteAllInBatch()
+                productRepository.deleteAllInBatch()
             }
-        ticketRepository.deleteAllInBatch()
-        productRepository.deleteAllInBatch()
     }
 
     @Test
     fun getProfileNotFound() {
         val email = "non_existing_email@fake.com"
         mockMvc
-            .get("/API/profiles/$email")
-            .andExpect { status { isNotFound() } }
-            .andExpect { jsonPath("$.error").doesNotExist() }
+            .perform(get("/API/profiles/$email").contentType("application/json"))
+            .andExpectAll(
+                status().isNotFound,
+                jsonPath("$.error").doesNotExist()
+            )
     }
 
     @Test
@@ -134,9 +137,11 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
 
         for (email in invalidEmails) {
             mockMvc
-                .get("/API/profiles/$email")
-                .andExpect { status { isUnprocessableEntity() } }
-                .andExpect { jsonPath("$.error").exists() }
+                .perform(get("/API/profiles/$email").contentType("application/json"))
+                .andExpectAll(
+                    status().isUnprocessableEntity,
+                    jsonPath("$.error").exists()
+                )
         }
     }
 

@@ -13,6 +13,6 @@ class Skill(
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     var level: Level,
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     var expert: Expert
 ) : EntityBase<Int>()
