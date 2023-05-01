@@ -1,6 +1,7 @@
 package it.polito.wa2.g29.server.integration.controller
 
 import it.polito.wa2.g29.server.integration.AbstractTestcontainersTest
+import it.polito.wa2.g29.server.model.Ticket
 import it.polito.wa2.g29.server.repository.ProductRepository
 import it.polito.wa2.g29.server.repository.ProfileRepository
 import it.polito.wa2.g29.server.repository.TicketRepository
@@ -28,21 +29,23 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
     @Autowired
     private lateinit var ticketRepository: TicketRepository
 
+    lateinit var testTickets: List<Ticket>
+
     companion object {
         @BeforeAll
         @JvmStatic
         fun prepare(@Autowired profileRepository: ProfileRepository, @Autowired productRepository: ProductRepository) {
-            productRepository.deleteAll()
-            profileRepository.deleteAll()
-            TestProductUtils.insertProducts(productRepository)
-            TestProfileUtils.insertProfiles(profileRepository)
+            productRepository.deleteAllInBatch()
+            profileRepository.deleteAllInBatch()
+            TestTicketUtils.products = TestProductUtils.insertProducts(productRepository)
+            TestTicketUtils.profiles = TestProfileUtils.insertProfiles(profileRepository)
         }
     }
 
     @BeforeEach
     fun setup() {
-        ticketRepository.deleteAll()
-        TestTicketUtils.insertTickets(ticketRepository)
+        ticketRepository.deleteAllInBatch()
+        testTickets = TestTicketUtils.insertTickets(ticketRepository)
     }
 
     /////////////////////////////////////////////////////////////////////
@@ -51,7 +54,7 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     fun getAllTicketsEmpty() {
-        ticketRepository.deleteAll()
+        ticketRepository.deleteAllInBatch()
         mockMvc
             .perform(get("/API/tickets").contentType("application/json"))
             .andExpectAll(

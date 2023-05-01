@@ -1,12 +1,14 @@
 package it.polito.wa2.g29.server.utils
 
+import it.polito.wa2.g29.server.model.Product
+import it.polito.wa2.g29.server.model.Profile
 import it.polito.wa2.g29.server.model.Ticket
 import it.polito.wa2.g29.server.repository.TicketRepository
 
 object TestTicketUtils {
 
-    private val products = TestProductUtils.products
-    private val profiles = TestProfileUtils.profiles
+    lateinit var products: List<Product>
+    lateinit var profiles: List<Profile>
 
     private val tickets = listOf(
         Ticket(
