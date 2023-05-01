@@ -5,6 +5,11 @@ import it.polito.wa2.g29.server.repository.ProductRepository
 
 object TestProductUtils {
 
+    /**
+     * Inserts a list of new products into the provided [productRepository] and returns an array of the newly added products.
+     * @param productRepository the repository where the products should be saved
+     * @return an array of the newly added products, with a guaranteed size of 2
+     */
     fun insertProducts(productRepository: ProductRepository): List<Product> {
         val newProducts = getProducts()
         productRepository.saveAll(newProducts)

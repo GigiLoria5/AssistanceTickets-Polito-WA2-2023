@@ -1,17 +1,52 @@
 package it.polito.wa2.g29.server.utils
 
+import it.polito.wa2.g29.server.dto.ticketDTOs.TicketStatusChangeDTO
 import it.polito.wa2.g29.server.enums.Expertise
 import it.polito.wa2.g29.server.enums.Level
+import it.polito.wa2.g29.server.enums.TicketStatus
+import it.polito.wa2.g29.server.enums.UserType
 import it.polito.wa2.g29.server.model.Expert
 import it.polito.wa2.g29.server.model.Skill
+import it.polito.wa2.g29.server.model.Ticket
+import it.polito.wa2.g29.server.model.TicketChange
 import it.polito.wa2.g29.server.repository.ExpertRepository
+import it.polito.wa2.g29.server.repository.TicketRepository
+import it.polito.wa2.g29.server.service.TicketStatusChangeService
 
 object TestExpertUtils {
 
+    /**
+     * Inserts a list of new experts into the provided [expertRepository] and returns an array of the newly added experts.
+     * @param expertRepository the repository where the experts should be saved
+     * @return an array of the newly added experts, with a guaranteed size of 3
+     */
     fun insertExperts(expertRepository: ExpertRepository): List<Expert> {
         val newExperts = getExperts()
         expertRepository.saveAll(newExperts)
         return newExperts
+    }
+
+    fun addTicket(ticketRepository: TicketRepository, expert: Expert, ticket: Ticket) {
+        expert.tickets.add(ticket)
+        ticket.expert = expert
+        ticketRepository.save(ticket)
+    }
+
+    fun addTicketStatusChange(
+        ticketStatusChangeService: TicketStatusChangeService,
+        expert: Expert,
+        ticket: Ticket,
+        newStatus: TicketStatus,
+        userType: UserType,
+        description: String?
+    ) {
+        val oldStatus = ticket.status
+        ticketStatusChangeService.ticketStatusChange(
+            ticket.id!!,
+            newStatus,
+            TicketStatusChangeDTO(userType, description)
+        )
+        expert.ticketChanges.add(TicketChange(ticket, oldStatus, userType, description))
     }
 
     private fun getExperts(): List<Expert> {

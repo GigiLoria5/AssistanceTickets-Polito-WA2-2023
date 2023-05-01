@@ -6,6 +6,11 @@ import it.polito.wa2.g29.server.repository.ProfileRepository
 
 object TestProfileUtils {
 
+    /**
+     * Inserts a list of new profiles into the provided [profileRepository] and returns an array of the newly added profiles.
+     * @param profileRepository the repository where the profiles should be saved
+     * @return an array of the newly added profiles, with a guaranteed size of 2
+     */
     fun insertProfiles(profileRepository: ProfileRepository): List<Profile> {
         val newProfiles = getProfiles()
         profileRepository.saveAll(newProfiles)

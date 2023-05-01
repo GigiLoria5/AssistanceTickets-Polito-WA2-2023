@@ -59,6 +59,10 @@ class Ticket(
 
     @PreUpdate
     private fun preUpdate() {
+        if (ticketChanges.size == 0) {
+            lastModifiedAt = System.currentTimeMillis()
+            return
+        }
         lastModifiedAt = ticketChanges.maxOf { it.time }
     }
 
