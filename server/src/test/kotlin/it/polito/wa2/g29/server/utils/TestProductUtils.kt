@@ -5,6 +5,12 @@ import it.polito.wa2.g29.server.repository.ProductRepository
 
 object TestProductUtils {
 
+    fun insertProducts(productRepository: ProductRepository): List<Product> {
+        val newProducts = getProducts()
+        productRepository.saveAll(newProducts)
+        return newProducts
+    }
+
     private val products = listOf(
         Product(
             asin = "B08H8LGXC1",
@@ -40,9 +46,4 @@ object TestProductUtils {
         }
     }
 
-    fun insertProducts(productRepository: ProductRepository): List<Product> {
-        val newProducts = getProducts()
-        productRepository.saveAll(newProducts)
-        return newProducts
-    }
 }

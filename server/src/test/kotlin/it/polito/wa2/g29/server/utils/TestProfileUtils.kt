@@ -6,6 +6,26 @@ import it.polito.wa2.g29.server.repository.ProfileRepository
 
 object TestProfileUtils {
 
+    fun insertProfiles(profileRepository: ProfileRepository): List<Profile> {
+        val newProfiles = getProfiles()
+        profileRepository.saveAll(newProfiles)
+        return newProfiles
+    }
+
+    fun getNewProfileDTO(): ProfileDTO {
+        return ProfileDTO(
+            profileId = null,
+            email = "new_mail@test.com",
+            name = "Name",
+            surname = "Surname",
+            phoneNumber = "3333333333",
+            address = "New Address",
+            city = "New City",
+            country = "New Country",
+            ticketsIds = mutableListOf()
+        )
+    }
+
     private val profiles = listOf(
         Profile(
             email = "email1@wa2.it",
@@ -29,26 +49,6 @@ object TestProfileUtils {
 
     private fun getProfiles(): List<Profile> {
         return profiles.map { Profile(it.email, it.name, it.surname, it.phoneNumber, it.address, it.city, it.country) }
-    }
-
-    fun getNewProfileDTO(): ProfileDTO {
-        return ProfileDTO(
-            profileId = null,
-            email = "new_mail@test.com",
-            name = "Name",
-            surname = "Surname",
-            phoneNumber = "3333333333",
-            address = "New Address",
-            city = "New City",
-            country = "New Country",
-            ticketsIds = mutableListOf()
-        )
-    }
-
-    fun insertProfiles(profileRepository: ProfileRepository): List<Profile> {
-        val newProfiles = getProfiles()
-        profileRepository.saveAll(newProfiles)
-        return newProfiles
     }
 
 }
