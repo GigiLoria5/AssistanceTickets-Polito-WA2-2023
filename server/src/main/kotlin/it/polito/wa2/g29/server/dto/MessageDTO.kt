@@ -12,16 +12,6 @@ data class MessageDTO(
     val attachments: List<AttachmentDTO>
 )
 
-data class AttachmentDTO(
-    val attachmentId: Int?,
-    val name: String?,
-    val type: String
-)
-
-fun Attachment.toDTO(): AttachmentDTO {
-    return AttachmentDTO(id, name, type.toString())
-}
-
 fun Message.toDTO(): MessageDTO {
     val attachmentDTOs = attachments.map { it.toDTO() }
     return MessageDTO(id, sender.toString(), expert?.id, content, time, attachmentDTOs)

@@ -18,7 +18,7 @@ import kotlin.Exception
 @RestControllerAdvice
 class ApplicationExceptionHandler {
     // 404 - Not Found
-    @ExceptionHandler(value = [ProductNotFoundException::class, ProfileNotFoundException::class, ExpertNotFoundException::class, TicketNotFoundException::class])
+    @ExceptionHandler(value = [ProductNotFoundException::class, ProfileNotFoundException::class, ExpertNotFoundException::class, TicketNotFoundException::class, MessageNotFoundException::class, AttachmentNotFoundException::class])
     fun handleNotFoundException(exception: Exception): ResponseEntity<Unit> {
         return ResponseEntity(HttpStatus.NOT_FOUND)
     }
@@ -38,7 +38,7 @@ class ApplicationExceptionHandler {
      *
      * 422 - Generic Message
      */
-    @ExceptionHandler(value = [ConstraintViolationException::class, MethodArgumentNotValidException::class, HttpMessageNotReadableException::class, MethodArgumentTypeMismatchException::class])
+    @ExceptionHandler(value = [ConstraintViolationException::class, MethodArgumentNotValidException::class, HttpMessageNotReadableException::class, MethodArgumentTypeMismatchException::class, UserTypeNotValidException::class])
     fun handleValidationFailedException(exception: Exception): ResponseEntity<ErrorMessage> {
         val errorMessage = ErrorMessage("validation of request failed")
         return ResponseEntity(errorMessage, HttpStatus.UNPROCESSABLE_ENTITY)
