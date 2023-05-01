@@ -27,10 +27,12 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
     @Autowired
     private lateinit var profileRepository: ProfileRepository
 
+    lateinit var testProfiles: List<Profile>
+
     @BeforeEach
     fun setup() {
-        profileRepository.deleteAll()
-        TestProfileUtils.insertProfiles(profileRepository)
+        profileRepository.deleteAllInBatch()
+        testProfiles = TestProfileUtils.insertProfiles(profileRepository)
     }
 
     /////////////////////////////////////////////////////////////////////
@@ -39,7 +41,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     fun getProfile() {
-        val expectedProfile = TestProfileUtils.profiles[0]
+        val expectedProfile = testProfiles[0]
         mockMvc
             .get("/API/profiles/${expectedProfile.email}")
             .andExpect { status { isOk() } }
@@ -102,7 +104,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     fun createProfile() {
-        val newProfileDTO = TestProfileUtils.newProfileDTO.copy()
+        val newProfileDTO = TestProfileUtils.getNewProfileDTO()
 
         val mapper = ObjectMapper()
         val jsonBody = mapper.writeValueAsString(newProfileDTO)
@@ -128,7 +130,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
 
         for (email in validEmails) {
             val timestamp = System.currentTimeMillis()
-            val newProfileDTO = TestProfileUtils.newProfileDTO.copy(
+            val newProfileDTO = TestProfileUtils.getNewProfileDTO().copy(
                 email = email,
                 phoneNumber = "5${timestamp % 1000000000}"
             )
@@ -153,7 +155,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
 
         for (name in validNames) {
             val timestamp = System.currentTimeMillis()
-            val newProfileDTO = TestProfileUtils.newProfileDTO.copy(
+            val newProfileDTO = TestProfileUtils.getNewProfileDTO().copy(
                 email = "test$timestamp@example.com",
                 phoneNumber = "5${timestamp % 1000000000}",
                 name = name
@@ -178,7 +180,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
 
         for (surname in validSurnames) {
             val timestamp = System.currentTimeMillis()
-            val newProfileDTO = TestProfileUtils.newProfileDTO.copy(
+            val newProfileDTO = TestProfileUtils.getNewProfileDTO().copy(
                 email = "test$timestamp@example.com",
                 phoneNumber = "5${timestamp % 1000000000}",
                 surname = surname
@@ -213,7 +215,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
 
         for (address in validAddresses) {
             val timestamp = System.currentTimeMillis()
-            val newProfileDTO = TestProfileUtils.newProfileDTO.copy(
+            val newProfileDTO = TestProfileUtils.getNewProfileDTO().copy(
                 email = "test$timestamp@example.com",
                 phoneNumber = "5${timestamp % 1000000000}",
                 address = address
@@ -251,7 +253,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
 
         for (city in validCities) {
             val timestamp = System.currentTimeMillis()
-            val newProfileDTO = TestProfileUtils.newProfileDTO.copy(
+            val newProfileDTO = TestProfileUtils.getNewProfileDTO().copy(
                 email = "test$timestamp@example.com",
                 phoneNumber = "5${timestamp % 1000000000}",
                 city = city
@@ -286,7 +288,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
 
         for (country in validCountries) {
             val timestamp = System.currentTimeMillis()
-            val newProfileDTO = TestProfileUtils.newProfileDTO.copy(
+            val newProfileDTO = TestProfileUtils.getNewProfileDTO().copy(
                 email = "test$timestamp@example.com",
                 phoneNumber = "5${timestamp % 1000000000}",
                 country = country
@@ -307,7 +309,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     fun createProfileDuplicateEmail() {
-        val newProfileDTO = TestProfileUtils.profiles[0].toDTO().copy(
+        val newProfileDTO = testProfiles[0].toDTO().copy(
             profileId = null,
             phoneNumber = "9999999999"
         )
@@ -327,7 +329,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     fun createProfileDuplicatePhoneNumber() {
-        val newProfileDTO = TestProfileUtils.profiles[0].toDTO().copy(
+        val newProfileDTO = testProfiles[0].toDTO().copy(
             profileId = null,
             email = "new_profile@test.com",
         )
@@ -364,7 +366,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     fun createProfileFieldsWithSpace() {
-        val newProfileDTO = TestProfileUtils.newProfileDTO.copy(
+        val newProfileDTO = TestProfileUtils.getNewProfileDTO().copy(
             name = "   ",
             surname = "   ",
             address = "   ",
@@ -414,7 +416,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
 
         for (email in invalidEmails) {
             val timestamp = System.currentTimeMillis()
-            val newProfileDTO = TestProfileUtils.newProfileDTO.copy(
+            val newProfileDTO = TestProfileUtils.getNewProfileDTO().copy(
                 email = email,
                 phoneNumber = "5${timestamp % 1000000000}",
             )
@@ -452,7 +454,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
 
         for (name in invalidNames) {
             val timestamp = System.currentTimeMillis()
-            val newProfileDTO = TestProfileUtils.newProfileDTO.copy(
+            val newProfileDTO = TestProfileUtils.getNewProfileDTO().copy(
                 email = "test$timestamp@example.com",
                 phoneNumber = "5${timestamp % 1000000000}",
                 name = name
@@ -490,7 +492,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
 
         for (surname in invalidSurnames) {
             val timestamp = System.currentTimeMillis()
-            val newProfileDTO = TestProfileUtils.newProfileDTO.copy(
+            val newProfileDTO = TestProfileUtils.getNewProfileDTO().copy(
                 email = "test$timestamp@example.com",
                 phoneNumber = "5${timestamp % 1000000000}",
                 surname = surname
@@ -516,7 +518,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
 
         for (phoneNumber in invalidPhoneNumbers) {
             val timestamp = System.currentTimeMillis()
-            val newProfileDTO = TestProfileUtils.newProfileDTO.copy(
+            val newProfileDTO = TestProfileUtils.getNewProfileDTO().copy(
                 email = "test$timestamp@example.com",
                 phoneNumber = phoneNumber
             )
@@ -546,7 +548,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
 
         for (address in invalidAddresses) {
             val timestamp = System.currentTimeMillis()
-            val newProfileDTO = TestProfileUtils.newProfileDTO.copy(
+            val newProfileDTO = TestProfileUtils.getNewProfileDTO().copy(
                 email = "test$timestamp@example.com",
                 phoneNumber = "5${timestamp % 1000000000}",
                 address = address
@@ -586,7 +588,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
 
         for (city in invalidCities) {
             val timestamp = System.currentTimeMillis()
-            val newProfileDTO = TestProfileUtils.newProfileDTO.copy(
+            val newProfileDTO = TestProfileUtils.getNewProfileDTO().copy(
                 email = "test$timestamp@example.com",
                 phoneNumber = "5${timestamp % 1000000000}",
                 city = city
@@ -624,7 +626,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
 
         for (country in invalidCountries) {
             val timestamp = System.currentTimeMillis()
-            val newProfileDTO = TestProfileUtils.newProfileDTO.copy(
+            val newProfileDTO = TestProfileUtils.getNewProfileDTO().copy(
                 email = "test$timestamp@example.com",
                 phoneNumber = "5${timestamp % 1000000000}",
                 country = country
@@ -650,7 +652,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     fun modifyProfile() {
-        val oldProfileDTO = TestProfileUtils.profiles[0].toDTO()
+        val oldProfileDTO = testProfiles[0].toDTO()
         val newProfileDTO = oldProfileDTO.copy(
             profileId = null,
             name = "NewName"
@@ -670,7 +672,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     fun modifyProfileEmail() {
-        val oldProfileDTO = TestProfileUtils.profiles[0].toDTO()
+        val oldProfileDTO = testProfiles[0].toDTO()
         val newProfileDTO = oldProfileDTO.copy(
             profileId = null,
             email = "new_email@test.org"
@@ -690,7 +692,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     fun modifyProfilePhoneNumber() {
-        val oldProfileDTO = TestProfileUtils.profiles[0].toDTO()
+        val oldProfileDTO = testProfiles[0].toDTO()
         val newProfileDTO = oldProfileDTO.copy(
             profileId = null,
             phoneNumber = "4444444444"
@@ -710,8 +712,8 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     fun modifyProfileComplete() {
-        val oldProfileDTO = TestProfileUtils.profiles[0].toDTO()
-        val newProfileDTO = TestProfileUtils.newProfileDTO
+        val oldProfileDTO = testProfiles[0].toDTO()
+        val newProfileDTO = TestProfileUtils.getNewProfileDTO()
 
         val mapper = ObjectMapper()
         val jsonBody = mapper.writeValueAsString(newProfileDTO)
@@ -727,7 +729,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     fun modifyProfileNotFound() {
-        val oldProfileDTO = TestProfileUtils.profiles[0].toDTO()
+        val oldProfileDTO = testProfiles[0].toDTO()
         val newProfileDTO = oldProfileDTO.copy(
             profileId = null,
             name = "NewName"
@@ -747,8 +749,8 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     fun modifyProfileDuplicateEmail() {
-        val oldProfileDTO = TestProfileUtils.profiles[0].toDTO()
-        val otherProfileDTO = TestProfileUtils.profiles[1].toDTO()
+        val oldProfileDTO = testProfiles[0].toDTO()
+        val otherProfileDTO = testProfiles[1].toDTO()
         val newProfileDTO = oldProfileDTO.copy(
             profileId = null,
             email = otherProfileDTO.email
@@ -768,8 +770,8 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     fun modifyProfileDuplicatePhoneNumber() {
-        val oldProfileDTO = TestProfileUtils.profiles[0].toDTO()
-        val otherProfileDTO = TestProfileUtils.profiles[1].toDTO()
+        val oldProfileDTO = testProfiles[0].toDTO()
+        val otherProfileDTO = testProfiles[1].toDTO()
         val newProfileDTO = oldProfileDTO.copy(
             profileId = null,
             phoneNumber = otherProfileDTO.phoneNumber
@@ -789,7 +791,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     fun modifyProfileWrongEmailParameter() {
-        val newProfileDTO = TestProfileUtils.newProfileDTO
+        val newProfileDTO = TestProfileUtils.getNewProfileDTO()
 
         val mapper = ObjectMapper()
         val jsonBody = mapper.writeValueAsString(newProfileDTO)
@@ -806,8 +808,8 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     fun modifyProfileWrongEmailBody() {
-        val oldProfileDTO = TestProfileUtils.profiles[0].toDTO()
-        val newProfileDTO = TestProfileUtils.newProfileDTO.copy(
+        val oldProfileDTO = testProfiles[0].toDTO()
+        val newProfileDTO = TestProfileUtils.getNewProfileDTO().copy(
             email = "aaaa@12132lc.com@org@.cak12"
         )
 
@@ -826,8 +828,8 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     fun modifyProfileWrongPhoneNumber() {
-        val oldProfileDTO = TestProfileUtils.profiles[0].toDTO()
-        val newProfileDTO = TestProfileUtils.newProfileDTO.copy(
+        val oldProfileDTO = testProfiles[0].toDTO()
+        val newProfileDTO = TestProfileUtils.getNewProfileDTO().copy(
             phoneNumber = "abc"
         )
 
@@ -846,8 +848,8 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     fun modifyProfileWrongName() {
-        val oldProfileDTO = TestProfileUtils.profiles[0].toDTO()
-        val newProfileDTO = TestProfileUtils.newProfileDTO.copy(
+        val oldProfileDTO = testProfiles[0].toDTO()
+        val newProfileDTO = TestProfileUtils.getNewProfileDTO().copy(
             name = "@!'ì23190!--@#è]"
         )
 
@@ -866,8 +868,8 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     fun modifyProfileWrongSurname() {
-        val oldProfileDTO = TestProfileUtils.profiles[0].toDTO()
-        val newProfileDTO = TestProfileUtils.newProfileDTO.copy(
+        val oldProfileDTO = testProfiles[0].toDTO()
+        val newProfileDTO = TestProfileUtils.getNewProfileDTO().copy(
             surname = "Do Silva £$%&!()/{}"
         )
 
@@ -886,7 +888,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     fun modifyProfileEmptyBody() {
-        val oldProfileDTO = TestProfileUtils.profiles[0].toDTO()
+        val oldProfileDTO = testProfiles[0].toDTO()
 
         val mapper = ObjectMapper()
         val jsonBody = mapper.writeValueAsString("")
@@ -903,8 +905,8 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     fun modifyProfileEmptyFields() {
-        val oldProfileDTO = TestProfileUtils.profiles[0].toDTO()
-        val newProfileDTO = TestProfileUtils.newProfileDTO.copy(
+        val oldProfileDTO = testProfiles[0].toDTO()
+        val newProfileDTO = TestProfileUtils.getNewProfileDTO().copy(
             name = "",
             surname = "",
             address = "",
