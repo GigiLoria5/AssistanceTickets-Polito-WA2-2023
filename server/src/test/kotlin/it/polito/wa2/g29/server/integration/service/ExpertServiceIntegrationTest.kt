@@ -3,6 +3,7 @@ package it.polito.wa2.g29.server.integration.service
 import it.polito.wa2.g29.server.dto.toDTO
 import it.polito.wa2.g29.server.exception.ExpertNotFoundException
 import it.polito.wa2.g29.server.integration.AbstractTestcontainersTest
+import it.polito.wa2.g29.server.model.Expert
 import it.polito.wa2.g29.server.repository.ExpertRepository
 import it.polito.wa2.g29.server.service.ExpertService
 import it.polito.wa2.g29.server.utils.TestExpertUtils
@@ -18,10 +19,12 @@ class ExpertServiceIntegrationTest : AbstractTestcontainersTest() {
     @Autowired
     private lateinit var expertRepository: ExpertRepository
 
+    lateinit var testExperts: List<Expert>
+
     @BeforeEach
     fun setup() {
         expertRepository.deleteAll()
-        TestExpertUtils.insertExperts(expertRepository)
+        testExperts = TestExpertUtils.insertExperts(expertRepository)
     }
 
     /////////////////////////////////////////////////////////////////////
@@ -39,7 +42,7 @@ class ExpertServiceIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     fun getAllExperts() {
-        val expectedExperts = TestExpertUtils.experts
+        val expectedExperts = testExperts
 
         val actualExperts = expertService.getAllExperts()
 
@@ -58,7 +61,9 @@ class ExpertServiceIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     fun getExpertById() {
-        val expectedExpertDTO = expertRepository.findAll()[0].toDTO()
+        println("Pippo")
+        println(testExperts)
+        val expectedExpertDTO = testExperts[0].toDTO()
 
         val actualExpertDTO = expertService.getExpertById(expectedExpertDTO.expertId!!)
 

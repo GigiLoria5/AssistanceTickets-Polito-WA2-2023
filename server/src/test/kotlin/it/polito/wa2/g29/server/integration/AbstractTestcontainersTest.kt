@@ -29,5 +29,4 @@ abstract class AbstractTestcontainersTest {
             registry.add("spring.datasource.password", container::getPassword)
         }
     }
-
 }

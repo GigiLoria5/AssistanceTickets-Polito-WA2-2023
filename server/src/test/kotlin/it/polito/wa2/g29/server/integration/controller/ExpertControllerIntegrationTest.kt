@@ -2,6 +2,7 @@ package it.polito.wa2.g29.server.integration.controller
 
 import it.polito.wa2.g29.server.dto.SkillDTO
 import it.polito.wa2.g29.server.integration.AbstractTestcontainersTest
+import it.polito.wa2.g29.server.model.Expert
 import it.polito.wa2.g29.server.repository.ExpertRepository
 import it.polito.wa2.g29.server.utils.TestExpertUtils
 import org.hamcrest.Matchers.hasSize
@@ -25,10 +26,12 @@ class ExpertControllerIntegrationTest : AbstractTestcontainersTest() {
     @Autowired
     private lateinit var expertRepository: ExpertRepository
 
+    lateinit var testExperts: List<Expert>
+
     @BeforeEach
     fun setup() {
         expertRepository.deleteAll()
-        TestExpertUtils.insertExperts(expertRepository)
+        testExperts = TestExpertUtils.insertExperts(expertRepository)
     }
 
     /////////////////////////////////////////////////////////////////////
@@ -75,7 +78,7 @@ class ExpertControllerIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     fun getExpertById() {
-        val expert = expertRepository.findAll()[0]
+        val expert = testExperts[0]
         mockMvc
             .perform(get("/API/experts/${expert.id}").contentType("application/json"))
             .andExpectAll(

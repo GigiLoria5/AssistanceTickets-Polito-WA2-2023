@@ -7,41 +7,54 @@ import it.polito.wa2.g29.server.model.Skill
 import it.polito.wa2.g29.server.repository.ExpertRepository
 
 object TestExpertUtils {
-    val experts = listOf(
-        Expert(
-            name = "John",
-            surname = "Doe",
-            email = "john.doe@example.com",
-            country = "United States",
-            city = "New York",
-            skills = mutableSetOf()
-        ),
-        Expert(
-            name = "Jane",
-            surname = "Doe",
-            email = "jane.doe@example.com",
-            country = "United States",
-            city = "Los Angeles",
-            skills = mutableSetOf()
-        ),
-        Expert(
-            name = "Bob",
-            surname = "Smith",
-            email = "bob.smith@example.com",
-            country = "Canada",
-            city = "Toronto",
-            skills = mutableSetOf()
-        )
-    )
 
-    init {
+    fun insertExperts(expertRepository: ExpertRepository): List<Expert> {
+        val newExperts = getExperts()
+        expertRepository.saveAll(newExperts)
+        return newExperts
+    }
+
+    private fun getExperts(): List<Expert> {
+        val experts = listOf(
+            Expert(
+                name = "John",
+                surname = "Doe",
+                email = "john.doe@example.com",
+                country = "United States",
+                city = "New York",
+                skills = mutableSetOf()
+            ),
+            Expert(
+                name = "Jane",
+                surname = "Doe",
+                email = "jane.doe@example.com",
+                country = "United States",
+                city = "Los Angeles",
+                skills = mutableSetOf()
+            ),
+            Expert(
+                name = "Bob",
+                surname = "Smith",
+                email = "bob.smith@example.com",
+                country = "Canada",
+                city = "Toronto",
+                skills = mutableSetOf()
+            )
+        )
+
         val expert0 = experts[0]
         expert0.skills.add(Skill(expertise = Expertise.SMARTPHONE, level = Level.AVERAGE, expert = expert0))
         expert0.skills.add(Skill(expertise = Expertise.COMPUTER, level = Level.SKILLED, expert = expert0))
 
         val expert1 = experts[1]
         expert1.skills.add(Skill(expertise = Expertise.APPLIANCES, level = Level.EXPERT, expert = expert1))
-        expert1.skills.add(Skill(expertise = Expertise.CONSUMER_ELECTRONICS, level = Level.SKILLED, expert = expert1))
+        expert1.skills.add(
+            Skill(
+                expertise = Expertise.CONSUMER_ELECTRONICS,
+                level = Level.SKILLED,
+                expert = expert1
+            )
+        )
         expert1.skills.add(Skill(expertise = Expertise.SMARTPHONE, level = Level.SPECIALIST, expert = expert1))
 
         val expert2 = experts[2]
@@ -55,9 +68,7 @@ object TestExpertUtils {
                 expert = expert2
             )
         )
+        return experts
     }
 
-    fun insertExperts(expertRepository: ExpertRepository) {
-        expertRepository.saveAll(experts)
-    }
 }
