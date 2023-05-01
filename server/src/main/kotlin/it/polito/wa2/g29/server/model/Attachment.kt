@@ -4,11 +4,17 @@ import it.polito.wa2.g29.server.enums.AttachmentType
 import jakarta.persistence.*
 
 @Entity
-@Table(name = "attachments")
+@Table(
+    name = "attachments"
+)
 class Attachment(
     var name: String,
-    var file: Array<Byte>,
+    @Column(nullable = false)
+    var file: ByteArray,
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     var type: AttachmentType,
-    @ManyToOne
+    @JoinColumn(nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     var message: Message
 ) : EntityBase<Int>()

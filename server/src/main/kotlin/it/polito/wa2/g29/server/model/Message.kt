@@ -6,7 +6,10 @@ import org.springframework.data.annotation.CreatedDate
 
 
 @Entity
-@Table(name = "messages")
+@Table(
+    name = "messages",
+    uniqueConstraints = [UniqueConstraint(columnNames = arrayOf("sender", "ticket_id", "time"))]
+)
 class Message(
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

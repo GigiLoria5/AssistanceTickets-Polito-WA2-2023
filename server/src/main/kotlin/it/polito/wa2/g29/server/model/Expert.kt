@@ -3,7 +3,10 @@ package it.polito.wa2.g29.server.model
 import jakarta.persistence.*
 
 @Entity
-@Table(name = "experts")
+@Table(
+    name = "experts",
+    uniqueConstraints = [UniqueConstraint(columnNames = arrayOf("email"))]
+)
 class Expert(
     @Column(nullable = false)
     var name: String,

@@ -5,7 +5,10 @@ import it.polito.wa2.g29.server.enums.Level
 import jakarta.persistence.*
 
 @Entity
-@Table(name = "skills")
+@Table(
+    name = "skills",
+    uniqueConstraints = [UniqueConstraint(columnNames = arrayOf("expertise", "expert_id"))]
+)
 class Skill(
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
