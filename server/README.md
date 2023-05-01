@@ -68,7 +68,8 @@
     - Response: `200 OK` (success)
     - Error responses: `404 Not Found` (email not found), `422 Unprocessable Entity` (validation of email failed) or
       `500 Internal Server Error` (generic error)
-    - Response body: An object containing profileId, email, name, surname, phoneNumber, address, city, country and tickets (An array of Int, each one representing a created ticket) of the
+    - Response body: An object containing profileId, email, name, surname, phoneNumber, address, city, country and
+      ticketsIds (an array of int, each representing the id of a ticket opened by the user) of the
       requested user. An error message in case of error
 
       ```
@@ -81,7 +82,7 @@
           "address": "Corso Duca degli Abruzzi, 24",
           "city": "Turin",
           "country": "Italy",
-          "tickets": [1,2,3]
+          "ticketsIds": [1,2,3]
       }
       ```
 
