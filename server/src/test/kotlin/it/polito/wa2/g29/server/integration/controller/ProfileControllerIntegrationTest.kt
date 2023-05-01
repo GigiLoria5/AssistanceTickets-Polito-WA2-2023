@@ -4,8 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import it.polito.wa2.g29.server.dto.toDTO
 import it.polito.wa2.g29.server.integration.AbstractTestcontainersTest
 import it.polito.wa2.g29.server.model.Profile
+import it.polito.wa2.g29.server.repository.ProductRepository
 import it.polito.wa2.g29.server.repository.ProfileRepository
+import it.polito.wa2.g29.server.repository.TicketRepository
+import it.polito.wa2.g29.server.utils.TestProductUtils
 import it.polito.wa2.g29.server.utils.TestProfileUtils
+import it.polito.wa2.g29.server.utils.TestTicketUtils
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -27,6 +31,12 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
     @Autowired
     private lateinit var profileRepository: ProfileRepository
 
+    @Autowired
+    private lateinit var ticketRepository: TicketRepository
+
+    @Autowired
+    private lateinit var productRepository: ProductRepository
+
     lateinit var testProfiles: List<Profile>
 
     @BeforeEach
@@ -40,7 +50,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
     /////////////////////////////////////////////////////////////////////
 
     @Test
-    fun getProfile() {
+    fun getProfileWithoutTickets() {
         val expectedProfile = testProfiles[0]
         mockMvc
             .get("/API/profiles/${expectedProfile.email}")
@@ -55,7 +65,39 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
                 jsonPath("$[*].address").value(expectedProfile.address)
                 jsonPath("$[*].city").value(expectedProfile.city)
                 jsonPath("$[*].country").value(expectedProfile.country)
+                jsonPath("$[*].ticketIds").isArray
+                jsonPath("$[*].ticketIds").isEmpty
             }
+    }
+
+    @Test
+    fun getProfileWithTickets() {
+        ticketRepository.deleteAllInBatch()
+        productRepository.deleteAllInBatch()
+        TestTicketUtils.profiles = testProfiles
+        TestTicketUtils.products = TestProductUtils.insertProducts(productRepository)
+        val tickets = TestTicketUtils.insertTickets(ticketRepository)
+        testProfiles[0].tickets.add(tickets.first { it.customer.id == testProfiles[0].id })
+        profileRepository.save(testProfiles[0])
+        val expectedProfile = testProfiles[0]
+        mockMvc
+            .get("/API/profiles/${expectedProfile.email}")
+            .andExpect { status { isOk() } }
+            .andExpect { content().contentType(MediaType.APPLICATION_JSON) }
+            .andExpectAll {
+                jsonPath("$[*].profileId").exists()
+                jsonPath("$[*].email").value(expectedProfile.email)
+                jsonPath("$[*].name").value(expectedProfile.name)
+                jsonPath("$[*].surname").value(expectedProfile.surname)
+                jsonPath("$[*].phoneNumber").value(expectedProfile.phoneNumber)
+                jsonPath("$[*].address").value(expectedProfile.address)
+                jsonPath("$[*].city").value(expectedProfile.city)
+                jsonPath("$[*].country").value(expectedProfile.country)
+                jsonPath("$[*].ticketIds").isArray
+                jsonPath("$[*].ticketIds").isNotEmpty
+            }
+        ticketRepository.deleteAllInBatch()
+        productRepository.deleteAllInBatch()
     }
 
     @Test
