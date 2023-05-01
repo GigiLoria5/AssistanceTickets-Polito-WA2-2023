@@ -11,6 +11,7 @@ import it.polito.wa2.g29.server.utils.TestTicketUtils
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
@@ -21,6 +22,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
 
     @Autowired
@@ -31,15 +33,12 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
 
     lateinit var testTickets: List<Ticket>
 
-    companion object {
-        @BeforeAll
-        @JvmStatic
-        fun prepare(@Autowired profileRepository: ProfileRepository, @Autowired productRepository: ProductRepository) {
-            productRepository.deleteAllInBatch()
-            profileRepository.deleteAllInBatch()
-            TestTicketUtils.products = TestProductUtils.insertProducts(productRepository)
-            TestTicketUtils.profiles = TestProfileUtils.insertProfiles(profileRepository)
-        }
+    @BeforeAll
+    fun prepare(@Autowired profileRepository: ProfileRepository, @Autowired productRepository: ProductRepository) {
+        productRepository.deleteAllInBatch()
+        profileRepository.deleteAllInBatch()
+        TestTicketUtils.products = TestProductUtils.insertProducts(productRepository)
+        TestTicketUtils.profiles = TestProfileUtils.insertProfiles(profileRepository)
     }
 
     @BeforeEach
