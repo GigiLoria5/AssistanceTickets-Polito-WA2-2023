@@ -22,7 +22,6 @@ import org.springframework.data.repository.findByIdOrNull
     uniqueConstraints =
     [UniqueConstraint(columnNames = arrayOf("product_id", "customer_id", "created_at"))]
 )
-
 class Ticket(
     @Column(nullable = false)
     var title: String,

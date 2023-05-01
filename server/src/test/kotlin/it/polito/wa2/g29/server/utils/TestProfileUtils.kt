@@ -27,7 +27,7 @@ object TestProfileUtils {
         ),
     )
 
-    fun getProfiles(): List<Profile> {
+    private fun getProfiles(): List<Profile> {
         return profiles.map { Profile(it.email, it.name, it.surname, it.phoneNumber, it.address, it.city, it.country) }
     }
 
@@ -41,7 +41,7 @@ object TestProfileUtils {
             address = "New Address",
             city = "New City",
             country = "New Country",
-            ticketsIds = null
+            ticketsIds = mutableListOf()
         )
     }
 

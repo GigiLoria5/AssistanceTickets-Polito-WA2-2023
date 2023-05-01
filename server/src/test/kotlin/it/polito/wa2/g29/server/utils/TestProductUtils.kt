@@ -26,7 +26,7 @@ object TestProductUtils {
         )
     )
 
-    fun getProducts(): List<Product> {
+    private fun getProducts(): List<Product> {
         return products.map {
             Product(
                 it.asin,

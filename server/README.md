@@ -385,12 +385,12 @@
     - Error responses: `404 Not Found` (customerId or productId not found), `409 Conflict` (a not closed
       ticket for the same customer and product already exists), `422 Unprocessable Entity` (validation of
       request body failed) or `500 Internal Server Error` (generic error)
-  - Response body: An object containing the id of the ticket created. An error message in case of error
-    ```
-    {
-      "ticketId": 5
-    }
-    ```
+    - Response body: An object containing the id of the ticket created. An error message in case of error
+      ```
+      {
+        "ticketId": 5
+      }
+      ```
 
 - PUT `/API/tickets/{ticketId}/start`
 

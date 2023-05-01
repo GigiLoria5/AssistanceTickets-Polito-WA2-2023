@@ -5,9 +5,13 @@ import it.polito.wa2.g29.server.exception.DuplicateProfileException
 import it.polito.wa2.g29.server.exception.ProfileNotFoundException
 import it.polito.wa2.g29.server.integration.AbstractTestcontainersTest
 import it.polito.wa2.g29.server.model.Profile
+import it.polito.wa2.g29.server.repository.ProductRepository
 import it.polito.wa2.g29.server.repository.ProfileRepository
+import it.polito.wa2.g29.server.repository.TicketRepository
 import it.polito.wa2.g29.server.service.ProfileService
+import it.polito.wa2.g29.server.utils.TestProductUtils
 import it.polito.wa2.g29.server.utils.TestProfileUtils
+import it.polito.wa2.g29.server.utils.TestTicketUtils
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -20,6 +24,12 @@ class ProfileServiceIntegrationTest : AbstractTestcontainersTest() {
 
     @Autowired
     private lateinit var profileRepository: ProfileRepository
+
+    @Autowired
+    private lateinit var ticketRepository: TicketRepository
+
+    @Autowired
+    private lateinit var productRepository: ProductRepository
 
     lateinit var testProfiles: List<Profile>
 
@@ -35,11 +45,29 @@ class ProfileServiceIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     @Transactional
-    fun getProfileByEmail() {
+    fun getProfileByEmailWithoutTickets() {
         val expectedProfileDTO = testProfiles[0].toDTO()
 
         val actualProfileDTO = profileService.getProfileByEmail(expectedProfileDTO.email)
 
+        assert(actualProfileDTO.ticketsIds?.isEmpty() ?: false)
+        assert(actualProfileDTO == expectedProfileDTO)
+    }
+
+    @Test
+    @Transactional
+    fun getProfileByEmailWithTickets() {
+        TestTicketUtils.profiles = testProfiles
+        TestTicketUtils.products = TestProductUtils.insertProducts(productRepository)
+        val tickets = TestTicketUtils.insertTickets(ticketRepository)
+        testProfiles[0].tickets.add(tickets.first { it.customer.id == testProfiles[0].id })
+        profileRepository.save(testProfiles[0])
+        val expectedProfileDTO = testProfiles[0].toDTO()
+
+        val actualProfileDTO = profileService.getProfileByEmail(expectedProfileDTO.email)
+
+        assert(actualProfileDTO.ticketsIds?.isNotEmpty() ?: false)
+        assert(actualProfileDTO.ticketsIds?.size == expectedProfileDTO.ticketsIds?.size)
         assert(actualProfileDTO == expectedProfileDTO)
     }
 
