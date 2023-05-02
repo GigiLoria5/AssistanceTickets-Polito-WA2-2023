@@ -115,6 +115,9 @@ class ChatServiceIntegrationTest : AbstractTestcontainersTest() {
         assert(actualMessageDTOs.isNotEmpty())
         assert(expectedMessageDTOs.size == actualMessageDTOs.size)
         assert(expectedMessageDTOs == actualMessageDTOs)
+        for (i in 0 until actualMessageDTOs.size - 1) {
+            assert(actualMessageDTOs[i].time <= actualMessageDTOs[i + 1].time)
+        }
     }
 
     @Test
