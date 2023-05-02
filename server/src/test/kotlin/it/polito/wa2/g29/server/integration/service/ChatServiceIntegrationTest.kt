@@ -5,9 +5,7 @@ import it.polito.wa2.g29.server.enums.AttachmentType
 import it.polito.wa2.g29.server.enums.TicketPriority
 import it.polito.wa2.g29.server.enums.TicketStatus
 import it.polito.wa2.g29.server.enums.UserType
-import it.polito.wa2.g29.server.exception.ChatIsInactiveException
-import it.polito.wa2.g29.server.exception.TicketNotFoundException
-import it.polito.wa2.g29.server.exception.UserTypeNotValidException
+import it.polito.wa2.g29.server.exception.*
 import it.polito.wa2.g29.server.integration.AbstractTestcontainersTest
 import it.polito.wa2.g29.server.model.*
 import it.polito.wa2.g29.server.repository.*
@@ -201,7 +199,7 @@ class ChatServiceIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     @Transactional
-    fun addMessageWithAttachmentsWithAttachment() {
+    fun addMessageWithAttachmentsWithDifferentAttachmentType() {
         val ticket = testTickets[0]
         val ticketExpert = testExperts[0]
         TestTicketUtils.startTicket(ticketRepository, ticket, ticketExpert, TicketPriority.LOW)
@@ -269,5 +267,96 @@ class ChatServiceIntegrationTest : AbstractTestcontainersTest() {
     /////////////////////////////////////////////////////////////////////
     ////// getAttachments
     /////////////////////////////////////////////////////////////////////
+
+    @Test
+    @Transactional
+    fun getAttachmentsWithTicketIdNotFound() {
+        val ticket = testTickets[0]
+        val ticketExpert = testExperts[0]
+        TestTicketUtils.startTicket(ticketRepository, ticket, ticketExpert, TicketPriority.LOW)
+        val messages = TestChatUtils.getMessages(ticket, ticketExpert)
+        val attachment = Attachment(
+            "AttachmentName",
+            byteArrayOf(0x00, 0x01, 0x02),
+            AttachmentType.OTHER,
+            messages[0]
+        )
+        messages[0].apply {
+            attachments = setOf(attachment)
+        }
+        TestChatUtils.addMessages(messageRepository, messages, ticket, ticketExpert)
+        assertThrows<TicketNotFoundException> {
+            chatService.getAttachment(Int.MAX_VALUE, messages[0].id!!, attachment.id!!)
+        }
+    }
+
+    @Test
+    @Transactional
+    fun getAttachmentsWithMessageIdNotFound() {
+        val ticket = testTickets[0]
+        val ticketExpert = testExperts[0]
+        TestTicketUtils.startTicket(ticketRepository, ticket, ticketExpert, TicketPriority.LOW)
+        val messages = TestChatUtils.getMessages(ticket, ticketExpert)
+        val attachment = Attachment(
+            "AttachmentName",
+            byteArrayOf(0x00, 0x01, 0x02),
+            AttachmentType.OTHER,
+            messages[0]
+        )
+        messages[0].apply {
+            attachments = setOf(attachment)
+        }
+        TestChatUtils.addMessages(messageRepository, messages, ticket, ticketExpert)
+        assertThrows<MessageNotFoundException> {
+            chatService.getAttachment(ticket.id!!, Int.MAX_VALUE, attachment.id!!)
+        }
+    }
+
+    @Test
+    @Transactional
+    fun getAttachmentsWithAttachmentIdNotFound() {
+        val ticket = testTickets[0]
+        val ticketExpert = testExperts[0]
+        TestTicketUtils.startTicket(ticketRepository, ticket, ticketExpert, TicketPriority.LOW)
+        val messages = TestChatUtils.getMessages(ticket, ticketExpert)
+        val attachment = Attachment(
+            "AttachmentName",
+            byteArrayOf(0x00, 0x01, 0x02),
+            AttachmentType.OTHER,
+            messages[0]
+        )
+        messages[0].apply {
+            attachments = setOf(attachment)
+        }
+        TestChatUtils.addMessages(messageRepository, messages, ticket, ticketExpert)
+        assertThrows<AttachmentNotFoundException> {
+            chatService.getAttachment(ticket.id!!, messages[0].id!!, Int.MAX_VALUE)
+        }
+    }
+
+    @Test
+    @Transactional
+    fun getAttachmentsValid() {
+        val ticket = testTickets[0]
+        val ticketExpert = testExperts[0]
+        TestTicketUtils.startTicket(ticketRepository, ticket, ticketExpert, TicketPriority.LOW)
+        val messages = TestChatUtils.getMessages(ticket, ticketExpert)
+        val expectedAttachment = Attachment(
+            "AttachmentName",
+            byteArrayOf(0x00, 0x01, 0x02),
+            AttachmentType.OTHER,
+            messages[0]
+        )
+        messages[0].apply {
+            attachments = setOf(expectedAttachment)
+        }
+        TestChatUtils.addMessages(messageRepository, messages, ticket, ticketExpert)
+
+        val actualAttachment = chatService.getAttachment(ticket.id!!, messages[0].id!!, expectedAttachment.id!!)
+
+        assert(expectedAttachment.name == actualAttachment.name)
+        assert(expectedAttachment.type == actualAttachment.type)
+        assert(expectedAttachment.file.contentEquals(actualAttachment.file))
+    }
 
 }
