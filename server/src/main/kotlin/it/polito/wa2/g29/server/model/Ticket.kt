@@ -55,6 +55,7 @@ class Ticket(
     @Column(updatable = false, nullable = false, name = "created_at")
     var createdAt: Long = 0
 
+    @CreatedDate
     @Column(nullable = false)
     var lastModifiedAt: Long = createdAt
 
