@@ -3,17 +3,13 @@ package it.polito.wa2.g29.server.integration.controller
 import it.polito.wa2.g29.server.dto.MessageDTO
 import it.polito.wa2.g29.server.enums.AttachmentType
 import it.polito.wa2.g29.server.enums.TicketPriority
+import it.polito.wa2.g29.server.enums.TicketStatus
 import it.polito.wa2.g29.server.enums.UserType
 import it.polito.wa2.g29.server.integration.AbstractTestcontainersTest
 import it.polito.wa2.g29.server.model.*
 import it.polito.wa2.g29.server.repository.*
 import it.polito.wa2.g29.server.service.TicketStatusChangeService
 import it.polito.wa2.g29.server.utils.*
-import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
@@ -22,6 +18,8 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import org.hamcrest.Matchers.*
+import org.junit.jupiter.api.*
+import org.springframework.mock.web.MockMultipartFile
 import org.springframework.transaction.annotation.Transactional
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -226,7 +224,38 @@ class ChatControllerIntegrationTest : AbstractTestcontainersTest() {
     @Test
     @Transactional
     fun getAllChatMessagesInAnyTicketStatus() {
+        val ticket = testTickets[0]
+        val ticketExpert = testExperts[0]
+        TestTicketUtils.startTicket(ticketRepository, ticket, ticketExpert, TicketPriority.LOW)
+        val messages = listOf(Message(UserType.EXPERT, "Message1", ticket, ticketExpert))
+        TestChatUtils.addMessages(messageRepository, messages, ticket, ticketExpert)
+        val chatStatusTransactions =
+            listOf(
+                TicketStatus.OPEN,
+                TicketStatus.IN_PROGRESS,
+                TicketStatus.RESOLVED,
+                TicketStatus.CLOSED,
+                TicketStatus.REOPENED
+            )
 
+        chatStatusTransactions.forEach {
+            TestExpertUtils.addTicketStatusChange(
+                ticketStatusChangeService,
+                ticketExpert,
+                ticket,
+                it,
+                UserType.MANAGER,
+                null
+            )
+            mockMvc
+                .perform(get("/API/chats/${ticket.id!!}/messages").contentType("application/json"))
+                .andExpectAll(
+                    status().isOk,
+                    content().contentType(MediaType.APPLICATION_JSON),
+                    jsonPath("$").isArray,
+                    jsonPath("$").isNotEmpty
+                )
+        }
     }
 
     @Test
@@ -260,6 +289,186 @@ class ChatControllerIntegrationTest : AbstractTestcontainersTest() {
     ////// POST `/API/chats/{ticketId}/messages`
     /////////////////////////////////////////////////////////////////////
 
+    @Test
+    @Transactional
+    fun sendMessageWithCustomer() {
+        val ticket = testTickets[0]
+        val ticketExpert = testExperts[0]
+        TestTicketUtils.startTicket(ticketRepository, ticket, ticketExpert, TicketPriority.CRITICAL)
+        val contentBytes = "file content".toByteArray()
+        val file1 = MockMultipartFile("attachments", "file1.pdf", "application/pdf", contentBytes)
+        val file2 = MockMultipartFile("attachments", "file2.txt", "text/plain", contentBytes)
+
+        mockMvc
+            .perform(
+                multipart("/API/chats/${ticket.id!!}/messages")
+                    .file(file1)
+                    .file(file2)
+                    .param("sender", UserType.CUSTOMER.toString())
+                    .param("content", "Message")
+                    .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+            )
+            .andExpectAll(
+                status().isCreated,
+                content().contentType(MediaType.APPLICATION_JSON),
+                jsonPath("$.messageId").isNumber
+            )
+    }
+
+    @Test
+    @Transactional
+    fun sendMessageWithExpert() {
+        val ticket = testTickets[0]
+        val ticketExpert = testExperts[0]
+        TestTicketUtils.startTicket(ticketRepository, ticket, ticketExpert, TicketPriority.HIGH)
+        val contentBytes = "file content".toByteArray()
+        val file1 = MockMultipartFile("attachments", "file1.jpg", "image/jpeg", contentBytes)
+        val file2 = MockMultipartFile("attachments", "file2.png", "image/png", contentBytes)
+
+        mockMvc
+            .perform(
+                multipart("/API/chats/${ticket.id!!}/messages")
+                    .file(file1)
+                    .file(file2)
+                    .param("sender", UserType.EXPERT.toString())
+                    .param("content", "Message")
+                    .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+            )
+            .andExpectAll(
+                status().isCreated,
+                content().contentType(MediaType.APPLICATION_JSON),
+                jsonPath("$.messageId").isNumber
+            )
+    }
+
+    @Test
+    fun sendMessageNonExistingTicket() {
+        mockMvc
+            .perform(
+                multipart("/API/chats/1/messages")
+                    .param("sender", UserType.EXPERT.toString())
+                    .param("content", "Message")
+                    .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+            )
+            .andExpectAll(
+                status().isNotFound,
+                content().string("")
+            )
+    }
+
+
+    @Test
+    fun sendMessageWithManagerShouldBeForbidden() {
+        val ticket = testTickets[0]
+        val ticketExpert = testExperts[0]
+        TestTicketUtils.startTicket(ticketRepository, ticket, ticketExpert, TicketPriority.LOW)
+
+        mockMvc
+            .perform(
+                multipart("/API/chats/${ticket.id!!}/messages")
+                    .param("sender", UserType.MANAGER.toString())
+                    .param("content", "Message")
+                    .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+            )
+            .andExpectAll(
+                status().isUnprocessableEntity,
+                content().contentType(MediaType.APPLICATION_JSON),
+                jsonPath("$.error").isString
+            )
+    }
+
+    @Test
+    @Transactional
+    fun sendMessageWhenTicketIsInactive() {
+        val ticket = testTickets[0]
+        val ticketExpert = testExperts[0]
+        TestTicketUtils.startTicket(ticketRepository, ticket, ticketExpert, TicketPriority.LOW)
+        val messages = listOf(Message(UserType.EXPERT, "Message1", ticket, ticketExpert))
+        TestChatUtils.addMessages(messageRepository, messages, ticket, ticketExpert)
+        val contentBytes = "file content".toByteArray()
+        val file1 = MockMultipartFile("attachments", "file1.pdf", "application/pdf", contentBytes)
+        val file2 = MockMultipartFile("attachments", "file2.txt", "text/plain", contentBytes)
+        val chatStatusTransactions =
+            listOf(
+                TicketStatus.OPEN,
+                TicketStatus.IN_PROGRESS,
+                TicketStatus.RESOLVED,
+                TicketStatus.CLOSED,
+                TicketStatus.REOPENED
+            )
+
+        chatStatusTransactions.forEach {
+            TestExpertUtils.addTicketStatusChange(
+                ticketStatusChangeService,
+                ticketExpert,
+                ticket,
+                it,
+                UserType.MANAGER,
+                null
+            )
+            if (it != TicketStatus.IN_PROGRESS && it != TicketStatus.RESOLVED)
+                mockMvc
+                    .perform(
+                        multipart("/API/chats/${ticket.id!!}/messages")
+                            .file(file1)
+                            .file(file2)
+                            .param("sender", UserType.CUSTOMER.toString())
+                            .param("content", "Message")
+                            .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+                    )
+                    .andExpectAll(
+                        status().isUnprocessableEntity,
+                        content().contentType(MediaType.APPLICATION_JSON),
+                        jsonPath("$.error").isString
+                    )
+        }
+    }
+
+    @Test
+    fun sendMessageWithInvalidSender() {
+        val ticket = testTickets[0]
+        val ticketExpert = testExperts[0]
+        TestTicketUtils.startTicket(ticketRepository, ticket, ticketExpert, TicketPriority.HIGH)
+        val invalidSender = listOf("", null, "FakeSender", "ADMIN")
+
+        invalidSender.forEach {
+            mockMvc
+                .perform(
+                    multipart("/API/chats/${ticket.id!!}/messages")
+                        .param("sender", it)
+                        .param("content", "Message")
+                        .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+                )
+                .andExpectAll(
+                    status().isUnprocessableEntity,
+                    content().contentType(MediaType.APPLICATION_JSON),
+                    jsonPath("$.error").isString
+                )
+        }
+    }
+
+    @Test
+    fun sendMessageWithInvalidContent() {
+        val ticket = testTickets[0]
+        val ticketExpert = testExperts[0]
+        TestTicketUtils.startTicket(ticketRepository, ticket, ticketExpert, TicketPriority.HIGH)
+        val invalidContent = listOf("", null, " ", "  ")
+
+        invalidContent.forEach {
+            mockMvc
+                .perform(
+                    multipart("/API/chats/${ticket.id!!}/messages")
+                        .param("sender", UserType.EXPERT.toString())
+                        .param("content", it)
+                        .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+                )
+                .andExpectAll(
+                    status().isUnprocessableEntity,
+                    content().contentType(MediaType.APPLICATION_JSON),
+                    jsonPath("$.error").isString
+                )
+        }
+    }
 
     /////////////////////////////////////////////////////////////////////
     ////// GET `/API/chats/{ticketId}/messages/{messageId}/attachments/{attachmentId}`

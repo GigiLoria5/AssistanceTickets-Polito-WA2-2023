@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.web.bind.MethodArgumentNotValidException
+import org.springframework.web.bind.MissingServletRequestParameterException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
@@ -35,10 +36,14 @@ class ApplicationExceptionHandler {
      * MethodArgumentNotValidException      from @Valid
      * HttpMessageNotReadableException      from missing field
      * MethodArgumentTypeMismatchException  from failing type coercion
+     * MissingServletRequestParameterException from missing request parameter
      *
      * 422 - Generic Message
      */
-    @ExceptionHandler(value = [ConstraintViolationException::class, MethodArgumentNotValidException::class, HttpMessageNotReadableException::class, MethodArgumentTypeMismatchException::class, UserTypeNotValidException::class])
+    @ExceptionHandler(
+        value = [ConstraintViolationException::class, MethodArgumentNotValidException::class, HttpMessageNotReadableException::class,
+            MethodArgumentTypeMismatchException::class, MissingServletRequestParameterException::class, UserTypeNotValidException::class]
+    )
     fun handleValidationFailedException(exception: Exception): ResponseEntity<ErrorMessage> {
         val errorMessage = ErrorMessage("validation of request failed")
         return ResponseEntity(errorMessage, HttpStatus.UNPROCESSABLE_ENTITY)
