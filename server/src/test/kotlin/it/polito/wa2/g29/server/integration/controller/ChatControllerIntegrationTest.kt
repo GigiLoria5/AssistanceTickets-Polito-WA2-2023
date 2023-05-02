@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.*
+import org.springframework.http.HttpHeaders
 import org.springframework.mock.web.MockMultipartFile
 import org.springframework.transaction.annotation.Transactional
 
@@ -474,4 +475,273 @@ class ChatControllerIntegrationTest : AbstractTestcontainersTest() {
     ////// GET `/API/chats/{ticketId}/messages/{messageId}/attachments/{attachmentId}`
     /////////////////////////////////////////////////////////////////////
 
+    @Test
+    @Transactional
+    fun getAttachment() {
+        val ticket = testTickets[0]
+        val ticketExpert = testExperts[0]
+        TestTicketUtils.startTicket(ticketRepository, ticket, ticketExpert, TicketPriority.LOW)
+        val messages = listOf(Message(UserType.CUSTOMER, "Message2", ticket, null))
+        messages[0].apply {
+            attachments = setOf(
+                Attachment(
+                    "Filename1.png",
+                    byteArrayOf(0x00, 0x01, 0x02),
+                    AttachmentType.PNG,
+                    this
+                ),
+                Attachment(
+                    "Filename2.jpeg",
+                    byteArrayOf(0x03, 0x04, 0x06),
+                    AttachmentType.JPEG,
+                    this
+                ),
+                Attachment(
+                    "Filename3.pdf",
+                    byteArrayOf(0x07, 0x08, 0x09),
+                    AttachmentType.PDF,
+                    this
+                ),
+                Attachment(
+                    "Filename4.doc",
+                    byteArrayOf(0x00, 0x01, 0x02, 0x00, 0x01, 0x02, 0x00, 0x01, 0x02, 0x00, 0x01, 0x02),
+                    AttachmentType.DOC,
+                    this
+                ),
+                Attachment(
+                    "Filename5.bin",
+                    byteArrayOf(0x00, 0x01, 0x02, 0x02, 0x02, 0x02),
+                    AttachmentType.OTHER,
+                    this
+                )
+            )
+        }
+        TestChatUtils.addMessages(messageRepository, messages, ticket, ticketExpert)
+        val expectedMessage = messages[0]
+
+        expectedMessage.attachments.forEach {
+            mockMvc
+                .perform(
+                    get("/API/chats/${ticket.id!!}/messages/${expectedMessage.id}/attachments/${it.id}")
+                        .contentType("application/json")
+                )
+                .andExpectAll(
+                    status().isOk,
+                    content().contentType(MediaTypeUtil.attachmentTypeToMediaType(it.type)),
+                    content().bytes(it.file),
+                    header().string(
+                        HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=\"${it.name}\""
+                    )
+                )
+        }
+    }
+
+    @Test
+    @Transactional
+    fun getAttachmentTicketIdNotFound() {
+        val ticket = testTickets[0]
+        val ticketExpert = testExperts[0]
+        TestTicketUtils.startTicket(ticketRepository, ticket, ticketExpert, TicketPriority.LOW)
+        val messages = listOf(Message(UserType.CUSTOMER, "Message2", ticket, null))
+        messages[0].apply {
+            attachments = setOf(
+                Attachment(
+                    "Filename.png",
+                    byteArrayOf(0x00, 0x01, 0x02),
+                    AttachmentType.PNG,
+                    this
+                )
+            )
+        }
+        TestChatUtils.addMessages(messageRepository, messages, ticket, ticketExpert)
+        val expectedMessage = messages[0]
+        val expectedAttachment = expectedMessage.attachments.toList()[0]
+
+        mockMvc
+            .perform(
+                get("/API/chats/${Int.MAX_VALUE}/messages/${expectedMessage.id}/attachments/${expectedAttachment.id}").contentType(
+                    "application/json"
+                )
+            )
+            .andExpectAll(
+                status().isNotFound,
+                content().string("")
+            )
+    }
+
+    @Test
+    @Transactional
+    fun getAttachmentMessageIdNotFound() {
+        val ticket = testTickets[0]
+        val ticketExpert = testExperts[0]
+        TestTicketUtils.startTicket(ticketRepository, ticket, ticketExpert, TicketPriority.LOW)
+        val messages = listOf(Message(UserType.CUSTOMER, "Message2", ticket, null))
+        messages[0].apply {
+            attachments = setOf(
+                Attachment(
+                    "Filename.png",
+                    byteArrayOf(0x00, 0x01, 0x02),
+                    AttachmentType.PNG,
+                    this
+                )
+            )
+        }
+        TestChatUtils.addMessages(messageRepository, messages, ticket, ticketExpert)
+        val expectedMessage = messages[0]
+        val expectedAttachment = expectedMessage.attachments.toList()[0]
+
+        mockMvc
+            .perform(
+                get("/API/chats/${ticket.id!!}/messages/${Int.MAX_VALUE}/attachments/${expectedAttachment.id}").contentType(
+                    "application/json"
+                )
+            )
+            .andExpectAll(
+                status().isNotFound,
+                content().string("")
+            )
+    }
+
+    @Test
+    @Transactional
+    fun getAttachmentAttachmentIdNotFound() {
+        val ticket = testTickets[0]
+        val ticketExpert = testExperts[0]
+        TestTicketUtils.startTicket(ticketRepository, ticket, ticketExpert, TicketPriority.LOW)
+        val messages = listOf(Message(UserType.CUSTOMER, "Message2", ticket, null))
+        messages[0].apply {
+            attachments = setOf(
+                Attachment(
+                    "Filename.png",
+                    byteArrayOf(0x00, 0x01, 0x02),
+                    AttachmentType.PNG,
+                    this
+                )
+            )
+        }
+        TestChatUtils.addMessages(messageRepository, messages, ticket, ticketExpert)
+        val expectedMessage = messages[0]
+
+        mockMvc
+            .perform(
+                get("/API/chats/${ticket.id!!}/messages/${expectedMessage.id}/attachments/${Int.MAX_VALUE}").contentType(
+                    "application/json"
+                )
+            )
+            .andExpectAll(
+                status().isNotFound,
+                content().string("")
+            )
+    }
+
+    @Test
+    @Transactional
+    fun getAttachmentTicketIdInvalid() {
+        val ticket = testTickets[0]
+        val ticketExpert = testExperts[0]
+        TestTicketUtils.startTicket(ticketRepository, ticket, ticketExpert, TicketPriority.LOW)
+        val messages = listOf(Message(UserType.CUSTOMER, "Message2", ticket, null))
+        messages[0].apply {
+            attachments = setOf(
+                Attachment(
+                    "Filename.png",
+                    byteArrayOf(0x00, 0x01, 0x02),
+                    AttachmentType.PNG,
+                    this
+                )
+            )
+        }
+        TestChatUtils.addMessages(messageRepository, messages, ticket, ticketExpert)
+        val expectedMessage = messages[0]
+        val expectedAttachment = expectedMessage.attachments.toList()[0]
+        val invalidIds = listOf("invalid", -1, 0)
+
+        invalidIds.forEach {
+            mockMvc
+                .perform(
+                    get("/API/chats/${it}/messages/${expectedMessage.id}/attachments/${expectedAttachment.id}").contentType(
+                        "application/json"
+                    )
+                )
+                .andExpectAll(
+                    status().isUnprocessableEntity,
+                    content().contentType(MediaType.APPLICATION_JSON),
+                    jsonPath("$.error").isString
+                )
+        }
+    }
+
+    @Test
+    @Transactional
+    fun getAttachmentMessageIdInvalid() {
+        val ticket = testTickets[0]
+        val ticketExpert = testExperts[0]
+        TestTicketUtils.startTicket(ticketRepository, ticket, ticketExpert, TicketPriority.LOW)
+        val messages = listOf(Message(UserType.CUSTOMER, "Message2", ticket, null))
+        messages[0].apply {
+            attachments = setOf(
+                Attachment(
+                    "Filename.png",
+                    byteArrayOf(0x00, 0x01, 0x02),
+                    AttachmentType.PNG,
+                    this
+                )
+            )
+        }
+        TestChatUtils.addMessages(messageRepository, messages, ticket, ticketExpert)
+        val expectedMessage = messages[0]
+        val expectedAttachment = expectedMessage.attachments.toList()[0]
+        val invalidIds = listOf("invalid", -1, 0)
+
+        invalidIds.forEach {
+            mockMvc
+                .perform(
+                    get("/API/chats/${ticket.id!!}/messages/${it}/attachments/${expectedAttachment.id}").contentType(
+                        "application/json"
+                    )
+                )
+                .andExpectAll(
+                    status().isUnprocessableEntity,
+                    content().contentType(MediaType.APPLICATION_JSON),
+                    jsonPath("$.error").isString
+                )
+        }
+    }
+
+    @Test
+    @Transactional
+    fun getAttachmentAttachmentIdInvalid() {
+        val ticket = testTickets[0]
+        val ticketExpert = testExperts[0]
+        TestTicketUtils.startTicket(ticketRepository, ticket, ticketExpert, TicketPriority.LOW)
+        val messages = listOf(Message(UserType.CUSTOMER, "Message2", ticket, null))
+        messages[0].apply {
+            attachments = setOf(
+                Attachment(
+                    "Filename.png",
+                    byteArrayOf(0x00, 0x01, 0x02),
+                    AttachmentType.PNG,
+                    this
+                )
+            )
+        }
+        TestChatUtils.addMessages(messageRepository, messages, ticket, ticketExpert)
+        val expectedMessage = messages[0]
+        val invalidIds = listOf("invalid", -1, 0)
+
+        invalidIds.forEach {
+            mockMvc
+                .perform(
+                    get("/API/chats/${ticket.id!!}/messages/${expectedMessage.id}/attachments/${it}").contentType(
+                        "application/json"
+                    )
+                )
+                .andExpectAll(
+                    status().isUnprocessableEntity,
+                    content().contentType(MediaType.APPLICATION_JSON),
+                    jsonPath("$.error").isString
+                )
+        }
+    }
 }
