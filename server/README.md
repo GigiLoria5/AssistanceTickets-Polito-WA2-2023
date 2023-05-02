@@ -538,7 +538,8 @@
     - Response: `200 OK` (success)
     - Error responses: `404 Not Found` (ticketId not found), `422 Unprocessable Entity` (validation of
       ticketId) or `500 Internal Server Error` (generic error)
-    - Response body: An array of objects, for each containing messageId, sender, expertId (optional), content,
+    - Response body: An array of objects, ordered chronologically, for each containing messageId, sender, expertId (
+      optional), content,
       attachments (array of objects, for each containing attachmentId, name and type) and time. An error message in case
       of error
       ```
@@ -575,17 +576,11 @@
 
     - Description: Allows to send a message and optionally some attachments
     - Headers: {"Content-Type" : "multipart/form-data"}
-    - Request body: a sender field specifying who, between the CUSTOMER and the EXPERT, is sending the message, and the
-      message's content to be sent
-
-      ```
-      {
-        "sender": "EXPERT",
-        "content" "Hi there, I'm sorry to hear that the solution didn't work for you. Let's try some additional troubleshooting steps.
-                   Can you please confirm if the headphones are visible in the list of available Bluetooth devices on your laptop?"
-      }
-      ```
-
+    - Request Parameters:
+        - sender(required) - the sender's user type. Allowed values:CUSTOMER,EXPERT
+        - content(required) - the content of the message.
+    - Request Parts:
+        - attachments(optional) - the files to be attached to the message.
     - Response: `201 Created` (success)
     - Error responses: `404 Not Found` (ticketId not found), `422 Unprocessable Entity` (validation of request
       body or ticketId failed or ticket is not in progress/resolve) or `500 Internal Server Error` (generic error)

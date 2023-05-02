@@ -8,6 +8,7 @@ import it.polito.wa2.g29.server.service.ChatService
 import it.polito.wa2.g29.server.utils.MediaTypeUtil
 import jakarta.validation.Valid
 import jakarta.validation.constraints.Min
+import jakarta.validation.constraints.NotBlank
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -29,7 +30,7 @@ class ChatController(private val chatService: ChatService) {
     fun addMessageWithAttachments(
         @PathVariable @Min(1) @Valid ticketId: Int,
         @RequestParam("sender") sender: UserType,
-        @RequestParam("content") content: String,
+        @RequestParam("content") @NotBlank content: String,
         @RequestPart("attachments") attachments: List<MultipartFile>?
     ): NewMessageIdDTO {
         val newMessage = NewMessageDTO(sender, content, attachments)

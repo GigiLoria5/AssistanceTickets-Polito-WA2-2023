@@ -17,4 +17,19 @@ data class FileAttachmentDTO(
     val name: String,
     val type: AttachmentType,
     val file: ByteArray
-)
+) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as FileAttachmentDTO
+
+        if (!file.contentEquals(other.file)) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return file.contentHashCode()
+    }
+}

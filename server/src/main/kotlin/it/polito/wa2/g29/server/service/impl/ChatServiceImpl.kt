@@ -25,7 +25,7 @@ class ChatServiceImpl(
 
     override fun addMessageWithAttachments(ticketId: Int, newMessage: NewMessageDTO): NewMessageIdDTO {
         if (newMessage.sender == UserType.MANAGER)
-            throw UserTypeNotValidException()
+            throw UserTypeNotValidException("Impossible to send message as a MANAGER")
 
         val ticket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
         if (ticket.status !in setOf(TicketStatus.RESOLVED, TicketStatus.IN_PROGRESS))

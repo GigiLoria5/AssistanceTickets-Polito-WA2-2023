@@ -42,7 +42,7 @@ class ApplicationExceptionHandler {
      */
     @ExceptionHandler(
         value = [ConstraintViolationException::class, MethodArgumentNotValidException::class, HttpMessageNotReadableException::class,
-            MethodArgumentTypeMismatchException::class, MissingServletRequestParameterException::class, UserTypeNotValidException::class]
+            MethodArgumentTypeMismatchException::class, MissingServletRequestParameterException::class]
     )
     fun handleValidationFailedException(exception: Exception): ResponseEntity<ErrorMessage> {
         val errorMessage = ErrorMessage("validation of request failed")
@@ -50,7 +50,7 @@ class ApplicationExceptionHandler {
     }
 
     // 422 - Error message
-    @ExceptionHandler(value = [NotValidStatusChangeException::class, ChatIsInactiveException::class])
+    @ExceptionHandler(value = [NotValidStatusChangeException::class, ChatIsInactiveException::class, UserTypeNotValidException::class])
     fun handleValidationFailedExceptionWithErrorMessage(exception: Exception): ResponseEntity<ErrorMessage> {
         val errorMessage = ErrorMessage(exception.message.orEmpty())
         return ResponseEntity(errorMessage, HttpStatus.UNPROCESSABLE_ENTITY)
