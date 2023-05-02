@@ -26,28 +26,28 @@ class ChatServiceImpl(
     override fun addMessageWithAttachments(ticketId: Int, newMessage: NewMessageDTO): NewMessageIdDTO {
         if (newMessage.sender == UserType.MANAGER)
             throw UserTypeNotValidException()
+
         val ticket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
         if (ticket.status !in setOf(TicketStatus.RESOLVED, TicketStatus.IN_PROGRESS))
             throw ChatIsInactiveException("impossible to send the message as the chat is inactive")
-        else {
-            val message = Message(
-                sender = newMessage.sender,
-                content = newMessage.content,
-                ticket = ticket,
-                expert = if (newMessage.sender === UserType.EXPERT) ticket.expert else null
-            )
-            message.attachments = newMessage.attachments?.map { attachment ->
-                Attachment(
-                    name = attachment.originalFilename ?: "no_name",
-                    file = attachment.bytes,
-                    type = AttachmentType.fromMimeType(attachment.contentType ?: ""),
-                    message = message
-                )
-            }?.toSet() ?: emptySet()
 
-            messageRepository.save(message)
-            return NewMessageIdDTO(message.id!!)
-        }
+        val message = Message(
+            sender = newMessage.sender,
+            content = newMessage.content,
+            ticket = ticket,
+            expert = if (newMessage.sender === UserType.EXPERT) ticket.expert else null
+        )
+        message.attachments = newMessage.attachments?.map { attachment ->
+            Attachment(
+                name = attachment.originalFilename ?: "no_name",
+                file = attachment.bytes,
+                type = AttachmentType.fromMimeType(attachment.contentType ?: ""),
+                message = message
+            )
+        }?.toSet() ?: emptySet()
+
+        messageRepository.save(message)
+        return NewMessageIdDTO(message.id!!)
     }
 
     override fun getAttachments(ticketId: Int, messageId: Int, attachmentId: Int): FileAttachmentDTO {

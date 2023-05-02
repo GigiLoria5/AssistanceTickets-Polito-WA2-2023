@@ -1,5 +1,8 @@
 package it.polito.wa2.g29.server.utils
 
+import it.polito.wa2.g29.server.enums.TicketPriority
+import it.polito.wa2.g29.server.enums.TicketStatus
+import it.polito.wa2.g29.server.model.Expert
 import it.polito.wa2.g29.server.model.Product
 import it.polito.wa2.g29.server.model.Profile
 import it.polito.wa2.g29.server.model.Ticket
@@ -33,4 +36,13 @@ object TestTicketUtils {
         ticketRepository.saveAll(newTickets)
         return newTickets
     }
+
+    fun startTicket(ticketRepository: TicketRepository, ticket: Ticket, expert: Expert, priority: TicketPriority) {
+        ticket.apply {
+            status = TicketStatus.IN_PROGRESS
+            priorityLevel = priority
+        }
+        TestExpertUtils.addTicket(ticketRepository, expert, ticket)
+    }
+
 }

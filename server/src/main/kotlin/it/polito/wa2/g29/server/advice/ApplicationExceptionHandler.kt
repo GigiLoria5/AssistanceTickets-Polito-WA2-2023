@@ -40,7 +40,7 @@ class ApplicationExceptionHandler {
      */
     @ExceptionHandler(value = [ConstraintViolationException::class, MethodArgumentNotValidException::class, HttpMessageNotReadableException::class, MethodArgumentTypeMismatchException::class, UserTypeNotValidException::class])
     fun handleValidationFailedException(exception: Exception): ResponseEntity<ErrorMessage> {
-        val errorMessage = ErrorMessage(exception.message.orEmpty())
+        val errorMessage = ErrorMessage("validation of request failed")
         return ResponseEntity(errorMessage, HttpStatus.UNPROCESSABLE_ENTITY)
     }
 
@@ -54,7 +54,7 @@ class ApplicationExceptionHandler {
     // 500 - Generic Error
     @ExceptionHandler(Exception::class)
     fun handleGenericException(exception: Exception): ResponseEntity<ErrorMessage> {
-        val errorMessage = ErrorMessage(exception.message.orEmpty())
+        val errorMessage = ErrorMessage("an error occur, please retry")
         return ResponseEntity(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR)
     }
 }
