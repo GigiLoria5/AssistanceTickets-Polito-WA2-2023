@@ -31,6 +31,16 @@ class Expert(
     @OneToMany(mappedBy = "currentExpert")
     var ticketChanges = mutableSetOf<TicketChange>()
 
+    fun addTicket(ticket: Ticket) {
+        ticket.expert = this
+        tickets.add(ticket)
+    }
+
+    fun addMessage(msg: Message) {
+        msg.expert = this
+        messages.add(msg)
+    }
+
     @PreRemove
     private fun preRemove() {
         tickets.forEach { it.expert = null }

@@ -7,13 +7,11 @@ import it.polito.wa2.g29.server.enums.UserType
 import it.polito.wa2.g29.server.exception.*
 import it.polito.wa2.g29.server.model.Attachment
 import it.polito.wa2.g29.server.model.Message
-import it.polito.wa2.g29.server.repository.AttachmentsRepository
 import it.polito.wa2.g29.server.repository.MessageRepository
 import it.polito.wa2.g29.server.repository.TicketRepository
 import it.polito.wa2.g29.server.service.ChatService
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
-import org.springframework.web.bind.MethodArgumentNotValidException
 
 @Service
 class ChatServiceImpl(

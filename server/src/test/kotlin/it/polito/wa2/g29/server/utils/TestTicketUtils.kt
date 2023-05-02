@@ -10,6 +10,11 @@ object TestTicketUtils {
     lateinit var products: List<Product>
     lateinit var profiles: List<Profile>
 
+    /**
+     * Inserts a list of new tickets into the provided [ticketRepository] and returns an array of the newly added tickets.
+     * @param ticketRepository the repository where the tickets should be saved
+     * @return an array of the newly added tickets, with a guaranteed size of 2
+     */
     fun insertTickets(ticketRepository: TicketRepository): List<Ticket> {
         val newTickets = listOf(
             Ticket(

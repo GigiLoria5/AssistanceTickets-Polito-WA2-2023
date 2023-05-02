@@ -108,7 +108,7 @@ class ExpertServiceIntegrationTest : AbstractTestcontainersTest() {
     @Test
     fun getExpertByIdNotFound() {
         assertThrows<ExpertNotFoundException> {
-            expertService.getExpertById(99999999)
+            expertService.getExpertById(Int.MAX_VALUE)
         }
     }
 

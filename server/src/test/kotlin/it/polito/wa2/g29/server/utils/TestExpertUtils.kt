@@ -27,8 +27,7 @@ object TestExpertUtils {
     }
 
     fun addTicket(ticketRepository: TicketRepository, expert: Expert, ticket: Ticket) {
-        expert.tickets.add(ticket)
-        ticket.expert = expert
+        expert.addTicket(ticket)
         ticketRepository.save(ticket)
     }
 

@@ -69,7 +69,7 @@ class ProductServiceIntegrationTest : AbstractTestcontainersTest() {
     @Test
     fun getProductByIdNotFound() {
         assertThrows<ProductNotFoundException> {
-            productService.getProductById(99999999)
+            productService.getProductById(Int.MAX_VALUE)
         }
     }
 }

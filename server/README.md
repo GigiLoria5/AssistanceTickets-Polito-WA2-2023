@@ -571,20 +571,6 @@
       ]
       ```
 
-- GET `/API/chats/{ticketId}/messages/{messageId}/attachments/{attachmentId}`
-
-    - Description: Allows to download an attachment related to a message
-    - Request body: _None_
-    - Response: `200 OK` (success)
-    - Error responses: `404 Not Found` (ticketId, messageId or attachmentId not found), `422 Unprocessable Entity` (
-      validation of ticketId, messageId or attachmentId failed) or `500 Internal Server Error` (generic error)
-    - Response body: The binary contents of the attachment file. An error message in case of error
-      ```
-      {
-        "error": "validation of request failed"
-      }
-      ```
-
 - POST `/API/chats/{ticketId}/messages`
 
     - Description: Allows to send a message and optionally some attachments
@@ -613,5 +599,19 @@
       ```
       {
         "error": "impossible to send the message as the chat is inactive"
+      }
+      ```
+
+- GET `/API/chats/{ticketId}/messages/{messageId}/attachments/{attachmentId}`
+
+    - Description: Allows to download an attachment related to a message
+    - Request body: _None_
+    - Response: `200 OK` (success)
+    - Error responses: `404 Not Found` (ticketId, messageId or attachmentId not found), `422 Unprocessable Entity` (
+      validation of ticketId, messageId or attachmentId failed) or `500 Internal Server Error` (generic error)
+    - Response body: The binary contents of the attachment file. An error message in case of error
+      ```
+      {
+        "error": "validation of request failed"
       }
       ```

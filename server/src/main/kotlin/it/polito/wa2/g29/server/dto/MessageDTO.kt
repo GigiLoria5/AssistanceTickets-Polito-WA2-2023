@@ -1,6 +1,5 @@
 package it.polito.wa2.g29.server.dto
 
-import it.polito.wa2.g29.server.model.Attachment
 import it.polito.wa2.g29.server.model.Message
 
 data class MessageDTO(
@@ -8,11 +7,11 @@ data class MessageDTO(
     val sender: String,
     val expertId: Int?,
     val content: String,
-    val time: Long,
-    val attachments: List<AttachmentDTO>
+    val attachments: List<AttachmentDTO>,
+    val time: Long
 )
 
 fun Message.toDTO(): MessageDTO {
     val attachmentDTOs = attachments.map { it.toDTO() }
-    return MessageDTO(id, sender.toString(), expert?.id, content, time, attachmentDTOs)
+    return MessageDTO(id, sender.toString(), expert?.id, content, attachmentDTOs, time)
 }
