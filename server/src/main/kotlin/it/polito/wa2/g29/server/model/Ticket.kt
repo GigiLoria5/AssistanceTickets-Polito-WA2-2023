@@ -54,11 +54,16 @@ class Ticket(
     @Column(updatable = false, nullable = false, name = "created_at")
     var createdAt: Long = 0
 
+    @CreatedDate
     @Column(nullable = false)
     var lastModifiedAt: Long = createdAt
 
     @PreUpdate
     private fun preUpdate() {
+        if (ticketChanges.size == 0) {
+            lastModifiedAt = System.currentTimeMillis()
+            return
+        }
         lastModifiedAt = ticketChanges.maxOf { it.time }
     }
 
