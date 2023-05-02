@@ -12,7 +12,7 @@ class Expert(
     var name: String,
     @Column(nullable = false)
     var surname: String,
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     var email: String,
     @Column(nullable = false)
     var country: String,
@@ -30,11 +30,6 @@ class Expert(
 
     @OneToMany(mappedBy = "currentExpert")
     var ticketChanges = mutableSetOf<TicketChange>()
-
-    fun addMessage(m: Message) {
-        m.expert = this
-        messages.add(m)
-    }
 
     @PreRemove
     private fun preRemove() {

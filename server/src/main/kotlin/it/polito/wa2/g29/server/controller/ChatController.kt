@@ -8,7 +8,6 @@ import it.polito.wa2.g29.server.service.ChatService
 import it.polito.wa2.g29.server.utils.MediaTypeUtil
 import jakarta.validation.Valid
 import jakarta.validation.constraints.Min
-import jakarta.validation.constraints.NotEmpty
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity

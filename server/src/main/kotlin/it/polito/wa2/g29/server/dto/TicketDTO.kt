@@ -1,8 +1,9 @@
 package it.polito.wa2.g29.server.dto
 
-import it.polito.wa2.g29.server.model.*
+import it.polito.wa2.g29.server.model.Ticket
 
 
+// TODO: MOVE THIS FILE INTO ticketDTOs once in dev
 data class TicketDTO(
     val ticketId: Int?,
     val title: String,
