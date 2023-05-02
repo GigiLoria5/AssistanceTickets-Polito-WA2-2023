@@ -7,5 +7,5 @@ interface ChatService {
 
     fun addMessageWithAttachments(ticketId: Int, newMessage: NewMessageDTO): NewMessageIdDTO
 
-    fun getAttachments(ticketId: Int, messageId: Int, attachmentId: Int): FileAttachmentDTO
+    fun getAttachment(ticketId: Int, messageId: Int, attachmentId: Int): FileAttachmentDTO
 }

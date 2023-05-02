@@ -42,7 +42,7 @@ class ChatController(private val chatService: ChatService) {
         @PathVariable @Min(1) @Valid messageId: Int,
         @PathVariable @Min(1) @Valid attachmentId: Int
     ): ResponseEntity<ByteArray> {
-        val attachment = chatService.getAttachments(ticketId, messageId, attachmentId)
+        val attachment = chatService.getAttachment(ticketId, messageId, attachmentId)
         val mediaType = MediaTypeUtil.attachmentTypeToMediaType(attachment.type)
         return ResponseEntity
             .ok()
