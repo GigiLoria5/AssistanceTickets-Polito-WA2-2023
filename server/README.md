@@ -576,12 +576,12 @@
     - Description: Allows to send a message and optionally some attachments
     - Headers: {"Content-Type" : "multipart/form-data"}
     - Request body: a sender field specifying who, between the CUSTOMER and the EXPERT, is sending the message, and the
-      message to be sent
+      message's content to be sent
 
       ```
       {
         "sender": "EXPERT",
-        "message" "Hi there, I'm sorry to hear that the solution didn't work for you. Let's try some additional troubleshooting steps.
+        "content" "Hi there, I'm sorry to hear that the solution didn't work for you. Let's try some additional troubleshooting steps.
                    Can you please confirm if the headphones are visible in the list of available Bluetooth devices on your laptop?"
       }
       ```

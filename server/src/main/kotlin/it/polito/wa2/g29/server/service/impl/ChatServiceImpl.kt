@@ -50,7 +50,7 @@ class ChatServiceImpl(
         return NewMessageIdDTO(message.id!!)
     }
 
-    override fun getAttachments(ticketId: Int, messageId: Int, attachmentId: Int): FileAttachmentDTO {
+    override fun getAttachment(ticketId: Int, messageId: Int, attachmentId: Int): FileAttachmentDTO {
         val ticket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
         val message = ticket.messages.find { it.id == messageId } ?: throw MessageNotFoundException()
         val attachment = message.attachments.find { it.id == attachmentId } ?: throw AttachmentNotFoundException()
