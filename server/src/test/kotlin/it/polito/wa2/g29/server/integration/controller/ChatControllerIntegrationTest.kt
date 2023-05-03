@@ -172,7 +172,7 @@ class ChatControllerIntegrationTest : AbstractTestcontainersTest() {
                 jsonPath<List<MessageDTO>>("$", hasSize(messages.size)),
                 jsonPath("$[0].messageId").value(expectedMessage.id),
                 jsonPath("$[0].sender").value(expectedMessage.sender.toString()),
-                jsonPath("$[0].expertId").doesNotExist(),
+                jsonPath("$[0].expertId").value(ticketExpert.id),
                 jsonPath("$[0].content").value(expectedMessage.content),
                 jsonPath("$[0].attachments").isArray,
                 jsonPath("$[0].attachments[0].attachmentId").value(expectedAttachment.id),

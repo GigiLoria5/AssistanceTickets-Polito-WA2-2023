@@ -38,11 +38,11 @@ object TestChatUtils {
     fun getMessages(ticket: Ticket, expert: Expert): List<Message> {
         return listOf(
             Message(UserType.EXPERT, "Message1", ticket, expert),
-            Message(UserType.CUSTOMER, "Message2", ticket, null),
+            Message(UserType.CUSTOMER, "Message2", ticket, expert),
             Message(UserType.EXPERT, "Message3", ticket, expert),
-            Message(UserType.CUSTOMER, "Message4", ticket, null),
+            Message(UserType.CUSTOMER, "Message4", ticket, expert),
             Message(UserType.EXPERT, "Message5", ticket, expert),
-            Message(UserType.CUSTOMER, "Message6", ticket, null)
+            Message(UserType.CUSTOMER, "Message6", ticket, expert)
         )
     }
 
