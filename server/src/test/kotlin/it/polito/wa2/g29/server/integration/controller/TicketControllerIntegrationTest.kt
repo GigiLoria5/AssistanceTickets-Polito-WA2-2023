@@ -1,9 +1,11 @@
 package it.polito.wa2.g29.server.integration.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import it.polito.wa2.g29.server.dto.ticketDTOs.TicketStatusChangeDTO
 import it.polito.wa2.g29.server.dto.toDTO
 import it.polito.wa2.g29.server.enums.TicketPriority
 import it.polito.wa2.g29.server.enums.TicketStatus
+import it.polito.wa2.g29.server.enums.UserType
 import it.polito.wa2.g29.server.integration.AbstractTestcontainersTest
 import it.polito.wa2.g29.server.model.Ticket
 import it.polito.wa2.g29.server.repository.ExpertRepository
@@ -117,7 +119,6 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
                 jsonPath("$[*].createdAt").exists(),
                 jsonPath("$[*].lastModifiedAt").exists(),
                 jsonPath("$[*].status").value(List(2){"OPEN"})
-            // TODO: generalize for all sizes and all status
             )
     }
 
@@ -211,8 +212,6 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
             .andExpect(status().isCreated)
             .andExpect { jsonPath("$.ticketId").exists() }
     }
-
-    // TODO: all right cases
 
     @Test
     fun createTicketCustomerNotFound() {
@@ -411,4 +410,419 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
             .andExpect(status().isUnprocessableEntity)
     }
 
+    /////////////////////////////////////////////////////////////////////
+    ////// PUT /API/tickets/{ticketId}/stop
+    /////////////////////////////////////////////////////////////////////
+
+    @Test
+    fun stopTicketById() {
+
+        val expert = TestTicketUtils.experts[0]
+
+        val ticket = Ticket("title1", "description1", TestTicketUtils.products[0], TestTicketUtils.profiles[1]).apply {
+            status = TicketStatus.IN_PROGRESS
+            priorityLevel = TicketPriority.LOW
+        }
+
+        TestExpertUtils.addTicket(ticketRepository, expert, ticket)
+
+
+        val ticketStatusChangeDTO = TicketStatusChangeDTO(
+            changedBy = UserType.EXPERT,
+            description = null
+        )
+
+        val mapper = ObjectMapper()
+        val jsonBody = mapper.writeValueAsString(ticketStatusChangeDTO)
+
+        mockMvc
+            .perform(
+                put("/API/tickets/${ticket.toDTO().ticketId}/stop")
+                    .content(jsonBody)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isNoContent)
+    }
+
+    @Test
+    fun stopTicketByIdNotFound() {
+
+        val ticketStatusChangeDTO = TicketStatusChangeDTO(
+            changedBy = UserType.EXPERT,
+            description = null
+        )
+
+        val mapper = ObjectMapper()
+        val jsonBody = mapper.writeValueAsString(ticketStatusChangeDTO)
+
+        mockMvc
+            .perform(
+                put("/API/tickets/${Int.MAX_VALUE}/stop")
+                    .content(jsonBody)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isNotFound)
+    }
+
+    @Test
+    fun stopTicketByIdNotInProgress() {
+
+        val expert = TestTicketUtils.experts[0]
+
+        val ticket = Ticket("title1", "description1", TestTicketUtils.products[0], TestTicketUtils.profiles[1]).apply {
+            status = TicketStatus.CLOSED
+        }
+
+        TestExpertUtils.addTicket(ticketRepository, expert, ticket)
+
+
+        val ticketStatusChangeDTO = TicketStatusChangeDTO(
+            changedBy = UserType.EXPERT,
+            description = null
+        )
+
+        val mapper = ObjectMapper()
+        val jsonBody = mapper.writeValueAsString(ticketStatusChangeDTO)
+
+        mockMvc
+            .perform(
+                put("/API/tickets/${ticket.toDTO().ticketId}/stop")
+                    .content(jsonBody)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isUnprocessableEntity)
+    }
+
+    /////////////////////////////////////////////////////////////////////
+    ////// PUT /API/tickets/{ticketId}/resolve
+    /////////////////////////////////////////////////////////////////////
+
+    @Test
+    fun resolveTicketById() {
+
+        val expert = TestTicketUtils.experts[0]
+
+        val ticket = Ticket("title1", "description1", TestTicketUtils.products[0], TestTicketUtils.profiles[1]).apply {
+            status = TicketStatus.IN_PROGRESS
+        }
+
+        TestExpertUtils.addTicket(ticketRepository, expert, ticket)
+
+
+        val ticketStatusChangeDTO = TicketStatusChangeDTO(
+            changedBy = UserType.EXPERT,
+            description = null
+        )
+
+        val mapper = ObjectMapper()
+        val jsonBody = mapper.writeValueAsString(ticketStatusChangeDTO)
+
+        mockMvc
+            .perform(
+                put("/API/tickets/${ticket.toDTO().ticketId}/resolve")
+                    .content(jsonBody)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isNoContent)
+    }
+
+    @Test
+    fun resolveTicketByIdNotFound() {
+
+        val ticketStatusChangeDTO = TicketStatusChangeDTO(
+            changedBy = UserType.EXPERT,
+            description = null
+        )
+
+        val mapper = ObjectMapper()
+        val jsonBody = mapper.writeValueAsString(ticketStatusChangeDTO)
+
+        mockMvc
+            .perform(
+                put("/API/tickets/${Int.MAX_VALUE}/resolve")
+                    .content(jsonBody)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isNotFound)
+    }
+
+    @Test
+    fun resolveTicketByIdAlreadyResolved() {
+
+        val expert = TestTicketUtils.experts[0]
+
+        val ticket = Ticket("title1", "description1", TestTicketUtils.products[0], TestTicketUtils.profiles[1]).apply {
+            status = TicketStatus.RESOLVED
+        }
+
+        TestExpertUtils.addTicket(ticketRepository, expert, ticket)
+
+
+        val ticketStatusChangeDTO = TicketStatusChangeDTO(
+            changedBy = UserType.EXPERT,
+            description = null
+        )
+
+        val mapper = ObjectMapper()
+        val jsonBody = mapper.writeValueAsString(ticketStatusChangeDTO)
+
+        mockMvc
+            .perform(
+                put("/API/tickets/${ticket.toDTO().ticketId}/resolve")
+                    .content(jsonBody)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isUnprocessableEntity)
+    }
+
+    @Test
+    fun resolveTicketByIdClosed() {
+
+        val expert = TestTicketUtils.experts[0]
+
+        val ticket = Ticket("title1", "description1", TestTicketUtils.products[0], TestTicketUtils.profiles[1]).apply {
+            status = TicketStatus.CLOSED
+        }
+
+        TestExpertUtils.addTicket(ticketRepository, expert, ticket)
+
+
+        val ticketStatusChangeDTO = TicketStatusChangeDTO(
+            changedBy = UserType.EXPERT,
+            description = null
+        )
+
+        val mapper = ObjectMapper()
+        val jsonBody = mapper.writeValueAsString(ticketStatusChangeDTO)
+
+        mockMvc
+            .perform(
+                put("/API/tickets/${ticket.toDTO().ticketId}/resolve")
+                    .content(jsonBody)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isUnprocessableEntity)
+    }
+
+    /////////////////////////////////////////////////////////////////////
+    ////// PUT /API/tickets/{ticketId}/reopen
+    /////////////////////////////////////////////////////////////////////
+
+    @Test
+    fun reopenClosedTicketById() {
+
+        val expert = TestTicketUtils.experts[0]
+
+        val ticket = Ticket("title1", "description1", TestTicketUtils.products[0], TestTicketUtils.profiles[1]).apply {
+            status = TicketStatus.CLOSED
+        }
+
+        TestExpertUtils.addTicket(ticketRepository, expert, ticket)
+
+
+        val ticketStatusChangeDTO = TicketStatusChangeDTO(
+            changedBy = UserType.CUSTOMER,
+            description = "description"
+        )
+
+        val mapper = ObjectMapper()
+        val jsonBody = mapper.writeValueAsString(ticketStatusChangeDTO)
+
+        mockMvc
+            .perform(
+                put("/API/tickets/${ticket.toDTO().ticketId}/reopen")
+                    .content(jsonBody)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isNoContent)
+    }
+
+    @Test
+    fun reopenResolvedTicketById() {
+
+        val expert = TestTicketUtils.experts[0]
+
+        val ticket = Ticket("title1", "description1", TestTicketUtils.products[0], TestTicketUtils.profiles[1]).apply {
+            status = TicketStatus.RESOLVED
+        }
+
+        TestExpertUtils.addTicket(ticketRepository, expert, ticket)
+
+
+        val ticketStatusChangeDTO = TicketStatusChangeDTO(
+            changedBy = UserType.CUSTOMER,
+            description = "description"
+        )
+
+        val mapper = ObjectMapper()
+        val jsonBody = mapper.writeValueAsString(ticketStatusChangeDTO)
+
+        mockMvc
+            .perform(
+                put("/API/tickets/${ticket.toDTO().ticketId}/reopen")
+                    .content(jsonBody)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isNoContent)
+    }
+
+    @Test
+    fun reopenTicketByIdNotFound() {
+
+        val ticketStatusChangeDTO = TicketStatusChangeDTO(
+            changedBy = UserType.CUSTOMER,
+            description = "description"
+        )
+
+        val mapper = ObjectMapper()
+        val jsonBody = mapper.writeValueAsString(ticketStatusChangeDTO)
+
+        mockMvc
+            .perform(
+                put("/API/tickets/${Int.MAX_VALUE}/reopen")
+                    .content(jsonBody)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isNotFound)
+    }
+
+    @Test
+    fun reopenTicketByIdNotClosedOrResolved() {
+
+        val expert = TestTicketUtils.experts[0]
+
+        val ticket = Ticket("title1", "description1", TestTicketUtils.products[0], TestTicketUtils.profiles[1]).apply {
+            status = TicketStatus.OPEN
+        }
+
+        TestExpertUtils.addTicket(ticketRepository, expert, ticket)
+
+
+        val ticketStatusChangeDTO = TicketStatusChangeDTO(
+            changedBy = UserType.CUSTOMER,
+            description = "description"
+        )
+
+        val mapper = ObjectMapper()
+        val jsonBody = mapper.writeValueAsString(ticketStatusChangeDTO)
+
+        mockMvc
+            .perform(
+                put("/API/tickets/${ticket.toDTO().ticketId}/reopen")
+                    .content(jsonBody)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isUnprocessableEntity)
+    }
+
+    @Test
+    fun reopenTicketByIdWithoutDescription() {
+
+        val expert = TestTicketUtils.experts[0]
+
+        val ticket = Ticket("title1", "description1", TestTicketUtils.products[0], TestTicketUtils.profiles[1]).apply {
+            status = TicketStatus.CLOSED
+        }
+
+        TestExpertUtils.addTicket(ticketRepository, expert, ticket)
+
+
+        val ticketStatusChangeDTO = TicketStatusChangeDTO(
+            changedBy = UserType.CUSTOMER,
+            description = null
+        )
+
+        val mapper = ObjectMapper()
+        val jsonBody = mapper.writeValueAsString(ticketStatusChangeDTO)
+
+        mockMvc
+            .perform(
+                put("/API/tickets/${ticket.toDTO().ticketId}/reopen")
+                    .content(jsonBody)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isUnprocessableEntity)
+    }
+
+    /////////////////////////////////////////////////////////////////////
+    ////// PUT /API/tickets/{ticketId}/close
+    /////////////////////////////////////////////////////////////////////
+
+    @Test
+    fun closeTicketById() {
+
+        val expert = TestTicketUtils.experts[0]
+
+        val ticket = Ticket("title1", "description1", TestTicketUtils.products[0], TestTicketUtils.profiles[1]).apply {
+            status = TicketStatus.IN_PROGRESS
+        }
+
+        TestExpertUtils.addTicket(ticketRepository, expert, ticket)
+
+
+        val ticketStatusChangeDTO = TicketStatusChangeDTO(
+            changedBy = UserType.CUSTOMER,
+            description = null
+        )
+
+        val mapper = ObjectMapper()
+        val jsonBody = mapper.writeValueAsString(ticketStatusChangeDTO)
+
+        mockMvc
+            .perform(
+                put("/API/tickets/${ticket.toDTO().ticketId}/close")
+                    .content(jsonBody)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isNoContent)
+    }
+
+    @Test
+    fun closeTicketByIdNotFound() {
+
+        val ticketStatusChangeDTO = TicketStatusChangeDTO(
+            changedBy = UserType.CUSTOMER,
+            description = null
+        )
+
+        val mapper = ObjectMapper()
+        val jsonBody = mapper.writeValueAsString(ticketStatusChangeDTO)
+
+        mockMvc
+            .perform(
+                put("/API/tickets/${Int.MAX_VALUE}/close")
+                    .content(jsonBody)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isNotFound)
+    }
+
+    @Test
+    fun closeTicketByIdAlreadyClosed() {
+
+        val expert = TestTicketUtils.experts[0]
+
+        val ticket = Ticket("title1", "description1", TestTicketUtils.products[0], TestTicketUtils.profiles[1]).apply {
+            status = TicketStatus.CLOSED
+        }
+
+        TestExpertUtils.addTicket(ticketRepository, expert, ticket)
+
+
+        val ticketStatusChangeDTO = TicketStatusChangeDTO(
+            changedBy = UserType.CUSTOMER,
+            description = null
+        )
+
+        val mapper = ObjectMapper()
+        val jsonBody = mapper.writeValueAsString(ticketStatusChangeDTO)
+
+        mockMvc
+            .perform(
+                put("/API/tickets/${ticket.toDTO().ticketId}/close")
+                    .content(jsonBody)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isUnprocessableEntity)
+    }
 }

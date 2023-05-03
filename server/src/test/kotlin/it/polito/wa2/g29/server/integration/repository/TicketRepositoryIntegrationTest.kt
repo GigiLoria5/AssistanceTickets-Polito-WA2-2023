@@ -34,7 +34,6 @@ class TicketRepositoryIntegrationTest: AbstractTestcontainersTest() {
     }
 
     @BeforeEach
-    @Transactional
     fun setup() {
         ticketRepository.deleteAllInBatch()
         testTickets = TestTicketUtils.insertTickets(ticketRepository)

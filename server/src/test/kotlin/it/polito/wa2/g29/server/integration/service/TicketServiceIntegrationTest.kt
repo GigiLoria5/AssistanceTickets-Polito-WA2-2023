@@ -1,9 +1,15 @@
 package it.polito.wa2.g29.server.integration.service
 
 import it.polito.wa2.g29.server.dto.ticketDTOs.NewTicketDTO
+import it.polito.wa2.g29.server.dto.ticketDTOs.TicketStatusChangeDTO
+import it.polito.wa2.g29.server.dto.ticketDTOs.TicketStatusChangeInProgressDTO
 import it.polito.wa2.g29.server.dto.toDTO
+import it.polito.wa2.g29.server.enums.TicketPriority
 import it.polito.wa2.g29.server.enums.TicketStatus
+import it.polito.wa2.g29.server.enums.UserType
 import it.polito.wa2.g29.server.exception.DuplicateTicketException
+import it.polito.wa2.g29.server.exception.ExpertNotFoundException
+import it.polito.wa2.g29.server.exception.NotValidStatusChangeException
 import it.polito.wa2.g29.server.exception.TicketNotFoundException
 import it.polito.wa2.g29.server.integration.AbstractTestcontainersTest
 import it.polito.wa2.g29.server.model.Ticket
@@ -12,6 +18,8 @@ import it.polito.wa2.g29.server.repository.ProductRepository
 import it.polito.wa2.g29.server.repository.ProfileRepository
 import it.polito.wa2.g29.server.repository.TicketRepository
 import it.polito.wa2.g29.server.service.TicketService
+import it.polito.wa2.g29.server.service.TicketStatusChangeService
+import it.polito.wa2.g29.server.utils.TestExpertUtils
 import it.polito.wa2.g29.server.utils.TestProductUtils
 import it.polito.wa2.g29.server.utils.TestProfileUtils
 import it.polito.wa2.g29.server.utils.TestTicketUtils
@@ -26,6 +34,10 @@ class TicketServiceIntegrationTest: AbstractTestcontainersTest() {
     private lateinit var ticketService: TicketService
 
     @Autowired
+    private lateinit var ticketStatusChangeService: TicketStatusChangeService
+
+
+    @Autowired
     private lateinit var ticketRepository: TicketRepository
 
     lateinit var testTickets: List<Ticket>
@@ -34,8 +46,10 @@ class TicketServiceIntegrationTest: AbstractTestcontainersTest() {
     fun prepare(@Autowired profileRepository: ProfileRepository, @Autowired productRepository: ProductRepository, @Autowired expertRepository: ExpertRepository) {
         productRepository.deleteAll()
         profileRepository.deleteAll()
+        expertRepository.deleteAll()
         TestTicketUtils.products = TestProductUtils.insertProducts(productRepository)
         TestTicketUtils.profiles = TestProfileUtils.insertProfiles(profileRepository)
+        TestTicketUtils.experts = TestExpertUtils.insertExperts(expertRepository)
     }
 
     @BeforeEach
@@ -145,6 +159,111 @@ class TicketServiceIntegrationTest: AbstractTestcontainersTest() {
 
         assertThrows<DuplicateTicketException> {
             ticketService.createTicket(duplicateTicketDTO)
+        }
+    }
+
+    /////////////////////////////////////////////////////////////////////
+    ////// ticketStatusChangeInProgress
+    /////////////////////////////////////////////////////////////////////
+
+    @Transactional
+    @Test
+    fun ticketStatusChangeInProgress() {
+        val ticket = testTickets[0]
+        val expectedStatus = TicketStatus.IN_PROGRESS
+
+        val statusChangeData = TicketStatusChangeInProgressDTO(
+            expertId = TestTicketUtils.experts[0].id!!,
+            priorityLevel = TicketPriority.LOW,
+            description = null
+        )
+        ticketStatusChangeService.ticketStatusChangeInProgress(ticket.id!!, statusChangeData)
+
+        val actualNewTicketDTO = ticketService.getTicketById(ticket.id!!)
+
+        assert(actualNewTicketDTO.status == expectedStatus.toString())
+    }
+
+    @Transactional
+    @Test
+    fun ticketStatusChangeInProgressTicketNotFound() {
+
+        val statusChangeData = TicketStatusChangeInProgressDTO(
+            expertId = TestTicketUtils.experts[0].id!!,
+            priorityLevel = TicketPriority.LOW,
+            description = null
+        )
+
+        assertThrows<TicketNotFoundException> {
+            ticketStatusChangeService.ticketStatusChangeInProgress(Int.MAX_VALUE, statusChangeData)
+        }
+    }
+
+    @Transactional
+    @Test
+    fun ticketStatusChangeInProgressExpertNotFound() {
+        val ticket = testTickets[0]
+
+        val statusChangeData = TicketStatusChangeInProgressDTO(
+            expertId = Int.MAX_VALUE,
+            priorityLevel = TicketPriority.LOW,
+            description = null
+        )
+
+        assertThrows<ExpertNotFoundException> {
+            ticketStatusChangeService.ticketStatusChangeInProgress(ticket.id!!, statusChangeData)
+        }
+    }
+
+    /////////////////////////////////////////////////////////////////////
+    ////// ticketStatusChange
+    /////////////////////////////////////////////////////////////////////
+
+    @Transactional
+    @Test
+    fun ticketStatusChange() {
+        val ticket = testTickets[0]
+        val expectedStatus = TicketStatus.RESOLVED
+
+        val statusChangeData = TicketStatusChangeDTO(
+            changedBy = UserType.CUSTOMER,
+            description = null
+        )
+
+        ticketStatusChangeService.ticketStatusChange(ticket.id!!, expectedStatus, statusChangeData )
+
+        val actualNewTicketDTO = ticketService.getTicketById(ticket.id!!)
+
+        assert(actualNewTicketDTO.status == expectedStatus.toString())
+    }
+
+    @Transactional
+    @Test
+    fun ticketStatusChangeNotFound() {
+
+        val statusChangeData = TicketStatusChangeDTO(
+            changedBy = UserType.CUSTOMER,
+            description = null
+        )
+
+        assertThrows<TicketNotFoundException> {
+            ticketStatusChangeService.ticketStatusChange(Int.MAX_VALUE, TicketStatus.RESOLVED, statusChangeData )
+        }
+    }
+
+    @Transactional
+    @Test
+    fun ticketStatusChangeNotAllowed() {
+        val ticket = testTickets[0]
+        val newStatus = TicketStatus.REOPENED
+
+        val statusChangeData = TicketStatusChangeDTO(
+            changedBy = UserType.CUSTOMER,
+            description = null
+        )
+
+        assertThrows<NotValidStatusChangeException> {
+            ticketStatusChangeService.ticketStatusChange(ticket.id!!, newStatus, statusChangeData )
         }
     }
 }
