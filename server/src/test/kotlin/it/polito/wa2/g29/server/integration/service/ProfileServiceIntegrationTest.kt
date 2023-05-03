@@ -4,13 +4,19 @@ import it.polito.wa2.g29.server.dto.toDTO
 import it.polito.wa2.g29.server.exception.DuplicateProfileException
 import it.polito.wa2.g29.server.exception.ProfileNotFoundException
 import it.polito.wa2.g29.server.integration.AbstractTestcontainersTest
+import it.polito.wa2.g29.server.model.Profile
+import it.polito.wa2.g29.server.repository.ProductRepository
 import it.polito.wa2.g29.server.repository.ProfileRepository
+import it.polito.wa2.g29.server.repository.TicketRepository
 import it.polito.wa2.g29.server.service.ProfileService
+import it.polito.wa2.g29.server.utils.TestProductUtils
 import it.polito.wa2.g29.server.utils.TestProfileUtils
+import it.polito.wa2.g29.server.utils.TestTicketUtils
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.transaction.annotation.Transactional
 
 class ProfileServiceIntegrationTest : AbstractTestcontainersTest() {
     @Autowired
@@ -19,10 +25,18 @@ class ProfileServiceIntegrationTest : AbstractTestcontainersTest() {
     @Autowired
     private lateinit var profileRepository: ProfileRepository
 
+    @Autowired
+    private lateinit var ticketRepository: TicketRepository
+
+    @Autowired
+    private lateinit var productRepository: ProductRepository
+
+    lateinit var testProfiles: List<Profile>
+
     @BeforeEach
     fun setup() {
-        profileRepository.deleteAll()
-        TestProfileUtils.insertProfiles(profileRepository)
+        profileRepository.deleteAllInBatch()
+        testProfiles = TestProfileUtils.insertProfiles(profileRepository)
     }
 
     /////////////////////////////////////////////////////////////////////
@@ -30,11 +44,30 @@ class ProfileServiceIntegrationTest : AbstractTestcontainersTest() {
     /////////////////////////////////////////////////////////////////////
 
     @Test
-    fun getProfileByEmail() {
-        val expectedProfileDTO = profileRepository.findAll()[0].toDTO()
+    @Transactional
+    fun getProfileByEmailWithoutTickets() {
+        val expectedProfileDTO = testProfiles[0].toDTO()
 
         val actualProfileDTO = profileService.getProfileByEmail(expectedProfileDTO.email)
 
+        assert(actualProfileDTO.ticketsIds?.isEmpty() ?: false)
+        assert(actualProfileDTO == expectedProfileDTO)
+    }
+
+    @Test
+    @Transactional
+    fun getProfileByEmailWithTickets() {
+        TestTicketUtils.profiles = testProfiles
+        TestTicketUtils.products = TestProductUtils.insertProducts(productRepository)
+        val tickets = TestTicketUtils.insertTickets(ticketRepository)
+        testProfiles[0].tickets.add(tickets.first { it.customer.id == testProfiles[0].id })
+        profileRepository.save(testProfiles[0])
+        val expectedProfileDTO = testProfiles[0].toDTO()
+
+        val actualProfileDTO = profileService.getProfileByEmail(expectedProfileDTO.email)
+
+        assert(actualProfileDTO.ticketsIds?.isNotEmpty() ?: false)
+        assert(actualProfileDTO.ticketsIds?.size == expectedProfileDTO.ticketsIds?.size)
         assert(actualProfileDTO == expectedProfileDTO)
     }
 
@@ -51,7 +84,7 @@ class ProfileServiceIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     fun createProfile() {
-        val newProfileDTO = TestProfileUtils.profiles[0].toDTO().copy(
+        val newProfileDTO = testProfiles[0].toDTO().copy(
             profileId = null,
             email = "new_mail@test.com",
             phoneNumber = "3333333333"
@@ -59,12 +92,12 @@ class ProfileServiceIntegrationTest : AbstractTestcontainersTest() {
 
         profileService.createProfile(newProfileDTO)
 
-        assert(profileRepository.findAll().size == (TestProfileUtils.profiles.size + 1))
+        assert(profileRepository.findAll().size == (testProfiles.size + 1))
     }
 
     @Test
     fun createProfileDuplicateEmail() {
-        val newProfileDTO = TestProfileUtils.profiles[0].toDTO().copy(
+        val newProfileDTO = testProfiles[0].toDTO().copy(
             phoneNumber = "3333333333"
         )
 
@@ -75,7 +108,7 @@ class ProfileServiceIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     fun createProfileDuplicatePhoneNumber() {
-        val newProfileDTO = TestProfileUtils.profiles[0].toDTO().copy(
+        val newProfileDTO = testProfiles[0].toDTO().copy(
             email = "new_mail@test.com"
         )
 
@@ -89,8 +122,9 @@ class ProfileServiceIntegrationTest : AbstractTestcontainersTest() {
     /////////////////////////////////////////////////////////////////////
 
     @Test
+    @Transactional
     fun modifyProfilePartial() {
-        val oldProfileDTO = TestProfileUtils.profiles[0].toDTO()
+        val oldProfileDTO = testProfiles[0].toDTO()
         val newProfileDTO = oldProfileDTO.copy(
             email = "new_mail@test.com",
             phoneNumber = "3333333333"
@@ -98,7 +132,7 @@ class ProfileServiceIntegrationTest : AbstractTestcontainersTest() {
 
         profileService.modifyProfile(oldProfileDTO.email, newProfileDTO)
 
-        assert(profileRepository.findAll().size == TestProfileUtils.profiles.size)
+        assert(profileRepository.findAll().size == testProfiles.size)
         val actualNewProfileDTO = profileService.getProfileByEmail(newProfileDTO.email)
         assert(actualNewProfileDTO.email == newProfileDTO.email)
         assert(actualNewProfileDTO.name == oldProfileDTO.name)
@@ -110,8 +144,9 @@ class ProfileServiceIntegrationTest : AbstractTestcontainersTest() {
     }
 
     @Test
+    @Transactional
     fun modifyProfileComplete() {
-        val oldProfileDTO = TestProfileUtils.profiles[0].toDTO()
+        val oldProfileDTO = testProfiles[0].toDTO()
         val newProfileDTO = oldProfileDTO.copy(
             email = "new_mail@test.com",
             name = "NewName",
@@ -124,7 +159,7 @@ class ProfileServiceIntegrationTest : AbstractTestcontainersTest() {
 
         profileService.modifyProfile(oldProfileDTO.email, newProfileDTO)
 
-        assert(profileRepository.findAll().size == TestProfileUtils.profiles.size)
+        assert(profileRepository.findAll().size == testProfiles.size)
         val actualNewProfileDTO = profileService.getProfileByEmail(newProfileDTO.email)
         assert(actualNewProfileDTO.email == newProfileDTO.email)
         assert(actualNewProfileDTO.name == newProfileDTO.name)
@@ -136,8 +171,9 @@ class ProfileServiceIntegrationTest : AbstractTestcontainersTest() {
     }
 
     @Test
+    @Transactional
     fun modifyProfileCompleteSameEmail() {
-        val oldProfileDTO = TestProfileUtils.profiles[0].toDTO()
+        val oldProfileDTO = testProfiles[0].toDTO()
         val newProfileDTO = oldProfileDTO.copy(
             name = "NewName",
             surname = "NewSurname",
@@ -149,7 +185,7 @@ class ProfileServiceIntegrationTest : AbstractTestcontainersTest() {
 
         profileService.modifyProfile(oldProfileDTO.email, newProfileDTO)
 
-        assert(profileRepository.findAll().size == TestProfileUtils.profiles.size)
+        assert(profileRepository.findAll().size == testProfiles.size)
         val actualNewProfileDTO = profileService.getProfileByEmail(newProfileDTO.email)
         assert(actualNewProfileDTO.email == oldProfileDTO.email)
         assert(actualNewProfileDTO.name == newProfileDTO.name)
@@ -161,8 +197,9 @@ class ProfileServiceIntegrationTest : AbstractTestcontainersTest() {
     }
 
     @Test
+    @Transactional
     fun modifyProfileCompleteSamePhoneNumber() {
-        val oldProfileDTO = TestProfileUtils.profiles[0].toDTO()
+        val oldProfileDTO = testProfiles[0].toDTO()
         val newProfileDTO = oldProfileDTO.copy(
             email = "new_mail@test.com",
             name = "NewName",
@@ -174,7 +211,7 @@ class ProfileServiceIntegrationTest : AbstractTestcontainersTest() {
 
         profileService.modifyProfile(oldProfileDTO.email, newProfileDTO)
 
-        assert(profileRepository.findAll().size == TestProfileUtils.profiles.size)
+        assert(profileRepository.findAll().size == testProfiles.size)
         val actualNewProfileDTO = profileService.getProfileByEmail(newProfileDTO.email)
         assert(actualNewProfileDTO.email == newProfileDTO.email)
         assert(actualNewProfileDTO.name == newProfileDTO.name)
@@ -186,8 +223,9 @@ class ProfileServiceIntegrationTest : AbstractTestcontainersTest() {
     }
 
     @Test
+    @Transactional
     fun modifyProfileCompleteSameEmailAndPhoneNumber() {
-        val oldProfileDTO = TestProfileUtils.profiles[0].toDTO()
+        val oldProfileDTO = testProfiles[0].toDTO()
         val newProfileDTO = oldProfileDTO.copy(
             name = "NewName",
             surname = "NewSurname",
@@ -198,7 +236,7 @@ class ProfileServiceIntegrationTest : AbstractTestcontainersTest() {
 
         profileService.modifyProfile(oldProfileDTO.email, newProfileDTO)
 
-        assert(profileRepository.findAll().size == TestProfileUtils.profiles.size)
+        assert(profileRepository.findAll().size == testProfiles.size)
         val actualNewProfileDTO = profileService.getProfileByEmail(newProfileDTO.email)
         assert(actualNewProfileDTO.email == oldProfileDTO.email)
         assert(actualNewProfileDTO.name == newProfileDTO.name)
@@ -211,7 +249,7 @@ class ProfileServiceIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     fun modifyProfileEmailNotFound() {
-        val oldProfileDTO = TestProfileUtils.profiles[0].toDTO()
+        val oldProfileDTO = testProfiles[0].toDTO()
         val newProfileDTO = oldProfileDTO.copy(
             phoneNumber = "333-333-3333"
         )
@@ -223,9 +261,9 @@ class ProfileServiceIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     fun modifyProfileDuplicateEmail() {
-        val oldProfileDTO = TestProfileUtils.profiles[0].toDTO()
+        val oldProfileDTO = testProfiles[0].toDTO()
         val newProfileDTO = oldProfileDTO.copy(
-            email = TestProfileUtils.profiles[1].email
+            email = testProfiles[1].email
         )
 
         assertThrows<DuplicateProfileException> {
@@ -235,9 +273,9 @@ class ProfileServiceIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     fun modifyProfileDuplicatePhoneNumber() {
-        val oldProfileDTO = TestProfileUtils.profiles[0].toDTO()
+        val oldProfileDTO = testProfiles[0].toDTO()
         val newProfileDTO = oldProfileDTO.copy(
-            phoneNumber = TestProfileUtils.profiles[1].phoneNumber
+            phoneNumber = testProfiles[1].phoneNumber
         )
 
         assertThrows<DuplicateProfileException> {

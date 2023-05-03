@@ -3,6 +3,7 @@ package it.polito.wa2.g29.server.integration.service
 import it.polito.wa2.g29.server.dto.toDTO
 import it.polito.wa2.g29.server.exception.ProductNotFoundException
 import it.polito.wa2.g29.server.integration.AbstractTestcontainersTest
+import it.polito.wa2.g29.server.model.Product
 import it.polito.wa2.g29.server.repository.ProductRepository
 import it.polito.wa2.g29.server.service.ProductService
 import it.polito.wa2.g29.server.utils.TestProductUtils
@@ -18,10 +19,12 @@ class ProductServiceIntegrationTest : AbstractTestcontainersTest() {
     @Autowired
     private lateinit var productRepository: ProductRepository
 
+    lateinit var testProducts: List<Product>
+
     @BeforeEach
     fun setup() {
-        productRepository.deleteAll()
-        TestProductUtils.insertProducts(productRepository)
+        productRepository.deleteAllInBatch()
+        testProducts = TestProductUtils.insertProducts(productRepository)
     }
 
     /////////////////////////////////////////////////////////////////////
@@ -30,7 +33,7 @@ class ProductServiceIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     fun getAllProductsEmpty() {
-        productRepository.deleteAll()
+        productRepository.deleteAllInBatch()
 
         val products = productService.getAllProducts()
 
@@ -39,7 +42,7 @@ class ProductServiceIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     fun getAllProducts() {
-        val expectedProducts = TestProductUtils.products
+        val expectedProducts = testProducts
 
         val actualProducts = productService.getAllProducts()
 
@@ -66,7 +69,7 @@ class ProductServiceIntegrationTest : AbstractTestcontainersTest() {
     @Test
     fun getProductByIdNotFound() {
         assertThrows<ProductNotFoundException> {
-            productService.getProductById(99999999)
+            productService.getProductById(Int.MAX_VALUE)
         }
     }
 }

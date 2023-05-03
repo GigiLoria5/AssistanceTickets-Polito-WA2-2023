@@ -4,7 +4,19 @@ import it.polito.wa2.g29.server.model.Product
 import it.polito.wa2.g29.server.repository.ProductRepository
 
 object TestProductUtils {
-    val products = listOf(
+
+    /**
+     * Inserts a list of new products into the provided [productRepository] and returns an array of the newly added products.
+     * @param productRepository the repository where the products should be saved
+     * @return an array of the newly added products, with a guaranteed size of 2
+     */
+    fun insertProducts(productRepository: ProductRepository): List<Product> {
+        val newProducts = getProducts()
+        productRepository.saveAll(newProducts)
+        return newProducts
+    }
+
+    private val products = listOf(
         Product(
             asin = "B08H8LGXC1",
             brand = "Apple",
@@ -25,7 +37,18 @@ object TestProductUtils {
         )
     )
 
-    fun insertProducts(productRepository: ProductRepository) {
-        productRepository.saveAll(products)
+    private fun getProducts(): List<Product> {
+        return products.map {
+            Product(
+                it.asin,
+                it.brand,
+                it.category,
+                it.manufacturerNumber,
+                it.name,
+                it.price,
+                it.weight
+            )
+        }
     }
+
 }

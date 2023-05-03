@@ -68,7 +68,8 @@
     - Response: `200 OK` (success)
     - Error responses: `404 Not Found` (email not found), `422 Unprocessable Entity` (validation of email failed) or
       `500 Internal Server Error` (generic error)
-    - Response body: An object containing profileId, email, name, surname, phoneNumber, address, city, country and tickets (An array of Int, each one representing a created ticket) of the
+    - Response body: An object containing profileId, email, name, surname, phoneNumber, address, city, country and
+      ticketsIds (an array of int, each representing the id of a ticket opened by the user) of the
       requested user. An error message in case of error
 
       ```
@@ -81,7 +82,7 @@
           "address": "Corso Duca degli Abruzzi, 24",
           "city": "Turin",
           "country": "Italy",
-          "tickets": [1,2,3]
+          "ticketsIds": [1, 2, 3]
       }
       ```
 
@@ -151,7 +152,8 @@
     - Request body: _None_
     - Response: `200 OK` (success)
     - Error responses: `500 Internal Server Error` (generic error)
-    - Response body: An array of objects, for each containing expertId, name, surname, email and skills (array of objects, for each containing expertise and level). An error message in case of error
+    - Response body: An array of objects, for each containing expertId, name, surname, email and skills (array of
+      objects, for each containing expertise and level). An error message in case of error
 
       ```
       [
@@ -161,10 +163,16 @@
             "name": "Gino",
             "surname": "Fastdio",
             "email": "gino.fastidio@expert.org",
-            "skills": [..., {
-                                           "expertise":"COMPUTER",
-                                           "level":"SKILLED"
-                                           }, ...]
+            "country": "Italy",
+            "city": "Naples",
+            "skills": [
+                        ..., 
+                        { 
+                          "expertise":"COMPUTER",
+                          "level":"SKILLED"
+                        }, 
+                        ...
+                      ]
           },
           ...
       ]
@@ -177,18 +185,25 @@
     - Response: `200 OK` (success)
     - Error responses: `404 Not Found` (expertId not found), `422 Unprocessable Entity` (validation of expertId
       failed) or `500 Internal Server Error` (generic error)
-    - Response body: An object containing expertId, name, surname, email and skills (array of objects, for each containing expertise and level). An error message in case of error
+    - Response body: An object containing expertId, name, surname, email and skills (array of objects, for each
+      containing expertise and level). An error message in case of error
 
       ```
       {
-        "expertId": 5,
-        "name": "Gino",
-        "surname": "Fastdio",
-        "email": "gino.fastidio@expert.org",
-        "skills": [..., {
-                                        "expertise":"COMPUTER",
-                                        "level":"SKILLED"
-                                        }, ...]      }
+        "expertId": 4,
+        "name": "Ambra",
+        "surname": "Grigia",
+        "email": "a.grigia@expert.org",
+        "country": "Italy",
+        "city": "Turin",
+        "skills": [
+                    ..., 
+                    {
+                      "expertise":"APPLIANCES",
+                      "level":"SPECIALIST"
+                    }, 
+                    ...
+                  ]
       ```
 
 - GET `/API/experts/{expertId}/statusChanges`
@@ -198,7 +213,8 @@
     - Response: `200 OK` (success)
     - Error responses: `404 Not Found` (expertId not found), `422 Unprocessable Entity` (validation of
       expertId failed) or `500 Internal Server Error` (generic error)
-    - Response body: An array of objects, sorted by time descending, for each containing ticketId, currentExpertId, oldStatus, newStatus, changedBy, description and time. An error message in case of error
+    - Response body: An array of objects, sorted by time descending, for each containing ticketId, currentExpertId,
+      oldStatus, newStatus, changedBy, description and time. An error message in case of error
     ```
     [
         ...,
@@ -222,7 +238,9 @@
     - Response: `200 OK` (success)
     - Error responses: `404 Not Found` (expertId not found), `422 Unprocessable Entity` (validation of
       expertId failed) or `500 Internal Server Error` (generic error)
-    - Response body: An array of objects (sorted by status, priorityLevel and lastModifiedAt) for each containing ticketId, description, productId, customerId, expertId, totalExchangedMessages, status, priorityLevel, createdAt and lastModifiedAt.
+    - Response body: An array of objects (sorted by status, priorityLevel and lastModifiedAt) for each containing
+      ticketId, description, productId, customerId, expertId, totalExchangedMessages, status, priorityLevel, createdAt
+      and lastModifiedAt.
       An error message in case of error
       ```
       [
@@ -331,7 +349,8 @@
     - Response: `200 OK` (success)
     - Error responses: `404 Not Found` (ticketId not found), `422 Unprocessable Entity` (validation of
       ticketId failed) or `500 Internal Server Error` (generic error)
-    - Response body: An array of objects, sorted by time descending,  for each containing ticketId, currentExpertId, oldStatus, newStatus, description, changedBy and time. An error message in case of error
+    - Response body: An array of objects, sorted by time descending, for each containing ticketId, currentExpertId,
+      oldStatus, newStatus, description, changedBy and time. An error message in case of error
       ```
       [
           ...,
@@ -387,9 +406,10 @@
 
 - PUT `/API/tickets/{ticketId}/start`
 
-    - Description: Allows to start the progress of an "OPEN"/"REOPENED" ticket by assigning it to an expert and setting a
+    - Description: Allows to start the progress of an "OPEN"/"REOPENED" ticket by assigning it to an expert and setting
+      a
       priority level. Upon successful completion of the request, the ticket status will be "IN_PROGRESS"
-    - Request body: the id of the assigned expert, the priority level of the ticket and an optional description. 
+    - Request body: the id of the assigned expert, the priority level of the ticket and an optional description.
 
       ```
       {
@@ -398,7 +418,7 @@
         "description": ""
       }
       ```
-      
+
     - Response: `204 No Content` (success)
     - Error responses: `404 Not Found` (ticketId or expertId not found), `422 Unprocessable Entity` (validation of
       request body or ticketId failed or tried to start a not open/reopened ticket)
@@ -413,7 +433,8 @@
 
 - PUT `/API/tickets/{ticketId}/stop`
 
-    - Description: Allows to stop an "IN_PROGRESS" ticket. Upon successful completion of the request, the ticket status will be "OPEN"
+    - Description: Allows to stop an "IN_PROGRESS" ticket. Upon successful completion of the request, the ticket status
+      will be "OPEN"
     - Request body: changedBy and an optional description.
 
       ```
@@ -422,7 +443,7 @@
         "description": "I'm not able to solve this issue"
       }
       ```
-      
+
     - Response: `204 No Content` (success)
     - Error responses: `404 Not Found` (ticketId not found), `422 Unprocessable Entity` (validation of
       request body or ticketId failed or ticket is not in progress) or `500 Internal Server Error` (generic error)
@@ -436,7 +457,8 @@
 
 - PUT `/API/tickets/{ticketId}/resolve`
 
-    - Description: Allows to set a not closed ticket as resolved. Upon successful completion of the request, the ticket status will be "RESOLVED"
+    - Description: Allows to set a not closed ticket as resolved. Upon successful completion of the request, the ticket
+      status will be "RESOLVED"
     - Request body: changedBy and an optional description.
 
       ```
@@ -445,9 +467,10 @@
         "description": ""
       }
       ```
-      
+
     - Response: `204 No Content` (success)
-    - Error responses: `404 Not Found` (ticketId not found), `422 Unprocessable Entity` (validation of request body or ticketId failed
+    - Error responses: `404 Not Found` (ticketId not found), `422 Unprocessable Entity` (validation of request body or
+      ticketId failed
       or ticket is already resolved or ticket is closed) or `500 Internal Server Error` (generic error)
     - Response body: An error message in case of error
 
@@ -459,7 +482,8 @@
 
 - PUT `/API/tickets/{ticketId}/reopen`
 
-    - Description: Allows to reopen a closed/resolved ticket. Upon successful completion of the request, the ticket status will be "REOPENED"
+    - Description: Allows to reopen a closed/resolved ticket. Upon successful completion of the request, the ticket
+      status will be "REOPENED"
     - Request body: changedBy and description.
 
       ```
@@ -470,9 +494,8 @@
       ```
 
     - Response: `204 No Content` (success)
-    - Error responses: `404 Not Found` (ticketId not found), `409 Conflict` (a not closed
-      ticket for the same customer and product already exists), `422 Unprocessable Entity` (validation of request body
-      or ticketId failed
+    - Error responses: `404 Not Found` (ticketId not found), `422 Unprocessable Entity` (validation of request body or
+      ticketId failed
       or ticket is not closed/resolved) or `500 Internal Server Error` (generic error)
     - Response body: An error message in case of error
 
@@ -484,7 +507,8 @@
 
 - PUT `/API/tickets/{ticketId}/close`
 
-    - Description: Allows to close any ticket. Upon successful completion of the request, the ticket status will be "CLOSED"
+    - Description: Allows to close any ticket. Upon successful completion of the request, the ticket status will be "
+      CLOSED"
     - Request body: changedBy and an optional description.
 
       ```
@@ -493,7 +517,7 @@
         "description": ""
       }
       ```   
-      
+
     - Response: `204 No Content` (success)
     - Error responses: `404 Not Found` (ticketId not found), `422 Unprocessable Entity` (validation of ticketId failed
       or ticket is already closed) or `500 Internal Server Error` (generic error)
@@ -514,13 +538,18 @@
     - Response: `200 OK` (success)
     - Error responses: `404 Not Found` (ticketId not found), `422 Unprocessable Entity` (validation of
       ticketId) or `500 Internal Server Error` (generic error)
-    - Response body: An array of objects, for each containing messageId, sender, expertId (optional), content, attachments (array of objects, for each containing attachmentId, name and type) and time. An error message in case of error
+    - Response body: An array of objects, ordered chronologically, for each containing messageId, sender, expertId (
+      expert to whom the ticket was assigned),
+      content,
+      attachments (array of objects, for each containing attachmentId, name and type) and time. An error message in case
+      of error
       ```
       [
           ...,
           {
             "messageId": 16,
             "sender": "CUSTOMER",
+            "expertId": 25
             "content": "Hi, I'm having trouble with my device. Can you help me?",
             "attachments": [
                              ...,
@@ -545,35 +574,15 @@
       ]
       ```
 
-- GET `/API/chats/{ticketId}/messages/{messageId}/attachments/{attachmentId}`
-
-    - Description: Allows to download an attachment related to a message
-    - Request body: _None_
-    - Response: `200 OK` (success)
-    - Error responses: `404 Not Found` (ticketId, messageId or attachmentId not found), `422 Unprocessable Entity` (
-      validation of ticketId, messageId or attachmentId failed) or `500 Internal Server Error` (generic error)
-    - Response body: The binary contents of the attachment file. An error message in case of error
-      ```
-      {
-        "error": "validation of request failed"
-      }
-      ```
-
 - POST `/API/chats/{ticketId}/messages`
 
     - Description: Allows to send a message and optionally some attachments
     - Headers: {"Content-Type" : "multipart/form-data"}
-    - Request body: a sender field specifying who, between the CUSTOMER and the EXPERT, is sending the message, and the
-      message to be sent
-
-      ```
-      {
-        "sender": "EXPERT",
-        "message" "Hi there, I'm sorry to hear that the solution didn't work for you. Let's try some additional troubleshooting steps.
-                   Can you please confirm if the headphones are visible in the list of available Bluetooth devices on your laptop?"
-      }
-      ```
-
+    - Request Parameters:
+        - sender(required) - the sender's user type. Allowed values:CUSTOMER,EXPERT
+        - content(required) - the content of the message.
+    - Request Parts:
+        - attachments(optional) - the files to be attached to the message.
     - Response: `201 Created` (success)
     - Error responses: `404 Not Found` (ticketId not found), `422 Unprocessable Entity` (validation of request
       body or ticketId failed or ticket is not in progress/resolve) or `500 Internal Server Error` (generic error)
@@ -587,5 +596,19 @@
       ```
       {
         "error": "impossible to send the message as the chat is inactive"
+      }
+      ```
+
+- GET `/API/chats/{ticketId}/messages/{messageId}/attachments/{attachmentId}`
+
+    - Description: Allows to download an attachment related to a message
+    - Request body: _None_
+    - Response: `200 OK` (success)
+    - Error responses: `404 Not Found` (ticketId, messageId or attachmentId not found), `422 Unprocessable Entity` (
+      validation of ticketId, messageId or attachmentId failed) or `500 Internal Server Error` (generic error)
+    - Response body: The binary contents of the attachment file. An error message in case of error
+      ```
+      {
+        "error": "validation of request failed"
       }
       ```

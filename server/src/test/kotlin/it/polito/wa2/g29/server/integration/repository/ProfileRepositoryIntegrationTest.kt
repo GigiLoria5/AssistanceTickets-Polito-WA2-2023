@@ -2,20 +2,25 @@ package it.polito.wa2.g29.server.integration.repository
 
 import it.polito.wa2.g29.server.dto.toDTO
 import it.polito.wa2.g29.server.integration.AbstractTestcontainersTest
+import it.polito.wa2.g29.server.model.Profile
 import it.polito.wa2.g29.server.repository.ProfileRepository
 import it.polito.wa2.g29.server.utils.TestProfileUtils
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.transaction.annotation.Transactional
 
 class ProfileRepositoryIntegrationTest : AbstractTestcontainersTest() {
     @Autowired
     private lateinit var profileRepository: ProfileRepository
 
+    lateinit var testProfiles: List<Profile>
+
     @BeforeEach
+    @Transactional
     fun setup() {
-        profileRepository.deleteAll()
-        TestProfileUtils.insertProfiles(profileRepository)
+        profileRepository.deleteAllInBatch()
+        testProfiles = TestProfileUtils.insertProfiles(profileRepository)
     }
 
     /////////////////////////////////////////////////////////////////////
@@ -23,8 +28,9 @@ class ProfileRepositoryIntegrationTest : AbstractTestcontainersTest() {
     /////////////////////////////////////////////////////////////////////
 
     @Test
+    @Transactional
     fun findByProfileByEmail() {
-        val expectedProfile = profileRepository.findAll()[0]
+        val expectedProfile = testProfiles[0]
 
         val actualProfile = profileRepository.findProfileByEmail(expectedProfile.email)
 
@@ -48,8 +54,9 @@ class ProfileRepositoryIntegrationTest : AbstractTestcontainersTest() {
     /////////////////////////////////////////////////////////////////////
 
     @Test
+    @Transactional
     fun findByProfileByPhoneNumber() {
-        val expectedProfile = profileRepository.findAll()[0]
+        val expectedProfile = testProfiles[0]
 
         val actualProfile = profileRepository.findProfileByPhoneNumber(expectedProfile.phoneNumber)
 

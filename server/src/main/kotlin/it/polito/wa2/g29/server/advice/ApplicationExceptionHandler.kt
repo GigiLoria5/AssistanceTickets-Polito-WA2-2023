@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.web.bind.MethodArgumentNotValidException
+import org.springframework.web.bind.MissingServletRequestParameterException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
@@ -18,7 +19,7 @@ import kotlin.Exception
 @RestControllerAdvice
 class ApplicationExceptionHandler {
     // 404 - Not Found
-    @ExceptionHandler(value = [ProductNotFoundException::class, ProfileNotFoundException::class, TicketNotFoundException::class, ExpertNotFoundException::class])
+    @ExceptionHandler(value = [ProductNotFoundException::class, ProfileNotFoundException::class, ExpertNotFoundException::class, TicketNotFoundException::class, MessageNotFoundException::class, AttachmentNotFoundException::class])
     fun handleNotFoundException(exception: Exception): ResponseEntity<Unit> {
         return ResponseEntity(HttpStatus.NOT_FOUND)
     }
@@ -35,17 +36,21 @@ class ApplicationExceptionHandler {
      * MethodArgumentNotValidException      from @Valid
      * HttpMessageNotReadableException      from missing field
      * MethodArgumentTypeMismatchException  from failing type coercion
+     * MissingServletRequestParameterException from missing request parameter
      *
      * 422 - Generic Message
      */
-    @ExceptionHandler(value = [ConstraintViolationException::class, MethodArgumentNotValidException::class, HttpMessageNotReadableException::class, MethodArgumentTypeMismatchException::class])
+    @ExceptionHandler(
+        value = [ConstraintViolationException::class, MethodArgumentNotValidException::class, HttpMessageNotReadableException::class,
+            MethodArgumentTypeMismatchException::class, MissingServletRequestParameterException::class]
+    )
     fun handleValidationFailedException(exception: Exception): ResponseEntity<ErrorMessage> {
         val errorMessage = ErrorMessage("validation of request failed")
         return ResponseEntity(errorMessage, HttpStatus.UNPROCESSABLE_ENTITY)
     }
 
     // 422 - Error message
-    @ExceptionHandler(value = [NotValidStatusChangeException::class])
+    @ExceptionHandler(value = [NotValidStatusChangeException::class, ChatIsInactiveException::class, UserTypeNotValidException::class])
     fun handleValidationFailedExceptionWithErrorMessage(exception: Exception): ResponseEntity<ErrorMessage> {
         val errorMessage = ErrorMessage(exception.message.orEmpty())
         return ResponseEntity(errorMessage, HttpStatus.UNPROCESSABLE_ENTITY)
@@ -54,7 +59,7 @@ class ApplicationExceptionHandler {
     // 500 - Generic Error
     @ExceptionHandler(Exception::class)
     fun handleGenericException(exception: Exception): ResponseEntity<ErrorMessage> {
-        val errorMessage = ErrorMessage(exception.message.orEmpty())
+        val errorMessage = ErrorMessage("an error occur, please retry")
         return ResponseEntity(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR)
     }
 }

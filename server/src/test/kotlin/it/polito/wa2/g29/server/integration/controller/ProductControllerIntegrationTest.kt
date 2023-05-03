@@ -1,6 +1,7 @@
 package it.polito.wa2.g29.server.integration.controller
 
 import it.polito.wa2.g29.server.integration.AbstractTestcontainersTest
+import it.polito.wa2.g29.server.model.Product
 import it.polito.wa2.g29.server.repository.ProductRepository
 import it.polito.wa2.g29.server.utils.TestProductUtils
 import org.junit.jupiter.api.BeforeEach
@@ -10,9 +11,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.get
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
@@ -23,10 +23,12 @@ class ProductControllerIntegrationTest : AbstractTestcontainersTest() {
     @Autowired
     private lateinit var productRepository: ProductRepository
 
+    lateinit var testProducts: List<Product>
+
     @BeforeEach
     fun setup() {
-        productRepository.deleteAll()
-        TestProductUtils.insertProducts(productRepository)
+        productRepository.deleteAllInBatch()
+        testProducts = TestProductUtils.insertProducts(productRepository)
     }
 
     /////////////////////////////////////////////////////////////////////
@@ -35,31 +37,35 @@ class ProductControllerIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     fun getAllProductsEmpty() {
-        productRepository.deleteAll()
+        productRepository.deleteAllInBatch()
         mockMvc
-            .get("/API/products")
-            .andExpect { status { isOk() } }
-            .andExpect { content().contentType(MediaType.APPLICATION_JSON) }
-            .andExpect { jsonPath("$").isArray }
-            .andExpect { jsonPath("$").isEmpty }
+            .perform(get("/API/products").contentType("application/json"))
+            .andExpectAll(
+                status().isOk,
+                content().contentType(MediaType.APPLICATION_JSON),
+                jsonPath("$").isArray,
+                jsonPath("$").isEmpty
+            )
     }
 
     @Test
     fun getAllProducts() {
         mockMvc
-            .get("/API/products")
-            .andExpect { status { isOk() } }
-            .andExpect { content().contentType(MediaType.APPLICATION_JSON) }
-            .andExpect { jsonPath("$").isArray }
-            .andExpect { jsonPath("$").isNotEmpty }
-            .andExpect { jsonPath("$[*].productId").exists() }
-            .andExpect { jsonPath("$[*].asin").exists() }
-            .andExpect { jsonPath("$[*].brand").exists() }
-            .andExpect { jsonPath("$[*].category").exists() }
-            .andExpect { jsonPath("$[*].manufacturerNumber").exists() }
-            .andExpect { jsonPath("$[*].name").exists() }
-            .andExpect { jsonPath("$[*].price").exists() }
-            .andExpect { jsonPath("$[*].weight").exists() }
+            .perform(get("/API/products").contentType("application/json"))
+            .andExpectAll(
+                status().isOk,
+                content().contentType(MediaType.APPLICATION_JSON),
+                jsonPath("$").isArray,
+                jsonPath("$").isNotEmpty,
+                jsonPath("$[*].productId").exists(),
+                jsonPath("$[*].asin").exists(),
+                jsonPath("$[*].brand").exists(),
+                jsonPath("$[*].category").exists(),
+                jsonPath("$[*].manufacturerNumber").exists(),
+                jsonPath("$[*].name").exists(),
+                jsonPath("$[*].price").exists(),
+                jsonPath("$[*].weight").exists()
+            )
     }
 
     /////////////////////////////////////////////////////////////////////
@@ -68,46 +74,48 @@ class ProductControllerIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     fun getProductById() {
-        val product = productRepository.findAll()[0]
+        val product = testProducts[0]
         mockMvc
-            .get("/API/products/${product.id}")
-            .andExpect { status { isOk() } }
-            .andExpect { content().contentType(MediaType.APPLICATION_JSON) }
-            .andExpect { jsonPath("$.productId").value(product.id) }
-            .andExpect { jsonPath("$.asin").value(product.asin) }
-            .andExpect { jsonPath("$.brand").value(product.brand) }
-            .andExpect { jsonPath("$.category").value(product.category) }
-            .andExpect { jsonPath("$.manufacturerNumber").value(product.manufacturerNumber) }
-            .andExpect { jsonPath("$.name").value(product.name) }
-            .andExpect { jsonPath("$.price").value(product.price) }
-            .andExpect { jsonPath("$.weight").value(product.weight) }
+            .perform(get("/API/products/${product.id}").contentType("application/json"))
+            .andExpectAll(
+                status().isOk,
+                content().contentType(MediaType.APPLICATION_JSON),
+                jsonPath("$.productId").value(product.id),
+                jsonPath("$.asin").value(product.asin),
+                jsonPath("$.brand").value(product.brand),
+                jsonPath("$.category").value(product.category),
+                jsonPath("$.manufacturerNumber").value(product.manufacturerNumber),
+                jsonPath("$.name").value(product.name),
+                jsonPath("$.price").value(product.price),
+                jsonPath("$.weight").value(product.weight)
+            )
     }
 
     @Test
     fun getProductByIdNotFound() {
         mockMvc
-            .get("/API/products/99999999")
-            .andExpect { status { isNotFound() } }
+            .perform(get("/API/products/99999999").contentType("application/json"))
+            .andExpect(status().isNotFound)
     }
 
     @Test
     fun getProductByIdNegative() {
         mockMvc
-            .get("/API/products/-1")
-            .andExpect { status { isUnprocessableEntity() } }
+            .perform(get("/API/products/-1").contentType("application/json"))
+            .andExpect(status().isUnprocessableEntity)
     }
 
     @Test
     fun getProductByIdZero() {
         mockMvc
-            .get("/API/products/0")
-            .andExpect { status { isUnprocessableEntity() } }
+            .perform(get("/API/products/0").contentType("application/json"))
+            .andExpect(status().isUnprocessableEntity)
     }
 
     @Test
     fun getProductByIdWrongType() {
         mockMvc
-            .get("/API/products/pippo")
-            .andExpect { status { isUnprocessableEntity() } }
+            .perform(get("/API/products/wrongTypeId").contentType("application/json"))
+            .andExpect(status().isUnprocessableEntity)
     }
 }
