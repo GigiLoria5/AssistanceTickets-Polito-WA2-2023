@@ -1,13 +1,13 @@
 package it.polito.wa2.g29.server.utils
 
 import it.polito.wa2.g29.server.dto.TicketDTO
+import it.polito.wa2.g29.server.dto.ticketDTOs.TicketStatusChangeDTO
 import it.polito.wa2.g29.server.enums.TicketPriority
 import it.polito.wa2.g29.server.enums.TicketStatus
-import it.polito.wa2.g29.server.model.Expert
-import it.polito.wa2.g29.server.model.Product
-import it.polito.wa2.g29.server.model.Profile
-import it.polito.wa2.g29.server.model.Ticket
+import it.polito.wa2.g29.server.enums.UserType
+import it.polito.wa2.g29.server.model.*
 import it.polito.wa2.g29.server.repository.TicketRepository
+import it.polito.wa2.g29.server.service.TicketStatusChangeService
 
 object TestTicketUtils {
 
@@ -19,6 +19,28 @@ object TestTicketUtils {
         val newTickets = getTickets()
         ticketRepository.saveAll(newTickets)
         return newTickets
+    }
+
+    fun addTicket(ticketRepository: TicketRepository, expert: Expert, ticket: Ticket) {
+        expert.addTicket(ticket)
+        ticketRepository.save(ticket)
+    }
+
+    fun addTicketStatusChange(
+        ticketStatusChangeService: TicketStatusChangeService,
+        expert: Expert,
+        ticket: Ticket,
+        newStatus: TicketStatus,
+        userType: UserType,
+        description: String?
+    ) {
+        val oldStatus = ticket.status
+        ticketStatusChangeService.ticketStatusChange(
+            ticket.id!!,
+            newStatus,
+            TicketStatusChangeDTO(userType, description)
+        )
+        expert.ticketChanges.add(TicketChange(ticket, oldStatus, userType, description))
     }
 
     private fun getTickets(): List<Ticket> {

@@ -125,7 +125,99 @@ class TicketServiceIntegrationTest: AbstractTestcontainersTest() {
         }
     }
 
-    // TODO: getTicketStatusChangesByTicketId
+    /////////////////////////////////////////////////////////////////////
+    ////// getTicketStatusChangesByTicketId
+    /////////////////////////////////////////////////////////////////////
+
+    @Test
+    @Transactional
+    fun getTicketStatusChangesByTicketId() {
+        val expert = TestTicketUtils.experts[0]
+
+        val ticketOne = Ticket("title1", "description1", TestTicketUtils.products[0], TestTicketUtils.profiles[0]).apply {
+            status = TicketStatus.IN_PROGRESS
+            priorityLevel = TicketPriority.LOW
+        }
+
+        TestTicketUtils.addTicket(ticketRepository, expert, ticketOne)
+        TestTicketUtils.addTicketStatusChange(
+            ticketStatusChangeService,
+            expert,
+            ticketOne,
+            TicketStatus.RESOLVED,
+            UserType.EXPERT,
+            ""
+        )
+
+        val ticketOneActualTicketsStatusChangesDTO = ticketService.getTicketStatusChangesByTicketId(ticketOne.id!!)
+
+        assert(ticketOneActualTicketsStatusChangesDTO.isNotEmpty())
+        assert(ticketOneActualTicketsStatusChangesDTO.size == 1)
+    }
+
+    @Test
+    @Transactional
+    fun getTicketStatusChangesByTicketIdWithManyChanges() {
+        val expert = TestTicketUtils.experts[0]
+
+        val ticketOne = Ticket("title1", "description1", TestTicketUtils.products[0], TestTicketUtils.profiles[0]).apply {
+            status = TicketStatus.IN_PROGRESS
+            priorityLevel = TicketPriority.LOW
+        }
+
+        TestTicketUtils.addTicket(ticketRepository, expert, ticketOne)
+        TestTicketUtils.addTicketStatusChange(
+            ticketStatusChangeService,
+            expert,
+            ticketOne,
+            TicketStatus.RESOLVED,
+            UserType.EXPERT,
+            ""
+        )
+        TestTicketUtils.addTicketStatusChange(
+            ticketStatusChangeService,
+            expert,
+            ticketOne,
+            TicketStatus.CLOSED,
+            UserType.CUSTOMER,
+            "It works now"
+        )
+
+        val ticketOneActualTicketsStatusChangesDTO = ticketService.getTicketStatusChangesByTicketId(ticketOne.id!!)
+
+        assert(ticketOneActualTicketsStatusChangesDTO.isNotEmpty())
+        assert(ticketOneActualTicketsStatusChangesDTO.size == 2)
+
+        for (i in 0 until ticketOneActualTicketsStatusChangesDTO.size - 1) {
+            ticketOneActualTicketsStatusChangesDTO[i].time >= ticketOneActualTicketsStatusChangesDTO[i+1].time
+        }
+    }
+
+    @Test
+    @Transactional
+    fun getTicketStatusChangesByTicketIdWithoutChanges() {
+        val expert = TestTicketUtils.experts[0]
+
+        val ticketOne = Ticket("title1", "description1", TestTicketUtils.products[0], TestTicketUtils.profiles[0]).apply {
+            status = TicketStatus.IN_PROGRESS
+            priorityLevel = TicketPriority.LOW
+        }
+
+        TestTicketUtils.addTicket(ticketRepository, expert, ticketOne)
+
+        val ticketOneActualTicketsStatusChangesDTO = ticketService.getTicketStatusChangesByTicketId(ticketOne.id!!)
+
+        assert(ticketOneActualTicketsStatusChangesDTO.isEmpty())
+    }
+
+    @Test
+    fun getTicketStatusChangesByTicketIdNotFound() {
+        val ticketId = Int.MAX_VALUE
+
+        assertThrows<TicketNotFoundException> {
+            ticketService.getTicketStatusChangesByTicketId(ticketId)
+        }
+    }
 
     /////////////////////////////////////////////////////////////////////
     ////// createTicket

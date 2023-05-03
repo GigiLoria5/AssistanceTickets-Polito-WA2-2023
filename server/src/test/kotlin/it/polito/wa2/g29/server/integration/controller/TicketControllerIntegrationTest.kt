@@ -1,6 +1,7 @@
 package it.polito.wa2.g29.server.integration.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import it.polito.wa2.g29.server.dto.TicketChangeDTO
 import it.polito.wa2.g29.server.dto.ticketDTOs.TicketStatusChangeDTO
 import it.polito.wa2.g29.server.dto.toDTO
 import it.polito.wa2.g29.server.enums.TicketPriority
@@ -12,6 +13,7 @@ import it.polito.wa2.g29.server.repository.ExpertRepository
 import it.polito.wa2.g29.server.repository.ProductRepository
 import it.polito.wa2.g29.server.repository.ProfileRepository
 import it.polito.wa2.g29.server.repository.TicketRepository
+import it.polito.wa2.g29.server.service.TicketStatusChangeService
 import it.polito.wa2.g29.server.utils.TestExpertUtils
 import it.polito.wa2.g29.server.utils.TestProductUtils
 import it.polito.wa2.g29.server.utils.TestProfileUtils
@@ -36,6 +38,9 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
 
     @Autowired
     private lateinit var mockMvc: MockMvc
+
+    @Autowired
+    private lateinit var ticketStatusChangeService: TicketStatusChangeService
 
     @Autowired
     private lateinit var ticketRepository: TicketRepository
@@ -187,12 +192,92 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     fun getTicketStatusChangesById() {
-        val ticket = testTickets[0]
+        val expert = TestTicketUtils.experts[0]
+
+        val ticketOne = Ticket("title1", "description1", TestTicketUtils.products[0], TestTicketUtils.profiles[0]).apply {
+            status = TicketStatus.IN_PROGRESS
+            priorityLevel = TicketPriority.LOW
+        }
+
+        TestTicketUtils.addTicket(ticketRepository, expert, ticketOne)
+        TestTicketUtils.addTicketStatusChange(
+            ticketStatusChangeService,
+            expert,
+            ticketOne,
+            TicketStatus.RESOLVED,
+            UserType.EXPERT,
+            ""
+        )
+        TestTicketUtils.addTicketStatusChange(
+            ticketStatusChangeService,
+            expert,
+            ticketOne,
+            TicketStatus.CLOSED,
+            UserType.CUSTOMER,
+            "It works now"
+        )
+
+
         mockMvc
-            .perform(get("/API/tickets/${ticket.id}/statusChanges").contentType("application/json"))
-            .andExpect(status().isOk)
-        // TODO: to complete
+            .perform(get("/API/tickets/${ticketOne.id}/statusChanges").contentType("application/json"))
+            .andExpectAll(
+                status().isOk,
+                content().contentType(MediaType.APPLICATION_JSON),
+                jsonPath("$").isArray,
+                jsonPath("$").isNotEmpty,
+                jsonPath<List<TicketChangeDTO>>("$", hasSize(2)),
+                jsonPath("$[*].ticketId").value(List(2){ticketOne.id}),
+                jsonPath("$[*].currentExpertId").value(contains(expert.id, expert.id)),
+                jsonPath("$[*].oldStatus").exists(),
+                jsonPath("$[*].newStatus").exists(),
+                jsonPath("$[*].changedBy").exists(),
+                jsonPath("$[*].description").exists(),
+                jsonPath("$[*].time").exists()
+            )
     }
+
+    @Test
+    fun getTicketStatusChangesByIdWithNoChanges() {
+        val expert = TestTicketUtils.experts[0]
+
+        val ticketOne = Ticket("title1", "description1", TestTicketUtils.products[0], TestTicketUtils.profiles[0]).apply {
+            status = TicketStatus.IN_PROGRESS
+            priorityLevel = TicketPriority.LOW
+        }
+
+        TestTicketUtils.addTicket(ticketRepository, expert, ticketOne)
+
+        mockMvc
+            .perform(get("/API/tickets/${ticketOne.id}/statusChanges").contentType("application/json"))
+            .andExpectAll(
+                status().isOk,
+                content().contentType(MediaType.APPLICATION_JSON),
+                jsonPath("$").isArray,
+                jsonPath("$").isEmpty
+            )
+    }
+
+    @Test
+    fun getTicketStatusChangesByIdNotFound() {
+        val ticketId = Int.MAX_VALUE
+
+        mockMvc
+            .perform(get("/API/ticket/${ticketId}/statusChanges").contentType("application/json"))
+            .andExpect(status().isNotFound)
+    }
+
+    @Test
+    fun getTicketStatusChangesByIdWrongIdType() {
+        val ticketIdWrongValues = listOf("wrong", 0, -1, Int.MIN_VALUE)
+
+        ticketIdWrongValues.forEach {
+            mockMvc
+                .perform(get("/API/ticket/${it}/statusChanges").contentType("application/json"))
+                .andExpect(status().isUnprocessableEntity)
+        }
+    }
+
+
 
     /////////////////////////////////////////////////////////////////////
     ////// POST /API/tickets
@@ -361,6 +446,32 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
     }
 
     @Test
+    fun startTicketByIdWrongType() {
+        val oldTicketDTO = testTickets[0].toDTO()
+        val newTicketDTO = oldTicketDTO.copy(
+            expertId = 1,
+            priorityLevel = "LOW",
+            description = ""
+        )
+
+        val mapper = ObjectMapper()
+        val jsonBody = mapper.writeValueAsString(newTicketDTO)
+
+        val wrongIdValues = listOf("wrong", 0, -1, Int.MIN_VALUE)
+
+        wrongIdValues.forEach {
+            mockMvc
+                .perform(
+                    put("/API/tickets/${it}/start")
+                        .content(jsonBody)
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isUnprocessableEntity)
+        }
+
+    }
+
+    @Test
     fun startTicketByExpertIdNotFound() {
         val oldTicketDTO = testTickets[0].toDTO()
         val newTicketDTO = oldTicketDTO.copy(
@@ -390,7 +501,7 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
             priorityLevel = TicketPriority.LOW
         }
 
-        TestExpertUtils.addTicket(ticketRepository, expert, ticket)
+        TestTicketUtils.addTicket(ticketRepository, expert, ticket)
 
         val newTicketDTO = ticket.toDTO().copy(
             expertId = expert.id,
@@ -424,7 +535,7 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
             priorityLevel = TicketPriority.LOW
         }
 
-        TestExpertUtils.addTicket(ticketRepository, expert, ticket)
+        TestTicketUtils.addTicket(ticketRepository, expert, ticket)
 
 
         val ticketStatusChangeDTO = TicketStatusChangeDTO(
@@ -473,7 +584,7 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
             status = TicketStatus.CLOSED
         }
 
-        TestExpertUtils.addTicket(ticketRepository, expert, ticket)
+        TestTicketUtils.addTicket(ticketRepository, expert, ticket)
 
 
         val ticketStatusChangeDTO = TicketStatusChangeDTO(
@@ -506,7 +617,7 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
             status = TicketStatus.IN_PROGRESS
         }
 
-        TestExpertUtils.addTicket(ticketRepository, expert, ticket)
+        TestTicketUtils.addTicket(ticketRepository, expert, ticket)
 
 
         val ticketStatusChangeDTO = TicketStatusChangeDTO(
@@ -555,7 +666,7 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
             status = TicketStatus.RESOLVED
         }
 
-        TestExpertUtils.addTicket(ticketRepository, expert, ticket)
+        TestTicketUtils.addTicket(ticketRepository, expert, ticket)
 
 
         val ticketStatusChangeDTO = TicketStatusChangeDTO(
@@ -584,7 +695,7 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
             status = TicketStatus.CLOSED
         }
 
-        TestExpertUtils.addTicket(ticketRepository, expert, ticket)
+        TestTicketUtils.addTicket(ticketRepository, expert, ticket)
 
 
         val ticketStatusChangeDTO = TicketStatusChangeDTO(
@@ -617,7 +728,7 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
             status = TicketStatus.CLOSED
         }
 
-        TestExpertUtils.addTicket(ticketRepository, expert, ticket)
+        TestTicketUtils.addTicket(ticketRepository, expert, ticket)
 
 
         val ticketStatusChangeDTO = TicketStatusChangeDTO(
@@ -646,7 +757,7 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
             status = TicketStatus.RESOLVED
         }
 
-        TestExpertUtils.addTicket(ticketRepository, expert, ticket)
+        TestTicketUtils.addTicket(ticketRepository, expert, ticket)
 
 
         val ticketStatusChangeDTO = TicketStatusChangeDTO(
@@ -695,7 +806,7 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
             status = TicketStatus.OPEN
         }
 
-        TestExpertUtils.addTicket(ticketRepository, expert, ticket)
+        TestTicketUtils.addTicket(ticketRepository, expert, ticket)
 
 
         val ticketStatusChangeDTO = TicketStatusChangeDTO(
@@ -724,7 +835,7 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
             status = TicketStatus.CLOSED
         }
 
-        TestExpertUtils.addTicket(ticketRepository, expert, ticket)
+        TestTicketUtils.addTicket(ticketRepository, expert, ticket)
 
 
         val ticketStatusChangeDTO = TicketStatusChangeDTO(
@@ -757,7 +868,7 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
             status = TicketStatus.IN_PROGRESS
         }
 
-        TestExpertUtils.addTicket(ticketRepository, expert, ticket)
+        TestTicketUtils.addTicket(ticketRepository, expert, ticket)
 
 
         val ticketStatusChangeDTO = TicketStatusChangeDTO(
@@ -806,7 +917,7 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
             status = TicketStatus.CLOSED
         }
 
-        TestExpertUtils.addTicket(ticketRepository, expert, ticket)
+        TestTicketUtils.addTicket(ticketRepository, expert, ticket)
 
 
         val ticketStatusChangeDTO = TicketStatusChangeDTO(
