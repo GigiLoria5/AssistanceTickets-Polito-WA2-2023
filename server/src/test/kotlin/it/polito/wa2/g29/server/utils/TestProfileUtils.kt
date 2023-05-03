@@ -6,6 +6,36 @@ import it.polito.wa2.g29.server.repository.ProfileRepository
 
 object TestProfileUtils {
 
+    /**
+     * Inserts a list of new profiles into the provided [profileRepository] and returns an array of the newly added profiles.
+     * @param profileRepository the repository where the profiles should be saved
+     * @return an array of the newly added profiles, with a guaranteed size of 2
+     */
+    fun insertProfiles(profileRepository: ProfileRepository): List<Profile> {
+        val newProfiles = getProfiles()
+        profileRepository.saveAll(newProfiles)
+        return newProfiles
+    }
+
+    fun getNewProfileDTO(): ProfileDTO {
+        return ProfileDTO(
+            profileId = null,
+            email = "new_mail@test.com",
+            name = "Name",
+            surname = "Surname",
+            phoneNumber = "3333333333",
+            address = "New Address",
+            city = "New City",
+            country = "New Country",
+            ticketsIds = mutableListOf()
+        )
+    }
+
+    fun generateRandomPhoneNumber(): String {
+        val timestamp = System.currentTimeMillis()
+        return (timestamp % 10000000000).toString().padStart(10, '0')
+    }
+
     private val profiles = listOf(
         Profile(
             email = "email1@wa2.it",
@@ -27,28 +57,8 @@ object TestProfileUtils {
         ),
     )
 
-    fun getProfiles(): List<Profile> {
+    private fun getProfiles(): List<Profile> {
         return profiles.map { Profile(it.email, it.name, it.surname, it.phoneNumber, it.address, it.city, it.country) }
-    }
-
-    fun getNewProfileDTO(): ProfileDTO {
-        return ProfileDTO(
-            profileId = null,
-            email = "new_mail@test.com",
-            name = "Name",
-            surname = "Surname",
-            phoneNumber = "3333333333",
-            address = "New Address",
-            city = "New City",
-            country = "New Country",
-            ticketsIds = null
-        )
-    }
-
-    fun insertProfiles(profileRepository: ProfileRepository): List<Profile> {
-        val newProfiles = getProfiles()
-        profileRepository.saveAll(newProfiles)
-        return newProfiles
     }
 
 }

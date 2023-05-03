@@ -4,8 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import it.polito.wa2.g29.server.dto.toDTO
 import it.polito.wa2.g29.server.integration.AbstractTestcontainersTest
 import it.polito.wa2.g29.server.model.Profile
+import it.polito.wa2.g29.server.repository.ProductRepository
 import it.polito.wa2.g29.server.repository.ProfileRepository
+import it.polito.wa2.g29.server.repository.TicketRepository
+import it.polito.wa2.g29.server.utils.TestProductUtils
 import it.polito.wa2.g29.server.utils.TestProfileUtils
+import it.polito.wa2.g29.server.utils.TestTicketUtils
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -13,7 +17,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
@@ -26,6 +30,12 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
 
     @Autowired
     private lateinit var profileRepository: ProfileRepository
+
+    @Autowired
+    private lateinit var ticketRepository: TicketRepository
+
+    @Autowired
+    private lateinit var productRepository: ProductRepository
 
     lateinit var testProfiles: List<Profile>
 
@@ -40,21 +50,54 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
     /////////////////////////////////////////////////////////////////////
 
     @Test
-    fun getProfile() {
+    fun getProfileWithoutTickets() {
         val expectedProfile = testProfiles[0]
         mockMvc
-            .get("/API/profiles/${expectedProfile.email}")
-            .andExpect { status { isOk() } }
-            .andExpect { content().contentType(MediaType.APPLICATION_JSON) }
-            .andExpectAll {
-                jsonPath("$[*].profileId").exists()
-                jsonPath("$[*].email").value(expectedProfile.email)
-                jsonPath("$[*].name").value(expectedProfile.name)
-                jsonPath("$[*].surname").value(expectedProfile.surname)
-                jsonPath("$[*].phoneNumber").value(expectedProfile.phoneNumber)
-                jsonPath("$[*].address").value(expectedProfile.address)
-                jsonPath("$[*].city").value(expectedProfile.city)
-                jsonPath("$[*].country").value(expectedProfile.country)
+            .perform(get("/API/profiles/${expectedProfile.email}").contentType("application/json"))
+            .andExpectAll(
+                status().isOk,
+                content().contentType(MediaType.APPLICATION_JSON),
+                jsonPath("$.profileId").exists(),
+                jsonPath("$.email").value(expectedProfile.email),
+                jsonPath("$.name").value(expectedProfile.name),
+                jsonPath("$.surname").value(expectedProfile.surname),
+                jsonPath("$.phoneNumber").value(expectedProfile.phoneNumber),
+                jsonPath("$.address").value(expectedProfile.address),
+                jsonPath("$.city").value(expectedProfile.city),
+                jsonPath("$.country").value(expectedProfile.country),
+                jsonPath("$.ticketsIds").isArray,
+                jsonPath("$.ticketsIds").isEmpty
+            )
+    }
+
+    @Test
+    fun getProfileWithTickets() {
+        ticketRepository.deleteAllInBatch()
+        productRepository.deleteAllInBatch()
+        TestTicketUtils.profiles = testProfiles
+        TestTicketUtils.products = TestProductUtils.insertProducts(productRepository)
+        val tickets = TestTicketUtils.insertTickets(ticketRepository)
+        testProfiles[0].tickets.add(tickets.first { it.customer.id == testProfiles[0].id })
+        profileRepository.save(testProfiles[0])
+        val expectedProfile = testProfiles[0]
+        mockMvc
+            .perform(get("/API/profiles/${expectedProfile.email}").contentType("application/json"))
+            .andExpectAll(
+                status().isOk,
+                content().contentType(MediaType.APPLICATION_JSON),
+                jsonPath("$.profileId").exists(),
+                jsonPath("$.email").value(expectedProfile.email),
+                jsonPath("$.name").value(expectedProfile.name),
+                jsonPath("$.surname").value(expectedProfile.surname),
+                jsonPath("$.phoneNumber").value(expectedProfile.phoneNumber),
+                jsonPath("$.address").value(expectedProfile.address),
+                jsonPath("$.city").value(expectedProfile.city),
+                jsonPath("$.country").value(expectedProfile.country),
+                jsonPath("$.ticketsIds").isArray,
+                jsonPath("$.ticketsIds").isNotEmpty
+            ).andDo {
+                ticketRepository.deleteAllInBatch()
+                productRepository.deleteAllInBatch()
             }
     }
 
@@ -62,9 +105,11 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
     fun getProfileNotFound() {
         val email = "non_existing_email@fake.com"
         mockMvc
-            .get("/API/profiles/$email")
-            .andExpect { status { isNotFound() } }
-            .andExpect { jsonPath("$.error").doesNotExist() }
+            .perform(get("/API/profiles/$email").contentType("application/json"))
+            .andExpectAll(
+                status().isNotFound,
+                jsonPath("$.error").doesNotExist()
+            )
     }
 
     @Test
@@ -92,9 +137,11 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
 
         for (email in invalidEmails) {
             mockMvc
-                .get("/API/profiles/$email")
-                .andExpect { status { isUnprocessableEntity() } }
-                .andExpect { jsonPath("$.error").exists() }
+                .perform(get("/API/profiles/$email").contentType("application/json"))
+                .andExpectAll(
+                    status().isUnprocessableEntity,
+                    jsonPath("$.error").exists()
+                )
         }
     }
 
@@ -129,10 +176,9 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
             )
 
         for (email in validEmails) {
-            val timestamp = System.currentTimeMillis()
             val newProfileDTO = TestProfileUtils.getNewProfileDTO().copy(
                 email = email,
-                phoneNumber = "5${timestamp % 1000000000}"
+                phoneNumber = TestProfileUtils.generateRandomPhoneNumber()
             )
 
             val mapper = ObjectMapper()
@@ -157,7 +203,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
             val timestamp = System.currentTimeMillis()
             val newProfileDTO = TestProfileUtils.getNewProfileDTO().copy(
                 email = "test$timestamp@example.com",
-                phoneNumber = "5${timestamp % 1000000000}",
+                phoneNumber = TestProfileUtils.generateRandomPhoneNumber(),
                 name = name
             )
 
@@ -182,7 +228,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
             val timestamp = System.currentTimeMillis()
             val newProfileDTO = TestProfileUtils.getNewProfileDTO().copy(
                 email = "test$timestamp@example.com",
-                phoneNumber = "5${timestamp % 1000000000}",
+                phoneNumber = TestProfileUtils.generateRandomPhoneNumber(),
                 surname = surname
             )
 
@@ -217,7 +263,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
             val timestamp = System.currentTimeMillis()
             val newProfileDTO = TestProfileUtils.getNewProfileDTO().copy(
                 email = "test$timestamp@example.com",
-                phoneNumber = "5${timestamp % 1000000000}",
+                phoneNumber = TestProfileUtils.generateRandomPhoneNumber(),
                 address = address
             )
 
@@ -255,7 +301,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
             val timestamp = System.currentTimeMillis()
             val newProfileDTO = TestProfileUtils.getNewProfileDTO().copy(
                 email = "test$timestamp@example.com",
-                phoneNumber = "5${timestamp % 1000000000}",
+                phoneNumber = TestProfileUtils.generateRandomPhoneNumber(),
                 city = city
             )
 
@@ -290,7 +336,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
             val timestamp = System.currentTimeMillis()
             val newProfileDTO = TestProfileUtils.getNewProfileDTO().copy(
                 email = "test$timestamp@example.com",
-                phoneNumber = "5${timestamp % 1000000000}",
+                phoneNumber = TestProfileUtils.generateRandomPhoneNumber(),
                 country = country
             )
 
@@ -415,10 +461,9 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
         )
 
         for (email in invalidEmails) {
-            val timestamp = System.currentTimeMillis()
             val newProfileDTO = TestProfileUtils.getNewProfileDTO().copy(
                 email = email,
-                phoneNumber = "5${timestamp % 1000000000}",
+                phoneNumber = TestProfileUtils.generateRandomPhoneNumber(),
             )
 
             val mapper = ObjectMapper()
@@ -456,7 +501,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
             val timestamp = System.currentTimeMillis()
             val newProfileDTO = TestProfileUtils.getNewProfileDTO().copy(
                 email = "test$timestamp@example.com",
-                phoneNumber = "5${timestamp % 1000000000}",
+                phoneNumber = TestProfileUtils.generateRandomPhoneNumber(),
                 name = name
             )
 
@@ -494,7 +539,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
             val timestamp = System.currentTimeMillis()
             val newProfileDTO = TestProfileUtils.getNewProfileDTO().copy(
                 email = "test$timestamp@example.com",
-                phoneNumber = "5${timestamp % 1000000000}",
+                phoneNumber = TestProfileUtils.generateRandomPhoneNumber(),
                 surname = surname
             )
 
@@ -550,7 +595,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
             val timestamp = System.currentTimeMillis()
             val newProfileDTO = TestProfileUtils.getNewProfileDTO().copy(
                 email = "test$timestamp@example.com",
-                phoneNumber = "5${timestamp % 1000000000}",
+                phoneNumber = TestProfileUtils.generateRandomPhoneNumber(),
                 address = address
             )
 
@@ -590,7 +635,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
             val timestamp = System.currentTimeMillis()
             val newProfileDTO = TestProfileUtils.getNewProfileDTO().copy(
                 email = "test$timestamp@example.com",
-                phoneNumber = "5${timestamp % 1000000000}",
+                phoneNumber = TestProfileUtils.generateRandomPhoneNumber(),
                 city = city
             )
 
@@ -628,7 +673,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
             val timestamp = System.currentTimeMillis()
             val newProfileDTO = TestProfileUtils.getNewProfileDTO().copy(
                 email = "test$timestamp@example.com",
-                phoneNumber = "5${timestamp % 1000000000}",
+                phoneNumber = TestProfileUtils.generateRandomPhoneNumber(),
                 country = country
             )
 

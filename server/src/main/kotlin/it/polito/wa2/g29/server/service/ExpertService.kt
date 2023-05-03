@@ -11,7 +11,6 @@ interface ExpertService {
     fun getExpertById(expertId: Int): ExpertDTO
 
     fun getAllTicketsByExpertId(expertId: Int): List<TicketDTO>
+
     fun getTicketStatusChangesByExpertId(expertId: Int): List<TicketChangeDTO>
-
-
 }
