@@ -35,7 +35,7 @@ class ChatServiceImpl(
             sender = newMessage.sender,
             content = newMessage.content,
             ticket = ticket,
-            expert = if (newMessage.sender === UserType.EXPERT) ticket.expert else null
+            expert = ticket.expert
         )
         message.attachments = newMessage.attachments?.map { attachment ->
             Attachment(
