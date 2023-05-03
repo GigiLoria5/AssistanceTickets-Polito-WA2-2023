@@ -262,7 +262,7 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
         val ticketId = Int.MAX_VALUE
 
         mockMvc
-            .perform(get("/API/ticket/${ticketId}/statusChanges").contentType("application/json"))
+            .perform(get("/API/tickets/${ticketId}/statusChanges").contentType("application/json"))
             .andExpect(status().isNotFound)
     }
 
@@ -272,7 +272,7 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
 
         ticketIdWrongValues.forEach {
             mockMvc
-                .perform(get("/API/ticket/${it}/statusChanges").contentType("application/json"))
+                .perform(get("/API/tickets/${it}/statusChanges").contentType("application/json"))
                 .andExpect(status().isUnprocessableEntity)
         }
     }
