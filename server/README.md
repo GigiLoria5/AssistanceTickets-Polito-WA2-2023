@@ -470,7 +470,9 @@
       ```
 
     - Response: `204 No Content` (success)
-    - Error responses: `404 Not Found` (ticketId not found), `422 Unprocessable Entity` (validation of request body or ticketId failed
+    - Error responses: `404 Not Found` (ticketId not found), `409 Conflict` (a not closed
+      ticket for the same customer and product already exists), `422 Unprocessable Entity` (validation of request body
+      or ticketId failed
       or ticket is not closed/resolved) or `500 Internal Server Error` (generic error)
     - Response body: An error message in case of error
 

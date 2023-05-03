@@ -4,6 +4,7 @@ import it.polito.wa2.g29.server.dto.ticketDTOs.TicketStatusChangeDTO
 import it.polito.wa2.g29.server.dto.ticketDTOs.TicketStatusChangeInProgressDTO
 import it.polito.wa2.g29.server.enums.TicketStatus
 import it.polito.wa2.g29.server.enums.UserType
+import it.polito.wa2.g29.server.exception.DuplicateTicketException
 import it.polito.wa2.g29.server.exception.ExpertNotFoundException
 import it.polito.wa2.g29.server.exception.TicketNotFoundException
 import it.polito.wa2.g29.server.model.Ticket
@@ -35,6 +36,14 @@ class TicketStatusChangeServiceImpl(
         statusChangeData: TicketStatusChangeDTO
     ) {
         val ticket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
+        //throw an exception if a not closed ticket for the same customer and product already exists
+        if (newStatus == TicketStatus.REOPENED && ticketRepository.findTicketByCustomerAndProductAndStatusNot(
+                ticket.customer,
+                ticket.product,
+                TicketStatus.CLOSED
+            ) != null
+        )
+            throw DuplicateTicketException("A not closed ticket with the same customer and product already exists")
         updateTicketStatus(ticket, newStatus, statusChangeData.changedBy, statusChangeData.description)
     }
 
