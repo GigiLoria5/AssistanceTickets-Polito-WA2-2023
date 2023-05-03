@@ -1,6 +1,9 @@
 package it.polito.wa2.g29.server.utils
 
 import it.polito.wa2.g29.server.dto.TicketDTO
+import it.polito.wa2.g29.server.enums.TicketPriority
+import it.polito.wa2.g29.server.enums.TicketStatus
+import it.polito.wa2.g29.server.model.Expert
 import it.polito.wa2.g29.server.model.Product
 import it.polito.wa2.g29.server.model.Profile
 import it.polito.wa2.g29.server.model.Ticket
@@ -10,6 +13,7 @@ object TestTicketUtils {
 
     lateinit var products: List<Product>
     lateinit var profiles: List<Profile>
+    lateinit var experts: List<Expert>
 
     fun insertTickets(ticketRepository: TicketRepository): List<Ticket> {
         val newTickets = getTickets()
@@ -49,5 +53,13 @@ object TestTicketUtils {
             createdAt = 0,
             lastModifiedAt = 0
         )
+    }
+
+    fun startTicket(ticketRepository: TicketRepository, ticket: Ticket, expert: Expert, priority: TicketPriority) {
+        ticket.apply {
+            status = TicketStatus.IN_PROGRESS
+            priorityLevel = priority
+        }
+        TestExpertUtils.addTicket(ticketRepository, expert, ticket)
     }
 }

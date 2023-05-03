@@ -59,6 +59,11 @@ class Ticket(
     @Column(nullable = false)
     var lastModifiedAt: Long = createdAt
 
+    fun addMessage(msg: Message) {
+        msg.ticket = this
+        messages.add(msg)
+    }
+
     @PreUpdate
     private fun preUpdate() {
         if (ticketChanges.size == 0) {

@@ -2,15 +2,15 @@ package it.polito.wa2.g29.server.integration.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import it.polito.wa2.g29.server.dto.toDTO
+import it.polito.wa2.g29.server.enums.TicketPriority
+import it.polito.wa2.g29.server.enums.TicketStatus
 import it.polito.wa2.g29.server.integration.AbstractTestcontainersTest
-import it.polito.wa2.g29.server.model.Expert
-import it.polito.wa2.g29.server.model.Product
-import it.polito.wa2.g29.server.model.Profile
 import it.polito.wa2.g29.server.model.Ticket
 import it.polito.wa2.g29.server.repository.ExpertRepository
 import it.polito.wa2.g29.server.repository.ProductRepository
 import it.polito.wa2.g29.server.repository.ProfileRepository
 import it.polito.wa2.g29.server.repository.TicketRepository
+import it.polito.wa2.g29.server.utils.TestExpertUtils
 import it.polito.wa2.g29.server.utils.TestProductUtils
 import it.polito.wa2.g29.server.utils.TestProfileUtils
 import it.polito.wa2.g29.server.utils.TestTicketUtils
@@ -47,6 +47,7 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
         expertRepository.deleteAllInBatch()
         TestTicketUtils.products = TestProductUtils.insertProducts(productRepository)
         TestTicketUtils.profiles = TestProfileUtils.insertProfiles(profileRepository)
+        TestTicketUtils.experts = TestExpertUtils.insertExperts(expertRepository)
     }
 
     @BeforeEach
@@ -317,6 +318,7 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
     ////// PUT /API/tickets/{ticketId}/start
     /////////////////////////////////////////////////////////////////////
 
+
     @Test
     fun startTicketById() {
         val oldTicketDTO = testTickets[0].toDTO()
@@ -329,7 +331,6 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
         val mapper = ObjectMapper()
         val jsonBody = mapper.writeValueAsString(newTicketDTO)
 
-        println("TUTTI: ${ticketRepository.findAll()}")
         mockMvc
             .perform(
                 put("/API/tickets/${oldTicketDTO.ticketId}/start")
@@ -337,6 +338,77 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
                     .contentType(MediaType.APPLICATION_JSON)
             )
             .andExpect(status().isNoContent)
+    }
+
+    @Test
+    fun startTicketByIdNotFound() {
+        val oldTicketDTO = testTickets[0].toDTO()
+        val newTicketDTO = oldTicketDTO.copy(
+            expertId = 1,
+            priorityLevel = "LOW",
+            description = ""
+        )
+
+        val mapper = ObjectMapper()
+        val jsonBody = mapper.writeValueAsString(newTicketDTO)
+
+        mockMvc
+            .perform(
+                put("/API/tickets/${Int.MAX_VALUE}/start")
+                    .content(jsonBody)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isNotFound)
+    }
+
+    @Test
+    fun startTicketByExpertIdNotFound() {
+        val oldTicketDTO = testTickets[0].toDTO()
+        val newTicketDTO = oldTicketDTO.copy(
+            expertId = Int.MAX_VALUE,
+            priorityLevel = "LOW",
+            description = ""
+        )
+
+        val mapper = ObjectMapper()
+        val jsonBody = mapper.writeValueAsString(newTicketDTO)
+
+        mockMvc
+            .perform(
+                put("/API/tickets/${oldTicketDTO.ticketId}/start")
+                    .content(jsonBody)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isNotFound)
+    }
+
+    @Test
+    fun startTicketByIdInProgress() {
+        val expert = TestTicketUtils.experts[0]
+
+        val ticket = Ticket("title1", "description1", TestTicketUtils.products[0], TestTicketUtils.profiles[1]).apply {
+            status = TicketStatus.IN_PROGRESS
+            priorityLevel = TicketPriority.LOW
+        }
+
+        TestExpertUtils.addTicket(ticketRepository, expert, ticket)
+
+        val newTicketDTO = ticket.toDTO().copy(
+            expertId = expert.id,
+            priorityLevel = "LOW",
+            description = ""
+        )
+
+        val mapper = ObjectMapper()
+        val jsonBody = mapper.writeValueAsString(newTicketDTO)
+
+        mockMvc
+            .perform(
+                put("/API/tickets/${ticket.toDTO().ticketId}/start")
+                    .content(jsonBody)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isUnprocessableEntity)
     }
 
 }
