@@ -539,7 +539,8 @@
     - Error responses: `404 Not Found` (ticketId not found), `422 Unprocessable Entity` (validation of
       ticketId) or `500 Internal Server Error` (generic error)
     - Response body: An array of objects, ordered chronologically, for each containing messageId, sender, expertId (
-      optional), content,
+      expert to whom the ticket was assigned),
+      content,
       attachments (array of objects, for each containing attachmentId, name and type) and time. An error message in case
       of error
       ```
@@ -548,6 +549,7 @@
           {
             "messageId": 16,
             "sender": "CUSTOMER",
+            "expertId": 25
             "content": "Hi, I'm having trouble with my device. Can you help me?",
             "attachments": [
                              ...,
