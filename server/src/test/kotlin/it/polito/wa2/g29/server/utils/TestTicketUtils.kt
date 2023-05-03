@@ -24,14 +24,14 @@ object TestTicketUtils {
     private fun getTickets(): List<Ticket> {
         val tickets = listOf(
             Ticket(
-                title = "Broken airpods",
-                description = "My airpods fell and now I can't hear anything",
+                title = "title1",
+                description = "description1",
                 product = products[0],
                 customer = profiles[0]
             ),
             Ticket(
-                title = "Broken screen",
-                description = "My computer fell and the screen is shattered",
+                title = "title1",
+                description = "description1",
                 product = products[1],
                 customer = profiles[1]
             )
@@ -44,8 +44,8 @@ object TestTicketUtils {
             ticketId = null,
             title = "newtitle",
             description = "newdescription",
-            productId = 1,
-            customerId = 2,
+            productId = products[0].id,
+            customerId = profiles[1].id,
             expertId = null,
             totalExchangedMessages = 0,
             status = "OPEN",

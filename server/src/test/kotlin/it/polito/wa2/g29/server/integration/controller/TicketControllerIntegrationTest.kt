@@ -42,9 +42,9 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
 
     @BeforeAll
     fun prepare(@Autowired profileRepository: ProfileRepository, @Autowired productRepository: ProductRepository, @Autowired expertRepository: ExpertRepository) {
-        productRepository.deleteAllInBatch()
-        profileRepository.deleteAllInBatch()
-        expertRepository.deleteAllInBatch()
+        productRepository.deleteAll()
+        profileRepository.deleteAll()
+        expertRepository.deleteAll()
         TestTicketUtils.products = TestProductUtils.insertProducts(productRepository)
         TestTicketUtils.profiles = TestProfileUtils.insertProfiles(profileRepository)
         TestTicketUtils.experts = TestExpertUtils.insertExperts(expertRepository)
@@ -52,7 +52,7 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
 
     @BeforeEach
     fun setup() {
-        ticketRepository.deleteAllInBatch()
+        ticketRepository.deleteAll()
         testTickets = TestTicketUtils.insertTickets(ticketRepository)
     }
 
@@ -323,7 +323,7 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
     fun startTicketById() {
         val oldTicketDTO = testTickets[0].toDTO()
         val newTicketDTO = oldTicketDTO.copy(
-            expertId = 1,
+            expertId = TestTicketUtils.experts[0].id,
             priorityLevel = "LOW",
             description = ""
         )

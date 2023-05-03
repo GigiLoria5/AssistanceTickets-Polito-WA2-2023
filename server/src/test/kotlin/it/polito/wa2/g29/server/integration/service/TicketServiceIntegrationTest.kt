@@ -32,16 +32,15 @@ class TicketServiceIntegrationTest: AbstractTestcontainersTest() {
 
     @BeforeAll
     fun prepare(@Autowired profileRepository: ProfileRepository, @Autowired productRepository: ProductRepository, @Autowired expertRepository: ExpertRepository) {
-        productRepository.deleteAllInBatch()
-        profileRepository.deleteAllInBatch()
+        productRepository.deleteAll()
+        profileRepository.deleteAll()
         TestTicketUtils.products = TestProductUtils.insertProducts(productRepository)
         TestTicketUtils.profiles = TestProfileUtils.insertProfiles(profileRepository)
     }
 
     @BeforeEach
-    @Transactional
     fun setup() {
-        ticketRepository.deleteAllInBatch()
+        ticketRepository.deleteAll()
         testTickets = TestTicketUtils.insertTickets(ticketRepository)
     }
 
@@ -121,8 +120,8 @@ class TicketServiceIntegrationTest: AbstractTestcontainersTest() {
     @Test
     fun createTicket() {
         val newTicketDTO = NewTicketDTO(
-            customerId = 1,
-            productId = 2,
+            customerId = TestTicketUtils.profiles[0].id!!,
+            productId = TestTicketUtils.products[1].id!!,
             title = "newtitle",
             description = "newdescription"
         )
@@ -135,8 +134,8 @@ class TicketServiceIntegrationTest: AbstractTestcontainersTest() {
     @Test
     fun createTicketDuplicateCustomerProduct() {
         val newTicketDTO = NewTicketDTO(
-            customerId = 1,
-            productId = 2,
+            customerId = TestTicketUtils.profiles[0].id!!,
+            productId = TestTicketUtils.products[1].id!!,
             title = "newtitle",
             description = "newdescription"
         )
