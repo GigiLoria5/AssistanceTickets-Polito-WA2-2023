@@ -58,7 +58,7 @@ class ExpertServiceIntegrationTest : AbstractTestcontainersTest() {
 
     @BeforeEach
     fun setup() {
-        ticketRepository.deleteAllInBatch()
+        ticketRepository.deleteAll()
         skillRepository.deleteAllInBatch()
         expertRepository.deleteAllInBatch()
         testExperts = TestExpertUtils.insertExperts(expertRepository)

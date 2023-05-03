@@ -48,10 +48,10 @@ class ChatServiceIntegrationTest : AbstractTestcontainersTest() {
 
     @BeforeAll
     fun prepare() {
-        productRepository.deleteAllInBatch()
-        profileRepository.deleteAllInBatch()
-        ticketRepository.deleteAllInBatch()
-        expertRepository.deleteAllInBatch()
+        productRepository.deleteAll()
+        profileRepository.deleteAll()
+        ticketRepository.deleteAll()
+        expertRepository.deleteAll()
         testProducts = TestProductUtils.insertProducts(productRepository)
         testProfiles = TestProfileUtils.insertProfiles(profileRepository)
         testExperts = TestExpertUtils.insertExperts(expertRepository)
@@ -64,8 +64,8 @@ class ChatServiceIntegrationTest : AbstractTestcontainersTest() {
     fun prune() {
         TestChatUtils.deleteAllMessages(messageRepository, testTickets, testExperts)
         ticketRepository.deleteAll()
-        productRepository.deleteAllInBatch()
-        profileRepository.deleteAllInBatch()
+        productRepository.deleteAll()
+        profileRepository.deleteAll()
         expertRepository.deleteAll()
     }
 

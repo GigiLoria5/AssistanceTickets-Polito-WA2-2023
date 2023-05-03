@@ -40,10 +40,19 @@ class TicketServiceIntegrationTest: AbstractTestcontainersTest() {
     @Autowired
     private lateinit var ticketRepository: TicketRepository
 
+    @Autowired
+    private lateinit var profileRepository: ProfileRepository
+
+    @Autowired
+    private lateinit var productRepository: ProductRepository
+
+    @Autowired
+    private lateinit var expertRepository: ExpertRepository
+
     lateinit var testTickets: List<Ticket>
 
     @BeforeAll
-    fun prepare(@Autowired profileRepository: ProfileRepository, @Autowired productRepository: ProductRepository, @Autowired expertRepository: ExpertRepository) {
+    fun prepare() {
         productRepository.deleteAll()
         profileRepository.deleteAll()
         expertRepository.deleteAll()
@@ -56,6 +65,14 @@ class TicketServiceIntegrationTest: AbstractTestcontainersTest() {
     fun setup() {
         ticketRepository.deleteAll()
         testTickets = TestTicketUtils.insertTickets(ticketRepository)
+    }
+
+    @AfterAll
+    fun prune() {
+        ticketRepository.deleteAll()
+        productRepository.deleteAll()
+        profileRepository.deleteAll()
+        expertRepository.deleteAll()
     }
 
     /////////////////////////////////////////////////////////////////////

@@ -19,6 +19,7 @@ import it.polito.wa2.g29.server.utils.TestProductUtils
 import it.polito.wa2.g29.server.utils.TestProfileUtils
 import it.polito.wa2.g29.server.utils.TestTicketUtils
 import org.hamcrest.Matchers.*
+import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -45,10 +46,19 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
     @Autowired
     private lateinit var ticketRepository: TicketRepository
 
+    @Autowired
+    private lateinit var profileRepository: ProfileRepository
+
+    @Autowired
+    private lateinit var productRepository: ProductRepository
+
+    @Autowired
+    private lateinit var expertRepository: ExpertRepository
+
     lateinit var testTickets: List<Ticket>
 
     @BeforeAll
-    fun prepare(@Autowired profileRepository: ProfileRepository, @Autowired productRepository: ProductRepository, @Autowired expertRepository: ExpertRepository) {
+    fun prepare() {
         productRepository.deleteAll()
         profileRepository.deleteAll()
         expertRepository.deleteAll()
@@ -61,6 +71,14 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
     fun setup() {
         ticketRepository.deleteAll()
         testTickets = TestTicketUtils.insertTickets(ticketRepository)
+    }
+
+    @AfterAll
+    fun prune() {
+        ticketRepository.deleteAll()
+        productRepository.deleteAll()
+        profileRepository.deleteAll()
+        expertRepository.deleteAll()
     }
 
     /////////////////////////////////////////////////////////////////////
