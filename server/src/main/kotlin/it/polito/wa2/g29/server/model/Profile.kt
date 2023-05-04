@@ -5,37 +5,39 @@ import jakarta.persistence.*
 
 @Entity
 @Table(name = "profiles")
-class Profile {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "profile_id")
-    var profileId: Int? = null
+class Profile(
+    @Column(nullable = false, unique = true)
+    var email: String,
+    @Column(nullable = false)
+    var name: String,
+    @Column(nullable = false)
+    var surname: String,
+    @Column(name = "phone_number", nullable = false)
+    var phoneNumber: String,
+    @Column(nullable = false)
+    var address: String,
+    @Column(nullable = false)
+    var city: String,
+    @Column(nullable = false)
+    var country: String
+) : EntityBase<Int>() {
 
-    var email: String = ""
+    @OneToMany(mappedBy = "customer",cascade = [CascadeType.ALL])
+    var tickets: MutableSet<Ticket> = mutableSetOf()
 
-    var name: String = ""
+    fun update(newProfile: ProfileDTO) {
+        email = newProfile.email
+        name = newProfile.name
+        surname = newProfile.surname
+        phoneNumber = newProfile.phoneNumber
+        address = newProfile.address
+        city = newProfile.city
+        country = newProfile.country
+    }
 
-    var surname: String = ""
-
-    @Column(name = "phone_number")
-    var phoneNumber: String = ""
-
-    var address: String = ""
-
-    var city: String = ""
-
-    var country: String = ""
 }
 
 fun ProfileDTO.toEntity(): Profile {
-    val profile = Profile()
-    profile.profileId = this.profileId
-    profile.email = this.email
-    profile.name = this.name
-    profile.surname = this.surname
-    profile.phoneNumber = this.phoneNumber
-    profile.address = this.address
-    profile.city = this.city
-    profile.country = this.country
-    return profile
+    return Profile(email, name, surname, phoneNumber, address, city, country)
 }
+

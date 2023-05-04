@@ -3,25 +3,28 @@ package it.polito.wa2.g29.server.integration.service
 import it.polito.wa2.g29.server.dto.toDTO
 import it.polito.wa2.g29.server.exception.ProductNotFoundException
 import it.polito.wa2.g29.server.integration.AbstractTestcontainersTest
+import it.polito.wa2.g29.server.model.Product
 import it.polito.wa2.g29.server.repository.ProductRepository
 import it.polito.wa2.g29.server.service.ProductService
-import it.polito.wa2.g29.server.utils.TestProductUtils
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
+import it.polito.wa2.g29.server.utils.ProductTestUtils
+import org.junit.jupiter.api.*
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.test.annotation.Rollback
+import org.springframework.transaction.annotation.Transactional
 
-class ProductServiceIntegrationTest : AbstractTestcontainersTest() {
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+class ProductServiceIT : AbstractTestcontainersTest() {
     @Autowired
     private lateinit var productService: ProductService
 
     @Autowired
     private lateinit var productRepository: ProductRepository
 
-    @BeforeEach
+    lateinit var testProducts: List<Product>
+
+    @BeforeAll
     fun setup() {
-        productRepository.deleteAll()
-        TestProductUtils.insertProducts(productRepository)
+        testProducts = ProductTestUtils.insertProducts(productRepository)
     }
 
     /////////////////////////////////////////////////////////////////////
@@ -29,8 +32,10 @@ class ProductServiceIntegrationTest : AbstractTestcontainersTest() {
     /////////////////////////////////////////////////////////////////////
 
     @Test
+    @Transactional
+    @Rollback
     fun getAllProductsEmpty() {
-        productRepository.deleteAll()
+        productRepository.deleteAllInBatch()
 
         val products = productService.getAllProducts()
 
@@ -39,7 +44,7 @@ class ProductServiceIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     fun getAllProducts() {
-        val expectedProducts = TestProductUtils.products
+        val expectedProducts = testProducts
 
         val actualProducts = productService.getAllProducts()
 
@@ -58,7 +63,7 @@ class ProductServiceIntegrationTest : AbstractTestcontainersTest() {
     fun getProductById() {
         val expectedProductDTO = productRepository.findAll()[0].toDTO()
 
-        val actualProductDTO = productService.getProductById(expectedProductDTO.productId)
+        val actualProductDTO = productService.getProductById(expectedProductDTO.productId!!)
 
         assert(actualProductDTO == expectedProductDTO)
     }
@@ -66,7 +71,7 @@ class ProductServiceIntegrationTest : AbstractTestcontainersTest() {
     @Test
     fun getProductByIdNotFound() {
         assertThrows<ProductNotFoundException> {
-            productService.getProductById(99999999)
+            productService.getProductById(Int.MAX_VALUE)
         }
     }
 }

@@ -2399,105 +2399,528 @@ VALUES (62.99, 'B013MC8H2A', 'Lowepro', 'Camera & Photo Accessories', 'LP36899',
         'Lowepro - Slingshot Edge 250 AW Camera Backpack - Black', 1.8);
 
 
-
 -- Profiles
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('kphilips0@nytimes.com', 'Kiel', 'Philips', '2535091502', '12 Hintze Junction', 'Tacoma', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('ekielty1@example.com', 'Eve', 'Kielty', '3361585021', '79 Cascade Terrace', 'Greensboro', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('rpetran2@tiny.cc', 'Roana', 'Petran', '6019673802', '5 Butternut Trail', 'Jackson', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('dpostin3@mozilla.com', 'Desi', 'Postin', '5613682292', '22 Harbort Plaza', 'West Palm Beach', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('tcrosskell4@apple.com', 'Tobit', 'Crosskell', '3045272337', '5 Magdeline Trail', 'Charleston', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('pcarrel5@sitemeter.com', 'Phelia', 'Carrel', '2129390924', '7 Cherokee Center', 'Jamaica', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('nvesque6@wix.com', 'Naomi', 'Vesque', '3143368815', '304 Cody Point', 'Saint Louis', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('cpinck7@archive.org', 'Chucho', 'Pinck', '2292971164', '90 Pine View Way', 'Lawrenceville', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('gfurney8@deliciousdays.com', 'Glendon', 'Furney', '9159160705', '835 Talmadge Circle', 'El Paso', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('btrehearne9@hatena.ne.jp', 'Barry', 'Trehearne', '2544391687', '14 Melrose Circle', 'Waco', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('bbraithwaita@clickbank.net', 'Blinny', 'Braithwait', '2129435305', '6852 Trailsway Park', 'New York City', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('rfishendenb@ifeng.com', 'Roseline', 'Fishenden', '8016538761', '15833 Butterfield Lane', 'Ogden', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('pjecksc@google.ca', 'Philly', 'Jecks', '7077620353', '22 Stuart Park', 'Petaluma', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('gaffusod@mozilla.com', 'Garfield', 'Affuso', '6161013905', '8 Hovde Crossing', 'Grand Rapids', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('aearle@delicious.com', 'Alysa', 'Earl', '9185907327', '3 Sycamore Plaza', 'Tulsa', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('cspillmanf@list-manage.com', 'Chrotoem', 'Spillman', '7197179845', '6 Mayfield Place', 'Colorado Springs', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('azimmerg@blogger.com', 'Annadiane', 'Zimmer', '2125434804', '3141 Upham Lane', 'New York City', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('mmeakingh@google.it', 'Mauricio', 'Meaking', '8129425936', '1846 Mariners Cove Way', 'Bloomington', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('drichmonti@photobucket.com', 'Davita', 'Richmont', '8062592738', '3723 Calypso Hill', 'Amarillo', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('dgiottoij@youtu.be', 'Dominique', 'Giottoi', '6167186226', '4878 Corry Junction', 'Grand Rapids', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('myakushkevk@mac.com', 'Mack', 'Yakushkev', '9156288525', '957 Bay Way', 'El Paso', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('mdalzelll@parallels.com', 'Melisande', 'Dalzell', '4342145951', '49 North Hill', 'Charlottesville', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('ascripturem@a8.net', 'Addison', 'Scripture', '4076735489', '904 Kennedy Point', 'Kissimmee', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('cdrinkeln@behance.net', 'Cullen', 'Drinkel', '5134117906', '64643 John Wall Alley', 'Cincinnati', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('mmanlowo@google.co.uk', 'Maryjo', 'Manlow', '6142806677', '3 Sunbrook Pass', 'Columbus', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('echandlerp@nytimes.com', 'Eleanora', 'Chandler', '7192624002', '826 Saint Paul Plaza', 'Colorado Springs', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('ejoneq@cmu.edu', 'Ellsworth', 'Jone', '4151265049', '2643 Hooker Place', 'San Francisco', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('dlemaitrer@umich.edu', 'Derby', 'Le Maitre', '3364924705', '116 Bay Junction', 'Greensboro', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('hseids@sciencedirect.com', 'Hinze', 'Seid', '6504457289', '35985 Londonderry Junction', 'Sunnyvale', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('bsignet@opera.com', 'Babb', 'Signe', '9152454081', '9 Packers Way', 'El Paso', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('rcamillou@over-blog.com', 'Ricki', 'Camillo', '2053177480', '6477 Bashford Terrace', 'Birmingham', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('vchaperlinv@t.co', 'Vida', 'Chaperlin', '6263296063', '6596 Talisman Lane', 'Pasadena', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('btutchenerw@illinois.edu', 'Brandais', 'Tutchener', '8656038285', '80 Karstens Avenue', 'Amarillo', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('dwinfieldx@artisteer.com', 'Dede', 'Winfield', '5026503055', '7623 Bartelt Point', 'Louisville', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('mmingauldy@independent.co.uk', 'Malia', 'Mingauld', '2054825399', '3 Union Trail', 'Birmingham', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('hbisonz@netlog.com', 'Hobart', 'Bison', '2143618586', '394 Prentice Avenue', 'Mesquite', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('bgiorgielli10@histats.com', 'Betteanne', 'Giorgielli', '8162762273', '3 Darwin Junction', 'Shawnee Mission', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('amccorley11@instagram.com', 'Amye', 'Mc Corley', '9161899108', '2 1st Crossing', 'Sacramento', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('jmacdermand12@creativecommons.org', 'Jeffrey', 'MacDermand', '2397744738', '860 Beilfuss Place', 'Fort Myers', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('koliphard13@dyndns.org', 'Kalinda', 'Oliphard', '3239694953', '207 Drewry Crossing', 'Los Angeles', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('nwloch14@mail.ru', 'North', 'Wloch', '2152654557', '767 Trailsway Place', 'Philadelphia', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('fmertsching15@arstechnica.com', 'Frazer', 'Mertsching', '9121899219', '499 Darwin Point', 'Savannah', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('ahallford16@prlog.org', 'Abraham', 'Hallford', '4329854329', '73 American Way', 'Midland', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('jmacane17@discovery.com', 'Janna', 'MacAne', '7726815622', '79145 Dovetail Plaza', 'Fort Pierce', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('nkettel18@symantec.com', 'Netti', 'Kettel', '7049549766', '7668 Kennedy Plaza', 'Charlotte', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('cdanbrook19@zimbio.com', 'Claudio', 'Danbrook', '2199245395', '94 Prairie Rose Hill', 'Gary', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('cpenticost1a@friendfeed.com', 'Caryl', 'Penticost', '9711145921', '5615 Anhalt Parkway', 'Portland', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('ddahl1b@gov.uk', 'Dode', 'Dahl', '2066230898', '7143 Holy Cross Alley', 'Seattle', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('jjamot1c@mac.com', 'Jedidiah', 'Jamot', '5715957312', '95967 Moland Circle', 'Alexandria', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('glockner1d@indiatimes.com', 'Gertrud', 'Lockner', '6018374710', '087 Oak Valley Parkway', 'Jackson', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('gevenden1e@uiuc.edu', 'Georg', 'Evenden', '4048852680', '500 Rutledge Place', 'Atlanta', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('dgrowy1f@odnoklassniki.ru', 'Demeter', 'Growy', '6198409958', '614 Columbus Park', 'San Diego', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('akenward1g@xrea.com', 'Alix', 'Kenward', '7868182049', '11 Talmadge Lane', 'Miami', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('gforce1h@nyu.edu', 'Gilberto', 'Force', '3181172438', '08749 Grasskamp Park', 'Shreveport', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('styres1i@ycombinator.com', 'Sophi', 'Tyres', '4089108686', '28 East Alley', 'Los Angeles', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('clepper1j@google.com.hk', 'Calida', 'Lepper', '9018446065', '7 Pleasure Road', 'Memphis', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('dpert1k@tinyurl.com', 'Dave', 'Pert', '8503107002', '0 Schiller Circle', 'Pensacola', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('bmaccari1l@dion.ne.jp', 'Barnett', 'Maccari', '8137146938', '512 Debs Court', 'Tampa', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('gmicklewright1m@google.co.jp', 'Georgeanne', 'Micklewright', '8048555126', '777 Lakeland Circle', 'Hampton', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('hlacey1n@nyu.edu', 'Hollie', 'Lacey', '2122264382', '77 Everett Road', 'New York City', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('agaroghan1o@state.gov', 'Armin', 'Garoghan', '2065191791', '781 Mayer Junction', 'Seattle', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('bwoodwin1p@amazon.de', 'Briggs', 'Woodwin', '4786614132', '9600 Laurel Terrace', 'Macon', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('fvoules1q@shutterfly.com', 'Fredrika', 'Voules', '4155878357', '63 Calypso Point', 'San Francisco', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('mcarmody1r@usda.gov', 'Margalo', 'Carmody', '5595806663', '686 Division Drive', 'Fresno', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('wgianullo1s@intel.com', 'Wilhelmina', 'Gianullo', '3185629825', '4 Kropf Parkway', 'Shreveport', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('ebutterwick1t@ovh.net', 'Earlie', 'Butterwick', '2057876461', '9965 Waywood Trail', 'Birmingham', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('gchitty1u@jalbum.net', 'Gae', 'Chitty', '7046939038', '47 Gateway Parkway', 'Charlotte', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('rgianninotti1v@tinypic.com', 'Rickie', 'Gianninotti', '8047510294', '4815 Lakewood Court', 'Manassas', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('ctrussell1w@smh.com.au', 'Chrotoem', 'Trussell', '5026675872', '2700 Riverside Hill', 'Louisville', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('rmadigan1x@studiopress.com', 'Roselle', 'Madigan', '7208706935', '33 West Road', 'Boulder', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('msehorsch1y@scientificamerican.com', 'Marty', 'Sehorsch', '7608103815', '02 Novick Plaza', 'Carlsbad', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('zkeelinge1z@homestead.com', 'Zsa zsa', 'Keelinge', '5125146662', '5387 Thompson Circle', 'Austin', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('aferruzzi20@ycombinator.com', 'Ailyn', 'Ferruzzi', '8584664959', '81183 Welch Crossing', 'San Francisco', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('odanihel21@narod.ru', 'Olivero', 'Danihel', '5014486150', '5 Lakewood Gardens Court', 'North Little Rock', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('bgorghetto22@mediafire.com', 'Budd', 'Gorghetto', '2628739460', '4003 Loomis Crossing', 'Racine', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('lleggis23@engadget.com', 'Lucho', 'Leggis', '5617794069', '16 Nelson Crossing', 'West Palm Beach', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('nfraney24@aboutads.info', 'Normie', 'Franey', '2164895411', '6 Ridgeview Circle', 'Cleveland', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('cpaoletto25@google.com.hk', 'Christa', 'Paoletto', '2051694719', '65240 Pankratz Lane', 'Birmingham', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('mantonin26@aboutads.info', 'Morley', 'Antonin', '4173550756', '011 Burrows Parkway', 'Springfield', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('jmeeke27@e-recht24.de', 'Jecho', 'Meeke', '4782407197', '3524 Northwestern Street', 'Macon', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('isprigg28@shop-pro.jp', 'Ivie', 'Sprigg', '2099960426', '19 Meadow Valley Court', 'Stockton', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('mromanelli29@sogou.com', 'Manolo', 'Romanelli', '9511196392', '93 Gerald Crossing', 'Corona', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('lyggo2a@wp.com', 'Leif', 'Yggo', '4053111145', '1 Sommers Circle', 'Oklahoma City', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('jkubal2b@trellian.com', 'Jessalin', 'Kubal', '5026876650', '1272 Russell Trail', 'Louisville', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('krace2c@prweb.com', 'Kaila', 'Race', '4072751483', '5240 Melrose Center', 'Orlando', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('cloines2d@ox.ac.uk', 'Carlina', 'Loines', '4324014667', '42667 Pepper Wood Road', 'Odessa', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('yreddyhoff2e@123-reg.co.uk', 'Yoshi', 'Reddyhoff', '8143183546', '99 Monica Crossing', 'Erie', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('vcurdell2f@yale.edu', 'Viviene', 'Curdell', '4046046874', '4098 Summerview Pass', 'Atlanta', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('tsharply2g@cdc.gov', 'Timothee', 'Sharply', '3348565867', '14 Myrtle Court', 'Montgomery', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('ldougliss2h@prweb.com', 'Laurens', 'Dougliss', '9079737870', '54593 Pearson Center', 'Fairbanks', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('olepard2i@mysql.com', 'Osbourn', 'Lepard', '6085035786', '3 Fremont Trail', 'Madison', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('cbygrave2j@hp.com', 'Currey', 'Bygrave', '6025424855', '6179 Forest Dale Junction', 'Phoenix', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('ndumbare2k@last.fm', 'Nero', 'Dumbare', '3149309073', '9546 Helena Alley', 'Saint Louis', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('mfreyne2l@icq.com', 'Meade', 'Freyne', '7189040817', '2 Pearson Hill', 'Brooklyn', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('eperroni2m@spotify.com', 'Eugenie', 'Perroni', '5715420665', '2270 Lake View Pass', 'Richmond', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('gdawdary2n@merriam-webster.com', 'Giraud', 'Dawdary', '4024791682', '64 Oak Street', 'Lincoln', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('gepp2o@opensource.org', 'Georgena', 'Epp', '8624156297', '91 Grim Court', 'Paterson', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('gpickworth2p@tuttocitta.it', 'Guillermo', 'Pickworth', '6824668458', '7 Farwell Road', 'Fort Worth', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('hvenour2q@livejournal.com', 'Hi', 'Venour', '3366276183', '6683 Forster Crossing', 'High Point', 'United States');
-insert into profiles (email, name, surname, phone_number, address, city, country) values ('rpinkerton2r@ocn.ne.jp', 'Robb', 'Pinkerton', '2565077130', '93 Thierer Alley', 'Huntsville', 'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('kphilips0@nytimes.com', 'Kiel', 'Philips', '2535091502', '12 Hintze Junction', 'Tacoma', 'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('ekielty1@example.com', 'Eve', 'Kielty', '3361585021', '79 Cascade Terrace', 'Greensboro', 'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('rpetran2@tiny.cc', 'Roana', 'Petran', '6019673802', '5 Butternut Trail', 'Jackson', 'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('dpostin3@mozilla.com', 'Desi', 'Postin', '5613682292', '22 Harbort Plaza', 'West Palm Beach', 'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('tcrosskell4@apple.com', 'Tobit', 'Crosskell', '3045272337', '5 Magdeline Trail', 'Charleston',
+        'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('pcarrel5@sitemeter.com', 'Phelia', 'Carrel', '2129390924', '7 Cherokee Center', 'Jamaica', 'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('nvesque6@wix.com', 'Naomi', 'Vesque', '3143368815', '304 Cody Point', 'Saint Louis', 'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('cpinck7@archive.org', 'Chucho', 'Pinck', '2292971164', '90 Pine View Way', 'Lawrenceville', 'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('gfurney8@deliciousdays.com', 'Glendon', 'Furney', '9159160705', '835 Talmadge Circle', 'El Paso',
+        'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('btrehearne9@hatena.ne.jp', 'Barry', 'Trehearne', '2544391687', '14 Melrose Circle', 'Waco', 'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('bbraithwaita@clickbank.net', 'Blinny', 'Braithwait', '2129435305', '6852 Trailsway Park', 'New York City',
+        'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('rfishendenb@ifeng.com', 'Roseline', 'Fishenden', '8016538761', '15833 Butterfield Lane', 'Ogden',
+        'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('pjecksc@google.ca', 'Philly', 'Jecks', '7077620353', '22 Stuart Park', 'Petaluma', 'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('gaffusod@mozilla.com', 'Garfield', 'Affuso', '6161013905', '8 Hovde Crossing', 'Grand Rapids',
+        'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('aearle@delicious.com', 'Alysa', 'Earl', '9185907327', '3 Sycamore Plaza', 'Tulsa', 'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('cspillmanf@list-manage.com', 'Chrotoem', 'Spillman', '7197179845', '6 Mayfield Place', 'Colorado Springs',
+        'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('azimmerg@blogger.com', 'Annadiane', 'Zimmer', '2125434804', '3141 Upham Lane', 'New York City',
+        'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('mmeakingh@google.it', 'Mauricio', 'Meaking', '8129425936', '1846 Mariners Cove Way', 'Bloomington',
+        'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('drichmonti@photobucket.com', 'Davita', 'Richmont', '8062592738', '3723 Calypso Hill', 'Amarillo',
+        'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('dgiottoij@youtu.be', 'Dominique', 'Giottoi', '6167186226', '4878 Corry Junction', 'Grand Rapids',
+        'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('myakushkevk@mac.com', 'Mack', 'Yakushkev', '9156288525', '957 Bay Way', 'El Paso', 'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('mdalzelll@parallels.com', 'Melisande', 'Dalzell', '4342145951', '49 North Hill', 'Charlottesville',
+        'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('ascripturem@a8.net', 'Addison', 'Scripture', '4076735489', '904 Kennedy Point', 'Kissimmee', 'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('cdrinkeln@behance.net', 'Cullen', 'Drinkel', '5134117906', '64643 John Wall Alley', 'Cincinnati',
+        'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('mmanlowo@google.co.uk', 'Maryjo', 'Manlow', '6142806677', '3 Sunbrook Pass', 'Columbus', 'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('echandlerp@nytimes.com', 'Eleanora', 'Chandler', '7192624002', '826 Saint Paul Plaza', 'Colorado Springs',
+        'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('ejoneq@cmu.edu', 'Ellsworth', 'Jone', '4151265049', '2643 Hooker Place', 'San Francisco', 'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('dlemaitrer@umich.edu', 'Derby', 'Le Maitre', '3364924705', '116 Bay Junction', 'Greensboro', 'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('hseids@sciencedirect.com', 'Hinze', 'Seid', '6504457289', '35985 Londonderry Junction', 'Sunnyvale',
+        'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('bsignet@opera.com', 'Babb', 'Signe', '9152454081', '9 Packers Way', 'El Paso', 'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('rcamillou@over-blog.com', 'Ricki', 'Camillo', '2053177480', '6477 Bashford Terrace', 'Birmingham',
+        'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('vchaperlinv@t.co', 'Vida', 'Chaperlin', '6263296063', '6596 Talisman Lane', 'Pasadena', 'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('btutchenerw@illinois.edu', 'Brandais', 'Tutchener', '8656038285', '80 Karstens Avenue', 'Amarillo',
+        'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('dwinfieldx@artisteer.com', 'Dede', 'Winfield', '5026503055', '7623 Bartelt Point', 'Louisville',
+        'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('mmingauldy@independent.co.uk', 'Malia', 'Mingauld', '2054825399', '3 Union Trail', 'Birmingham',
+        'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('hbisonz@netlog.com', 'Hobart', 'Bison', '2143618586', '394 Prentice Avenue', 'Mesquite', 'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('bgiorgielli10@histats.com', 'Betteanne', 'Giorgielli', '8162762273', '3 Darwin Junction', 'Shawnee Mission',
+        'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('amccorley11@instagram.com', 'Amye', 'Mc Corley', '9161899108', '2 1st Crossing', 'Sacramento',
+        'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('jmacdermand12@creativecommons.org', 'Jeffrey', 'MacDermand', '2397744738', '860 Beilfuss Place', 'Fort Myers',
+        'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('koliphard13@dyndns.org', 'Kalinda', 'Oliphard', '3239694953', '207 Drewry Crossing', 'Los Angeles',
+        'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('nwloch14@mail.ru', 'North', 'Wloch', '2152654557', '767 Trailsway Place', 'Philadelphia', 'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('fmertsching15@arstechnica.com', 'Frazer', 'Mertsching', '9121899219', '499 Darwin Point', 'Savannah',
+        'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('ahallford16@prlog.org', 'Abraham', 'Hallford', '4329854329', '73 American Way', 'Midland', 'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('jmacane17@discovery.com', 'Janna', 'MacAne', '7726815622', '79145 Dovetail Plaza', 'Fort Pierce',
+        'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('nkettel18@symantec.com', 'Netti', 'Kettel', '7049549766', '7668 Kennedy Plaza', 'Charlotte', 'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('cdanbrook19@zimbio.com', 'Claudio', 'Danbrook', '2199245395', '94 Prairie Rose Hill', 'Gary', 'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('cpenticost1a@friendfeed.com', 'Caryl', 'Penticost', '9711145921', '5615 Anhalt Parkway', 'Portland',
+        'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('ddahl1b@gov.uk', 'Dode', 'Dahl', '2066230898', '7143 Holy Cross Alley', 'Seattle', 'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('jjamot1c@mac.com', 'Jedidiah', 'Jamot', '5715957312', '95967 Moland Circle', 'Alexandria', 'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('glockner1d@indiatimes.com', 'Gertrud', 'Lockner', '6018374710', '087 Oak Valley Parkway', 'Jackson',
+        'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('gevenden1e@uiuc.edu', 'Georg', 'Evenden', '4048852680', '500 Rutledge Place', 'Atlanta', 'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('dgrowy1f@odnoklassniki.ru', 'Demeter', 'Growy', '6198409958', '614 Columbus Park', 'San Diego',
+        'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('akenward1g@xrea.com', 'Alix', 'Kenward', '7868182049', '11 Talmadge Lane', 'Miami', 'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('gforce1h@nyu.edu', 'Gilberto', 'Force', '3181172438', '08749 Grasskamp Park', 'Shreveport', 'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('styres1i@ycombinator.com', 'Sophi', 'Tyres', '4089108686', '28 East Alley', 'Los Angeles', 'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('clepper1j@google.com.hk', 'Calida', 'Lepper', '9018446065', '7 Pleasure Road', 'Memphis', 'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('dpert1k@tinyurl.com', 'Dave', 'Pert', '8503107002', '0 Schiller Circle', 'Pensacola', 'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('bmaccari1l@dion.ne.jp', 'Barnett', 'Maccari', '8137146938', '512 Debs Court', 'Tampa', 'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('gmicklewright1m@google.co.jp', 'Georgeanne', 'Micklewright', '8048555126', '777 Lakeland Circle', 'Hampton',
+        'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('hlacey1n@nyu.edu', 'Hollie', 'Lacey', '2122264382', '77 Everett Road', 'New York City', 'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('agaroghan1o@state.gov', 'Armin', 'Garoghan', '2065191791', '781 Mayer Junction', 'Seattle', 'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('bwoodwin1p@amazon.de', 'Briggs', 'Woodwin', '4786614132', '9600 Laurel Terrace', 'Macon', 'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('fvoules1q@shutterfly.com', 'Fredrika', 'Voules', '4155878357', '63 Calypso Point', 'San Francisco',
+        'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('mcarmody1r@usda.gov', 'Margalo', 'Carmody', '5595806663', '686 Division Drive', 'Fresno', 'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('wgianullo1s@intel.com', 'Wilhelmina', 'Gianullo', '3185629825', '4 Kropf Parkway', 'Shreveport',
+        'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('ebutterwick1t@ovh.net', 'Earlie', 'Butterwick', '2057876461', '9965 Waywood Trail', 'Birmingham',
+        'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('gchitty1u@jalbum.net', 'Gae', 'Chitty', '7046939038', '47 Gateway Parkway', 'Charlotte', 'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('rgianninotti1v@tinypic.com', 'Rickie', 'Gianninotti', '8047510294', '4815 Lakewood Court', 'Manassas',
+        'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('ctrussell1w@smh.com.au', 'Chrotoem', 'Trussell', '5026675872', '2700 Riverside Hill', 'Louisville',
+        'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('rmadigan1x@studiopress.com', 'Roselle', 'Madigan', '7208706935', '33 West Road', 'Boulder', 'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('msehorsch1y@scientificamerican.com', 'Marty', 'Sehorsch', '7608103815', '02 Novick Plaza', 'Carlsbad',
+        'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('zkeelinge1z@homestead.com', 'Zsa zsa', 'Keelinge', '5125146662', '5387 Thompson Circle', 'Austin',
+        'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('aferruzzi20@ycombinator.com', 'Ailyn', 'Ferruzzi', '8584664959', '81183 Welch Crossing', 'San Francisco',
+        'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('odanihel21@narod.ru', 'Olivero', 'Danihel', '5014486150', '5 Lakewood Gardens Court', 'North Little Rock',
+        'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('bgorghetto22@mediafire.com', 'Budd', 'Gorghetto', '2628739460', '4003 Loomis Crossing', 'Racine',
+        'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('lleggis23@engadget.com', 'Lucho', 'Leggis', '5617794069', '16 Nelson Crossing', 'West Palm Beach',
+        'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('nfraney24@aboutads.info', 'Normie', 'Franey', '2164895411', '6 Ridgeview Circle', 'Cleveland',
+        'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('cpaoletto25@google.com.hk', 'Christa', 'Paoletto', '2051694719', '65240 Pankratz Lane', 'Birmingham',
+        'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('mantonin26@aboutads.info', 'Morley', 'Antonin', '4173550756', '011 Burrows Parkway', 'Springfield',
+        'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('jmeeke27@e-recht24.de', 'Jecho', 'Meeke', '4782407197', '3524 Northwestern Street', 'Macon', 'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('isprigg28@shop-pro.jp', 'Ivie', 'Sprigg', '2099960426', '19 Meadow Valley Court', 'Stockton', 'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('mromanelli29@sogou.com', 'Manolo', 'Romanelli', '9511196392', '93 Gerald Crossing', 'Corona', 'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('lyggo2a@wp.com', 'Leif', 'Yggo', '4053111145', '1 Sommers Circle', 'Oklahoma City', 'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('jkubal2b@trellian.com', 'Jessalin', 'Kubal', '5026876650', '1272 Russell Trail', 'Louisville',
+        'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('krace2c@prweb.com', 'Kaila', 'Race', '4072751483', '5240 Melrose Center', 'Orlando', 'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('cloines2d@ox.ac.uk', 'Carlina', 'Loines', '4324014667', '42667 Pepper Wood Road', 'Odessa', 'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('yreddyhoff2e@123-reg.co.uk', 'Yoshi', 'Reddyhoff', '8143183546', '99 Monica Crossing', 'Erie',
+        'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('vcurdell2f@yale.edu', 'Viviene', 'Curdell', '4046046874', '4098 Summerview Pass', 'Atlanta', 'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('tsharply2g@cdc.gov', 'Timothee', 'Sharply', '3348565867', '14 Myrtle Court', 'Montgomery', 'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('ldougliss2h@prweb.com', 'Laurens', 'Dougliss', '9079737870', '54593 Pearson Center', 'Fairbanks',
+        'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('olepard2i@mysql.com', 'Osbourn', 'Lepard', '6085035786', '3 Fremont Trail', 'Madison', 'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('cbygrave2j@hp.com', 'Currey', 'Bygrave', '6025424855', '6179 Forest Dale Junction', 'Phoenix',
+        'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('ndumbare2k@last.fm', 'Nero', 'Dumbare', '3149309073', '9546 Helena Alley', 'Saint Louis', 'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('mfreyne2l@icq.com', 'Meade', 'Freyne', '7189040817', '2 Pearson Hill', 'Brooklyn', 'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('eperroni2m@spotify.com', 'Eugenie', 'Perroni', '5715420665', '2270 Lake View Pass', 'Richmond',
+        'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('gdawdary2n@merriam-webster.com', 'Giraud', 'Dawdary', '4024791682', '64 Oak Street', 'Lincoln',
+        'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('gepp2o@opensource.org', 'Georgena', 'Epp', '8624156297', '91 Grim Court', 'Paterson', 'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('gpickworth2p@tuttocitta.it', 'Guillermo', 'Pickworth', '6824668458', '7 Farwell Road', 'Fort Worth',
+        'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('hvenour2q@livejournal.com', 'Hi', 'Venour', '3366276183', '6683 Forster Crossing', 'High Point',
+        'United States');
+insert into profiles (email, name, surname, phone_number, address, city, country)
+values ('rpinkerton2r@ocn.ne.jp', 'Robb', 'Pinkerton', '2565077130', '93 Thierer Alley', 'Huntsville', 'United States');
+
+-- experts
+insert into experts (name, surname, email, country, city)
+values ('Nicolea', 'Wimpenny', 'nwimpenny0@rediff.com', 'United States', 'Greensboro');
+insert into experts (name, surname, email, country, city)
+values ('Luigi', 'Fulbrook', 'lfulbrook1@gnu.org', 'United States', 'Kansas City');
+insert into experts (name, surname, email, country, city)
+values ('Flynn', 'Fishbie', 'ffishbie2@flickr.com', 'United States', 'Las Vegas');
+insert into experts (name, surname, email, country, city)
+values ('Sean', 'Artz', 'sartz3@aol.com', 'United States', 'Cincinnati');
+insert into experts (name, surname, email, country, city)
+values ('Barr', 'Bowering', 'bbowering4@vistaprint.com', 'United States', 'Rochester');
+insert into experts (name, surname, email, country, city)
+values ('Noel', 'Bage', 'nbage5@house.gov', 'United States', 'New Bedford');
+insert into experts (name, surname, email, country, city)
+values ('Tillie', 'Rival', 'trival6@cnbc.com', 'United States', 'West Palm Beach');
+insert into experts (name, surname, email, country, city)
+values ('Kellia', 'Rubin', 'krubin7@edublogs.org', 'United States', 'Burbank');
+insert into experts (name, surname, email, country, city)
+values ('Denys', 'MacKibbon', 'dmackibbon8@huffingtonpost.com', 'United States', 'Clearwater');
+insert into experts (name, surname, email, country, city)
+values ('Abagael', 'Guard', 'aguard9@cnbc.com', 'United States', 'Scottsdale');
+
+-- skills
+
+insert into skills (expertise, level, expert_id)
+values ('APPLIANCES', 'BEGINNER', 1);
+insert into skills (expertise, level, expert_id)
+values ('CONSUMER_ELECTRONICS', 'BEGINNER', 1);
+insert into skills (expertise, level, expert_id)
+values ('APPLIANCES', 'EXPERT', 2);
+insert into skills (expertise, level, expert_id)
+values ('COMPUTER', 'SPECIALIST', 2);
+insert into skills (expertise, level, expert_id)
+values ('CONSUMER_ELECTRONICS', 'EXPERT', 3);
+insert into skills (expertise, level, expert_id)
+values ('SMARTPHONE', 'EXPERT', 3);
+insert into skills (expertise, level, expert_id)
+values ('SMARTPHONE', 'EXPERT', 4);
+insert into skills (expertise, level, expert_id)
+values ('COMPUTER', 'EXPERT', 4);
+insert into skills (expertise, level, expert_id)
+values ('COMPUTER', 'SPECIALIST', 5);
+insert into skills (expertise, level, expert_id)
+values ('CONSUMER_ELECTRONICS', 'SPECIALIST', 5);
+insert into skills (expertise, level, expert_id)
+values ('COMPUTER', 'BEGINNER', 6);
+insert into skills (expertise, level, expert_id)
+values ('APPLIANCES', 'SKILLED', 7);
+insert into skills (expertise, level, expert_id)
+values ('COMPUTER', 'AVERAGE', 8);
+insert into skills (expertise, level, expert_id)
+values ('COMPUTER', 'EXPERT', 9);
+insert into skills (expertise, level, expert_id)
+values ('COMPUTER', 'BEGINNER', 10);
+
+-- tickets
+
+INSERT INTO tickets (created_at, title, description, last_modified_at, priority_level, status, customer_id, expert_id,
+                     product_id)
+VALUES (1682616982680, 'Can''t install Sanus VLF410B1 mount',
+        'I''m trying to install the Sanus VLF410B1 mount for my TV, but I can''t seem to get it to work', 1682616982680,
+        null, 'OPEN', 1, null, 1);
+
+INSERT INTO tickets (created_at, title, description, last_modified_at, priority_level, status, customer_id, expert_id,
+                     product_id)
+VALUES (1582616982680, 'Boytone BT-210F sound issues',
+        'I''m having trouble with the sound on my Boytone BT-210F stereo system, it''s not playing any audio',
+        1582616982680, null, 'OPEN', 51, null, 2);
+
+INSERT INTO tickets (created_at, title, description, last_modified_at, priority_level, status, customer_id, expert_id,
+                     product_id)
+VALUES (1612616982680, 'DENAQ DQ-PA3032U-5525 adapter not charging',
+        'My DENAQ DQ-PA3032U-5525 adapter is not charging my Toshiba laptop, it''s plugged in but not working',
+        1612616982680, null, 'OPEN', 12, null, 3);
+
+INSERT INTO tickets (created_at, title, description, last_modified_at, priority_level, status, customer_id, expert_id,
+                     product_id)
+VALUES (1681426902680, 'SOL REPUBLIC - Amps Air Bluetooth Earbuds connection issue',
+        'I''m having trouble connecting my SOL REPUBLIC - Amps Air Bluetooth Earbuds to my phone', 1681526902680, 'LOW',
+        'IN_PROGRESS', 44, 3, 277);
+
+INSERT INTO tickets (created_at, title, description, last_modified_at, priority_level, status, customer_id, expert_id,
+                     product_id)
+VALUES (1679526902680, 'SOL REPUBLIC - Amps Air Bluetooth Earbuds battery issue',
+        'My SOL REPUBLIC - Amps Air Bluetooth Earbuds battery is draining too quickly', 1680526902680, 'MEDIUM',
+        'IN_PROGRESS', 65, 5, 278);
+
+INSERT INTO tickets (created_at, title, description, last_modified_at, priority_level, status, customer_id, expert_id,
+                     product_id)
+VALUES (1681016982680, 'Kicker Bullfrog Jump speaker not turning on',
+        'My Kicker Bullfrog Jump speaker won''t turn on anymore', 1681116982680, 'HIGH', 'IN_PROGRESS', 6, 5, 279);
+
+INSERT INTO tickets (created_at, title, description, last_modified_at, priority_level, status, customer_id, expert_id,
+                     product_id)
+VALUES (1673586015516, 'Hauppauge - WinTV-dualHD Cordcutter driver issue',
+        'I cannot get my Hauppauge - WinTV-dualHD Cordcutter to work, it seems to be a driver issue', 1677487264681,
+        'HIGH', 'RESOLVED', 23, 8, 275);
+
+INSERT INTO tickets (created_at, title, description, last_modified_at, priority_level, status, customer_id, expert_id,
+                     product_id)
+VALUES (1674024324147, 'Yamaha - Natural Sound 5 outdoor speakers not working',
+        'My Yamaha - Natural Sound 5 outdoor speakers suddenly stopped working', 1677065479943, 'MEDIUM', 'RESOLVED',
+        13, 9, 276);
+
+INSERT INTO tickets (created_at, title, description, last_modified_at, priority_level, status, customer_id, expert_id,
+                     product_id)
+VALUES (1664855274686, 'Issue with Acer 15.6 Chromebook',
+        'My Acer 15.6 Chromebook CB5-571-C4G4 is not turning on. I have tried charging it but nothing seems to work.',
+        1672386059292, 'MEDIUM', 'CLOSED', 12, 5, 635);
+
+INSERT INTO tickets (created_at, title, description, last_modified_at, priority_level, status, customer_id, expert_id,
+                     product_id)
+VALUES (1666955083652, 'Sony home theater system not working',
+        'I purchased a Sony - 5.1-Ch. 3D / Smart Blu-ray Home Theater System (BDVE3100) but it is not working. The sound is not coming out from the speakers. Please help.',
+        1672450855038, 'HIGH', 'CLOSED', 93, 8, 640);
+
+INSERT INTO tickets (created_at, title, description, last_modified_at, priority_level, status, customer_id, expert_id,
+                     product_id)
+VALUES (1667082377012, 'Netgear Powerline Wifi not working',
+        'I recently purchased Netgear Powerline 1000 Mbps Wifi (PLW1000-100NAS) but I am not able to connect to the internet through it. The LED lights are blinking but there is no internet. Please assist.',
+        1672890571523, 'LOW', 'CLOSED', 81, 7, 637);
+
+INSERT INTO tickets (created_at, title, description, last_modified_at, priority_level, status, customer_id, expert_id,
+                     product_id)
+VALUES (1670664805413, 'Issues with Logitech iPad Slim Folio keyboard',
+        'I am experiencing problems with my Logitech iPad Slim Folio keyboard. It is not connecting via Bluetooth to my iPad 5th generation. Please help me resolve this issue.',
+        1773830274473, 'HIGH', 'REOPENED', 28, 8, 796);
+
+INSERT INTO tickets (created_at, title, description, last_modified_at, priority_level, status, customer_id, expert_id,
+                     product_id)
+VALUES (1703019801326, 'Dash cam not recording rear camera footage',
+        'My Cobra CDR895D dash cam is not recording footage from the rear camera. I have checked all connections and settings but the issue persists. Please provide assistance.',
+        1755808548965, 'MEDIUM', 'REOPENED', 44, 7, 797);
+
+INSERT INTO tickets (created_at, title, description, last_modified_at, priority_level, status, customer_id, expert_id,
+                     product_id)
+VALUES (1691498758279, 'Netgear CM700 modem not connecting to internet',
+        'My Netgear CM700 modem is not connecting to the internet. I have restarted it multiple times, but it does not seem to resolve the issue. Please help me troubleshoot this problem.',
+        1751388016898, 'LOW', 'REOPENED', 24, 9, 798);
+
+-- Ticket 1
+INSERT INTO messages(sender, content, ticket_id, expert_id, time)
+VALUES ('CUSTOMER', 'Ciao, ho bisogno di assistenza per il mio ordine.', 4, NULL, 1640856000);
+INSERT INTO messages(sender, content, ticket_id, expert_id, time)
+VALUES ('EXPERT', 'Buongiorno, in cosa posso aiutarti?', 4, 3, 1640856120);
+INSERT INTO messages(sender, content, ticket_id, expert_id, time)
+VALUES ('CUSTOMER', 'Ho ricevuto un prodotto danneggiato, cosa posso fare?', 4, NULL, 1640856200);
+INSERT INTO messages(sender, content, ticket_id, expert_id, time)
+VALUES ('EXPERT', 'Mi dispiace per linconveniente, puoi mandarmi una foto del prodotto?', 4, 3, 1640856260);
+INSERT INTO messages(sender, content, ticket_id, expert_id, time)
+VALUES ('CUSTOMER', 'Eccola qui.', 4, NULL, 1640856340);
+INSERT INTO messages(sender, content, ticket_id, expert_id, time)
+VALUES ('EXPERT', 'Grazie, possiamo organizzare un reso o una sostituzione.', 4, 3, 1640856400);
+INSERT INTO messages(sender, content, ticket_id, expert_id, time)
+VALUES ('CUSTOMER', 'Preferirei una sostituzione, grazie.', 4, NULL, 1640856460);
+INSERT INTO messages(sender, content, ticket_id, expert_id, time)
+VALUES ('EXPERT', 'Va bene, ti faremo sapere quando il nuovo prodotto sarà in viaggio.', 4, 3, 1640856520);
+
+-- Ticket 2
+INSERT INTO messages(sender, content, ticket_id, expert_id, time)
+VALUES ('CUSTOMER', 'Buongiorno, vorrei sapere come funziona il vostro servizio di assistenza.', 5, NULL, 1640870400);
+INSERT INTO messages(sender, content, ticket_id, expert_id, time)
+VALUES ('EXPERT',
+        'Ciao, il nostro servizio di assistenza è a disposizione per qualsiasi problema tu abbia con il tuo ordine.', 5,
+        5, 1640870520);
+INSERT INTO messages(sender, content, ticket_id, expert_id, time)
+VALUES ('CUSTOMER', 'Grazie, avevo dei dubbi riguardo al mio ordine. Ho visto che non è stato ancora spedito.', 5, NULL,
+        1640870580);
+INSERT INTO messages(sender, content, ticket_id, expert_id, time)
+VALUES ('EXPERT',
+        'Hai ragione, ci sono stati dei ritardi nella produzione. Ti confermo che il tuo ordine verrà spedito entro la fine della settimana.',
+        5, 5, 1640870640);
+INSERT INTO messages(sender, content, ticket_id, expert_id, time)
+VALUES ('CUSTOMER', 'Ok, grazie per informazione.', 5, NULL, 1640870700);
+INSERT INTO messages(sender, content, ticket_id, expert_id, time)
+VALUES ('EXPERT', 'Di nulla, siamo qui per aiutarti.', 5, 5, 1640870760);
+--tickets_changes
+
+--ticket 4
+INSERT INTO tickets_changes (ticket_id, old_status, new_status, changed_by, current_expert_id, description, time)
+VALUES (4, 'OPEN', 'IN_PROGRESS', 'MANAGER', 3, '', 1681526902680);
+
+--ticket 5
+INSERT INTO tickets_changes (ticket_id, old_status, new_status, changed_by, current_expert_id, description, time)
+VALUES (5, 'OPEN', 'IN_PROGRESS', 'MANAGER', 5, '', 1680526902680);
+
+--ticket 6
+INSERT INTO tickets_changes (ticket_id, old_status, new_status, changed_by, current_expert_id, description, time)
+VALUES (6, 'OPEN', 'IN_PROGRESS', 'MANAGER', 5, '', 1681116982680);
+
+--ticket 7
+INSERT INTO tickets_changes (ticket_id, old_status, new_status, changed_by, current_expert_id, description, time)
+VALUES (7, 'OPEN', 'IN_PROGRESS', 'MANAGER', 8, '', 1675987266681);
+
+INSERT INTO tickets_changes (ticket_id, old_status, new_status, changed_by, current_expert_id, description, time)
+VALUES (7, 'IN_PROGRESS', 'RESOLVED', 'EXPERT', 8, '', 1677487264681);
+
+--ticket 8
+INSERT INTO tickets_changes (ticket_id, old_status, new_status, changed_by, current_expert_id, description, time)
+VALUES (8, 'OPEN', 'IN_PROGRESS', 'MANAGER', 9, '', 1674424324147);
+
+INSERT INTO tickets_changes (ticket_id, old_status, new_status, changed_by, current_expert_id, description, time)
+VALUES (8, 'IN_PROGRESS', 'RESOLVED', 'EXPERT', 9, '', 1677065479943);
+
+--ticket 9
+INSERT INTO tickets_changes (ticket_id, old_status, new_status, changed_by, current_expert_id, description, time)
+VALUES (9, 'OPEN', 'IN_PROGRESS', 'MANAGER', 5, '', 1665055274686);
+
+INSERT INTO tickets_changes (ticket_id, old_status, new_status, changed_by, current_expert_id, description, time)
+VALUES (9, 'IN_PROGRESS', 'RESOLVED', 'EXPERT', 5, '', 1665955274686);
+
+INSERT INTO tickets_changes (ticket_id, old_status, new_status, changed_by, current_expert_id, description, time)
+VALUES (9, 'RESOLVED', 'CLOSED', 'EXPERT', 5, '', 1672386059292);
+
+--ticket 10
+INSERT INTO tickets_changes (ticket_id, old_status, new_status, changed_by, current_expert_id, description, time)
+VALUES (10, 'OPEN', 'IN_PROGRESS', 'MANAGER', 8, '', 1669055083652);
+
+INSERT INTO tickets_changes (ticket_id, old_status, new_status, changed_by, current_expert_id, description, time)
+VALUES (10, 'IN_PROGRESS', 'RESOLVED', 'EXPERT', 8, '', 1671055083652);
+
+INSERT INTO tickets_changes (ticket_id, old_status, new_status, changed_by, current_expert_id, description, time)
+VALUES (10, 'RESOLVED', 'CLOSED', 'EXPERT', 8, '', 1672450855038);
+
+--ticket 11
+INSERT INTO tickets_changes (ticket_id, old_status, new_status, changed_by, current_expert_id, description, time)
+VALUES (11, 'OPEN', 'IN_PROGRESS', 'MANAGER', 7, '', 1670082377012);
+
+INSERT INTO tickets_changes (ticket_id, old_status, new_status, changed_by, current_expert_id, description, time)
+VALUES (11, 'IN_PROGRESS', 'RESOLVED', 'EXPERT', 7, '', 1671990571523);
+
+INSERT INTO tickets_changes (ticket_id, old_status, new_status, changed_by, current_expert_id, description, time)
+VALUES (11, 'RESOLVED', 'CLOSED', 'EXPERT', 7, '', 1672890571523);
+
+--ticket 12
+INSERT INTO tickets_changes (ticket_id, old_status, new_status, changed_by, current_expert_id, description, time)
+VALUES (12, 'OPEN', 'IN_PROGRESS', 'MANAGER', 8, '', 1690664805413);
+
+INSERT INTO tickets_changes (ticket_id, old_status, new_status, changed_by, current_expert_id, description, time)
+VALUES (12, 'IN_PROGRESS', 'RESOLVED', 'EXPERT', 8, '', 1710664805413);
+
+INSERT INTO tickets_changes (ticket_id, old_status, new_status, changed_by, current_expert_id, description, time)
+VALUES (12, 'RESOLVED', 'CLOSED', 'EXPERT', 8, '', 1720664805413);
+
+INSERT INTO tickets_changes (ticket_id, old_status, new_status, changed_by, current_expert_id, description, time)
+VALUES (12, 'CLOSED', 'REOPENED', 'CUSTOMER', 8, 'My problem has not been solved. It reappeared', 1773830274473);
+
+--ticket 13
+INSERT INTO tickets_changes (ticket_id, old_status, new_status, changed_by, current_expert_id, description, time)
+VALUES (13, 'OPEN', 'IN_PROGRESS', 'MANAGER', 7, '', 1724019801326);
+
+INSERT INTO tickets_changes (ticket_id, old_status, new_status, changed_by, current_expert_id, description, time)
+VALUES (13, 'IN_PROGRESS', 'RESOLVED', 'EXPERT', 7, '', 1733019861326);
+
+INSERT INTO tickets_changes (ticket_id, old_status, new_status, changed_by, current_expert_id, description, time)
+VALUES (13, 'RESOLVED', 'CLOSED', 'EXPERT', 7, '', 1743019851326);
+
+INSERT INTO tickets_changes (ticket_id, old_status, new_status, changed_by, current_expert_id, description, time)
+VALUES (13, 'CLOSED', 'REOPENED', 'CUSTOMER', 7, 'My dash cam is not recording footage from the rear camera, AGAIN',
+        1755808548965);
+
+--ticket 14
+INSERT INTO tickets_changes (ticket_id, old_status, new_status, changed_by, current_expert_id, description, time)
+VALUES (14, 'OPEN', 'IN_PROGRESS', 'MANAGER', 9, '', 1697498758279);
+
+INSERT INTO tickets_changes (ticket_id, old_status, new_status, changed_by, current_expert_id, description, time)
+VALUES (14, 'IN_PROGRESS', 'RESOLVED', 'EXPERT', 9, '', 1698998758279);
+
+INSERT INTO tickets_changes (ticket_id, old_status, new_status, changed_by, current_expert_id, description, time)
+VALUES (14, 'RESOLVED', 'CLOSED', 'EXPERT', 9, '', 1711098758279);
+
+INSERT INTO tickets_changes (ticket_id, old_status, new_status, changed_by, current_expert_id, description, time)
+VALUES (14, 'CLOSED', 'REOPENED', 'CUSTOMER', 9, 'I am offline again', 1751388016898);

@@ -2,20 +2,25 @@ package it.polito.wa2.g29.server.integration.repository
 
 import it.polito.wa2.g29.server.dto.toDTO
 import it.polito.wa2.g29.server.integration.AbstractTestcontainersTest
+import it.polito.wa2.g29.server.model.Profile
 import it.polito.wa2.g29.server.repository.ProfileRepository
-import it.polito.wa2.g29.server.utils.TestProfileUtils
-import org.junit.jupiter.api.BeforeEach
+import it.polito.wa2.g29.server.utils.ProfileTestUtils
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.transaction.annotation.Transactional
 
-class ProfileRepositoryIntegrationTest : AbstractTestcontainersTest() {
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+class ProfileRepositoryIT : AbstractTestcontainersTest() {
     @Autowired
     private lateinit var profileRepository: ProfileRepository
 
-    @BeforeEach
+    lateinit var testProfiles: List<Profile>
+
+    @BeforeAll
     fun setup() {
-        profileRepository.deleteAll()
-        TestProfileUtils.insertProfiles(profileRepository)
+        testProfiles = ProfileTestUtils.insertProfiles(profileRepository)
     }
 
     /////////////////////////////////////////////////////////////////////
@@ -23,8 +28,9 @@ class ProfileRepositoryIntegrationTest : AbstractTestcontainersTest() {
     /////////////////////////////////////////////////////////////////////
 
     @Test
+    @Transactional
     fun findByProfileByEmail() {
-        val expectedProfile = profileRepository.findAll()[0]
+        val expectedProfile = testProfiles[0]
 
         val actualProfile = profileRepository.findProfileByEmail(expectedProfile.email)
 
@@ -48,8 +54,9 @@ class ProfileRepositoryIntegrationTest : AbstractTestcontainersTest() {
     /////////////////////////////////////////////////////////////////////
 
     @Test
+    @Transactional
     fun findByProfileByPhoneNumber() {
-        val expectedProfile = profileRepository.findAll()[0]
+        val expectedProfile = testProfiles[0]
 
         val actualProfile = profileRepository.findProfileByPhoneNumber(expectedProfile.phoneNumber)
 

@@ -1,23 +1,27 @@
 package it.polito.wa2.g29.server.integration
 
-import org.junit.jupiter.api.BeforeAll
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.annotation.DirtiesContext
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
-import org.springframework.test.context.jdbc.Sql
 import org.testcontainers.containers.PostgreSQLContainer
-import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.utility.DockerImageName
 
-@Sql(scripts = ["classpath:schema.sql"])
 @SpringBootTest
+@ActiveProfiles("test")
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 abstract class AbstractTestcontainersTest {
     companion object {
-        @Container
-        private val container = PostgreSQLContainer(DockerImageName.parse("postgres:latest"))
+
+        private var container = PostgreSQLContainer(DockerImageName.parse("postgres:latest"))
             .apply {
                 this.withDatabaseName("testDb").withUsername("root").withPassword("123456")
             }
+
+        init {
+            container.start()
+        }
 
         @JvmStatic
         @DynamicPropertySource
@@ -26,11 +30,6 @@ abstract class AbstractTestcontainersTest {
             registry.add("spring.datasource.username", container::getUsername)
             registry.add("spring.datasource.password", container::getPassword)
         }
-
-        @JvmStatic
-        @BeforeAll
-        internal fun setUp() {
-            container.start()
-        }
     }
+
 }
