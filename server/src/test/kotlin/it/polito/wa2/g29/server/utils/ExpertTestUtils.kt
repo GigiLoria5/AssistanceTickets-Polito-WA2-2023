@@ -13,7 +13,7 @@ import it.polito.wa2.g29.server.repository.ExpertRepository
 import it.polito.wa2.g29.server.repository.TicketRepository
 import it.polito.wa2.g29.server.service.TicketStatusChangeService
 
-object TestExpertUtils {
+object ExpertTestUtils {
 
     /**
      * Inserts a list of new experts into the provided [expertRepository] and returns an array of the newly added experts.

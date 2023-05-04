@@ -12,9 +12,9 @@ import it.polito.wa2.g29.server.model.Profile
 import it.polito.wa2.g29.server.model.Ticket
 import it.polito.wa2.g29.server.repository.*
 import it.polito.wa2.g29.server.service.TicketStatusChangeService
-import it.polito.wa2.g29.server.utils.TestExpertUtils
-import it.polito.wa2.g29.server.utils.TestProductUtils
-import it.polito.wa2.g29.server.utils.TestProfileUtils
+import it.polito.wa2.g29.server.utils.ExpertTestUtils
+import it.polito.wa2.g29.server.utils.ProductTestUtils
+import it.polito.wa2.g29.server.utils.ProfileTestUtils
 import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -33,7 +33,7 @@ import org.springframework.transaction.annotation.Transactional
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class ExpertControllerIntegrationTest : AbstractTestcontainersTest() {
+class ExpertControllerIT : AbstractTestcontainersTest() {
     @Autowired
     private lateinit var mockMvc: MockMvc
 
@@ -58,9 +58,9 @@ class ExpertControllerIntegrationTest : AbstractTestcontainersTest() {
 
     @BeforeAll
     fun setup() {
-        testProducts = TestProductUtils.insertProducts(productRepository)
-        testProfiles = TestProfileUtils.insertProfiles(profileRepository)
-        testExperts = TestExpertUtils.insertExperts(expertRepository)
+        testProducts = ProductTestUtils.insertProducts(productRepository)
+        testProfiles = ProfileTestUtils.insertProfiles(profileRepository)
+        testExperts = ExpertTestUtils.insertExperts(expertRepository)
     }
 
     /////////////////////////////////////////////////////////////////////
@@ -170,9 +170,9 @@ class ExpertControllerIntegrationTest : AbstractTestcontainersTest() {
             status = TicketStatus.IN_PROGRESS
             priorityLevel = TicketPriority.LOW
         }
-        TestExpertUtils.addTicket(ticketRepository, expert, ticketOne)
-        TestExpertUtils.addTicket(ticketRepository, expert, ticketTwo)
-        TestExpertUtils.addTicketStatusChange(
+        ExpertTestUtils.addTicket(ticketRepository, expert, ticketOne)
+        ExpertTestUtils.addTicket(ticketRepository, expert, ticketTwo)
+        ExpertTestUtils.addTicketStatusChange(
             ticketStatusChangeService,
             expert,
             ticketOne,
@@ -180,7 +180,7 @@ class ExpertControllerIntegrationTest : AbstractTestcontainersTest() {
             UserType.EXPERT,
             ""
         )
-        TestExpertUtils.addTicketStatusChange(
+        ExpertTestUtils.addTicketStatusChange(
             ticketStatusChangeService,
             expert,
             ticketOne,
@@ -188,7 +188,7 @@ class ExpertControllerIntegrationTest : AbstractTestcontainersTest() {
             UserType.CUSTOMER,
             "It works now"
         )
-        TestExpertUtils.addTicketStatusChange(
+        ExpertTestUtils.addTicketStatusChange(
             ticketStatusChangeService,
             expert,
             ticketTwo,
@@ -196,7 +196,7 @@ class ExpertControllerIntegrationTest : AbstractTestcontainersTest() {
             UserType.EXPERT,
             "The issue has been resolved"
         )
-        TestExpertUtils.addTicketStatusChange(
+        ExpertTestUtils.addTicketStatusChange(
             ticketStatusChangeService,
             expert,
             ticketTwo,
@@ -236,8 +236,8 @@ class ExpertControllerIntegrationTest : AbstractTestcontainersTest() {
             status = TicketStatus.IN_PROGRESS
             priorityLevel = TicketPriority.LOW
         }
-        TestExpertUtils.addTicket(ticketRepository, expert, ticketOne)
-        TestExpertUtils.addTicket(ticketRepository, expert, ticketTwo)
+        ExpertTestUtils.addTicket(ticketRepository, expert, ticketOne)
+        ExpertTestUtils.addTicket(ticketRepository, expert, ticketTwo)
 
         mockMvc
             .perform(get("/API/experts/${expert.id}/statusChanges").contentType("application/json"))
@@ -300,9 +300,9 @@ class ExpertControllerIntegrationTest : AbstractTestcontainersTest() {
             status = TicketStatus.IN_PROGRESS
             priorityLevel = TicketPriority.LOW
         }
-        TestExpertUtils.addTicket(ticketRepository, expertOne, ticket1ForExpertOne)
-        TestExpertUtils.addTicket(ticketRepository, expertOne, ticket2ForExpertOne)
-        TestExpertUtils.addTicket(ticketRepository, expertTwo, ticketForExpertTwo)
+        ExpertTestUtils.addTicket(ticketRepository, expertOne, ticket1ForExpertOne)
+        ExpertTestUtils.addTicket(ticketRepository, expertOne, ticket2ForExpertOne)
+        ExpertTestUtils.addTicket(ticketRepository, expertTwo, ticketForExpertTwo)
 
         mockMvc
             .perform(get("/API/experts/${expertOne.id}/tickets").contentType("application/json"))

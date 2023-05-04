@@ -14,10 +14,10 @@ import it.polito.wa2.g29.server.repository.ProductRepository
 import it.polito.wa2.g29.server.repository.ProfileRepository
 import it.polito.wa2.g29.server.repository.TicketRepository
 import it.polito.wa2.g29.server.service.TicketStatusChangeService
-import it.polito.wa2.g29.server.utils.TestExpertUtils
-import it.polito.wa2.g29.server.utils.TestProductUtils
-import it.polito.wa2.g29.server.utils.TestProfileUtils
-import it.polito.wa2.g29.server.utils.TestTicketUtils
+import it.polito.wa2.g29.server.utils.ExpertTestUtils
+import it.polito.wa2.g29.server.utils.ProductTestUtils
+import it.polito.wa2.g29.server.utils.ProfileTestUtils
+import it.polito.wa2.g29.server.utils.TicketTestUtils
 import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -35,7 +35,7 @@ import org.springframework.transaction.annotation.Transactional
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
+class TicketControllerIT : AbstractTestcontainersTest() {
     @Autowired
     private lateinit var mockMvc: MockMvc
 
@@ -58,10 +58,10 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
 
     @BeforeAll
     fun prepare() {
-        TestTicketUtils.products = TestProductUtils.insertProducts(productRepository)
-        TestTicketUtils.profiles = TestProfileUtils.insertProfiles(profileRepository)
-        TestTicketUtils.experts = TestExpertUtils.insertExperts(expertRepository)
-        testTickets = TestTicketUtils.insertTickets(ticketRepository)
+        TicketTestUtils.products = ProductTestUtils.insertProducts(productRepository)
+        TicketTestUtils.profiles = ProfileTestUtils.insertProfiles(profileRepository)
+        TicketTestUtils.experts = ExpertTestUtils.insertExperts(expertRepository)
+        testTickets = TicketTestUtils.insertTickets(ticketRepository)
     }
 
     /////////////////////////////////////////////////////////////////////
@@ -197,16 +197,16 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
     @Transactional
     @Rollback
     fun getTicketStatusChangesById() {
-        val expert = TestTicketUtils.experts[0]
+        val expert = TicketTestUtils.experts[0]
 
         val ticketOne =
-            Ticket("title1", "description1", TestTicketUtils.products[0], TestTicketUtils.profiles[0]).apply {
+            Ticket("title1", "description1", TicketTestUtils.products[0], TicketTestUtils.profiles[0]).apply {
                 status = TicketStatus.IN_PROGRESS
                 priorityLevel = TicketPriority.LOW
             }
 
-        TestTicketUtils.addTicket(ticketRepository, expert, ticketOne)
-        TestTicketUtils.addTicketStatusChange(
+        TicketTestUtils.addTicket(ticketRepository, expert, ticketOne)
+        TicketTestUtils.addTicketStatusChange(
             ticketStatusChangeService,
             expert,
             ticketOne,
@@ -214,7 +214,7 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
             UserType.EXPERT,
             ""
         )
-        TestTicketUtils.addTicketStatusChange(
+        TicketTestUtils.addTicketStatusChange(
             ticketStatusChangeService,
             expert,
             ticketOne,
@@ -246,15 +246,15 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
     @Transactional
     @Rollback
     fun getTicketStatusChangesByIdWithNoChanges() {
-        val expert = TestTicketUtils.experts[0]
+        val expert = TicketTestUtils.experts[0]
 
         val ticketOne =
-            Ticket("title1", "description1", TestTicketUtils.products[0], TestTicketUtils.profiles[0]).apply {
+            Ticket("title1", "description1", TicketTestUtils.products[0], TicketTestUtils.profiles[0]).apply {
                 status = TicketStatus.IN_PROGRESS
                 priorityLevel = TicketPriority.LOW
             }
 
-        TestTicketUtils.addTicket(ticketRepository, expert, ticketOne)
+        TicketTestUtils.addTicket(ticketRepository, expert, ticketOne)
 
         mockMvc
             .perform(get("/API/tickets/${ticketOne.id}/statusChanges").contentType("application/json"))
@@ -294,7 +294,7 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
     @Transactional
     @Rollback
     fun createTicket() {
-        val newTicketDTO = TestTicketUtils.getNewTicketDTO()
+        val newTicketDTO = TicketTestUtils.getNewTicketDTO()
 
         val mapper = ObjectMapper()
         val jsonBody = mapper.writeValueAsString(newTicketDTO)
@@ -313,7 +313,7 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
     @Transactional
     @Rollback
     fun createTicketCustomerNotFound() {
-        val newTicketDTO = TestTicketUtils.getNewTicketDTO().copy(
+        val newTicketDTO = TicketTestUtils.getNewTicketDTO().copy(
             customerId = Int.MAX_VALUE
         )
 
@@ -333,7 +333,7 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
     @Transactional
     @Rollback
     fun createTicketProductNotFound() {
-        val newTicketDTO = TestTicketUtils.getNewTicketDTO().copy(
+        val newTicketDTO = TicketTestUtils.getNewTicketDTO().copy(
             productId = Int.MAX_VALUE
         )
 
@@ -371,7 +371,7 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
     @Transactional
     @Rollback
     fun createTicketBlankFields() {
-        val newTicketDTO = TestTicketUtils.getNewTicketDTO().copy(
+        val newTicketDTO = TicketTestUtils.getNewTicketDTO().copy(
             title = "",
             description = ""
         )
@@ -391,7 +391,7 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     fun createTicketFieldsWithSpaces() {
-        val newTicketDTO = TestTicketUtils.getNewTicketDTO().copy(
+        val newTicketDTO = TicketTestUtils.getNewTicketDTO().copy(
             title = "   ",
             description = " "
         )
@@ -411,7 +411,7 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     fun createTicketInvalidCustomerIdOrProductId() {
-        val newTicketDTO = TestTicketUtils.getNewTicketDTO().copy(
+        val newTicketDTO = TicketTestUtils.getNewTicketDTO().copy(
             customerId = -1,
             productId = -1
         )
@@ -439,7 +439,7 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
     fun startTicketById() {
         val oldTicketDTO = testTickets[0].toDTO()
         val newTicketDTO = oldTicketDTO.copy(
-            expertId = TestTicketUtils.experts[0].id,
+            expertId = TicketTestUtils.experts[0].id,
             priorityLevel = "LOW",
             description = ""
         )
@@ -528,14 +528,14 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
     @Transactional
     @Rollback
     fun startTicketByIdInProgress() {
-        val expert = TestTicketUtils.experts[0]
+        val expert = TicketTestUtils.experts[0]
 
-        val ticket = Ticket("title1", "description1", TestTicketUtils.products[0], TestTicketUtils.profiles[1]).apply {
+        val ticket = Ticket("title1", "description1", TicketTestUtils.products[0], TicketTestUtils.profiles[1]).apply {
             status = TicketStatus.IN_PROGRESS
             priorityLevel = TicketPriority.LOW
         }
 
-        TestTicketUtils.addTicket(ticketRepository, expert, ticket)
+        TicketTestUtils.addTicket(ticketRepository, expert, ticket)
 
         val newTicketDTO = ticket.toDTO().copy(
             expertId = expert.id,
@@ -563,14 +563,14 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
     @Transactional
     @Rollback
     fun stopTicketById() {
-        val expert = TestTicketUtils.experts[0]
+        val expert = TicketTestUtils.experts[0]
 
-        val ticket = Ticket("title1", "description1", TestTicketUtils.products[0], TestTicketUtils.profiles[1]).apply {
+        val ticket = Ticket("title1", "description1", TicketTestUtils.products[0], TicketTestUtils.profiles[1]).apply {
             status = TicketStatus.IN_PROGRESS
             priorityLevel = TicketPriority.LOW
         }
 
-        TestTicketUtils.addTicket(ticketRepository, expert, ticket)
+        TicketTestUtils.addTicket(ticketRepository, expert, ticket)
 
 
         val ticketStatusChangeDTO = TicketStatusChangeDTO(
@@ -613,13 +613,13 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
     @Transactional
     @Rollback
     fun stopTicketByIdNotInProgress() {
-        val expert = TestTicketUtils.experts[0]
+        val expert = TicketTestUtils.experts[0]
 
-        val ticket = Ticket("title1", "description1", TestTicketUtils.products[0], TestTicketUtils.profiles[1]).apply {
+        val ticket = Ticket("title1", "description1", TicketTestUtils.products[0], TicketTestUtils.profiles[1]).apply {
             status = TicketStatus.CLOSED
         }
 
-        TestTicketUtils.addTicket(ticketRepository, expert, ticket)
+        TicketTestUtils.addTicket(ticketRepository, expert, ticket)
 
 
         val ticketStatusChangeDTO = TicketStatusChangeDTO(
@@ -647,13 +647,13 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
     @Transactional
     @Rollback
     fun resolveTicketById() {
-        val expert = TestTicketUtils.experts[0]
+        val expert = TicketTestUtils.experts[0]
 
-        val ticket = Ticket("title1", "description1", TestTicketUtils.products[0], TestTicketUtils.profiles[1]).apply {
+        val ticket = Ticket("title1", "description1", TicketTestUtils.products[0], TicketTestUtils.profiles[1]).apply {
             status = TicketStatus.IN_PROGRESS
         }
 
-        TestTicketUtils.addTicket(ticketRepository, expert, ticket)
+        TicketTestUtils.addTicket(ticketRepository, expert, ticket)
 
 
         val ticketStatusChangeDTO = TicketStatusChangeDTO(
@@ -696,13 +696,13 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
     @Transactional
     @Rollback
     fun resolveTicketByIdAlreadyResolved() {
-        val expert = TestTicketUtils.experts[0]
+        val expert = TicketTestUtils.experts[0]
 
-        val ticket = Ticket("title1", "description1", TestTicketUtils.products[0], TestTicketUtils.profiles[1]).apply {
+        val ticket = Ticket("title1", "description1", TicketTestUtils.products[0], TicketTestUtils.profiles[1]).apply {
             status = TicketStatus.RESOLVED
         }
 
-        TestTicketUtils.addTicket(ticketRepository, expert, ticket)
+        TicketTestUtils.addTicket(ticketRepository, expert, ticket)
 
 
         val ticketStatusChangeDTO = TicketStatusChangeDTO(
@@ -726,13 +726,13 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
     @Transactional
     @Rollback
     fun resolveTicketByIdClosed() {
-        val expert = TestTicketUtils.experts[0]
+        val expert = TicketTestUtils.experts[0]
 
-        val ticket = Ticket("title1", "description1", TestTicketUtils.products[0], TestTicketUtils.profiles[1]).apply {
+        val ticket = Ticket("title1", "description1", TicketTestUtils.products[0], TicketTestUtils.profiles[1]).apply {
             status = TicketStatus.CLOSED
         }
 
-        TestTicketUtils.addTicket(ticketRepository, expert, ticket)
+        TicketTestUtils.addTicket(ticketRepository, expert, ticket)
 
 
         val ticketStatusChangeDTO = TicketStatusChangeDTO(
@@ -761,13 +761,13 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
     @Rollback
     fun reopenClosedTicketById() {
 
-        val expert = TestTicketUtils.experts[0]
+        val expert = TicketTestUtils.experts[0]
 
-        val ticket = Ticket("title1", "description1", TestTicketUtils.products[0], TestTicketUtils.profiles[1]).apply {
+        val ticket = Ticket("title1", "description1", TicketTestUtils.products[0], TicketTestUtils.profiles[1]).apply {
             status = TicketStatus.CLOSED
         }
 
-        TestTicketUtils.addTicket(ticketRepository, expert, ticket)
+        TicketTestUtils.addTicket(ticketRepository, expert, ticket)
 
 
         val ticketStatusChangeDTO = TicketStatusChangeDTO(
@@ -791,13 +791,13 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
     @Transactional
     @Rollback
     fun reopenResolvedTicketById() {
-        val expert = TestTicketUtils.experts[0]
+        val expert = TicketTestUtils.experts[0]
 
-        val ticket = Ticket("title1", "description1", TestTicketUtils.products[0], TestTicketUtils.profiles[1]).apply {
+        val ticket = Ticket("title1", "description1", TicketTestUtils.products[0], TicketTestUtils.profiles[1]).apply {
             status = TicketStatus.RESOLVED
         }
 
-        TestTicketUtils.addTicket(ticketRepository, expert, ticket)
+        TicketTestUtils.addTicket(ticketRepository, expert, ticket)
 
 
         val ticketStatusChangeDTO = TicketStatusChangeDTO(
@@ -840,13 +840,13 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
     @Transactional
     @Rollback
     fun reopenTicketByIdNotClosedOrResolved() {
-        val expert = TestTicketUtils.experts[0]
+        val expert = TicketTestUtils.experts[0]
 
-        val ticket = Ticket("title1", "description1", TestTicketUtils.products[0], TestTicketUtils.profiles[1]).apply {
+        val ticket = Ticket("title1", "description1", TicketTestUtils.products[0], TicketTestUtils.profiles[1]).apply {
             status = TicketStatus.OPEN
         }
 
-        TestTicketUtils.addTicket(ticketRepository, expert, ticket)
+        TicketTestUtils.addTicket(ticketRepository, expert, ticket)
 
 
         val ticketStatusChangeDTO = TicketStatusChangeDTO(
@@ -870,13 +870,13 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
     @Transactional
     @Rollback
     fun reopenTicketByIdWithoutDescription() {
-        val expert = TestTicketUtils.experts[0]
+        val expert = TicketTestUtils.experts[0]
 
-        val ticket = Ticket("title1", "description1", TestTicketUtils.products[0], TestTicketUtils.profiles[1]).apply {
+        val ticket = Ticket("title1", "description1", TicketTestUtils.products[0], TicketTestUtils.profiles[1]).apply {
             status = TicketStatus.CLOSED
         }
 
-        TestTicketUtils.addTicket(ticketRepository, expert, ticket)
+        TicketTestUtils.addTicket(ticketRepository, expert, ticket)
 
 
         val ticketStatusChangeDTO = TicketStatusChangeDTO(
@@ -904,13 +904,13 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
     @Transactional
     @Rollback
     fun closeTicketById() {
-        val expert = TestTicketUtils.experts[0]
+        val expert = TicketTestUtils.experts[0]
 
-        val ticket = Ticket("title1", "description1", TestTicketUtils.products[0], TestTicketUtils.profiles[1]).apply {
+        val ticket = Ticket("title1", "description1", TicketTestUtils.products[0], TicketTestUtils.profiles[1]).apply {
             status = TicketStatus.IN_PROGRESS
         }
 
-        TestTicketUtils.addTicket(ticketRepository, expert, ticket)
+        TicketTestUtils.addTicket(ticketRepository, expert, ticket)
 
 
         val ticketStatusChangeDTO = TicketStatusChangeDTO(
@@ -953,13 +953,13 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
     @Transactional
     @Rollback
     fun closeTicketByIdAlreadyClosed() {
-        val expert = TestTicketUtils.experts[0]
+        val expert = TicketTestUtils.experts[0]
 
-        val ticket = Ticket("title1", "description1", TestTicketUtils.products[0], TestTicketUtils.profiles[1]).apply {
+        val ticket = Ticket("title1", "description1", TicketTestUtils.products[0], TicketTestUtils.profiles[1]).apply {
             status = TicketStatus.CLOSED
         }
 
-        TestTicketUtils.addTicket(ticketRepository, expert, ticket)
+        TicketTestUtils.addTicket(ticketRepository, expert, ticket)
 
 
         val ticketStatusChangeDTO = TicketStatusChangeDTO(

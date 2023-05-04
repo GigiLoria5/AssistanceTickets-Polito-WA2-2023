@@ -9,7 +9,7 @@ import it.polito.wa2.g29.server.model.*
 import it.polito.wa2.g29.server.repository.TicketRepository
 import it.polito.wa2.g29.server.service.TicketStatusChangeService
 
-object TestTicketUtils {
+object TicketTestUtils {
 
     lateinit var products: List<Product>
     lateinit var profiles: List<Profile>
@@ -81,6 +81,6 @@ object TestTicketUtils {
             status = TicketStatus.IN_PROGRESS
             priorityLevel = priority
         }
-        TestExpertUtils.addTicket(ticketRepository, expert, ticket)
+        ExpertTestUtils.addTicket(ticketRepository, expert, ticket)
     }
 }

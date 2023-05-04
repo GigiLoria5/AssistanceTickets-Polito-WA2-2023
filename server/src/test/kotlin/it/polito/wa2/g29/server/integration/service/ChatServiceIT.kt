@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class ChatServiceIntegrationTest : AbstractTestcontainersTest() {
+class ChatServiceIT : AbstractTestcontainersTest() {
     @Autowired
     private lateinit var chatService: ChatService
 
@@ -53,15 +53,15 @@ class ChatServiceIntegrationTest : AbstractTestcontainersTest() {
 
     @BeforeAll
     fun prepare() {
-        testProducts = TestProductUtils.insertProducts(productRepository)
-        testProfiles = TestProfileUtils.insertProfiles(profileRepository)
-        testExperts = TestExpertUtils.insertExperts(expertRepository)
-        TestTicketUtils.products = testProducts
-        TestTicketUtils.profiles = testProfiles
-        testTickets = TestTicketUtils.insertTickets(ticketRepository)
+        testProducts = ProductTestUtils.insertProducts(productRepository)
+        testProfiles = ProfileTestUtils.insertProfiles(profileRepository)
+        testExperts = ExpertTestUtils.insertExperts(expertRepository)
+        TicketTestUtils.products = testProducts
+        TicketTestUtils.profiles = testProfiles
+        testTickets = TicketTestUtils.insertTickets(ticketRepository)
         ticketExpert = testExperts[0]
         ticketWithMessages = testTickets[0]
-        TestTicketUtils.startTicket(ticketRepository, ticketWithMessages, ticketExpert, TicketPriority.LOW)
+        TicketTestUtils.startTicket(ticketRepository, ticketWithMessages, ticketExpert, TicketPriority.LOW)
         val messages = TestChatUtils.getMessages(ticketWithMessages, ticketExpert)
         messages[messageWithAttachmentIndex].apply {
             attachments = setOf(
@@ -124,7 +124,7 @@ class ChatServiceIntegrationTest : AbstractTestcontainersTest() {
     fun addMessageWithAttachmentsManagerCannotSendMsg() {
         val ticket = testTickets[0]
         val ticketExpert = testExperts[0]
-        TestTicketUtils.startTicket(ticketRepository, ticket, ticketExpert, TicketPriority.LOW)
+        TicketTestUtils.startTicket(ticketRepository, ticket, ticketExpert, TicketPriority.LOW)
         val newMessageDTO = TestChatUtils.getNewMessageDTO(UserType.MANAGER, "Message", null)
 
         assertThrows<UserTypeNotValidException> {
@@ -138,7 +138,7 @@ class ChatServiceIntegrationTest : AbstractTestcontainersTest() {
     fun addMessageWithAttachmentsTicketIdNotFound() {
         val ticket = testTickets[0]
         val ticketExpert = testExperts[0]
-        TestTicketUtils.startTicket(ticketRepository, ticket, ticketExpert, TicketPriority.LOW)
+        TicketTestUtils.startTicket(ticketRepository, ticket, ticketExpert, TicketPriority.LOW)
         val newMessageDTO = TestChatUtils.getNewMessageDTO(UserType.EXPERT, "Message", null)
 
         assertThrows<TicketNotFoundException> {
@@ -152,13 +152,13 @@ class ChatServiceIntegrationTest : AbstractTestcontainersTest() {
     fun addMessageWithAttachmentsChatInactive() {
         val ticket = testTickets[0]
         val ticketExpert = testExperts[0]
-        TestTicketUtils.startTicket(ticketRepository, ticket, ticketExpert, TicketPriority.LOW)
+        TicketTestUtils.startTicket(ticketRepository, ticket, ticketExpert, TicketPriority.LOW)
         val newMessageDTO = TestChatUtils.getNewMessageDTO(UserType.CUSTOMER, "Message", AttachmentType.OTHER)
         val chatStatusTransactions =
             listOf(TicketStatus.OPEN, TicketStatus.IN_PROGRESS, TicketStatus.CLOSED, TicketStatus.REOPENED)
 
         chatStatusTransactions.forEach {
-            TestExpertUtils.addTicketStatusChange(
+            ExpertTestUtils.addTicketStatusChange(
                 ticketStatusChangeService,
                 ticketExpert,
                 ticket,
@@ -179,7 +179,7 @@ class ChatServiceIntegrationTest : AbstractTestcontainersTest() {
     fun addMessageWithAttachmentsWithoutAttachment() {
         val ticket = testTickets[0]
         val ticketExpert = testExperts[0]
-        TestTicketUtils.startTicket(ticketRepository, ticket, ticketExpert, TicketPriority.LOW)
+        TicketTestUtils.startTicket(ticketRepository, ticket, ticketExpert, TicketPriority.LOW)
         val newMessageDTO = TestChatUtils.getNewMessageDTO(UserType.EXPERT, "Message", null)
 
         val messageId = chatService.addMessageWithAttachments(ticket.id!!, newMessageDTO).messageId
@@ -200,7 +200,7 @@ class ChatServiceIntegrationTest : AbstractTestcontainersTest() {
     fun addMessageWithAttachmentsWithDifferentAttachmentType() {
         val ticket = testTickets[0]
         val ticketExpert = testExperts[0]
-        TestTicketUtils.startTicket(ticketRepository, ticket, ticketExpert, TicketPriority.LOW)
+        TicketTestUtils.startTicket(ticketRepository, ticket, ticketExpert, TicketPriority.LOW)
         val attachmentTypes = listOf(
             AttachmentType.JPEG,
             AttachmentType.PNG,
@@ -235,7 +235,7 @@ class ChatServiceIntegrationTest : AbstractTestcontainersTest() {
     fun addMessageWithAttachmentsWithManyAttachments() {
         val ticket = testTickets[0]
         val ticketExpert = testExperts[0]
-        TestTicketUtils.startTicket(ticketRepository, ticket, ticketExpert, TicketPriority.LOW)
+        TicketTestUtils.startTicket(ticketRepository, ticket, ticketExpert, TicketPriority.LOW)
         val attachmentType = AttachmentType.JPEG
         val newMessageDTO = TestChatUtils.getNewMessageDTO(UserType.CUSTOMER, "Photos", attachmentType)
         val attachments: MutableSet<MultipartFile> = mutableSetOf()

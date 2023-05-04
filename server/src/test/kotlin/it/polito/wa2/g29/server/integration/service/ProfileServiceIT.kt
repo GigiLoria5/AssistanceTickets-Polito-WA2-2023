@@ -9,16 +9,16 @@ import it.polito.wa2.g29.server.repository.ProductRepository
 import it.polito.wa2.g29.server.repository.ProfileRepository
 import it.polito.wa2.g29.server.repository.TicketRepository
 import it.polito.wa2.g29.server.service.ProfileService
-import it.polito.wa2.g29.server.utils.TestProductUtils
-import it.polito.wa2.g29.server.utils.TestProfileUtils
-import it.polito.wa2.g29.server.utils.TestTicketUtils
+import it.polito.wa2.g29.server.utils.ProductTestUtils
+import it.polito.wa2.g29.server.utils.ProfileTestUtils
+import it.polito.wa2.g29.server.utils.TicketTestUtils
 import org.junit.jupiter.api.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.annotation.Rollback
 import org.springframework.transaction.annotation.Transactional
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class ProfileServiceIntegrationTest : AbstractTestcontainersTest() {
+class ProfileServiceIT : AbstractTestcontainersTest() {
     @Autowired
     private lateinit var profileService: ProfileService
 
@@ -35,7 +35,7 @@ class ProfileServiceIntegrationTest : AbstractTestcontainersTest() {
 
     @BeforeAll
     fun setup() {
-        testProfiles = TestProfileUtils.insertProfiles(profileRepository)
+        testProfiles = ProfileTestUtils.insertProfiles(profileRepository)
     }
 
     /////////////////////////////////////////////////////////////////////
@@ -56,9 +56,9 @@ class ProfileServiceIntegrationTest : AbstractTestcontainersTest() {
     @Test
     @Transactional
     fun getProfileByEmailWithTickets() {
-        TestTicketUtils.profiles = testProfiles
-        TestTicketUtils.products = TestProductUtils.insertProducts(productRepository)
-        val tickets = TestTicketUtils.insertTickets(ticketRepository)
+        TicketTestUtils.profiles = testProfiles
+        TicketTestUtils.products = ProductTestUtils.insertProducts(productRepository)
+        val tickets = TicketTestUtils.insertTickets(ticketRepository)
         testProfiles[0].tickets.add(tickets.first { it.customer.id == testProfiles[0].id })
         profileRepository.save(testProfiles[0])
         val expectedProfileDTO = testProfiles[0].toDTO()

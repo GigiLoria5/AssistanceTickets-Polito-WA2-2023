@@ -6,14 +6,14 @@ import it.polito.wa2.g29.server.integration.AbstractTestcontainersTest
 import it.polito.wa2.g29.server.model.Product
 import it.polito.wa2.g29.server.repository.ProductRepository
 import it.polito.wa2.g29.server.service.ProductService
-import it.polito.wa2.g29.server.utils.TestProductUtils
+import it.polito.wa2.g29.server.utils.ProductTestUtils
 import org.junit.jupiter.api.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.annotation.Rollback
 import org.springframework.transaction.annotation.Transactional
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class ProductServiceIntegrationTest : AbstractTestcontainersTest() {
+class ProductServiceIT : AbstractTestcontainersTest() {
     @Autowired
     private lateinit var productService: ProductService
 
@@ -24,7 +24,7 @@ class ProductServiceIntegrationTest : AbstractTestcontainersTest() {
 
     @BeforeAll
     fun setup() {
-        testProducts = TestProductUtils.insertProducts(productRepository)
+        testProducts = ProductTestUtils.insertProducts(productRepository)
     }
 
     /////////////////////////////////////////////////////////////////////

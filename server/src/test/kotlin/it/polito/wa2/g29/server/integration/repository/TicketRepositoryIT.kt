@@ -7,9 +7,9 @@ import it.polito.wa2.g29.server.repository.ExpertRepository
 import it.polito.wa2.g29.server.repository.ProductRepository
 import it.polito.wa2.g29.server.repository.ProfileRepository
 import it.polito.wa2.g29.server.repository.TicketRepository
-import it.polito.wa2.g29.server.utils.TestProductUtils
-import it.polito.wa2.g29.server.utils.TestProfileUtils
-import it.polito.wa2.g29.server.utils.TestTicketUtils
+import it.polito.wa2.g29.server.utils.ProductTestUtils
+import it.polito.wa2.g29.server.utils.ProfileTestUtils
+import it.polito.wa2.g29.server.utils.TicketTestUtils
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.transaction.annotation.Transactional
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class TicketRepositoryIntegrationTest : AbstractTestcontainersTest() {
+class TicketRepositoryIT : AbstractTestcontainersTest() {
     @Autowired
     private lateinit var ticketRepository: TicketRepository
 
@@ -29,9 +29,9 @@ class TicketRepositoryIntegrationTest : AbstractTestcontainersTest() {
         @Autowired productRepository: ProductRepository,
         @Autowired expertRepository: ExpertRepository
     ) {
-        TestTicketUtils.products = TestProductUtils.insertProducts(productRepository)
-        TestTicketUtils.profiles = TestProfileUtils.insertProfiles(profileRepository)
-        testTickets = TestTicketUtils.insertTickets(ticketRepository)
+        TicketTestUtils.products = ProductTestUtils.insertProducts(productRepository)
+        TicketTestUtils.profiles = ProfileTestUtils.insertProfiles(profileRepository)
+        testTickets = TicketTestUtils.insertTickets(ticketRepository)
     }
 
     /////////////////////////////////////////////////////////////////////
@@ -68,8 +68,8 @@ class TicketRepositoryIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     fun findTicketByCustomerAndProductAndStatusNot() {
-        val expectedCustomer = TestTicketUtils.profiles[0]
-        val expectedProduct = TestTicketUtils.products[0]
+        val expectedCustomer = TicketTestUtils.profiles[0]
+        val expectedProduct = TicketTestUtils.products[0]
         val notExpectedStatus = TicketStatus.RESOLVED
 
         val expectedTicket =
@@ -88,8 +88,8 @@ class TicketRepositoryIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     fun findNonExistingTicketByCustomerAndProductAndStatusNot() {
-        val expectedCustomer = TestTicketUtils.profiles[1]
-        val expectedProduct = TestTicketUtils.products[0]
+        val expectedCustomer = TicketTestUtils.profiles[1]
+        val expectedProduct = TicketTestUtils.products[0]
         val notExpectedStatus = TicketStatus.OPEN
 
         val actualTicket = ticketRepository.findTicketByCustomerAndProductAndStatusNot(
