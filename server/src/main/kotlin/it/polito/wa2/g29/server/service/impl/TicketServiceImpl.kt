@@ -5,7 +5,6 @@ import it.polito.wa2.g29.server.dto.ticketDTOs.NewTicketDTO
 import it.polito.wa2.g29.server.dto.ticketDTOs.NewTicketIdDTO
 import it.polito.wa2.g29.server.enums.TicketStatus
 import it.polito.wa2.g29.server.exception.*
-import it.polito.wa2.g29.server.model.TicketChange
 import it.polito.wa2.g29.server.model.toEntity
 import it.polito.wa2.g29.server.repository.*
 import it.polito.wa2.g29.server.service.TicketService
@@ -33,9 +32,7 @@ class TicketServiceImpl(
 
     override fun getTicketStatusChangesByTicketId(ticketId: Int): List<TicketChangeDTO> {
         val ticket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
-        return ticket.ticketChanges.sortedWith(
-            compareByDescending<TicketChange> { it.time })
-            .map { it.toDTO() }
+        return ticket.ticketChanges.sortedWith(compareByDescending { it.time }).map { it.toDTO() }
     }
 
     override fun createTicket(newTicketDTO: NewTicketDTO): NewTicketIdDTO {

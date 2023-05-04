@@ -2791,99 +2791,136 @@ VALUES (1691498758279, 'Netgear CM700 modem not connecting to internet',
         'My Netgear CM700 modem is not connecting to the internet. I have restarted it multiple times, but it does not seem to resolve the issue. Please help me troubleshoot this problem.',
         1751388016898, 'LOW', 'REOPENED', 24, 9, 798);
 
+-- Ticket 1
+INSERT INTO messages(sender, content, ticket_id, expert_id, time)
+VALUES ('CUSTOMER', 'Ciao, ho bisogno di assistenza per il mio ordine.', 4, NULL, 1640856000);
+INSERT INTO messages(sender, content, ticket_id, expert_id, time)
+VALUES ('EXPERT', 'Buongiorno, in cosa posso aiutarti?', 4, 3, 1640856120);
+INSERT INTO messages(sender, content, ticket_id, expert_id, time)
+VALUES ('CUSTOMER', 'Ho ricevuto un prodotto danneggiato, cosa posso fare?', 4, NULL, 1640856200);
+INSERT INTO messages(sender, content, ticket_id, expert_id, time)
+VALUES ('EXPERT', 'Mi dispiace per linconveniente, puoi mandarmi una foto del prodotto?', 4, 3, 1640856260);
+INSERT INTO messages(sender, content, ticket_id, expert_id, time)
+VALUES ('CUSTOMER', 'Eccola qui.', 4, NULL, 1640856340);
+INSERT INTO messages(sender, content, ticket_id, expert_id, time)
+VALUES ('EXPERT', 'Grazie, possiamo organizzare un reso o una sostituzione.', 4, 3, 1640856400);
+INSERT INTO messages(sender, content, ticket_id, expert_id, time)
+VALUES ('CUSTOMER', 'Preferirei una sostituzione, grazie.', 4, NULL, 1640856460);
+INSERT INTO messages(sender, content, ticket_id, expert_id, time)
+VALUES ('EXPERT', 'Va bene, ti faremo sapere quando il nuovo prodotto sarà in viaggio.', 4, 3, 1640856520);
+
+-- Ticket 2
+INSERT INTO messages(sender, content, ticket_id, expert_id, time)
+VALUES ('CUSTOMER', 'Buongiorno, vorrei sapere come funziona il vostro servizio di assistenza.', 5, NULL, 1640870400);
+INSERT INTO messages(sender, content, ticket_id, expert_id, time)
+VALUES ('EXPERT',
+        'Ciao, il nostro servizio di assistenza è a disposizione per qualsiasi problema tu abbia con il tuo ordine.', 5,
+        5, 1640870520);
+INSERT INTO messages(sender, content, ticket_id, expert_id, time)
+VALUES ('CUSTOMER', 'Grazie, avevo dei dubbi riguardo al mio ordine. Ho visto che non è stato ancora spedito.', 5, NULL,
+        1640870580);
+INSERT INTO messages(sender, content, ticket_id, expert_id, time)
+VALUES ('EXPERT',
+        'Hai ragione, ci sono stati dei ritardi nella produzione. Ti confermo che il tuo ordine verrà spedito entro la fine della settimana.',
+        5, 5, 1640870640);
+INSERT INTO messages(sender, content, ticket_id, expert_id, time)
+VALUES ('CUSTOMER', 'Ok, grazie per informazione.', 5, NULL, 1640870700);
+INSERT INTO messages(sender, content, ticket_id, expert_id, time)
+VALUES ('EXPERT', 'Di nulla, siamo qui per aiutarti.', 5, 5, 1640870760);
 --tickets_changes
 
 --ticket 4
-INSERT INTO tickets_changes (ticket_id,old_status,new_status,changed_by, current_expert_id, description,time )
-VALUES (4,'OPEN','IN_PROGRESS','MANAGER',3,'',1681526902680);
+INSERT INTO tickets_changes (ticket_id, old_status, new_status, changed_by, current_expert_id, description, time)
+VALUES (4, 'OPEN', 'IN_PROGRESS', 'MANAGER', 3, '', 1681526902680);
 
 --ticket 5
-INSERT INTO tickets_changes (ticket_id,old_status,new_status,changed_by, current_expert_id, description,time )
-VALUES (5,'OPEN','IN_PROGRESS','MANAGER',5,'',1680526902680);
+INSERT INTO tickets_changes (ticket_id, old_status, new_status, changed_by, current_expert_id, description, time)
+VALUES (5, 'OPEN', 'IN_PROGRESS', 'MANAGER', 5, '', 1680526902680);
 
 --ticket 6
-INSERT INTO tickets_changes (ticket_id,old_status,new_status,changed_by, current_expert_id, description,time )
-VALUES (6,'OPEN','IN_PROGRESS','MANAGER',5,'',1681116982680);
+INSERT INTO tickets_changes (ticket_id, old_status, new_status, changed_by, current_expert_id, description, time)
+VALUES (6, 'OPEN', 'IN_PROGRESS', 'MANAGER', 5, '', 1681116982680);
 
 --ticket 7
-INSERT INTO tickets_changes (ticket_id,old_status,new_status,changed_by, current_expert_id, description,time )
-VALUES (7,'OPEN','IN_PROGRESS','MANAGER',8,'',1675987266681);
+INSERT INTO tickets_changes (ticket_id, old_status, new_status, changed_by, current_expert_id, description, time)
+VALUES (7, 'OPEN', 'IN_PROGRESS', 'MANAGER', 8, '', 1675987266681);
 
-INSERT INTO tickets_changes (ticket_id,old_status,new_status,changed_by, current_expert_id, description,time )
-VALUES (7,'IN_PROGRESS','RESOLVED','EXPERT',8,'',1677487264681);
+INSERT INTO tickets_changes (ticket_id, old_status, new_status, changed_by, current_expert_id, description, time)
+VALUES (7, 'IN_PROGRESS', 'RESOLVED', 'EXPERT', 8, '', 1677487264681);
 
 --ticket 8
-INSERT INTO tickets_changes (ticket_id,old_status,new_status,changed_by, current_expert_id, description,time )
-VALUES (8,'OPEN','IN_PROGRESS','MANAGER',9,'',1674424324147);
+INSERT INTO tickets_changes (ticket_id, old_status, new_status, changed_by, current_expert_id, description, time)
+VALUES (8, 'OPEN', 'IN_PROGRESS', 'MANAGER', 9, '', 1674424324147);
 
-INSERT INTO tickets_changes (ticket_id,old_status,new_status,changed_by, current_expert_id, description,time )
-VALUES (8,'IN_PROGRESS','RESOLVED','EXPERT',9,'',1677065479943);
+INSERT INTO tickets_changes (ticket_id, old_status, new_status, changed_by, current_expert_id, description, time)
+VALUES (8, 'IN_PROGRESS', 'RESOLVED', 'EXPERT', 9, '', 1677065479943);
 
 --ticket 9
-INSERT INTO tickets_changes (ticket_id,old_status,new_status,changed_by, current_expert_id, description,time )
-VALUES (9,'OPEN','IN_PROGRESS','MANAGER',5,'',1665055274686);
+INSERT INTO tickets_changes (ticket_id, old_status, new_status, changed_by, current_expert_id, description, time)
+VALUES (9, 'OPEN', 'IN_PROGRESS', 'MANAGER', 5, '', 1665055274686);
 
-INSERT INTO tickets_changes (ticket_id,old_status,new_status,changed_by, current_expert_id, description,time )
-VALUES (9,'IN_PROGRESS','RESOLVED','EXPERT',5,'',1665955274686);
+INSERT INTO tickets_changes (ticket_id, old_status, new_status, changed_by, current_expert_id, description, time)
+VALUES (9, 'IN_PROGRESS', 'RESOLVED', 'EXPERT', 5, '', 1665955274686);
 
-INSERT INTO tickets_changes (ticket_id,old_status,new_status,changed_by, current_expert_id, description,time )
-VALUES (9,'RESOLVED','CLOSED','EXPERT',5,'',1672386059292);
+INSERT INTO tickets_changes (ticket_id, old_status, new_status, changed_by, current_expert_id, description, time)
+VALUES (9, 'RESOLVED', 'CLOSED', 'EXPERT', 5, '', 1672386059292);
 
 --ticket 10
-INSERT INTO tickets_changes (ticket_id,old_status,new_status,changed_by, current_expert_id, description,time )
-VALUES (10,'OPEN','IN_PROGRESS','MANAGER',8,'',1669055083652);
+INSERT INTO tickets_changes (ticket_id, old_status, new_status, changed_by, current_expert_id, description, time)
+VALUES (10, 'OPEN', 'IN_PROGRESS', 'MANAGER', 8, '', 1669055083652);
 
-INSERT INTO tickets_changes (ticket_id,old_status,new_status,changed_by, current_expert_id, description,time )
-VALUES (10,'IN_PROGRESS','RESOLVED','EXPERT',8,'',1671055083652);
+INSERT INTO tickets_changes (ticket_id, old_status, new_status, changed_by, current_expert_id, description, time)
+VALUES (10, 'IN_PROGRESS', 'RESOLVED', 'EXPERT', 8, '', 1671055083652);
 
-INSERT INTO tickets_changes (ticket_id,old_status,new_status,changed_by, current_expert_id, description,time )
-VALUES (10,'RESOLVED','CLOSED','EXPERT',8,'',1672450855038);
+INSERT INTO tickets_changes (ticket_id, old_status, new_status, changed_by, current_expert_id, description, time)
+VALUES (10, 'RESOLVED', 'CLOSED', 'EXPERT', 8, '', 1672450855038);
 
 --ticket 11
-INSERT INTO tickets_changes (ticket_id,old_status,new_status,changed_by, current_expert_id, description,time )
-VALUES (11,'OPEN','IN_PROGRESS','MANAGER',7,'',1670082377012);
+INSERT INTO tickets_changes (ticket_id, old_status, new_status, changed_by, current_expert_id, description, time)
+VALUES (11, 'OPEN', 'IN_PROGRESS', 'MANAGER', 7, '', 1670082377012);
 
-INSERT INTO tickets_changes (ticket_id,old_status,new_status,changed_by, current_expert_id, description,time )
-VALUES (11,'IN_PROGRESS','RESOLVED','EXPERT',7,'',1671990571523);
+INSERT INTO tickets_changes (ticket_id, old_status, new_status, changed_by, current_expert_id, description, time)
+VALUES (11, 'IN_PROGRESS', 'RESOLVED', 'EXPERT', 7, '', 1671990571523);
 
-INSERT INTO tickets_changes (ticket_id,old_status,new_status,changed_by, current_expert_id, description,time )
-VALUES (11,'RESOLVED','CLOSED','EXPERT',7,'',1672890571523);
+INSERT INTO tickets_changes (ticket_id, old_status, new_status, changed_by, current_expert_id, description, time)
+VALUES (11, 'RESOLVED', 'CLOSED', 'EXPERT', 7, '', 1672890571523);
 
 --ticket 12
-INSERT INTO tickets_changes (ticket_id,old_status,new_status,changed_by, current_expert_id, description,time )
-VALUES (12,'OPEN','IN_PROGRESS','MANAGER',8,'',1690664805413);
+INSERT INTO tickets_changes (ticket_id, old_status, new_status, changed_by, current_expert_id, description, time)
+VALUES (12, 'OPEN', 'IN_PROGRESS', 'MANAGER', 8, '', 1690664805413);
 
-INSERT INTO tickets_changes (ticket_id,old_status,new_status,changed_by, current_expert_id, description,time )
-VALUES (12,'IN_PROGRESS','RESOLVED','EXPERT',8,'',1710664805413);
+INSERT INTO tickets_changes (ticket_id, old_status, new_status, changed_by, current_expert_id, description, time)
+VALUES (12, 'IN_PROGRESS', 'RESOLVED', 'EXPERT', 8, '', 1710664805413);
 
-INSERT INTO tickets_changes (ticket_id,old_status,new_status,changed_by, current_expert_id, description,time )
-VALUES (12,'RESOLVED','CLOSED','EXPERT',8,'',1720664805413);
+INSERT INTO tickets_changes (ticket_id, old_status, new_status, changed_by, current_expert_id, description, time)
+VALUES (12, 'RESOLVED', 'CLOSED', 'EXPERT', 8, '', 1720664805413);
 
-INSERT INTO tickets_changes (ticket_id,old_status,new_status,changed_by, current_expert_id, description,time )
-VALUES (12,'CLOSED','REOPENED','CUSTOMER',8,'My problem has not been solved. It reappeared',1773830274473);
+INSERT INTO tickets_changes (ticket_id, old_status, new_status, changed_by, current_expert_id, description, time)
+VALUES (12, 'CLOSED', 'REOPENED', 'CUSTOMER', 8, 'My problem has not been solved. It reappeared', 1773830274473);
 
 --ticket 13
-INSERT INTO tickets_changes (ticket_id,old_status,new_status,changed_by, current_expert_id, description,time )
-VALUES (13,'OPEN','IN_PROGRESS','MANAGER',7,'',1724019801326);
+INSERT INTO tickets_changes (ticket_id, old_status, new_status, changed_by, current_expert_id, description, time)
+VALUES (13, 'OPEN', 'IN_PROGRESS', 'MANAGER', 7, '', 1724019801326);
 
-INSERT INTO tickets_changes (ticket_id,old_status,new_status,changed_by, current_expert_id, description,time )
-VALUES (13,'IN_PROGRESS','RESOLVED','EXPERT',7,'',1733019861326);
+INSERT INTO tickets_changes (ticket_id, old_status, new_status, changed_by, current_expert_id, description, time)
+VALUES (13, 'IN_PROGRESS', 'RESOLVED', 'EXPERT', 7, '', 1733019861326);
 
-INSERT INTO tickets_changes (ticket_id,old_status,new_status,changed_by, current_expert_id, description,time )
-VALUES (13,'RESOLVED','CLOSED','EXPERT',7,'',1743019851326);
+INSERT INTO tickets_changes (ticket_id, old_status, new_status, changed_by, current_expert_id, description, time)
+VALUES (13, 'RESOLVED', 'CLOSED', 'EXPERT', 7, '', 1743019851326);
 
-INSERT INTO tickets_changes (ticket_id,old_status,new_status,changed_by, current_expert_id, description,time )
-VALUES (13,'CLOSED','REOPENED','CUSTOMER',7,'My dash cam is not recording footage from the rear camera, AGAIN',1755808548965);
+INSERT INTO tickets_changes (ticket_id, old_status, new_status, changed_by, current_expert_id, description, time)
+VALUES (13, 'CLOSED', 'REOPENED', 'CUSTOMER', 7, 'My dash cam is not recording footage from the rear camera, AGAIN',
+        1755808548965);
 
 --ticket 14
-INSERT INTO tickets_changes (ticket_id,old_status,new_status,changed_by, current_expert_id, description,time )
-VALUES (14,'OPEN','IN_PROGRESS','MANAGER',9,'',1697498758279);
+INSERT INTO tickets_changes (ticket_id, old_status, new_status, changed_by, current_expert_id, description, time)
+VALUES (14, 'OPEN', 'IN_PROGRESS', 'MANAGER', 9, '', 1697498758279);
 
-INSERT INTO tickets_changes (ticket_id,old_status,new_status,changed_by, current_expert_id, description,time )
-VALUES (14,'IN_PROGRESS','RESOLVED','EXPERT',9,'',1698998758279);
+INSERT INTO tickets_changes (ticket_id, old_status, new_status, changed_by, current_expert_id, description, time)
+VALUES (14, 'IN_PROGRESS', 'RESOLVED', 'EXPERT', 9, '', 1698998758279);
 
-INSERT INTO tickets_changes (ticket_id,old_status,new_status,changed_by, current_expert_id, description,time )
-VALUES (14,'RESOLVED','CLOSED','EXPERT',9,'',1711098758279);
+INSERT INTO tickets_changes (ticket_id, old_status, new_status, changed_by, current_expert_id, description, time)
+VALUES (14, 'RESOLVED', 'CLOSED', 'EXPERT', 9, '', 1711098758279);
 
-INSERT INTO tickets_changes (ticket_id,old_status,new_status,changed_by, current_expert_id, description,time )
-VALUES (14,'CLOSED','REOPENED','CUSTOMER',9,'I am offline again',1751388016898);
+INSERT INTO tickets_changes (ticket_id, old_status, new_status, changed_by, current_expert_id, description, time)
+VALUES (14, 'CLOSED', 'REOPENED', 'CUSTOMER', 9, 'I am offline again', 1751388016898);

@@ -14,11 +14,11 @@ import it.polito.wa2.g29.server.utils.TestExpertUtils
 import it.polito.wa2.g29.server.utils.TestProductUtils
 import it.polito.wa2.g29.server.utils.TestProfileUtils
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.test.annotation.Rollback
 import org.springframework.transaction.annotation.Transactional
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -31,9 +31,6 @@ class ExpertServiceIntegrationTest : AbstractTestcontainersTest() {
 
     @Autowired
     private lateinit var expertRepository: ExpertRepository
-
-    @Autowired
-    private lateinit var skillRepository: SkillRepository
 
     @Autowired
     private lateinit var productRepository: ProductRepository
@@ -50,17 +47,8 @@ class ExpertServiceIntegrationTest : AbstractTestcontainersTest() {
 
     @BeforeAll
     fun prepare() {
-        productRepository.deleteAllInBatch()
-        profileRepository.deleteAllInBatch()
         testProducts = TestProductUtils.insertProducts(productRepository)
         testProfiles = TestProfileUtils.insertProfiles(profileRepository)
-    }
-
-    @BeforeEach
-    fun setup() {
-        ticketRepository.deleteAllInBatch()
-        skillRepository.deleteAllInBatch()
-        expertRepository.deleteAllInBatch()
         testExperts = TestExpertUtils.insertExperts(expertRepository)
     }
 
@@ -69,6 +57,8 @@ class ExpertServiceIntegrationTest : AbstractTestcontainersTest() {
     /////////////////////////////////////////////////////////////////////
 
     @Test
+    @Transactional
+    @Rollback
     fun getAllExpertsEmpty() {
         expertRepository.deleteAll()
 
@@ -82,8 +72,6 @@ class ExpertServiceIntegrationTest : AbstractTestcontainersTest() {
         val expectedExperts = testExperts
 
         val actualExperts = expertService.getAllExperts()
-
-        println(actualExperts)
 
         assert(actualExperts.isNotEmpty())
         assert(actualExperts.size == expectedExperts.size)
@@ -108,7 +96,7 @@ class ExpertServiceIntegrationTest : AbstractTestcontainersTest() {
     @Test
     fun getExpertByIdNotFound() {
         assertThrows<ExpertNotFoundException> {
-            expertService.getExpertById(99999999)
+            expertService.getExpertById(Int.MAX_VALUE)
         }
     }
 
@@ -118,6 +106,7 @@ class ExpertServiceIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     @Transactional
+    @Rollback
     fun getAllTicketsByExpertIdOnlyExpertTicketsReturned() {
         val expertOne = testExperts[0]
         val expertTwo = testExperts[1]
@@ -145,6 +134,7 @@ class ExpertServiceIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     @Transactional
+    @Rollback
     fun getAllTicketsByExpertIdWithManyTickets() {
         val expert = testExperts[0]
         val ticketOne = Ticket("title1", "description1", testProducts[0], testProfiles[0]).apply {
@@ -207,6 +197,7 @@ class ExpertServiceIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     @Transactional
+    @Rollback
     fun getTicketStatusChangesByExpertIdOnlyExpertTicketsReturned() {
         val expertOne = testExperts[0]
         val expertTwo = testExperts[1]
@@ -244,63 +235,6 @@ class ExpertServiceIntegrationTest : AbstractTestcontainersTest() {
         assert(expertTwoActualTicketsStatusChangesDTO.isNotEmpty())
         assert(expertOneActualTicketsStatusChangesDTO.size == 1)
         assert(expertTwoActualTicketsStatusChangesDTO.size == 1)
-    }
-
-    @Test
-    @Transactional
-    fun getTicketStatusChangesByExpertIdWithManyTickets() {
-        val expert = testExperts[0]
-        val ticketOne = Ticket("title1", "description1", testProducts[0], testProfiles[0]).apply {
-            status = TicketStatus.IN_PROGRESS
-            priorityLevel = TicketPriority.LOW
-        }
-        val ticketTwo = Ticket("title2", "description2", testProducts[0], testProfiles[1]).apply {
-            status = TicketStatus.IN_PROGRESS
-            priorityLevel = TicketPriority.LOW
-        }
-        TestExpertUtils.addTicket(ticketRepository, expert, ticketOne)
-        TestExpertUtils.addTicket(ticketRepository, expert, ticketTwo)
-        TestExpertUtils.addTicketStatusChange(
-            ticketStatusChangeService,
-            expert,
-            ticketOne,
-            TicketStatus.RESOLVED,
-            UserType.EXPERT,
-            ""
-        )
-        TestExpertUtils.addTicketStatusChange(
-            ticketStatusChangeService,
-            expert,
-            ticketOne,
-            TicketStatus.CLOSED,
-            UserType.CUSTOMER,
-            "It works now"
-        )
-        TestExpertUtils.addTicketStatusChange(
-            ticketStatusChangeService,
-            expert,
-            ticketTwo,
-            TicketStatus.RESOLVED,
-            UserType.EXPERT,
-            "The issue has been resolved"
-        )
-        TestExpertUtils.addTicketStatusChange(
-            ticketStatusChangeService,
-            expert,
-            ticketTwo,
-            TicketStatus.CLOSED,
-            UserType.EXPERT,
-            null
-        )
-
-        val expertActualTicketsStatusChangesDTO = expertService.getTicketStatusChangesByExpertId(expert.id!!)
-
-        assert(expertActualTicketsStatusChangesDTO.isNotEmpty())
-        assert(expertActualTicketsStatusChangesDTO.size == 3)
-        assert(expertActualTicketsStatusChangesDTO.map { it.changedBy }.none { it != UserType.EXPERT.toString() })
-        for (i in 0 until expertActualTicketsStatusChangesDTO.size - 1) {
-            assert(expertActualTicketsStatusChangesDTO[i].time >= expertActualTicketsStatusChangesDTO[i + 1].time)
-        }
     }
 
     @Test

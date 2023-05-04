@@ -3,7 +3,10 @@ package it.polito.wa2.g29.server.model
 import jakarta.persistence.*
 
 @Entity
-@Table(name = "experts")
+@Table(
+    name = "experts",
+    uniqueConstraints = [UniqueConstraint(columnNames = arrayOf("email"))]
+)
 class Expert(
     @Column(nullable = false)
     var name: String,
@@ -28,8 +31,20 @@ class Expert(
     @OneToMany(mappedBy = "currentExpert")
     var ticketChanges = mutableSetOf<TicketChange>()
 
-    fun addMessage(m: Message) {
-        m.expert = this
-        messages.add(m)
+    fun addTicket(ticket: Ticket) {
+        ticket.expert = this
+        tickets.add(ticket)
+    }
+
+    fun addMessage(msg: Message) {
+        msg.expert = this
+        messages.add(msg)
+    }
+
+    @PreRemove
+    private fun preRemove() {
+        tickets.forEach { it.expert = null }
+        messages.forEach { it.expert = null }
+        ticketChanges.forEach { it.currentExpert = null }
     }
 }

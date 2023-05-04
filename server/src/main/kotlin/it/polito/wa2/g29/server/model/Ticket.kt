@@ -58,13 +58,9 @@ class Ticket(
     @Column(nullable = false)
     var lastModifiedAt: Long = createdAt
 
-    @PreUpdate
-    private fun preUpdate() {
-        if (ticketChanges.size == 0) {
-            lastModifiedAt = System.currentTimeMillis()
-            return
-        }
-        lastModifiedAt = ticketChanges.maxOf { it.time }
+    fun addMessage(msg: Message) {
+        msg.ticket = this
+        messages.add(msg)
     }
 
     fun changeStatus(newStatus: TicketStatus, changedBy: UserType, description: String?) {
@@ -80,6 +76,15 @@ class Ticket(
             expert = null
 
         ticketChanges.add(tc)
+    }
+
+    @PreUpdate
+    private fun preUpdate() {
+        if (ticketChanges.size == 0) {
+            lastModifiedAt = System.currentTimeMillis()
+            return
+        }
+        lastModifiedAt = ticketChanges.maxOf { it.time }
     }
 }
 

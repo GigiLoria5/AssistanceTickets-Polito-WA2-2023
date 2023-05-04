@@ -31,6 +31,11 @@ object TestProfileUtils {
         )
     }
 
+    fun generateRandomPhoneNumber(): String {
+        val timestamp = System.currentTimeMillis()
+        return (timestamp % 10000000000).toString().padStart(10, '0')
+    }
+
     private val profiles = listOf(
         Profile(
             email = "email1@wa2.it",

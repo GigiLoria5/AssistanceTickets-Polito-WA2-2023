@@ -538,7 +538,9 @@
     - Response: `200 OK` (success)
     - Error responses: `404 Not Found` (ticketId not found), `422 Unprocessable Entity` (validation of
       ticketId) or `500 Internal Server Error` (generic error)
-    - Response body: An array of objects, for each containing messageId, sender, expertId (optional), content,
+    - Response body: An array of objects, ordered chronologically, for each containing messageId, sender, expertId (
+      expert to whom the ticket was assigned),
+      content,
       attachments (array of objects, for each containing attachmentId, name and type) and time. An error message in case
       of error
       ```
@@ -547,6 +549,7 @@
           {
             "messageId": 16,
             "sender": "CUSTOMER",
+            "expertId": 25
             "content": "Hi, I'm having trouble with my device. Can you help me?",
             "attachments": [
                              ...,
@@ -571,35 +574,15 @@
       ]
       ```
 
-- GET `/API/chats/{ticketId}/messages/{messageId}/attachments/{attachmentId}`
-
-    - Description: Allows to download an attachment related to a message
-    - Request body: _None_
-    - Response: `200 OK` (success)
-    - Error responses: `404 Not Found` (ticketId, messageId or attachmentId not found), `422 Unprocessable Entity` (
-      validation of ticketId, messageId or attachmentId failed) or `500 Internal Server Error` (generic error)
-    - Response body: The binary contents of the attachment file. An error message in case of error
-      ```
-      {
-        "error": "validation of request failed"
-      }
-      ```
-
 - POST `/API/chats/{ticketId}/messages`
 
     - Description: Allows to send a message and optionally some attachments
     - Headers: {"Content-Type" : "multipart/form-data"}
-    - Request body: a sender field specifying who, between the CUSTOMER and the EXPERT, is sending the message, and the
-      message to be sent
-
-      ```
-      {
-        "sender": "EXPERT",
-        "message" "Hi there, I'm sorry to hear that the solution didn't work for you. Let's try some additional troubleshooting steps.
-                   Can you please confirm if the headphones are visible in the list of available Bluetooth devices on your laptop?"
-      }
-      ```
-
+    - Request Parameters:
+        - sender(required) - the sender's user type. Allowed values:CUSTOMER,EXPERT
+        - content(required) - the content of the message.
+    - Request Parts:
+        - attachments(optional) - the files to be attached to the message.
     - Response: `201 Created` (success)
     - Error responses: `404 Not Found` (ticketId not found), `422 Unprocessable Entity` (validation of request
       body or ticketId failed or ticket is not in progress/resolve) or `500 Internal Server Error` (generic error)
@@ -613,5 +596,19 @@
       ```
       {
         "error": "impossible to send the message as the chat is inactive"
+      }
+      ```
+
+- GET `/API/chats/{ticketId}/messages/{messageId}/attachments/{attachmentId}`
+
+    - Description: Allows to download an attachment related to a message
+    - Request body: _None_
+    - Response: `200 OK` (success)
+    - Error responses: `404 Not Found` (ticketId, messageId or attachmentId not found), `422 Unprocessable Entity` (
+      validation of ticketId, messageId or attachmentId failed) or `500 Internal Server Error` (generic error)
+    - Response body: The binary contents of the attachment file. An error message in case of error
+      ```
+      {
+        "error": "validation of request failed"
       }
       ```
