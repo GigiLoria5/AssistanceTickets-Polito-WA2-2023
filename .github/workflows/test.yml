@@ -24,7 +24,17 @@ jobs:
           cd server
           chmod +x gradlew
 
-      - name: Build and test
+      - name: Clean
+        run: |
+          cd server
+          ./gradlew clean
+
+      - name: Build
+        run: |
+          cd server
+          ./gradlew build
+
+      - name: Test
         run: |
           cd server
           ./gradlew test

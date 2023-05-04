@@ -10,20 +10,26 @@ import it.polito.wa2.g29.server.repository.TicketRepository
 import it.polito.wa2.g29.server.utils.TestProductUtils
 import it.polito.wa2.g29.server.utils.TestProfileUtils
 import it.polito.wa2.g29.server.utils.TestTicketUtils
-import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ValueSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
+import org.springframework.test.annotation.Rollback
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
+import org.springframework.transaction.annotation.Transactional
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
     @Autowired
     private lateinit var mockMvc: MockMvc
@@ -39,9 +45,8 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
 
     lateinit var testProfiles: List<Profile>
 
-    @BeforeEach
+    @BeforeAll
     fun setup() {
-        profileRepository.deleteAllInBatch()
         testProfiles = TestProfileUtils.insertProfiles(profileRepository)
     }
 
@@ -71,9 +76,9 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
     }
 
     @Test
+    @Transactional
+    @Rollback
     fun getProfileWithTickets() {
-        ticketRepository.deleteAllInBatch()
-        productRepository.deleteAllInBatch()
         TestTicketUtils.profiles = testProfiles
         TestTicketUtils.products = TestProductUtils.insertProducts(productRepository)
         val tickets = TestTicketUtils.insertTickets(ticketRepository)
@@ -95,10 +100,7 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
                 jsonPath("$.country").value(expectedProfile.country),
                 jsonPath("$.ticketsIds").isArray,
                 jsonPath("$.ticketsIds").isNotEmpty
-            ).andDo {
-                ticketRepository.deleteAllInBatch()
-                productRepository.deleteAllInBatch()
-            }
+            )
     }
 
     @Test
@@ -112,10 +114,9 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
             )
     }
 
-    @Test
-    fun getProfileInvalidEmail() {
-        val invalidEmails = listOf(
-            "plainaddress",
+    @ParameterizedTest
+    @ValueSource(
+        strings = ["plainaddress",
             "Joe Smith <email@example.com>",
             "email.example.com",
             "this\\ is\"really\"not\\allowed@example.com",
@@ -132,17 +133,15 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
             "email@example*com",
             "email@example+com",
             "email@example=com",
-            "email@example|com"
-        )
-
-        for (email in invalidEmails) {
-            mockMvc
-                .perform(get("/API/profiles/$email").contentType("application/json"))
-                .andExpectAll(
-                    status().isUnprocessableEntity,
-                    jsonPath("$.error").exists()
-                )
-        }
+            "email@example|com"]
+    )
+    fun getProfileInvalidEmail(invalidEmail: String) {
+        mockMvc
+            .perform(get("/API/profiles/$invalidEmail").contentType("application/json"))
+            .andExpectAll(
+                status().isUnprocessableEntity,
+                jsonPath("$.error").exists()
+            )
     }
 
     /////////////////////////////////////////////////////////////////////
@@ -150,6 +149,8 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
     /////////////////////////////////////////////////////////////////////
 
     @Test
+    @Transactional
+    @Rollback
     fun createProfile() {
         val newProfileDTO = TestProfileUtils.getNewProfileDTO()
 
@@ -166,6 +167,8 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
     }
 
     @Test
+    @Transactional
+    @Rollback
     fun createProfileValidEmails() {
         val validEmails =
             listOf(
@@ -195,6 +198,8 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
     }
 
     @Test
+    @Transactional
+    @Rollback
     fun createProfileValidNames() {
         val validNames =
             listOf("X AE A-XII Musk", "nicola", "nicolo'", "John Paul", "Mary-Jane", "O'Connor", "John Jr.")
@@ -221,6 +226,8 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
     }
 
     @Test
+    @Transactional
+    @Rollback
     fun createProfileValidSurname() {
         val validSurnames = listOf("Van der Meer", "musk", "Kim-Lee", "O'Reilly", "Santos Jr.")
 
@@ -246,6 +253,8 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
     }
 
     @Test
+    @Transactional
+    @Rollback
     fun createProfileValidAddress() {
         val validAddresses = listOf(
             "New Address",
@@ -281,6 +290,8 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
     }
 
     @Test
+    @Transactional
+    @Rollback
     fun createProfileValidCity() {
         val validCities = listOf(
             "Bangkok",
@@ -319,6 +330,8 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
     }
 
     @Test
+    @Transactional
+    @Rollback
     fun createProfileValidCountry() {
         val validCountries = listOf(
             "Brazil",
@@ -696,6 +709,8 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
     /////////////////////////////////////////////////////////////////////
 
     @Test
+    @Transactional
+    @Rollback
     fun modifyProfile() {
         val oldProfileDTO = testProfiles[0].toDTO()
         val newProfileDTO = oldProfileDTO.copy(
@@ -716,6 +731,8 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
     }
 
     @Test
+    @Transactional
+    @Rollback
     fun modifyProfileEmail() {
         val oldProfileDTO = testProfiles[0].toDTO()
         val newProfileDTO = oldProfileDTO.copy(
@@ -736,6 +753,8 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
     }
 
     @Test
+    @Transactional
+    @Rollback
     fun modifyProfilePhoneNumber() {
         val oldProfileDTO = testProfiles[0].toDTO()
         val newProfileDTO = oldProfileDTO.copy(
@@ -756,6 +775,8 @@ class ProfileControllerIntegrationTest : AbstractTestcontainersTest() {
     }
 
     @Test
+    @Transactional
+    @Rollback
     fun modifyProfileComplete() {
         val oldProfileDTO = testProfiles[0].toDTO()
         val newProfileDTO = TestProfileUtils.getNewProfileDTO()

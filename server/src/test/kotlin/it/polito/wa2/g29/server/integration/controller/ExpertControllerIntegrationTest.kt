@@ -17,16 +17,17 @@ import it.polito.wa2.g29.server.utils.TestProductUtils
 import it.polito.wa2.g29.server.utils.TestProfileUtils
 import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
+import org.springframework.test.annotation.Rollback
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
+import org.springframework.transaction.annotation.Transactional
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -43,9 +44,6 @@ class ExpertControllerIntegrationTest : AbstractTestcontainersTest() {
     private lateinit var expertRepository: ExpertRepository
 
     @Autowired
-    private lateinit var skillRepository: SkillRepository
-
-    @Autowired
     private lateinit var productRepository: ProductRepository
 
     @Autowired
@@ -59,18 +57,9 @@ class ExpertControllerIntegrationTest : AbstractTestcontainersTest() {
     lateinit var testExperts: List<Expert>
 
     @BeforeAll
-    fun prepare() {
-        productRepository.deleteAllInBatch()
-        profileRepository.deleteAllInBatch()
+    fun setup() {
         testProducts = TestProductUtils.insertProducts(productRepository)
         testProfiles = TestProfileUtils.insertProfiles(profileRepository)
-    }
-
-    @BeforeEach
-    fun setup() {
-        ticketRepository.deleteAll()
-        skillRepository.deleteAllInBatch()
-        expertRepository.deleteAllInBatch()
         testExperts = TestExpertUtils.insertExperts(expertRepository)
     }
 
@@ -79,6 +68,8 @@ class ExpertControllerIntegrationTest : AbstractTestcontainersTest() {
     /////////////////////////////////////////////////////////////////////
 
     @Test
+    @Transactional
+    @Rollback
     fun getAllExpertsEmpty() {
         expertRepository.deleteAll()
         mockMvc
@@ -167,6 +158,8 @@ class ExpertControllerIntegrationTest : AbstractTestcontainersTest() {
     /////////////////////////////////////////////////////////////////////
 
     @Test
+    @Transactional
+    @Rollback
     fun getStatusChangesByExpertIdWithSomeChanges() {
         val expert = testExperts[0]
         val ticketOne = Ticket("title1", "description1", testProducts[0], testProfiles[0]).apply {
@@ -231,6 +224,8 @@ class ExpertControllerIntegrationTest : AbstractTestcontainersTest() {
     }
 
     @Test
+    @Transactional
+    @Rollback
     fun getStatusChangesByExpertIdWithNoChanges() {
         val expert = testExperts[0]
         val ticketOne = Ticket("title1", "description1", testProducts[0], testProfiles[0]).apply {
@@ -288,6 +283,8 @@ class ExpertControllerIntegrationTest : AbstractTestcontainersTest() {
     /////////////////////////////////////////////////////////////////////
 
     @Test
+    @Transactional
+    @Rollback
     fun getTicketsByExpertIdWithManyTickets() {
         val expertOne = testExperts[0]
         val expertTwo = testExperts[1]
