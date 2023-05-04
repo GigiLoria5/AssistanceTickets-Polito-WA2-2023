@@ -26,7 +26,7 @@ services:
 
   db-init:
     container_name: db-init
-    image: postgres:10.1-alpine
+    image: postgres
     environment:
       PGPASSWORD: p4ssw0rd
     command: sh -c "psql -h db -U postgres -d assistance_tickets < dump.sql && echo 'Database initialized!'"
@@ -35,12 +35,13 @@ services:
         condition: service_healthy
     volumes:
       - ./db-init/dump.sql:/dump.sql
-
+  
   app:
-    container_name: ticket-container
+    container_name: g29-assistance-tickets-container
+    image: pepaunz/ticket-assistance:latest
     depends_on:
-      db:
-        condition: service_healthy
+      db-init:
+        condition: service_completed_successfully
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/assistance_tickets
       - SPRING_DATASOURCE_USERNAME=postgres
@@ -49,7 +50,6 @@ services:
       - SPRING_JPA_HIBERNATE_DDL-AUTO=validate
       - SPRING_JPA_DEFER-DATASOURCE-INITIALIZATION=true
       - SPRING_JPA_INIT_MODE=never
-    image: pepaunz/ticket-assistance:latest
     restart: unless-stopped
     ports:
       - "8080:8080"
