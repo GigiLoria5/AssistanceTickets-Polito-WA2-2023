@@ -11,31 +11,26 @@ import it.polito.wa2.g29.server.utils.TestProductUtils
 import it.polito.wa2.g29.server.utils.TestProfileUtils
 import it.polito.wa2.g29.server.utils.TestTicketUtils
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.transaction.annotation.Transactional
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class TicketRepositoryIntegrationTest: AbstractTestcontainersTest() {
-
+class TicketRepositoryIntegrationTest : AbstractTestcontainersTest() {
     @Autowired
     private lateinit var ticketRepository: TicketRepository
 
     lateinit var testTickets: List<Ticket>
 
     @BeforeAll
-    fun prepare(@Autowired profileRepository: ProfileRepository, @Autowired productRepository: ProductRepository, @Autowired expertRepository: ExpertRepository) {
-        productRepository.deleteAllInBatch()
-        profileRepository.deleteAllInBatch()
+    fun prepare(
+        @Autowired profileRepository: ProfileRepository,
+        @Autowired productRepository: ProductRepository,
+        @Autowired expertRepository: ExpertRepository
+    ) {
         TestTicketUtils.products = TestProductUtils.insertProducts(productRepository)
         TestTicketUtils.profiles = TestProfileUtils.insertProfiles(profileRepository)
-    }
-
-    @BeforeEach
-    fun setup() {
-        ticketRepository.deleteAllInBatch()
         testTickets = TestTicketUtils.insertTickets(ticketRepository)
     }
 
@@ -77,8 +72,13 @@ class TicketRepositoryIntegrationTest: AbstractTestcontainersTest() {
         val expectedProduct = TestTicketUtils.products[0]
         val notExpectedStatus = TicketStatus.RESOLVED
 
-        val expectedTicket = testTickets.find { it.customer == expectedCustomer && it.product == expectedProduct && it.status != notExpectedStatus }
-        val actualTicket = ticketRepository.findTicketByCustomerAndProductAndStatusNot(expectedCustomer, expectedProduct, notExpectedStatus)
+        val expectedTicket =
+            testTickets.find { it.customer == expectedCustomer && it.product == expectedProduct && it.status != notExpectedStatus }
+        val actualTicket = ticketRepository.findTicketByCustomerAndProductAndStatusNot(
+            expectedCustomer,
+            expectedProduct,
+            notExpectedStatus
+        )
 
         assert(actualTicket != null)
         if (actualTicket != null) {
@@ -92,7 +92,11 @@ class TicketRepositoryIntegrationTest: AbstractTestcontainersTest() {
         val expectedProduct = TestTicketUtils.products[0]
         val notExpectedStatus = TicketStatus.OPEN
 
-        val actualTicket = ticketRepository.findTicketByCustomerAndProductAndStatusNot(expectedCustomer, expectedProduct, notExpectedStatus)
+        val actualTicket = ticketRepository.findTicketByCustomerAndProductAndStatusNot(
+            expectedCustomer,
+            expectedProduct,
+            notExpectedStatus
+        )
 
         assert(actualTicket == null)
     }

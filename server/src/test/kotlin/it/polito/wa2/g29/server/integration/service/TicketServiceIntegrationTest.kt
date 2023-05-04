@@ -25,17 +25,16 @@ import it.polito.wa2.g29.server.utils.TestProfileUtils
 import it.polito.wa2.g29.server.utils.TestTicketUtils
 import org.junit.jupiter.api.*
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.test.annotation.Rollback
 import org.springframework.transaction.annotation.Transactional
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class TicketServiceIntegrationTest: AbstractTestcontainersTest() {
-
+class TicketServiceIntegrationTest : AbstractTestcontainersTest() {
     @Autowired
     private lateinit var ticketService: TicketService
 
     @Autowired
     private lateinit var ticketStatusChangeService: TicketStatusChangeService
-
 
     @Autowired
     private lateinit var ticketRepository: TicketRepository
@@ -53,26 +52,10 @@ class TicketServiceIntegrationTest: AbstractTestcontainersTest() {
 
     @BeforeAll
     fun prepare() {
-        productRepository.deleteAll()
-        profileRepository.deleteAll()
-        expertRepository.deleteAll()
         TestTicketUtils.products = TestProductUtils.insertProducts(productRepository)
         TestTicketUtils.profiles = TestProfileUtils.insertProfiles(profileRepository)
         TestTicketUtils.experts = TestExpertUtils.insertExperts(expertRepository)
-    }
-
-    @BeforeEach
-    fun setup() {
-        ticketRepository.deleteAll()
         testTickets = TestTicketUtils.insertTickets(ticketRepository)
-    }
-
-    @AfterAll
-    fun prune() {
-        ticketRepository.deleteAll()
-        productRepository.deleteAll()
-        profileRepository.deleteAll()
-        expertRepository.deleteAll()
     }
 
     /////////////////////////////////////////////////////////////////////
@@ -80,6 +63,8 @@ class TicketServiceIntegrationTest: AbstractTestcontainersTest() {
     /////////////////////////////////////////////////////////////////////
 
     @Test
+    @Transactional
+    @Rollback
     fun getAllTicketsEmpty() {
         ticketRepository.deleteAll()
 
@@ -88,8 +73,8 @@ class TicketServiceIntegrationTest: AbstractTestcontainersTest() {
         assert(tickets.isEmpty())
     }
 
-    @Transactional
     @Test
+    @Transactional
     fun getAllTickets() {
         val expectedTickets = testTickets
 
@@ -97,7 +82,7 @@ class TicketServiceIntegrationTest: AbstractTestcontainersTest() {
 
         assert(actualTickets.isNotEmpty())
         assert(actualTickets.size == expectedTickets.size)
-        expectedTickets.forEach{
+        expectedTickets.forEach {
             actualTickets.contains(it.toDTO())
         }
     }
@@ -106,8 +91,8 @@ class TicketServiceIntegrationTest: AbstractTestcontainersTest() {
     ////// getTicketsByStatus
     /////////////////////////////////////////////////////////////////////
 
-    @Transactional
     @Test
+    @Transactional
     fun getTicketsByStatus() {
         val expectedStatus = TicketStatus.OPEN
         val expectedTicketsDTO = testTickets.filter { it.status == expectedStatus }.map { it.toDTO() }
@@ -125,8 +110,8 @@ class TicketServiceIntegrationTest: AbstractTestcontainersTest() {
     ////// getTicketById
     /////////////////////////////////////////////////////////////////////
 
-    @Transactional
     @Test
+    @Transactional
     fun getTicketById() {
         val expectedTicketDTO = testTickets[0].toDTO()
 
@@ -148,13 +133,15 @@ class TicketServiceIntegrationTest: AbstractTestcontainersTest() {
 
     @Test
     @Transactional
+    @Rollback
     fun getTicketStatusChangesByTicketId() {
         val expert = TestTicketUtils.experts[0]
 
-        val ticketOne = Ticket("title1", "description1", TestTicketUtils.products[0], TestTicketUtils.profiles[0]).apply {
-            status = TicketStatus.IN_PROGRESS
-            priorityLevel = TicketPriority.LOW
-        }
+        val ticketOne =
+            Ticket("title1", "description1", TestTicketUtils.products[0], TestTicketUtils.profiles[0]).apply {
+                status = TicketStatus.IN_PROGRESS
+                priorityLevel = TicketPriority.LOW
+            }
 
         TestTicketUtils.addTicket(ticketRepository, expert, ticketOne)
         TestTicketUtils.addTicketStatusChange(
@@ -174,13 +161,15 @@ class TicketServiceIntegrationTest: AbstractTestcontainersTest() {
 
     @Test
     @Transactional
+    @Rollback
     fun getTicketStatusChangesByTicketIdWithManyChanges() {
         val expert = TestTicketUtils.experts[0]
 
-        val ticketOne = Ticket("title1", "description1", TestTicketUtils.products[0], TestTicketUtils.profiles[0]).apply {
-            status = TicketStatus.IN_PROGRESS
-            priorityLevel = TicketPriority.LOW
-        }
+        val ticketOne =
+            Ticket("title1", "description1", TestTicketUtils.products[0], TestTicketUtils.profiles[0]).apply {
+                status = TicketStatus.IN_PROGRESS
+                priorityLevel = TicketPriority.LOW
+            }
 
         TestTicketUtils.addTicket(ticketRepository, expert, ticketOne)
         TestTicketUtils.addTicketStatusChange(
@@ -206,19 +195,21 @@ class TicketServiceIntegrationTest: AbstractTestcontainersTest() {
         assert(ticketOneActualTicketsStatusChangesDTO.size == 2)
 
         for (i in 0 until ticketOneActualTicketsStatusChangesDTO.size - 1) {
-            ticketOneActualTicketsStatusChangesDTO[i].time >= ticketOneActualTicketsStatusChangesDTO[i+1].time
+            ticketOneActualTicketsStatusChangesDTO[i].time >= ticketOneActualTicketsStatusChangesDTO[i + 1].time
         }
     }
 
     @Test
     @Transactional
+    @Rollback
     fun getTicketStatusChangesByTicketIdWithoutChanges() {
         val expert = TestTicketUtils.experts[0]
 
-        val ticketOne = Ticket("title1", "description1", TestTicketUtils.products[0], TestTicketUtils.profiles[0]).apply {
-            status = TicketStatus.IN_PROGRESS
-            priorityLevel = TicketPriority.LOW
-        }
+        val ticketOne =
+            Ticket("title1", "description1", TestTicketUtils.products[0], TestTicketUtils.profiles[0]).apply {
+                status = TicketStatus.IN_PROGRESS
+                priorityLevel = TicketPriority.LOW
+            }
 
         TestTicketUtils.addTicket(ticketRepository, expert, ticketOne)
 
@@ -241,6 +232,8 @@ class TicketServiceIntegrationTest: AbstractTestcontainersTest() {
     /////////////////////////////////////////////////////////////////////
 
     @Test
+    @Transactional
+    @Rollback
     fun createTicket() {
         val newTicketDTO = NewTicketDTO(
             customerId = TestTicketUtils.profiles[0].id!!,
@@ -255,6 +248,8 @@ class TicketServiceIntegrationTest: AbstractTestcontainersTest() {
     }
 
     @Test
+    @Transactional
+    @Rollback
     fun createTicketDuplicateCustomerProduct() {
         val newTicketDTO = NewTicketDTO(
             customerId = TestTicketUtils.profiles[0].id!!,
@@ -275,8 +270,9 @@ class TicketServiceIntegrationTest: AbstractTestcontainersTest() {
     ////// ticketStatusChangeInProgress
     /////////////////////////////////////////////////////////////////////
 
-    @Transactional
     @Test
+    @Transactional
+    @Rollback
     fun ticketStatusChangeInProgress() {
         val ticket = testTickets[0]
         val expectedStatus = TicketStatus.IN_PROGRESS
@@ -293,10 +289,10 @@ class TicketServiceIntegrationTest: AbstractTestcontainersTest() {
         assert(actualNewTicketDTO.status == expectedStatus.toString())
     }
 
-    @Transactional
     @Test
+    @Transactional
+    @Rollback
     fun ticketStatusChangeInProgressTicketNotFound() {
-
         val statusChangeData = TicketStatusChangeInProgressDTO(
             expertId = TestTicketUtils.experts[0].id!!,
             priorityLevel = TicketPriority.LOW,
@@ -308,8 +304,9 @@ class TicketServiceIntegrationTest: AbstractTestcontainersTest() {
         }
     }
 
-    @Transactional
     @Test
+    @Transactional
+    @Rollback
     fun ticketStatusChangeInProgressExpertNotFound() {
         val ticket = testTickets[0]
 
@@ -328,8 +325,9 @@ class TicketServiceIntegrationTest: AbstractTestcontainersTest() {
     ////// ticketStatusChange
     /////////////////////////////////////////////////////////////////////
 
-    @Transactional
     @Test
+    @Transactional
+    @Rollback
     fun ticketStatusChange() {
         val ticket = testTickets[0]
         val expectedStatus = TicketStatus.RESOLVED
@@ -339,29 +337,28 @@ class TicketServiceIntegrationTest: AbstractTestcontainersTest() {
             description = null
         )
 
-        ticketStatusChangeService.ticketStatusChange(ticket.id!!, expectedStatus, statusChangeData )
+        ticketStatusChangeService.ticketStatusChange(ticket.id!!, expectedStatus, statusChangeData)
 
         val actualNewTicketDTO = ticketService.getTicketById(ticket.id!!)
 
         assert(actualNewTicketDTO.status == expectedStatus.toString())
     }
 
-    @Transactional
     @Test
+    @Transactional
     fun ticketStatusChangeNotFound() {
-
         val statusChangeData = TicketStatusChangeDTO(
             changedBy = UserType.CUSTOMER,
             description = null
         )
 
         assertThrows<TicketNotFoundException> {
-            ticketStatusChangeService.ticketStatusChange(Int.MAX_VALUE, TicketStatus.RESOLVED, statusChangeData )
+            ticketStatusChangeService.ticketStatusChange(Int.MAX_VALUE, TicketStatus.RESOLVED, statusChangeData)
         }
     }
 
-    @Transactional
     @Test
+    @Transactional
     fun ticketStatusChangeNotAllowed() {
         val ticket = testTickets[0]
         val newStatus = TicketStatus.REOPENED
@@ -372,7 +369,7 @@ class TicketServiceIntegrationTest: AbstractTestcontainersTest() {
         )
 
         assertThrows<NotValidStatusChangeException> {
-            ticketStatusChangeService.ticketStatusChange(ticket.id!!, newStatus, statusChangeData )
+            ticketStatusChangeService.ticketStatusChange(ticket.id!!, newStatus, statusChangeData)
         }
     }
 }

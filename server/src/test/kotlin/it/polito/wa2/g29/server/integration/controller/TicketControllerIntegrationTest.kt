@@ -19,24 +19,23 @@ import it.polito.wa2.g29.server.utils.TestProductUtils
 import it.polito.wa2.g29.server.utils.TestProfileUtils
 import it.polito.wa2.g29.server.utils.TestTicketUtils
 import org.hamcrest.Matchers.*
-import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
+import org.springframework.test.annotation.Rollback
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
+import org.springframework.transaction.annotation.Transactional
 
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
-
     @Autowired
     private lateinit var mockMvc: MockMvc
 
@@ -59,26 +58,10 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
 
     @BeforeAll
     fun prepare() {
-        productRepository.deleteAll()
-        profileRepository.deleteAll()
-        expertRepository.deleteAll()
         TestTicketUtils.products = TestProductUtils.insertProducts(productRepository)
         TestTicketUtils.profiles = TestProfileUtils.insertProfiles(profileRepository)
         TestTicketUtils.experts = TestExpertUtils.insertExperts(expertRepository)
-    }
-
-    @BeforeEach
-    fun setup() {
-        ticketRepository.deleteAll()
         testTickets = TestTicketUtils.insertTickets(ticketRepository)
-    }
-
-    @AfterAll
-    fun prune() {
-        ticketRepository.deleteAll()
-        productRepository.deleteAll()
-        profileRepository.deleteAll()
-        expertRepository.deleteAll()
     }
 
     /////////////////////////////////////////////////////////////////////
@@ -86,6 +69,8 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
     /////////////////////////////////////////////////////////////////////
 
     @Test
+    @Transactional
+    @Rollback
     fun getAllTicketsEmpty() {
         ticketRepository.deleteAllInBatch()
         mockMvc
@@ -118,7 +103,7 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
                 jsonPath("$[*].priorityLevel").exists(),
                 jsonPath("$[*].createdAt").exists(),
                 jsonPath("$[*].lastModifiedAt").exists()
-                )
+            )
     }
 
     @Test
@@ -141,7 +126,7 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
                 jsonPath("$[*].priorityLevel").exists(),
                 jsonPath("$[*].createdAt").exists(),
                 jsonPath("$[*].lastModifiedAt").exists(),
-                jsonPath("$[*].status").value(List(2){"OPEN"})
+                jsonPath("$[*].status").value(List(2) { "OPEN" })
             )
     }
 
@@ -190,7 +175,7 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
     fun getTicketByIdWrongValue() {
         val ticketIdWrongValues = listOf(0, -1, -2, Int.MIN_VALUE)
 
-        ticketIdWrongValues.forEach{
+        ticketIdWrongValues.forEach {
             mockMvc
                 .perform(get("/API/tickets/${it}").contentType("application/json"))
                 .andExpect(status().isUnprocessableEntity)
@@ -209,13 +194,16 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
     /////////////////////////////////////////////////////////////////////
 
     @Test
+    @Transactional
+    @Rollback
     fun getTicketStatusChangesById() {
         val expert = TestTicketUtils.experts[0]
 
-        val ticketOne = Ticket("title1", "description1", TestTicketUtils.products[0], TestTicketUtils.profiles[0]).apply {
-            status = TicketStatus.IN_PROGRESS
-            priorityLevel = TicketPriority.LOW
-        }
+        val ticketOne =
+            Ticket("title1", "description1", TestTicketUtils.products[0], TestTicketUtils.profiles[0]).apply {
+                status = TicketStatus.IN_PROGRESS
+                priorityLevel = TicketPriority.LOW
+            }
 
         TestTicketUtils.addTicket(ticketRepository, expert, ticketOne)
         TestTicketUtils.addTicketStatusChange(
@@ -244,7 +232,7 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
                 jsonPath("$").isArray,
                 jsonPath("$").isNotEmpty,
                 jsonPath<List<TicketChangeDTO>>("$", hasSize(2)),
-                jsonPath("$[*].ticketId").value(List(2){ticketOne.id}),
+                jsonPath("$[*].ticketId").value(List(2) { ticketOne.id }),
                 jsonPath("$[*].currentExpertId").value(contains(expert.id, expert.id)),
                 jsonPath("$[*].oldStatus").exists(),
                 jsonPath("$[*].newStatus").exists(),
@@ -255,13 +243,16 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
     }
 
     @Test
+    @Transactional
+    @Rollback
     fun getTicketStatusChangesByIdWithNoChanges() {
         val expert = TestTicketUtils.experts[0]
 
-        val ticketOne = Ticket("title1", "description1", TestTicketUtils.products[0], TestTicketUtils.profiles[0]).apply {
-            status = TicketStatus.IN_PROGRESS
-            priorityLevel = TicketPriority.LOW
-        }
+        val ticketOne =
+            Ticket("title1", "description1", TestTicketUtils.products[0], TestTicketUtils.profiles[0]).apply {
+                status = TicketStatus.IN_PROGRESS
+                priorityLevel = TicketPriority.LOW
+            }
 
         TestTicketUtils.addTicket(ticketRepository, expert, ticketOne)
 
@@ -295,13 +286,13 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
         }
     }
 
-
-
     /////////////////////////////////////////////////////////////////////
     ////// POST /API/tickets
     /////////////////////////////////////////////////////////////////////
 
     @Test
+    @Transactional
+    @Rollback
     fun createTicket() {
         val newTicketDTO = TestTicketUtils.getNewTicketDTO()
 
@@ -309,14 +300,18 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
         val jsonBody = mapper.writeValueAsString(newTicketDTO)
 
         mockMvc
-            .perform(post("/API/tickets")
-                .content(jsonBody)
-                .contentType("application/json"))
+            .perform(
+                post("/API/tickets")
+                    .content(jsonBody)
+                    .contentType("application/json")
+            )
             .andExpect(status().isCreated)
             .andExpect { jsonPath("$.ticketId").exists() }
     }
 
     @Test
+    @Transactional
+    @Rollback
     fun createTicketCustomerNotFound() {
         val newTicketDTO = TestTicketUtils.getNewTicketDTO().copy(
             customerId = Int.MAX_VALUE
@@ -326,13 +321,17 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
         val jsonBody = mapper.writeValueAsString(newTicketDTO)
 
         mockMvc
-            .perform(post("/API/tickets")
-                .content(jsonBody)
-                .contentType("application/json"))
+            .perform(
+                post("/API/tickets")
+                    .content(jsonBody)
+                    .contentType("application/json")
+            )
             .andExpect(status().isNotFound)
     }
 
     @Test
+    @Transactional
+    @Rollback
     fun createTicketProductNotFound() {
         val newTicketDTO = TestTicketUtils.getNewTicketDTO().copy(
             productId = Int.MAX_VALUE
@@ -342,13 +341,17 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
         val jsonBody = mapper.writeValueAsString(newTicketDTO)
 
         mockMvc
-            .perform(post("/API/tickets")
-                .content(jsonBody)
-                .contentType("application/json"))
+            .perform(
+                post("/API/tickets")
+                    .content(jsonBody)
+                    .contentType("application/json")
+            )
             .andExpect(status().isNotFound)
     }
 
     @Test
+    @Transactional
+    @Rollback
     fun createTicketDuplicateCustomerProduct() {
         val newTicketDTO = testTickets[0].toDTO().copy()
 
@@ -356,13 +359,17 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
         val jsonBody = mapper.writeValueAsString(newTicketDTO)
 
         mockMvc
-            .perform(post("/API/tickets")
-                .content(jsonBody)
-                .contentType("application/json"))
+            .perform(
+                post("/API/tickets")
+                    .content(jsonBody)
+                    .contentType("application/json")
+            )
             .andExpect(status().isConflict)
     }
 
     @Test
+    @Transactional
+    @Rollback
     fun createTicketBlankFields() {
         val newTicketDTO = TestTicketUtils.getNewTicketDTO().copy(
             title = "",
@@ -373,9 +380,11 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
         val jsonBody = mapper.writeValueAsString(newTicketDTO)
 
         mockMvc
-            .perform(post("/API/tickets")
-                .content(jsonBody)
-                .contentType("application/json"))
+            .perform(
+                post("/API/tickets")
+                    .content(jsonBody)
+                    .contentType("application/json")
+            )
             .andExpect(status().isUnprocessableEntity)
             .andExpect { jsonPath("$.error").exists() }
     }
@@ -391,9 +400,11 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
         val jsonBody = mapper.writeValueAsString(newTicketDTO)
 
         mockMvc
-            .perform(post("/API/tickets")
-                .content(jsonBody)
-                .contentType("application/json"))
+            .perform(
+                post("/API/tickets")
+                    .content(jsonBody)
+                    .contentType("application/json")
+            )
             .andExpect(status().isUnprocessableEntity)
             .andExpect { jsonPath("$.error").exists() }
     }
@@ -409,9 +420,11 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
         val jsonBody = mapper.writeValueAsString(newTicketDTO)
 
         mockMvc
-            .perform(post("/API/tickets")
-                .content(jsonBody)
-                .contentType("application/json"))
+            .perform(
+                post("/API/tickets")
+                    .content(jsonBody)
+                    .contentType("application/json")
+            )
             .andExpect(status().isUnprocessableEntity)
             .andExpect { jsonPath("$.error").exists() }
     }
@@ -420,8 +433,9 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
     ////// PUT /API/tickets/{ticketId}/start
     /////////////////////////////////////////////////////////////////////
 
-
     @Test
+    @Transactional
+    @Rollback
     fun startTicketById() {
         val oldTicketDTO = testTickets[0].toDTO()
         val newTicketDTO = oldTicketDTO.copy(
@@ -511,6 +525,8 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
     }
 
     @Test
+    @Transactional
+    @Rollback
     fun startTicketByIdInProgress() {
         val expert = TestTicketUtils.experts[0]
 
@@ -544,8 +560,9 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
     /////////////////////////////////////////////////////////////////////
 
     @Test
+    @Transactional
+    @Rollback
     fun stopTicketById() {
-
         val expert = TestTicketUtils.experts[0]
 
         val ticket = Ticket("title1", "description1", TestTicketUtils.products[0], TestTicketUtils.profiles[1]).apply {
@@ -575,7 +592,6 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     fun stopTicketByIdNotFound() {
-
         val ticketStatusChangeDTO = TicketStatusChangeDTO(
             changedBy = UserType.EXPERT,
             description = null
@@ -594,8 +610,9 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
     }
 
     @Test
+    @Transactional
+    @Rollback
     fun stopTicketByIdNotInProgress() {
-
         val expert = TestTicketUtils.experts[0]
 
         val ticket = Ticket("title1", "description1", TestTicketUtils.products[0], TestTicketUtils.profiles[1]).apply {
@@ -627,8 +644,9 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
     /////////////////////////////////////////////////////////////////////
 
     @Test
+    @Transactional
+    @Rollback
     fun resolveTicketById() {
-
         val expert = TestTicketUtils.experts[0]
 
         val ticket = Ticket("title1", "description1", TestTicketUtils.products[0], TestTicketUtils.profiles[1]).apply {
@@ -657,7 +675,6 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     fun resolveTicketByIdNotFound() {
-
         val ticketStatusChangeDTO = TicketStatusChangeDTO(
             changedBy = UserType.EXPERT,
             description = null
@@ -676,8 +693,9 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
     }
 
     @Test
+    @Transactional
+    @Rollback
     fun resolveTicketByIdAlreadyResolved() {
-
         val expert = TestTicketUtils.experts[0]
 
         val ticket = Ticket("title1", "description1", TestTicketUtils.products[0], TestTicketUtils.profiles[1]).apply {
@@ -705,8 +723,9 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
     }
 
     @Test
+    @Transactional
+    @Rollback
     fun resolveTicketByIdClosed() {
-
         val expert = TestTicketUtils.experts[0]
 
         val ticket = Ticket("title1", "description1", TestTicketUtils.products[0], TestTicketUtils.profiles[1]).apply {
@@ -738,6 +757,8 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
     /////////////////////////////////////////////////////////////////////
 
     @Test
+    @Transactional
+    @Rollback
     fun reopenClosedTicketById() {
 
         val expert = TestTicketUtils.experts[0]
@@ -767,8 +788,9 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
     }
 
     @Test
+    @Transactional
+    @Rollback
     fun reopenResolvedTicketById() {
-
         val expert = TestTicketUtils.experts[0]
 
         val ticket = Ticket("title1", "description1", TestTicketUtils.products[0], TestTicketUtils.profiles[1]).apply {
@@ -797,7 +819,6 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     fun reopenTicketByIdNotFound() {
-
         val ticketStatusChangeDTO = TicketStatusChangeDTO(
             changedBy = UserType.CUSTOMER,
             description = "description"
@@ -816,8 +837,9 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
     }
 
     @Test
+    @Transactional
+    @Rollback
     fun reopenTicketByIdNotClosedOrResolved() {
-
         val expert = TestTicketUtils.experts[0]
 
         val ticket = Ticket("title1", "description1", TestTicketUtils.products[0], TestTicketUtils.profiles[1]).apply {
@@ -845,8 +867,9 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
     }
 
     @Test
+    @Transactional
+    @Rollback
     fun reopenTicketByIdWithoutDescription() {
-
         val expert = TestTicketUtils.experts[0]
 
         val ticket = Ticket("title1", "description1", TestTicketUtils.products[0], TestTicketUtils.profiles[1]).apply {
@@ -878,8 +901,9 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
     /////////////////////////////////////////////////////////////////////
 
     @Test
+    @Transactional
+    @Rollback
     fun closeTicketById() {
-
         val expert = TestTicketUtils.experts[0]
 
         val ticket = Ticket("title1", "description1", TestTicketUtils.products[0], TestTicketUtils.profiles[1]).apply {
@@ -908,7 +932,6 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     fun closeTicketByIdNotFound() {
-
         val ticketStatusChangeDTO = TicketStatusChangeDTO(
             changedBy = UserType.CUSTOMER,
             description = null
@@ -927,8 +950,9 @@ class TicketControllerIntegrationTest : AbstractTestcontainersTest() {
     }
 
     @Test
+    @Transactional
+    @Rollback
     fun closeTicketByIdAlreadyClosed() {
-
         val expert = TestTicketUtils.experts[0]
 
         val ticket = Ticket("title1", "description1", TestTicketUtils.products[0], TestTicketUtils.profiles[1]).apply {

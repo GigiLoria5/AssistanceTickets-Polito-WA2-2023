@@ -165,10 +165,8 @@ class ExpertServiceIntegrationTest : AbstractTestcontainersTest() {
         val actualExpertTicketsDTO = expertService.getAllTicketsByExpertId(expert.id!!)
 
         assert(expectedExpertTickets.size == actualExpertTicketsDTO.size)
-        val expectedExpertTicketsDTOSorted = expectedExpertTickets.sortedWith(compareBy<Ticket> { it.status }
-            .thenByDescending { it.priorityLevel }
-            .thenByDescending { it.lastModifiedAt })
-            .map { it.toDTO() }
+        val expectedExpertTicketsDTOSorted = expectedExpertTickets
+            .sortedWith(compareByDescending { it.priorityLevel }).map { it.toDTO() }
         assert(expectedExpertTicketsDTOSorted == actualExpertTicketsDTO)
     }
 

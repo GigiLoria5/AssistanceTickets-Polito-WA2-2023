@@ -26,15 +26,12 @@ class ExpertServiceImpl(
 
     override fun getAllTicketsByExpertId(expertId: Int): List<TicketDTO> {
         val expert = expertRepository.findByIdOrNull(expertId) ?: throw ExpertNotFoundException()
-        return expert.tickets.sortedWith(
-            compareByDescending { it.priorityLevel }
-        ).map { it.toDTO() }
+        return expert.tickets.sortedWith(compareByDescending { it.priorityLevel }).map { it.toDTO() }
     }
 
     override fun getTicketStatusChangesByExpertId(expertId: Int): List<TicketChangeDTO> {
         val expert = expertRepository.findByIdOrNull(expertId) ?: throw ExpertNotFoundException()
-        return expert.ticketChanges.filter { it.changedBy == UserType.EXPERT }.sortedWith(
-            compareByDescending { it.time })
-            .map { it.toDTO() }
+        return expert.ticketChanges.filter { it.changedBy == UserType.EXPERT }
+            .sortedWith(compareByDescending { it.time }).map { it.toDTO() }
     }
 }

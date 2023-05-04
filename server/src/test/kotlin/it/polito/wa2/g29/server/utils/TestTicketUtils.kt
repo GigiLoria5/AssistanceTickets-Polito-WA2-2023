@@ -44,7 +44,7 @@ object TestTicketUtils {
     }
 
     private fun getTickets(): List<Ticket> {
-        val tickets = listOf(
+        return listOf(
             Ticket(
                 title = "title1",
                 description = "description1",
@@ -58,7 +58,6 @@ object TestTicketUtils {
                 customer = profiles[1]
             )
         )
-        return tickets
     }
 
     fun getNewTicketDTO(): TicketDTO {
