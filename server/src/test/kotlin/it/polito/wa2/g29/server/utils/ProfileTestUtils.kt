@@ -4,7 +4,7 @@ import it.polito.wa2.g29.server.dto.ProfileDTO
 import it.polito.wa2.g29.server.model.Profile
 import it.polito.wa2.g29.server.repository.ProfileRepository
 
-object TestProfileUtils {
+object ProfileTestUtils {
 
     /**
      * Inserts a list of new profiles into the provided [profileRepository] and returns an array of the newly added profiles.

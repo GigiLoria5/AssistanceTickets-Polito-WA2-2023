@@ -26,7 +26,7 @@ import org.springframework.transaction.annotation.Transactional
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class ChatControllerIntegrationTest : AbstractTestcontainersTest() {
+class ChatControllerIT : AbstractTestcontainersTest() {
     @Autowired
     private lateinit var mockMvc: MockMvc
 
@@ -59,16 +59,16 @@ class ChatControllerIntegrationTest : AbstractTestcontainersTest() {
 
     @BeforeAll
     fun prepare() {
-        testProducts = TestProductUtils.insertProducts(productRepository)
-        testProfiles = TestProfileUtils.insertProfiles(profileRepository)
-        testExperts = TestExpertUtils.insertExperts(expertRepository)
-        TestTicketUtils.products = testProducts
-        TestTicketUtils.profiles = testProfiles
-        testTickets = TestTicketUtils.insertTickets(ticketRepository)
+        testProducts = ProductTestUtils.insertProducts(productRepository)
+        testProfiles = ProfileTestUtils.insertProfiles(profileRepository)
+        testExperts = ExpertTestUtils.insertExperts(expertRepository)
+        TicketTestUtils.products = testProducts
+        TicketTestUtils.profiles = testProfiles
+        testTickets = TicketTestUtils.insertTickets(ticketRepository)
         ticketExpert = testExperts[0]
         ticketWithMessages = testTickets[0]
         ticketWithoutMessages = testTickets[1]
-        TestTicketUtils.startTicket(ticketRepository, ticketWithMessages, ticketExpert, TicketPriority.LOW)
+        TicketTestUtils.startTicket(ticketRepository, ticketWithMessages, ticketExpert, TicketPriority.LOW)
         val messages = TestChatUtils.getMessages(ticketWithMessages, ticketExpert)
         messages[messageWithAttachmentIndex].apply {
             attachments = setOf(
@@ -132,7 +132,7 @@ class ChatControllerIntegrationTest : AbstractTestcontainersTest() {
             )
 
         chatStatusTransactions.forEach {
-            TestExpertUtils.addTicketStatusChange(
+            ExpertTestUtils.addTicketStatusChange(
                 ticketStatusChangeService,
                 ticketExpert,
                 ticketWithMessages,
@@ -279,7 +279,7 @@ class ChatControllerIntegrationTest : AbstractTestcontainersTest() {
             )
 
         chatStatusTransactions.forEach {
-            TestExpertUtils.addTicketStatusChange(
+            ExpertTestUtils.addTicketStatusChange(
                 ticketStatusChangeService,
                 ticketExpert,
                 ticketWithMessages,
@@ -446,7 +446,7 @@ class ChatControllerIntegrationTest : AbstractTestcontainersTest() {
     fun getAttachmentMessageIdNotFound() {
         val ticket = testTickets[0]
         val ticketExpert = testExperts[0]
-        TestTicketUtils.startTicket(ticketRepository, ticket, ticketExpert, TicketPriority.LOW)
+        TicketTestUtils.startTicket(ticketRepository, ticket, ticketExpert, TicketPriority.LOW)
         val messages = listOf(Message(UserType.CUSTOMER, "Message2", ticket, null))
         messages[0].apply {
             attachments = setOf(
@@ -480,7 +480,7 @@ class ChatControllerIntegrationTest : AbstractTestcontainersTest() {
     fun getAttachmentAttachmentIdNotFound() {
         val ticket = testTickets[0]
         val ticketExpert = testExperts[0]
-        TestTicketUtils.startTicket(ticketRepository, ticket, ticketExpert, TicketPriority.LOW)
+        TicketTestUtils.startTicket(ticketRepository, ticket, ticketExpert, TicketPriority.LOW)
         val messages = listOf(Message(UserType.CUSTOMER, "Message2", ticket, null))
         messages[0].apply {
             attachments = setOf(
@@ -513,7 +513,7 @@ class ChatControllerIntegrationTest : AbstractTestcontainersTest() {
     fun getAttachmentTicketIdInvalid() {
         val ticket = testTickets[0]
         val ticketExpert = testExperts[0]
-        TestTicketUtils.startTicket(ticketRepository, ticket, ticketExpert, TicketPriority.LOW)
+        TicketTestUtils.startTicket(ticketRepository, ticket, ticketExpert, TicketPriority.LOW)
         val messages = listOf(Message(UserType.CUSTOMER, "Message2", ticket, null))
         messages[0].apply {
             attachments = setOf(
@@ -551,7 +551,7 @@ class ChatControllerIntegrationTest : AbstractTestcontainersTest() {
     fun getAttachmentMessageIdInvalid() {
         val ticket = testTickets[0]
         val ticketExpert = testExperts[0]
-        TestTicketUtils.startTicket(ticketRepository, ticket, ticketExpert, TicketPriority.LOW)
+        TicketTestUtils.startTicket(ticketRepository, ticket, ticketExpert, TicketPriority.LOW)
         val messages = listOf(Message(UserType.CUSTOMER, "Message2", ticket, null))
         messages[0].apply {
             attachments = setOf(

@@ -3,7 +3,7 @@ package it.polito.wa2.g29.server.integration.controller
 import it.polito.wa2.g29.server.integration.AbstractTestcontainersTest
 import it.polito.wa2.g29.server.model.Product
 import it.polito.wa2.g29.server.repository.ProductRepository
-import it.polito.wa2.g29.server.utils.TestProductUtils
+import it.polito.wa2.g29.server.utils.ProductTestUtils
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class ProductControllerIntegrationTest : AbstractTestcontainersTest() {
+class ProductControllerIT : AbstractTestcontainersTest() {
     @Autowired
     private lateinit var mockMvc: MockMvc
 
@@ -31,7 +31,7 @@ class ProductControllerIntegrationTest : AbstractTestcontainersTest() {
 
     @BeforeAll
     fun setup() {
-        testProducts = TestProductUtils.insertProducts(productRepository)
+        testProducts = ProductTestUtils.insertProducts(productRepository)
     }
 
     /////////////////////////////////////////////////////////////////////

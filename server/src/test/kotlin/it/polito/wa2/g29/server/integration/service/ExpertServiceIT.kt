@@ -10,9 +10,9 @@ import it.polito.wa2.g29.server.model.*
 import it.polito.wa2.g29.server.repository.*
 import it.polito.wa2.g29.server.service.ExpertService
 import it.polito.wa2.g29.server.service.TicketStatusChangeService
-import it.polito.wa2.g29.server.utils.TestExpertUtils
-import it.polito.wa2.g29.server.utils.TestProductUtils
-import it.polito.wa2.g29.server.utils.TestProfileUtils
+import it.polito.wa2.g29.server.utils.ExpertTestUtils
+import it.polito.wa2.g29.server.utils.ProductTestUtils
+import it.polito.wa2.g29.server.utils.ProfileTestUtils
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -22,7 +22,7 @@ import org.springframework.test.annotation.Rollback
 import org.springframework.transaction.annotation.Transactional
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class ExpertServiceIntegrationTest : AbstractTestcontainersTest() {
+class ExpertServiceIT : AbstractTestcontainersTest() {
     @Autowired
     private lateinit var expertService: ExpertService
 
@@ -47,9 +47,9 @@ class ExpertServiceIntegrationTest : AbstractTestcontainersTest() {
 
     @BeforeAll
     fun prepare() {
-        testProducts = TestProductUtils.insertProducts(productRepository)
-        testProfiles = TestProfileUtils.insertProfiles(profileRepository)
-        testExperts = TestExpertUtils.insertExperts(expertRepository)
+        testProducts = ProductTestUtils.insertProducts(productRepository)
+        testProfiles = ProfileTestUtils.insertProfiles(profileRepository)
+        testExperts = ExpertTestUtils.insertExperts(expertRepository)
     }
 
     /////////////////////////////////////////////////////////////////////
@@ -118,8 +118,8 @@ class ExpertServiceIntegrationTest : AbstractTestcontainersTest() {
             status = TicketStatus.IN_PROGRESS
             priorityLevel = TicketPriority.LOW
         }
-        TestExpertUtils.addTicket(ticketRepository, expertOne, ticketForExpertOne)
-        TestExpertUtils.addTicket(ticketRepository, expertTwo, ticketForExpertTwo)
+        ExpertTestUtils.addTicket(ticketRepository, expertOne, ticketForExpertOne)
+        ExpertTestUtils.addTicket(ticketRepository, expertTwo, ticketForExpertTwo)
 
         val expertOneActualTickets = expertService.getAllTicketsByExpertId(expertOne.id!!)
         val expertTwoActualTickets = expertService.getAllTicketsByExpertId(expertTwo.id!!)
@@ -159,16 +159,14 @@ class ExpertServiceIntegrationTest : AbstractTestcontainersTest() {
         }
         val expectedExpertTickets = listOf(ticketOne, ticketTwo, ticketThree, ticketFour, ticketFive)
         expectedExpertTickets.forEach {
-            TestExpertUtils.addTicket(ticketRepository, expert, it)
+            ExpertTestUtils.addTicket(ticketRepository, expert, it)
         }
 
         val actualExpertTicketsDTO = expertService.getAllTicketsByExpertId(expert.id!!)
 
         assert(expectedExpertTickets.size == actualExpertTicketsDTO.size)
-        val expectedExpertTicketsDTOSorted = expectedExpertTickets.sortedWith(compareBy<Ticket> { it.status }
-            .thenByDescending { it.priorityLevel }
-            .thenByDescending { it.lastModifiedAt })
-            .map { it.toDTO() }
+        val expectedExpertTicketsDTOSorted = expectedExpertTickets
+            .sortedWith(compareByDescending { it.priorityLevel }).map { it.toDTO() }
         assert(expectedExpertTicketsDTOSorted == actualExpertTicketsDTO)
     }
 
@@ -209,9 +207,9 @@ class ExpertServiceIntegrationTest : AbstractTestcontainersTest() {
             status = TicketStatus.IN_PROGRESS
             priorityLevel = TicketPriority.LOW
         }
-        TestExpertUtils.addTicket(ticketRepository, expertOne, ticketForExpertOne)
-        TestExpertUtils.addTicket(ticketRepository, expertTwo, ticketForExpertTwo)
-        TestExpertUtils.addTicketStatusChange(
+        ExpertTestUtils.addTicket(ticketRepository, expertOne, ticketForExpertOne)
+        ExpertTestUtils.addTicket(ticketRepository, expertTwo, ticketForExpertTwo)
+        ExpertTestUtils.addTicketStatusChange(
             ticketStatusChangeService,
             expertOne,
             ticketForExpertOne,
@@ -219,7 +217,7 @@ class ExpertServiceIntegrationTest : AbstractTestcontainersTest() {
             UserType.EXPERT,
             "The issue has been resolved"
         )
-        TestExpertUtils.addTicketStatusChange(
+        ExpertTestUtils.addTicketStatusChange(
             ticketStatusChangeService,
             expertTwo,
             ticketForExpertTwo,

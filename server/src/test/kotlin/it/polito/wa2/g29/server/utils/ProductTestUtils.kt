@@ -3,7 +3,7 @@ package it.polito.wa2.g29.server.utils
 import it.polito.wa2.g29.server.model.Product
 import it.polito.wa2.g29.server.repository.ProductRepository
 
-object TestProductUtils {
+object ProductTestUtils {
 
     /**
      * Inserts a list of new products into the provided [productRepository] and returns an array of the newly added products.

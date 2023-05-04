@@ -25,16 +25,6 @@ object TestChatUtils {
         }
     }
 
-    fun deleteAllMessages(messageRepository: MessageRepository, tickets: List<Ticket>, experts: List<Expert>) {
-        tickets.forEach {
-            it.messages = mutableSetOf()
-        }
-        experts.forEach {
-            it.messages = mutableSetOf()
-        }
-        messageRepository.deleteAllInBatch()
-    }
-
     fun getMessages(ticket: Ticket, expert: Expert): List<Message> {
         return listOf(
             Message(UserType.EXPERT, "Message1", ticket, expert),

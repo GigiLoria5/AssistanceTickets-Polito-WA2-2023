@@ -1,15 +1,13 @@
 package it.polito.wa2.g29.server.model
 
-import it.polito.wa2.g29.server.dto.ticketDTOs.NewTicketDTO
+import it.polito.wa2.g29.server.dto.ticket.NewTicketDTO
 import it.polito.wa2.g29.server.enums.TicketPriority
 import it.polito.wa2.g29.server.enums.TicketStatus
 import it.polito.wa2.g29.server.enums.UserType
-import it.polito.wa2.g29.server.exception.NotValidStatusChangeException
 import it.polito.wa2.g29.server.exception.ProductNotFoundException
 import it.polito.wa2.g29.server.exception.ProfileNotFoundException
 import it.polito.wa2.g29.server.repository.ProductRepository
 import it.polito.wa2.g29.server.repository.ProfileRepository
-import it.polito.wa2.g29.server.utils.TicketStatusChangeRules
 import jakarta.persistence.*
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
@@ -22,6 +20,7 @@ import org.springframework.data.repository.findByIdOrNull
     uniqueConstraints =
     [UniqueConstraint(columnNames = arrayOf("product_id", "customer_id", "created_at"))]
 )
+
 class Ticket(
     @Column(nullable = false)
     var title: String,
@@ -63,9 +62,16 @@ class Ticket(
         messages.add(msg)
     }
 
+    @PreUpdate
+    private fun preUpdate() {
+        if (ticketChanges.size == 0) {
+            lastModifiedAt = System.currentTimeMillis()
+            return
+        }
+        lastModifiedAt = ticketChanges.maxOf { it.time }
+    }
+
     fun changeStatus(newStatus: TicketStatus, changedBy: UserType, description: String?) {
-        if (!TicketStatusChangeRules.isValidStatusChange(status, newStatus))
-            throw NotValidStatusChangeException("Could not ${TicketStatusChangeRules.getTaskToAchieveStatus(newStatus)} the ticket with id $id because its current status is '$status'")
 
         val oldStatus = status
         status = newStatus
@@ -76,15 +82,6 @@ class Ticket(
             expert = null
 
         ticketChanges.add(tc)
-    }
-
-    @PreUpdate
-    private fun preUpdate() {
-        if (ticketChanges.size == 0) {
-            lastModifiedAt = System.currentTimeMillis()
-            return
-        }
-        lastModifiedAt = ticketChanges.maxOf { it.time }
     }
 }
 

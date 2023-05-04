@@ -1,7 +1,7 @@
 package it.polito.wa2.g29.server.controller
 
 import it.polito.wa2.g29.server.dto.*
-import it.polito.wa2.g29.server.dto.ticketDTOs.*
+import it.polito.wa2.g29.server.dto.ticket.*
 import it.polito.wa2.g29.server.enums.TicketStatus
 import it.polito.wa2.g29.server.service.TicketService
 import jakarta.validation.Valid
