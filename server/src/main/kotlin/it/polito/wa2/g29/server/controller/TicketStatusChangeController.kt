@@ -1,8 +1,8 @@
 package it.polito.wa2.g29.server.controller
 
-import it.polito.wa2.g29.server.dto.ticketDTOs.TicketStatusChangeDTO
-import it.polito.wa2.g29.server.dto.ticketDTOs.TicketStatusChangeInProgressDTO
-import it.polito.wa2.g29.server.dto.ticketDTOs.TicketStatusChangeReopenDTO
+import it.polito.wa2.g29.server.dto.ticket.TicketStatusChangeDTO
+import it.polito.wa2.g29.server.dto.ticket.TicketStatusChangeInProgressDTO
+import it.polito.wa2.g29.server.dto.ticket.TicketStatusChangeReopenDTO
 import it.polito.wa2.g29.server.enums.TicketStatus
 import it.polito.wa2.g29.server.service.TicketStatusChangeService
 import jakarta.validation.Valid

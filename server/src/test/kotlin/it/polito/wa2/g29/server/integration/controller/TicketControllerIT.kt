@@ -2,7 +2,7 @@ package it.polito.wa2.g29.server.integration.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import it.polito.wa2.g29.server.dto.TicketChangeDTO
-import it.polito.wa2.g29.server.dto.ticketDTOs.TicketStatusChangeDTO
+import it.polito.wa2.g29.server.dto.ticket.TicketStatusChangeDTO
 import it.polito.wa2.g29.server.dto.toDTO
 import it.polito.wa2.g29.server.enums.TicketPriority
 import it.polito.wa2.g29.server.enums.TicketStatus

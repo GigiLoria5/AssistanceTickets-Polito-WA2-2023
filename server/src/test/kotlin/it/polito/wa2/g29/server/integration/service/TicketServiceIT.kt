@@ -1,8 +1,8 @@
 package it.polito.wa2.g29.server.integration.service
 
-import it.polito.wa2.g29.server.dto.ticketDTOs.NewTicketDTO
-import it.polito.wa2.g29.server.dto.ticketDTOs.TicketStatusChangeDTO
-import it.polito.wa2.g29.server.dto.ticketDTOs.TicketStatusChangeInProgressDTO
+import it.polito.wa2.g29.server.dto.ticket.NewTicketDTO
+import it.polito.wa2.g29.server.dto.ticket.TicketStatusChangeDTO
+import it.polito.wa2.g29.server.dto.ticket.TicketStatusChangeInProgressDTO
 import it.polito.wa2.g29.server.dto.toDTO
 import it.polito.wa2.g29.server.enums.TicketPriority
 import it.polito.wa2.g29.server.enums.TicketStatus

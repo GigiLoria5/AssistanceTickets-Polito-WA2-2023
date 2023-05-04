@@ -6,6 +6,7 @@ import jakarta.persistence.Id
 import jakarta.persistence.MappedSuperclass
 import org.springframework.data.util.ProxyUtils
 import java.io.Serializable
+import java.util.*
 
 @MappedSuperclass
 abstract class EntityBase<T : Serializable> {
@@ -28,7 +29,7 @@ abstract class EntityBase<T : Serializable> {
         if (javaClass != ProxyUtils.getUserClass(other))
             return false
         other as EntityBase<*>
-        return if (null == id) false else this.id == other.id
+        return Objects.equals(id, other.id)
     }
 
     override fun hashCode(): Int {

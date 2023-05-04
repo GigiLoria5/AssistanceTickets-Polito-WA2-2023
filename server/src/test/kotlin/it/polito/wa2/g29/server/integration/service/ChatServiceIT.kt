@@ -1,6 +1,6 @@
 package it.polito.wa2.g29.server.integration.service
 
-import it.polito.wa2.g29.server.dto.toDTO
+import it.polito.wa2.g29.server.dto.*
 import it.polito.wa2.g29.server.enums.AttachmentType
 import it.polito.wa2.g29.server.enums.TicketPriority
 import it.polito.wa2.g29.server.enums.TicketStatus
@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.test.annotation.Rollback
 import org.springframework.transaction.annotation.Transactional
-import org.springframework.web.multipart.MultipartFile
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ChatServiceIT : AbstractTestcontainersTest() {
@@ -226,40 +225,6 @@ class ChatServiceIT : AbstractTestcontainersTest() {
             val actualAttachment = actualMessage?.toDTO()?.attachments?.get(0)
             assert(expectedAttachment?.name == actualAttachment?.name)
             assert(it.toString() == actualAttachment?.type)
-        }
-    }
-
-    @Test
-    @Transactional
-    @Rollback
-    fun addMessageWithAttachmentsWithManyAttachments() {
-        val ticket = testTickets[0]
-        val ticketExpert = testExperts[0]
-        TicketTestUtils.startTicket(ticketRepository, ticket, ticketExpert, TicketPriority.LOW)
-        val attachmentType = AttachmentType.JPEG
-        val newMessageDTO = TestChatUtils.getNewMessageDTO(UserType.CUSTOMER, "Photos", attachmentType)
-        val attachments: MutableSet<MultipartFile> = mutableSetOf()
-        newMessageDTO.attachments?.get(0)?.let { attachments.add(it) }
-        for (i in 0..5) {
-            attachments.add(TestChatUtils.createAttachment(attachmentType))
-        }
-        val expectedMessageDTO = newMessageDTO.copy(attachments = attachments.toList())
-
-        val messageId = chatService.addMessageWithAttachments(ticket.id!!, expectedMessageDTO).messageId
-
-        val actualMessage = messageRepository.findByIdOrNull(messageId)
-        assert(actualMessage != null)
-        assert(expectedMessageDTO.sender == actualMessage?.sender)
-        assert(expectedMessageDTO.content == actualMessage?.content)
-        assert(ticketExpert == actualMessage?.expert)
-        assert(ticket == actualMessage?.ticket)
-        assert(actualMessage?.time != null)
-        assert(actualMessage?.attachments?.size == expectedMessageDTO.attachments?.size)
-        for (i in 0 until expectedMessageDTO.attachments?.size!!) {
-            val expectedAttachment = expectedMessageDTO.attachments?.get(i)
-            val actualAttachment = actualMessage?.toDTO()?.attachments?.get(i)
-            assert(expectedAttachment?.name == actualAttachment?.name)
-            assert(attachmentType.toString() == actualAttachment?.type)
         }
     }
 

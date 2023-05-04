@@ -1,8 +1,8 @@
 package it.polito.wa2.g29.server.service
 
 import it.polito.wa2.g29.server.dto.*
-import it.polito.wa2.g29.server.dto.ticketDTOs.NewTicketDTO
-import it.polito.wa2.g29.server.dto.ticketDTOs.NewTicketIdDTO
+import it.polito.wa2.g29.server.dto.ticket.NewTicketDTO
+import it.polito.wa2.g29.server.dto.ticket.NewTicketIdDTO
 import it.polito.wa2.g29.server.enums.TicketStatus
 
 interface TicketService {

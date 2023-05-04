@@ -1,6 +1,6 @@
 package it.polito.wa2.g29.server.utils
 
-import it.polito.wa2.g29.server.dto.ticketDTOs.TicketStatusChangeDTO
+import it.polito.wa2.g29.server.dto.ticket.TicketStatusChangeDTO
 import it.polito.wa2.g29.server.enums.Expertise
 import it.polito.wa2.g29.server.enums.Level
 import it.polito.wa2.g29.server.enums.TicketStatus

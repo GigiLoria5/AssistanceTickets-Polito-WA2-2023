@@ -1,7 +1,7 @@
 package it.polito.wa2.g29.server.service
 
-import it.polito.wa2.g29.server.dto.ticketDTOs.TicketStatusChangeDTO
-import it.polito.wa2.g29.server.dto.ticketDTOs.TicketStatusChangeInProgressDTO
+import it.polito.wa2.g29.server.dto.ticket.TicketStatusChangeDTO
+import it.polito.wa2.g29.server.dto.ticket.TicketStatusChangeInProgressDTO
 import it.polito.wa2.g29.server.enums.TicketStatus
 
 interface TicketStatusChangeService {
