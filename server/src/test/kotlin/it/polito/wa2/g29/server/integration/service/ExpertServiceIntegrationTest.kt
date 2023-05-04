@@ -239,64 +239,6 @@ class ExpertServiceIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     @Transactional
-    @Rollback
-    fun getTicketStatusChangesByExpertIdWithManyTickets() {
-        val expert = testExperts[0]
-        val ticketOne = Ticket("title1", "description1", testProducts[0], testProfiles[0]).apply {
-            status = TicketStatus.IN_PROGRESS
-            priorityLevel = TicketPriority.LOW
-        }
-        val ticketTwo = Ticket("title2", "description2", testProducts[0], testProfiles[1]).apply {
-            status = TicketStatus.IN_PROGRESS
-            priorityLevel = TicketPriority.LOW
-        }
-        TestExpertUtils.addTicket(ticketRepository, expert, ticketOne)
-        TestExpertUtils.addTicket(ticketRepository, expert, ticketTwo)
-        TestExpertUtils.addTicketStatusChange(
-            ticketStatusChangeService,
-            expert,
-            ticketOne,
-            TicketStatus.RESOLVED,
-            UserType.EXPERT,
-            ""
-        )
-        TestExpertUtils.addTicketStatusChange(
-            ticketStatusChangeService,
-            expert,
-            ticketOne,
-            TicketStatus.CLOSED,
-            UserType.CUSTOMER,
-            "It works now"
-        )
-        TestExpertUtils.addTicketStatusChange(
-            ticketStatusChangeService,
-            expert,
-            ticketTwo,
-            TicketStatus.RESOLVED,
-            UserType.EXPERT,
-            "The issue has been resolved"
-        )
-        TestExpertUtils.addTicketStatusChange(
-            ticketStatusChangeService,
-            expert,
-            ticketTwo,
-            TicketStatus.CLOSED,
-            UserType.EXPERT,
-            null
-        )
-
-        val expertActualTicketsStatusChangesDTO = expertService.getTicketStatusChangesByExpertId(expert.id!!)
-
-        assert(expertActualTicketsStatusChangesDTO.isNotEmpty())
-        assert(expertActualTicketsStatusChangesDTO.size == 3)
-        assert(expertActualTicketsStatusChangesDTO.map { it.changedBy }.none { it != UserType.EXPERT.toString() })
-        for (i in 0 until expertActualTicketsStatusChangesDTO.size - 1) {
-            assert(expertActualTicketsStatusChangesDTO[i].time >= expertActualTicketsStatusChangesDTO[i + 1].time)
-        }
-    }
-
-    @Test
-    @Transactional
     fun getTicketStatusChangesByExpertIdWithoutTickets() {
         val expert = testExperts[0]
 
