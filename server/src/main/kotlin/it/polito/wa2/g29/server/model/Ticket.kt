@@ -4,12 +4,10 @@ import it.polito.wa2.g29.server.dto.ticketDTOs.NewTicketDTO
 import it.polito.wa2.g29.server.enums.TicketPriority
 import it.polito.wa2.g29.server.enums.TicketStatus
 import it.polito.wa2.g29.server.enums.UserType
-import it.polito.wa2.g29.server.exception.NotValidStatusChangeException
 import it.polito.wa2.g29.server.exception.ProductNotFoundException
 import it.polito.wa2.g29.server.exception.ProfileNotFoundException
 import it.polito.wa2.g29.server.repository.ProductRepository
 import it.polito.wa2.g29.server.repository.ProfileRepository
-import it.polito.wa2.g29.server.utils.TicketStatusChangeRules
 import jakarta.persistence.*
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
@@ -74,8 +72,6 @@ class Ticket(
     }
 
     fun changeStatus(newStatus: TicketStatus, changedBy: UserType, description: String?) {
-        if (!TicketStatusChangeRules.isValidStatusChange(status, newStatus))
-            throw NotValidStatusChangeException("Could not ${TicketStatusChangeRules.getTaskToAchieveStatus(newStatus)} the ticket with id $id because its current status is '$status'")
 
         val oldStatus = status
         status = newStatus
