@@ -1,6 +1,6 @@
 package it.polito.wa2.g29.server.utils
 
-import it.polito.wa2.g29.server.dto.ticketDTOs.TicketStatusChangeDTO
+import it.polito.wa2.g29.server.dto.ticket.TicketStatusChangeDTO
 import it.polito.wa2.g29.server.enums.Expertise
 import it.polito.wa2.g29.server.enums.Level
 import it.polito.wa2.g29.server.enums.TicketStatus
@@ -13,7 +13,7 @@ import it.polito.wa2.g29.server.repository.ExpertRepository
 import it.polito.wa2.g29.server.repository.TicketRepository
 import it.polito.wa2.g29.server.service.TicketStatusChangeService
 
-object TestExpertUtils {
+object ExpertTestUtils {
 
     /**
      * Inserts a list of new experts into the provided [expertRepository] and returns an array of the newly added experts.

@@ -3,20 +3,24 @@ package it.polito.wa2.g29.server.integration.controller
 import it.polito.wa2.g29.server.integration.AbstractTestcontainersTest
 import it.polito.wa2.g29.server.model.Product
 import it.polito.wa2.g29.server.repository.ProductRepository
-import it.polito.wa2.g29.server.utils.TestProductUtils
-import org.junit.jupiter.api.BeforeEach
+import it.polito.wa2.g29.server.utils.ProductTestUtils
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
+import org.springframework.test.annotation.Rollback
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
+import org.springframework.transaction.annotation.Transactional
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-class ProductControllerIntegrationTest : AbstractTestcontainersTest() {
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+class ProductControllerIT : AbstractTestcontainersTest() {
     @Autowired
     private lateinit var mockMvc: MockMvc
 
@@ -25,10 +29,9 @@ class ProductControllerIntegrationTest : AbstractTestcontainersTest() {
 
     lateinit var testProducts: List<Product>
 
-    @BeforeEach
+    @BeforeAll
     fun setup() {
-        productRepository.deleteAllInBatch()
-        testProducts = TestProductUtils.insertProducts(productRepository)
+        testProducts = ProductTestUtils.insertProducts(productRepository)
     }
 
     /////////////////////////////////////////////////////////////////////
@@ -36,6 +39,8 @@ class ProductControllerIntegrationTest : AbstractTestcontainersTest() {
     /////////////////////////////////////////////////////////////////////
 
     @Test
+    @Transactional
+    @Rollback
     fun getAllProductsEmpty() {
         productRepository.deleteAllInBatch()
         mockMvc

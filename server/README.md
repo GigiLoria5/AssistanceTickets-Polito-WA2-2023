@@ -238,7 +238,7 @@
     - Response: `200 OK` (success)
     - Error responses: `404 Not Found` (expertId not found), `422 Unprocessable Entity` (validation of
       expertId failed) or `500 Internal Server Error` (generic error)
-    - Response body: An array of objects (sorted by status, priorityLevel and lastModifiedAt) for each containing
+    - Response body: An array of objects (sorted by priorityLevel descending) for each containing
       ticketId, description, productId, customerId, expertId, totalExchangedMessages, status, priorityLevel, createdAt
       and lastModifiedAt.
       An error message in case of error

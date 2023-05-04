@@ -12,27 +12,28 @@ import it.polito.wa2.g29.server.model.Profile
 import it.polito.wa2.g29.server.model.Ticket
 import it.polito.wa2.g29.server.repository.*
 import it.polito.wa2.g29.server.service.TicketStatusChangeService
-import it.polito.wa2.g29.server.utils.TestExpertUtils
-import it.polito.wa2.g29.server.utils.TestProductUtils
-import it.polito.wa2.g29.server.utils.TestProfileUtils
+import it.polito.wa2.g29.server.utils.ExpertTestUtils
+import it.polito.wa2.g29.server.utils.ProductTestUtils
+import it.polito.wa2.g29.server.utils.ProfileTestUtils
 import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
+import org.springframework.test.annotation.Rollback
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
+import org.springframework.transaction.annotation.Transactional
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class ExpertControllerIntegrationTest : AbstractTestcontainersTest() {
+class ExpertControllerIT : AbstractTestcontainersTest() {
     @Autowired
     private lateinit var mockMvc: MockMvc
 
@@ -41,9 +42,6 @@ class ExpertControllerIntegrationTest : AbstractTestcontainersTest() {
 
     @Autowired
     private lateinit var expertRepository: ExpertRepository
-
-    @Autowired
-    private lateinit var skillRepository: SkillRepository
 
     @Autowired
     private lateinit var productRepository: ProductRepository
@@ -59,19 +57,10 @@ class ExpertControllerIntegrationTest : AbstractTestcontainersTest() {
     lateinit var testExperts: List<Expert>
 
     @BeforeAll
-    fun prepare() {
-        productRepository.deleteAllInBatch()
-        profileRepository.deleteAllInBatch()
-        testProducts = TestProductUtils.insertProducts(productRepository)
-        testProfiles = TestProfileUtils.insertProfiles(profileRepository)
-    }
-
-    @BeforeEach
     fun setup() {
-        ticketRepository.deleteAll()
-        skillRepository.deleteAllInBatch()
-        expertRepository.deleteAllInBatch()
-        testExperts = TestExpertUtils.insertExperts(expertRepository)
+        testProducts = ProductTestUtils.insertProducts(productRepository)
+        testProfiles = ProfileTestUtils.insertProfiles(profileRepository)
+        testExperts = ExpertTestUtils.insertExperts(expertRepository)
     }
 
     /////////////////////////////////////////////////////////////////////
@@ -79,6 +68,8 @@ class ExpertControllerIntegrationTest : AbstractTestcontainersTest() {
     /////////////////////////////////////////////////////////////////////
 
     @Test
+    @Transactional
+    @Rollback
     fun getAllExpertsEmpty() {
         expertRepository.deleteAll()
         mockMvc
@@ -167,6 +158,8 @@ class ExpertControllerIntegrationTest : AbstractTestcontainersTest() {
     /////////////////////////////////////////////////////////////////////
 
     @Test
+    @Transactional
+    @Rollback
     fun getStatusChangesByExpertIdWithSomeChanges() {
         val expert = testExperts[0]
         val ticketOne = Ticket("title1", "description1", testProducts[0], testProfiles[0]).apply {
@@ -177,9 +170,9 @@ class ExpertControllerIntegrationTest : AbstractTestcontainersTest() {
             status = TicketStatus.IN_PROGRESS
             priorityLevel = TicketPriority.LOW
         }
-        TestExpertUtils.addTicket(ticketRepository, expert, ticketOne)
-        TestExpertUtils.addTicket(ticketRepository, expert, ticketTwo)
-        TestExpertUtils.addTicketStatusChange(
+        ExpertTestUtils.addTicket(ticketRepository, expert, ticketOne)
+        ExpertTestUtils.addTicket(ticketRepository, expert, ticketTwo)
+        ExpertTestUtils.addTicketStatusChange(
             ticketStatusChangeService,
             expert,
             ticketOne,
@@ -187,7 +180,7 @@ class ExpertControllerIntegrationTest : AbstractTestcontainersTest() {
             UserType.EXPERT,
             ""
         )
-        TestExpertUtils.addTicketStatusChange(
+        ExpertTestUtils.addTicketStatusChange(
             ticketStatusChangeService,
             expert,
             ticketOne,
@@ -195,7 +188,7 @@ class ExpertControllerIntegrationTest : AbstractTestcontainersTest() {
             UserType.CUSTOMER,
             "It works now"
         )
-        TestExpertUtils.addTicketStatusChange(
+        ExpertTestUtils.addTicketStatusChange(
             ticketStatusChangeService,
             expert,
             ticketTwo,
@@ -203,7 +196,7 @@ class ExpertControllerIntegrationTest : AbstractTestcontainersTest() {
             UserType.EXPERT,
             "The issue has been resolved"
         )
-        TestExpertUtils.addTicketStatusChange(
+        ExpertTestUtils.addTicketStatusChange(
             ticketStatusChangeService,
             expert,
             ticketTwo,
@@ -231,6 +224,8 @@ class ExpertControllerIntegrationTest : AbstractTestcontainersTest() {
     }
 
     @Test
+    @Transactional
+    @Rollback
     fun getStatusChangesByExpertIdWithNoChanges() {
         val expert = testExperts[0]
         val ticketOne = Ticket("title1", "description1", testProducts[0], testProfiles[0]).apply {
@@ -241,8 +236,8 @@ class ExpertControllerIntegrationTest : AbstractTestcontainersTest() {
             status = TicketStatus.IN_PROGRESS
             priorityLevel = TicketPriority.LOW
         }
-        TestExpertUtils.addTicket(ticketRepository, expert, ticketOne)
-        TestExpertUtils.addTicket(ticketRepository, expert, ticketTwo)
+        ExpertTestUtils.addTicket(ticketRepository, expert, ticketOne)
+        ExpertTestUtils.addTicket(ticketRepository, expert, ticketTwo)
 
         mockMvc
             .perform(get("/API/experts/${expert.id}/statusChanges").contentType("application/json"))
@@ -288,6 +283,8 @@ class ExpertControllerIntegrationTest : AbstractTestcontainersTest() {
     /////////////////////////////////////////////////////////////////////
 
     @Test
+    @Transactional
+    @Rollback
     fun getTicketsByExpertIdWithManyTickets() {
         val expertOne = testExperts[0]
         val expertTwo = testExperts[1]
@@ -303,9 +300,9 @@ class ExpertControllerIntegrationTest : AbstractTestcontainersTest() {
             status = TicketStatus.IN_PROGRESS
             priorityLevel = TicketPriority.LOW
         }
-        TestExpertUtils.addTicket(ticketRepository, expertOne, ticket1ForExpertOne)
-        TestExpertUtils.addTicket(ticketRepository, expertOne, ticket2ForExpertOne)
-        TestExpertUtils.addTicket(ticketRepository, expertTwo, ticketForExpertTwo)
+        ExpertTestUtils.addTicket(ticketRepository, expertOne, ticket1ForExpertOne)
+        ExpertTestUtils.addTicket(ticketRepository, expertOne, ticket2ForExpertOne)
+        ExpertTestUtils.addTicket(ticketRepository, expertTwo, ticketForExpertTwo)
 
         mockMvc
             .perform(get("/API/experts/${expertOne.id}/tickets").contentType("application/json"))

@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.springframework.http.MediaType
 
-class MediaTypeUtilUnitTest {
+class MediaTypeUtilTest {
 
     @Test
     fun `attachmentTypeToMediaType should return correct MediaType for each AttachmentType`() {

@@ -1,4 +1,4 @@
-package it.polito.wa2.g29.server.dto.ticketDTOs
+package it.polito.wa2.g29.server.dto.ticket
 
 import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotBlank

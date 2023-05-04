@@ -4,23 +4,23 @@ import it.polito.wa2.g29.server.dto.toDTO
 import it.polito.wa2.g29.server.integration.AbstractTestcontainersTest
 import it.polito.wa2.g29.server.model.Profile
 import it.polito.wa2.g29.server.repository.ProfileRepository
-import it.polito.wa2.g29.server.utils.TestProfileUtils
-import org.junit.jupiter.api.BeforeEach
+import it.polito.wa2.g29.server.utils.ProfileTestUtils
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.transaction.annotation.Transactional
 
-class ProfileRepositoryIntegrationTest : AbstractTestcontainersTest() {
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+class ProfileRepositoryIT : AbstractTestcontainersTest() {
     @Autowired
     private lateinit var profileRepository: ProfileRepository
 
     lateinit var testProfiles: List<Profile>
 
-    @BeforeEach
-    @Transactional
+    @BeforeAll
     fun setup() {
-        profileRepository.deleteAllInBatch()
-        testProfiles = TestProfileUtils.insertProfiles(profileRepository)
+        testProfiles = ProfileTestUtils.insertProfiles(profileRepository)
     }
 
     /////////////////////////////////////////////////////////////////////

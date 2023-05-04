@@ -2,8 +2,6 @@ package it.polito.wa2.g29.server.dto
 
 import it.polito.wa2.g29.server.model.Ticket
 
-
-// TODO: MOVE THIS FILE INTO ticketDTOs once in dev
 data class TicketDTO(
     val ticketId: Int?,
     val title: String,
@@ -19,7 +17,6 @@ data class TicketDTO(
 )
 
 fun Ticket.toDTO(): TicketDTO {
-
     return TicketDTO(
         id,
         title,

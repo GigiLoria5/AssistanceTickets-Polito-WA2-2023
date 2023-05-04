@@ -6,13 +6,14 @@ import it.polito.wa2.g29.server.integration.AbstractTestcontainersTest
 import it.polito.wa2.g29.server.model.Product
 import it.polito.wa2.g29.server.repository.ProductRepository
 import it.polito.wa2.g29.server.service.ProductService
-import it.polito.wa2.g29.server.utils.TestProductUtils
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
+import it.polito.wa2.g29.server.utils.ProductTestUtils
+import org.junit.jupiter.api.*
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.test.annotation.Rollback
+import org.springframework.transaction.annotation.Transactional
 
-class ProductServiceIntegrationTest : AbstractTestcontainersTest() {
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+class ProductServiceIT : AbstractTestcontainersTest() {
     @Autowired
     private lateinit var productService: ProductService
 
@@ -21,10 +22,9 @@ class ProductServiceIntegrationTest : AbstractTestcontainersTest() {
 
     lateinit var testProducts: List<Product>
 
-    @BeforeEach
+    @BeforeAll
     fun setup() {
-        productRepository.deleteAllInBatch()
-        testProducts = TestProductUtils.insertProducts(productRepository)
+        testProducts = ProductTestUtils.insertProducts(productRepository)
     }
 
     /////////////////////////////////////////////////////////////////////
@@ -32,6 +32,8 @@ class ProductServiceIntegrationTest : AbstractTestcontainersTest() {
     /////////////////////////////////////////////////////////////////////
 
     @Test
+    @Transactional
+    @Rollback
     fun getAllProductsEmpty() {
         productRepository.deleteAllInBatch()
 
