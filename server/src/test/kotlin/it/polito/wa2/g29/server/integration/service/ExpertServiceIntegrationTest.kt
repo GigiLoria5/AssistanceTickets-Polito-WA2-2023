@@ -14,11 +14,11 @@ import it.polito.wa2.g29.server.utils.TestExpertUtils
 import it.polito.wa2.g29.server.utils.TestProductUtils
 import it.polito.wa2.g29.server.utils.TestProfileUtils
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.test.annotation.Rollback
 import org.springframework.transaction.annotation.Transactional
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -31,9 +31,6 @@ class ExpertServiceIntegrationTest : AbstractTestcontainersTest() {
 
     @Autowired
     private lateinit var expertRepository: ExpertRepository
-
-    @Autowired
-    private lateinit var skillRepository: SkillRepository
 
     @Autowired
     private lateinit var productRepository: ProductRepository
@@ -50,17 +47,8 @@ class ExpertServiceIntegrationTest : AbstractTestcontainersTest() {
 
     @BeforeAll
     fun prepare() {
-        productRepository.deleteAllInBatch()
-        profileRepository.deleteAllInBatch()
         testProducts = TestProductUtils.insertProducts(productRepository)
         testProfiles = TestProfileUtils.insertProfiles(profileRepository)
-    }
-
-    @BeforeEach
-    fun setup() {
-        ticketRepository.deleteAllInBatch()
-        skillRepository.deleteAllInBatch()
-        expertRepository.deleteAllInBatch()
         testExperts = TestExpertUtils.insertExperts(expertRepository)
     }
 
@@ -69,6 +57,8 @@ class ExpertServiceIntegrationTest : AbstractTestcontainersTest() {
     /////////////////////////////////////////////////////////////////////
 
     @Test
+    @Transactional
+    @Rollback
     fun getAllExpertsEmpty() {
         expertRepository.deleteAll()
 
@@ -82,8 +72,6 @@ class ExpertServiceIntegrationTest : AbstractTestcontainersTest() {
         val expectedExperts = testExperts
 
         val actualExperts = expertService.getAllExperts()
-
-        println(actualExperts)
 
         assert(actualExperts.isNotEmpty())
         assert(actualExperts.size == expectedExperts.size)
@@ -118,6 +106,7 @@ class ExpertServiceIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     @Transactional
+    @Rollback
     fun getAllTicketsByExpertIdOnlyExpertTicketsReturned() {
         val expertOne = testExperts[0]
         val expertTwo = testExperts[1]
@@ -145,6 +134,7 @@ class ExpertServiceIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     @Transactional
+    @Rollback
     fun getAllTicketsByExpertIdWithManyTickets() {
         val expert = testExperts[0]
         val ticketOne = Ticket("title1", "description1", testProducts[0], testProfiles[0]).apply {
@@ -207,6 +197,7 @@ class ExpertServiceIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     @Transactional
+    @Rollback
     fun getTicketStatusChangesByExpertIdOnlyExpertTicketsReturned() {
         val expertOne = testExperts[0]
         val expertTwo = testExperts[1]
@@ -248,6 +239,7 @@ class ExpertServiceIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     @Transactional
+    @Rollback
     fun getTicketStatusChangesByExpertIdWithManyTickets() {
         val expert = testExperts[0]
         val ticketOne = Ticket("title1", "description1", testProducts[0], testProfiles[0]).apply {

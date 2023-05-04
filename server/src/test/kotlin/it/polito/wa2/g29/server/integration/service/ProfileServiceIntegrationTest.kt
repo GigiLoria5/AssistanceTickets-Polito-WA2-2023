@@ -12,12 +12,12 @@ import it.polito.wa2.g29.server.service.ProfileService
 import it.polito.wa2.g29.server.utils.TestProductUtils
 import it.polito.wa2.g29.server.utils.TestProfileUtils
 import it.polito.wa2.g29.server.utils.TestTicketUtils
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.api.*
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.test.annotation.Rollback
 import org.springframework.transaction.annotation.Transactional
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ProfileServiceIntegrationTest : AbstractTestcontainersTest() {
     @Autowired
     private lateinit var profileService: ProfileService
@@ -33,9 +33,8 @@ class ProfileServiceIntegrationTest : AbstractTestcontainersTest() {
 
     lateinit var testProfiles: List<Profile>
 
-    @BeforeEach
+    @BeforeAll
     fun setup() {
-        profileRepository.deleteAllInBatch()
         testProfiles = TestProfileUtils.insertProfiles(profileRepository)
     }
 
@@ -83,6 +82,8 @@ class ProfileServiceIntegrationTest : AbstractTestcontainersTest() {
     /////////////////////////////////////////////////////////////////////
 
     @Test
+    @Transactional
+    @Rollback
     fun createProfile() {
         val newProfileDTO = testProfiles[0].toDTO().copy(
             profileId = null,
@@ -123,6 +124,7 @@ class ProfileServiceIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     @Transactional
+    @Rollback
     fun modifyProfilePartial() {
         val oldProfileDTO = testProfiles[0].toDTO()
         val newProfileDTO = oldProfileDTO.copy(
@@ -145,6 +147,7 @@ class ProfileServiceIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     @Transactional
+    @Rollback
     fun modifyProfileComplete() {
         val oldProfileDTO = testProfiles[0].toDTO()
         val newProfileDTO = oldProfileDTO.copy(
@@ -172,6 +175,7 @@ class ProfileServiceIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     @Transactional
+    @Rollback
     fun modifyProfileCompleteSameEmail() {
         val oldProfileDTO = testProfiles[0].toDTO()
         val newProfileDTO = oldProfileDTO.copy(
@@ -198,6 +202,7 @@ class ProfileServiceIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     @Transactional
+    @Rollback
     fun modifyProfileCompleteSamePhoneNumber() {
         val oldProfileDTO = testProfiles[0].toDTO()
         val newProfileDTO = oldProfileDTO.copy(
@@ -224,6 +229,7 @@ class ProfileServiceIntegrationTest : AbstractTestcontainersTest() {
 
     @Test
     @Transactional
+    @Rollback
     fun modifyProfileCompleteSameEmailAndPhoneNumber() {
         val oldProfileDTO = testProfiles[0].toDTO()
         val newProfileDTO = oldProfileDTO.copy(
