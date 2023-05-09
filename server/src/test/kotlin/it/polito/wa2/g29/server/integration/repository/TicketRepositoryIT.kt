@@ -13,7 +13,10 @@ import it.polito.wa2.g29.server.utils.TicketTestUtils
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.EnumSource
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.test.annotation.Rollback
 import org.springframework.transaction.annotation.Transactional
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -38,15 +41,17 @@ class TicketRepositoryIT : AbstractTestcontainersTest() {
     ////// findTicketsByStatus
     /////////////////////////////////////////////////////////////////////
 
-    @Test
+    @ParameterizedTest
+    @EnumSource(
+        TicketStatus::class
+    )
     @Transactional
-    fun findTicketsByStatus() {
-        val expectedStatus = TicketStatus.OPEN
-        val expectedTickets = testTickets.filter { it.status == expectedStatus }
+    fun findTicketsByStatus(ticketStatus: TicketStatus) {
+        val expectedTickets = testTickets.filter { it.status == ticketStatus }
 
-        val actualTickets = ticketRepository.findTicketsByStatus(expectedStatus)
+        val actualTickets = ticketRepository.findTicketsByStatus(ticketStatus)
 
-        assert(actualTickets.isNotEmpty())
+        assert(actualTickets.isNotEmpty() == expectedTickets.isNotEmpty())
 
         if (actualTickets.isNotEmpty()) {
             assert(actualTickets.size == expectedTickets.size)
@@ -54,10 +59,15 @@ class TicketRepositoryIT : AbstractTestcontainersTest() {
         }
     }
 
-    @Test
-    fun findTicketsByStatusNotFound() {
-        val expectedStatus = TicketStatus.IN_PROGRESS
-        val actualTickets = ticketRepository.findTicketsByStatus(expectedStatus)
+    @ParameterizedTest
+    @EnumSource(
+        TicketStatus::class
+    )
+    @Rollback
+    fun findTicketsByStatusNotFound(ticketStatus: TicketStatus) {
+        ticketRepository.deleteAllInBatch()
+
+        val actualTickets = ticketRepository.findTicketsByStatus(ticketStatus)
 
         assert(actualTickets.isEmpty())
     }

@@ -24,6 +24,8 @@ import it.polito.wa2.g29.server.utils.ProductTestUtils
 import it.polito.wa2.g29.server.utils.ProfileTestUtils
 import it.polito.wa2.g29.server.utils.TicketTestUtils
 import org.junit.jupiter.api.*
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.EnumSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.annotation.Rollback
 import org.springframework.transaction.annotation.Transactional
@@ -91,15 +93,17 @@ class TicketServiceIT : AbstractTestcontainersTest() {
     ////// getTicketsByStatus
     /////////////////////////////////////////////////////////////////////
 
-    @Test
+    @ParameterizedTest
+    @EnumSource(
+        TicketStatus::class
+    )
     @Transactional
-    fun getTicketsByStatus() {
-        val expectedStatus = TicketStatus.OPEN
-        val expectedTicketsDTO = testTickets.filter { it.status == expectedStatus }.map { it.toDTO() }
+    fun getTicketsByStatus(ticketStatus: TicketStatus) {
+        val expectedTicketsDTO = testTickets.filter { it.status == ticketStatus }.map { it.toDTO() }
 
-        val actualTicketsDTO = ticketService.getTicketsByStatus(expectedStatus)
+        val actualTicketsDTO = ticketService.getTicketsByStatus(ticketStatus)
 
-        assert(actualTicketsDTO.isNotEmpty())
+        assert(actualTicketsDTO.isNotEmpty() == expectedTicketsDTO.isNotEmpty())
         assert(actualTicketsDTO.size == expectedTicketsDTO.size)
         expectedTicketsDTO.forEach {
             actualTicketsDTO.contains(it)
