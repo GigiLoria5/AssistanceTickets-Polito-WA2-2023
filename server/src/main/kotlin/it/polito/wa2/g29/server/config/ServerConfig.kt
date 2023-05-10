@@ -25,6 +25,7 @@ class ServerConfig(private val jwtAuthConverter: JwtAuthConverter) : WebMvcConfi
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http
             .authorizeHttpRequests()
+            .requestMatchers("/auth/login").permitAll()
             .anyRequest().authenticated()
         http
             .oauth2ResourceServer()
