@@ -24,8 +24,10 @@ class ServerConfig(private val jwtAuthConverter: JwtAuthConverter) : WebMvcConfi
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http
+            .csrf()
+            .disable()
             .authorizeHttpRequests()
-            .requestMatchers("/auth/login").permitAll()
+            .requestMatchers("/API/auth/login").permitAll()
             .anyRequest().authenticated()
         http
             .oauth2ResourceServer()
