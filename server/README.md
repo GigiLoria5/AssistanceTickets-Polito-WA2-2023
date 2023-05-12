@@ -7,6 +7,7 @@
 - [Experts](#experts)
 - [Tickets](#tickets)
 - [Chats](#chats)
+- [Auth](#auth)
 
 ### Products
 
@@ -612,3 +613,27 @@
         "error": "validation of request failed"
       }
       ```
+
+### Auth
+
+- POST `/API/auth/login`
+    - Description: Allows the user to authenticate
+    - Request body: username and password
+
+      ```
+      {
+        "username": "expert1",
+        "password": "password"
+      }
+      ```
+
+    - Response: `200 Ok` (success)
+    - Error responses: `401 Unauthorized` (invalid username and/or password),`422 Unprocessable Entity` (validation of
+      request body failed) or `500 Internal Server Error` (generic error)
+    - Response body: An object containing the access_token. An error message in case of error
+      ```
+      {
+        "access_token": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJTdEl1VDdvRGJ5cDc2SFg5QmlfdzZIUUk0SVZ5TXhfZ2g2WmpGT0ItT0RrIn0.eyJleHAiOjE2ODM4ODcyMzcsImlhdCI6MTY4Mzg4N"
+      }
+      ```
+
