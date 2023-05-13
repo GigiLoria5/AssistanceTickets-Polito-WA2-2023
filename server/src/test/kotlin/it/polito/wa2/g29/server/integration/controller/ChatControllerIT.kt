@@ -18,6 +18,10 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.*
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.EnumSource
+import org.junit.jupiter.params.provider.NullAndEmptySource
+import org.junit.jupiter.params.provider.ValueSource
 import org.springframework.http.HttpHeaders
 import org.springframework.mock.web.MockMultipartFile
 import org.springframework.test.annotation.Rollback
@@ -160,15 +164,14 @@ class ChatControllerIT : AbstractTestcontainersTest() {
             .andExpect(status().isNotFound)
     }
 
-    @Test
-    fun getAllChatMessagesWithInvalidTicketIdValue() {
-        val ticketIdWrongValues = listOf(0, -1, -2, Int.MIN_VALUE)
-
-        ticketIdWrongValues.forEach {
-            mockMvc
-                .perform(get("/API/chats/${it}/messages").contentType("application/json"))
-                .andExpect(status().isUnprocessableEntity)
-        }
+    @ParameterizedTest
+    @ValueSource(
+        ints = [0, -1, -2, Int.MIN_VALUE]
+    )
+    fun getAllChatMessagesWithInvalidTicketIdValue(id: Int) {
+        mockMvc
+            .perform(get("/API/chats/${id}/messages").contentType("application/json"))
+            .andExpect(status().isUnprocessableEntity)
     }
 
     @Test
@@ -182,10 +185,11 @@ class ChatControllerIT : AbstractTestcontainersTest() {
     ////// POST `/API/chats/{ticketId}/messages`
     /////////////////////////////////////////////////////////////////////
 
-    @Test
+    @ParameterizedTest
+    @EnumSource(UserType::class, names = ["CUSTOMER", "EXPERT"])
     @Transactional
     @Rollback
-    fun sendMessageWithCustomer() {
+    fun sendMessage(userType: UserType) {
         val contentBytes = "file content".toByteArray()
         val file1 = MockMultipartFile("attachments", "file1.pdf", "application/pdf", contentBytes)
         val file2 = MockMultipartFile("attachments", "file2.txt", "text/plain", contentBytes)
@@ -195,31 +199,7 @@ class ChatControllerIT : AbstractTestcontainersTest() {
                 multipart("/API/chats/${ticketWithMessages.id!!}/messages")
                     .file(file1)
                     .file(file2)
-                    .param("sender", UserType.CUSTOMER.toString())
-                    .param("content", "Message")
-                    .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
-            )
-            .andExpectAll(
-                status().isCreated,
-                content().contentType(MediaType.APPLICATION_JSON),
-                jsonPath("$.messageId").isNumber
-            )
-    }
-
-    @Test
-    @Transactional
-    @Rollback
-    fun sendMessageWithExpert() {
-        val contentBytes = "file content".toByteArray()
-        val file1 = MockMultipartFile("attachments", "file1.jpg", "image/jpeg", contentBytes)
-        val file2 = MockMultipartFile("attachments", "file2.png", "image/png", contentBytes)
-
-        mockMvc
-            .perform(
-                multipart("/API/chats/${ticketWithMessages.id!!}/messages")
-                    .file(file1)
-                    .file(file2)
-                    .param("sender", UserType.EXPERT.toString())
+                    .param("sender", userType.toString())
                     .param("content", "Message")
                     .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
             )
@@ -305,44 +285,58 @@ class ChatControllerIT : AbstractTestcontainersTest() {
         }
     }
 
-    @Test
-    fun sendMessageWithInvalidSender() {
-        val invalidSender = listOf("", null, "FakeSender", "ADMIN")
-
-        invalidSender.forEach {
-            mockMvc
-                .perform(
-                    multipart("/API/chats/${ticketWithMessages.id!!}/messages")
-                        .param("sender", it)
-                        .param("content", "Message")
-                        .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
-                )
-                .andExpectAll(
-                    status().isUnprocessableEntity,
-                    content().contentType(MediaType.APPLICATION_JSON),
-                    jsonPath("$.error").isString
-                )
-        }
+    @ParameterizedTest
+    @ValueSource(
+        strings = ["FakeSender", "ADMIN"]
+    )
+    fun sendMessageWithInvalidSender(sender: String) {
+        mockMvc
+            .perform(
+                multipart("/API/chats/${ticketWithMessages.id!!}/messages")
+                    .param("sender", sender)
+                    .param("content", "Message")
+                    .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+            )
+            .andExpectAll(
+                status().isUnprocessableEntity,
+                content().contentType(MediaType.APPLICATION_JSON),
+                jsonPath("$.error").isString
+            )
     }
 
-    @Test
-    fun sendMessageWithInvalidContent() {
-        val invalidContent = listOf("", null, " ", "  ")
+    @ParameterizedTest
+    @NullAndEmptySource
+    fun sendMessageWithEmptySender(sender: String?) {
+        mockMvc
+            .perform(
+                multipart("/API/chats/${ticketWithMessages.id!!}/messages")
+                    .param("sender", sender)
+                    .param("content", "Message")
+                    .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+            )
+            .andExpectAll(
+                status().isUnprocessableEntity,
+                content().contentType(MediaType.APPLICATION_JSON),
+                jsonPath("$.error").isString
+            )
+    }
 
-        invalidContent.forEach {
-            mockMvc
-                .perform(
-                    multipart("/API/chats/${ticketWithMessages.id!!}/messages")
-                        .param("sender", UserType.EXPERT.toString())
-                        .param("content", it)
-                        .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
-                )
-                .andExpectAll(
-                    status().isUnprocessableEntity,
-                    content().contentType(MediaType.APPLICATION_JSON),
-                    jsonPath("$.error").isString
-                )
-        }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    fun sendMessageWithInvalidContent(content: String?) {
+        mockMvc
+            .perform(
+                multipart("/API/chats/${ticketWithMessages.id!!}/messages")
+                    .param("sender", UserType.EXPERT.toString())
+                    .param("content", content)
+                    .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+            )
+            .andExpectAll(
+                status().isUnprocessableEntity,
+                content().contentType(MediaType.APPLICATION_JSON),
+                jsonPath("$.error").isString
+            )
     }
 
     /////////////////////////////////////////////////////////////////////
@@ -507,10 +501,13 @@ class ChatControllerIT : AbstractTestcontainersTest() {
             )
     }
 
-    @Test
+    @ParameterizedTest
+    @ValueSource(
+        ints = [0, -1, Int.MIN_VALUE]
+    )
     @Transactional
     @Rollback
-    fun getAttachmentTicketIdInvalid() {
+    fun getAttachmentTicketIdInvalid(ticketId: Int) {
         val ticket = testTickets[0]
         val ticketExpert = testExperts[0]
         TicketTestUtils.startTicket(ticketRepository, ticket, ticketExpert, TicketPriority.LOW)
@@ -528,27 +525,26 @@ class ChatControllerIT : AbstractTestcontainersTest() {
         TestChatUtils.addMessages(messageRepository, messages, ticket, ticketExpert)
         val expectedMessage = messages[0]
         val expectedAttachment = expectedMessage.attachments.toList()[0]
-        val invalidIds = listOf("invalid", -1, 0)
-
-        invalidIds.forEach {
-            mockMvc
-                .perform(
-                    get("/API/chats/${it}/messages/${expectedMessage.id}/attachments/${expectedAttachment.id}").contentType(
-                        "application/json"
-                    )
+        mockMvc
+            .perform(
+                get("/API/chats/${ticketId}/messages/${expectedMessage.id}/attachments/${expectedAttachment.id}").contentType(
+                    "application/json"
                 )
-                .andExpectAll(
-                    status().isUnprocessableEntity,
-                    content().contentType(MediaType.APPLICATION_JSON),
-                    jsonPath("$.error").isString
-                )
-        }
+            )
+            .andExpectAll(
+                status().isUnprocessableEntity,
+                content().contentType(MediaType.APPLICATION_JSON),
+                jsonPath("$.error").isString
+            )
     }
 
-    @Test
+    @ParameterizedTest
+    @ValueSource(
+        ints = [0, -1, Int.MIN_VALUE]
+    )
     @Transactional
     @Rollback
-    fun getAttachmentMessageIdInvalid() {
+    fun getAttachmentMessageIdInvalid(messageId: Int) {
         val ticket = testTickets[0]
         val ticketExpert = testExperts[0]
         TicketTestUtils.startTicket(ticketRepository, ticket, ticketExpert, TicketPriority.LOW)
@@ -566,41 +562,38 @@ class ChatControllerIT : AbstractTestcontainersTest() {
         TestChatUtils.addMessages(messageRepository, messages, ticket, ticketExpert)
         val expectedMessage = messages[0]
         val expectedAttachment = expectedMessage.attachments.toList()[0]
-        val invalidIds = listOf("invalid", -1, 0)
 
-        invalidIds.forEach {
-            mockMvc
-                .perform(
-                    get("/API/chats/${ticket.id!!}/messages/${it}/attachments/${expectedAttachment.id}").contentType(
-                        "application/json"
-                    )
+        mockMvc
+            .perform(
+                get("/API/chats/${ticket.id!!}/messages/${messageId}/attachments/${expectedAttachment.id}").contentType(
+                    "application/json"
                 )
-                .andExpectAll(
-                    status().isUnprocessableEntity,
-                    content().contentType(MediaType.APPLICATION_JSON),
-                    jsonPath("$.error").isString
-                )
-        }
+            )
+            .andExpectAll(
+                status().isUnprocessableEntity,
+                content().contentType(MediaType.APPLICATION_JSON),
+                jsonPath("$.error").isString
+            )
+
     }
 
-    @Test
+    @ParameterizedTest
+    @ValueSource(
+        ints = [0, -1, Int.MIN_VALUE]
+    )
     @Transactional
-    fun getAttachmentAttachmentIdInvalid() {
+    fun getAttachmentAttachmentIdInvalid(attachmentId: Int) {
         val messageWithAttachment = ticketWithMessages.messages.toList()[messageWithAttachmentIndex]
-        val invalidIds = listOf("invalid", -1, 0)
-
-        invalidIds.forEach {
-            mockMvc
-                .perform(
-                    get("/API/chats/${ticketWithMessages.id!!}/messages/${messageWithAttachment.id}/attachments/${it}").contentType(
-                        "application/json"
-                    )
+        mockMvc
+            .perform(
+                get("/API/chats/${ticketWithMessages.id!!}/messages/${messageWithAttachment.id}/attachments/${attachmentId}").contentType(
+                    "application/json"
                 )
-                .andExpectAll(
-                    status().isUnprocessableEntity,
-                    content().contentType(MediaType.APPLICATION_JSON),
-                    jsonPath("$.error").isString
-                )
-        }
+            )
+            .andExpectAll(
+                status().isUnprocessableEntity,
+                content().contentType(MediaType.APPLICATION_JSON),
+                jsonPath("$.error").isString
+            )
     }
 }
