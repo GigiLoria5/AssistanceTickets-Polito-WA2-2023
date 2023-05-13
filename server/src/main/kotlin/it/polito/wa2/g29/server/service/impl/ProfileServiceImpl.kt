@@ -10,9 +10,8 @@ import it.polito.wa2.g29.server.service.ProfileService
 import org.springframework.stereotype.Service
 
 @Service
-class ProfileServiceImpl(
-    private val profileRepository: ProfileRepository
-) : ProfileService {
+class ProfileServiceImpl(private val profileRepository: ProfileRepository) : ProfileService {
+
     override fun getProfileByEmail(email: String): ProfileDTO {
         val profile = profileRepository.findProfileByEmail(email) ?: throw ProfileNotFoundException()
         return profile.toDTO()
@@ -41,4 +40,5 @@ class ProfileServiceImpl(
         profile.update(newProfile)
         profileRepository.save(profile)
     }
+
 }

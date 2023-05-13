@@ -18,6 +18,7 @@ class ChatServiceImpl(
     private val messageRepository: MessageRepository,
     private val ticketRepository: TicketRepository,
 ) : ChatService {
+
     override fun getMessagesByTicketId(ticketId: Int): List<MessageDTO> {
         val ticket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
         return ticket.messages.sortedWith(compareBy { it.time }).map { it.toDTO() }
@@ -56,4 +57,5 @@ class ChatServiceImpl(
         val attachment = message.attachments.find { it.id == attachmentId } ?: throw AttachmentNotFoundException()
         return FileAttachmentDTO(attachment.name, attachment.type, attachment.file)
     }
+
 }

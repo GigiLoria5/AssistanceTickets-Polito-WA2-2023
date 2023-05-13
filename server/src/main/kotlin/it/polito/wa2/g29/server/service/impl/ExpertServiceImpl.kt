@@ -12,9 +12,8 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
 @Service
-class ExpertServiceImpl(
-    private val expertRepository: ExpertRepository,
-) : ExpertService {
+class ExpertServiceImpl(private val expertRepository: ExpertRepository) : ExpertService {
+
     override fun getAllExperts(): List<ExpertDTO> {
         return expertRepository.findAll().map { it.toDTO() }
     }
@@ -34,4 +33,5 @@ class ExpertServiceImpl(
         return expert.ticketChanges.filter { it.changedBy == UserType.EXPERT }
             .sortedWith(compareByDescending { it.time }).map { it.toDTO() }
     }
+
 }

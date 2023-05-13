@@ -1,12 +1,17 @@
 package it.polito.wa2.g29.server.service.impl
 
-import it.polito.wa2.g29.server.dto.*
+import it.polito.wa2.g29.server.dto.TicketChangeDTO
+import it.polito.wa2.g29.server.dto.TicketDTO
 import it.polito.wa2.g29.server.dto.ticket.NewTicketDTO
 import it.polito.wa2.g29.server.dto.ticket.NewTicketIdDTO
+import it.polito.wa2.g29.server.dto.toDTO
 import it.polito.wa2.g29.server.enums.TicketStatus
-import it.polito.wa2.g29.server.exception.*
+import it.polito.wa2.g29.server.exception.DuplicateTicketException
+import it.polito.wa2.g29.server.exception.TicketNotFoundException
 import it.polito.wa2.g29.server.model.toEntity
-import it.polito.wa2.g29.server.repository.*
+import it.polito.wa2.g29.server.repository.ProductRepository
+import it.polito.wa2.g29.server.repository.ProfileRepository
+import it.polito.wa2.g29.server.repository.TicketRepository
 import it.polito.wa2.g29.server.service.TicketService
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -17,6 +22,7 @@ class TicketServiceImpl(
     private val productRepository: ProductRepository,
     private val profileRepository: ProfileRepository
 ) : TicketService {
+
     override fun getAllTickets(): List<TicketDTO> {
         return ticketRepository.findAll().map { it.toDTO() }
     }
@@ -48,4 +54,5 @@ class TicketServiceImpl(
             throw DuplicateTicketException("A not closed ticket with the same customer and product already exists")
         return NewTicketIdDTO(ticketRepository.save(ticket).id!!)
     }
+
 }

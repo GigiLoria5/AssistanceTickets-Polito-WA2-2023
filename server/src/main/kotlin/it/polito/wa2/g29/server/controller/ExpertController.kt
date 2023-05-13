@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController
 @Validated
 @RestController
 class ExpertController(private val expertService: ExpertService) {
+
     @GetMapping("/experts")
     fun getAllExperts(): List<ExpertDTO> {
         return expertService.getAllExperts()
@@ -37,4 +38,5 @@ class ExpertController(private val expertService: ExpertService) {
     fun getTicketStatusChangesByExpertId(@PathVariable @Valid @Min(1) expertId: Int): List<TicketChangeDTO> {
         return expertService.getTicketStatusChangesByExpertId(expertId)
     }
+
 }
