@@ -22,6 +22,7 @@ class TicketStatusChangeServiceImpl(
     private val ticketRepository: TicketRepository,
     private val expertRepository: ExpertRepository
 ) : TicketStatusChangeService {
+
     @Transactional
     override fun ticketStatusChangeInProgress(ticketId: Int, statusChangeData: TicketStatusChangeInProgressDTO) {
         val ticket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
@@ -62,4 +63,5 @@ class TicketStatusChangeServiceImpl(
         ticket.changeStatus(newStatus, changedBy, description)
         ticketRepository.save(ticket)
     }
+
 }

@@ -14,9 +14,8 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/API")
 @Validated
 @RestController
-class TicketController(
-    private val ticketService: TicketService
-) {
+class TicketController(private val ticketService: TicketService) {
+
     // GET /API/tickets/ -- list all tickets in the DB
     @GetMapping("/tickets")
     fun getAllTickets(
@@ -46,4 +45,5 @@ class TicketController(
     fun createTicket(@RequestBody @Valid @NotNull ticket: NewTicketDTO): NewTicketIdDTO {
         return ticketService.createTicket(ticket)
     }
+
 }

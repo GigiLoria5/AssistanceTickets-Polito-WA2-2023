@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile
 @Validated
 @RestController
 class ChatController(private val chatService: ChatService) {
+
     @GetMapping("/chats/{ticketId}/messages")
     fun getMessagesByTicketId(@PathVariable @Min(1) @Valid ticketId: Int): List<MessageDTO> {
         return chatService.getMessagesByTicketId(ticketId)
@@ -51,4 +52,5 @@ class ChatController(private val chatService: ChatService) {
             .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"${attachment.name}\"")
             .body(attachment.file)
     }
+
 }

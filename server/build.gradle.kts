@@ -11,7 +11,7 @@ plugins {
 }
 
 group = "it.polito.wa2.g29"
-version = "0.2"
+version = "0.3"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {

@@ -9,16 +9,20 @@ import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerF
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpStatus
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.util.unit.DataSize
+import org.springframework.web.servlet.config.annotation.EnableWebMvc
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
-@EnableWebSecurity
 @Configuration
+@EnableWebSecurity
+@EnableWebMvc
+@EnableMethodSecurity
 class ServerConfig(private val jwtAuthConverter: JwtAuthConverter) : WebMvcConfigurer {
 
     @Bean
@@ -34,8 +38,7 @@ class ServerConfig(private val jwtAuthConverter: JwtAuthConverter) : WebMvcConfi
             .jwt()
             .jwtAuthenticationConverter(jwtAuthConverter)
         http
-            .sessionManagement()
-            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         return http.build()
     }
 

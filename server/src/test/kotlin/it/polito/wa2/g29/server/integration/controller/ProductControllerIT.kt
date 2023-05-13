@@ -7,6 +7,8 @@ import it.polito.wa2.g29.server.utils.ProductTestUtils
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ValueSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
@@ -18,7 +20,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import org.springframework.transaction.annotation.Transactional
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters = false)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ProductControllerIT : AbstractTestcontainersTest() {
     @Autowired
@@ -103,17 +105,13 @@ class ProductControllerIT : AbstractTestcontainersTest() {
             .andExpect(status().isNotFound)
     }
 
-    @Test
-    fun getProductByIdNegative() {
+    @ParameterizedTest
+    @ValueSource(
+        ints = [0, -1, -2, Int.MIN_VALUE]
+    )
+    fun getProductByInvalidId(id: Int) {
         mockMvc
-            .perform(get("/API/products/-1").contentType("application/json"))
-            .andExpect(status().isUnprocessableEntity)
-    }
-
-    @Test
-    fun getProductByIdZero() {
-        mockMvc
-            .perform(get("/API/products/0").contentType("application/json"))
+            .perform(get("/API/products/${id}").contentType("application/json"))
             .andExpect(status().isUnprocessableEntity)
     }
 

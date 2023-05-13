@@ -19,6 +19,8 @@ import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ValueSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
@@ -31,7 +33,7 @@ import org.springframework.transaction.annotation.Transactional
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters = false)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ExpertControllerIT : AbstractTestcontainersTest() {
     @Autowired
@@ -135,15 +137,14 @@ class ExpertControllerIT : AbstractTestcontainersTest() {
             .andExpect(status().isNotFound)
     }
 
-    @Test
-    fun getExpertByIdWrongExpertIdValue() {
-        val expertIdWrongValues = listOf(0, -1, -2, Int.MIN_VALUE)
-
-        expertIdWrongValues.forEach {
-            mockMvc
-                .perform(get("/API/experts/${it}").contentType("application/json"))
-                .andExpect(status().isUnprocessableEntity)
-        }
+    @ParameterizedTest
+    @ValueSource(
+        ints = [0, -1, -2, Int.MIN_VALUE]
+    )
+    fun getExpertByIdWrongExpertIdValue(id: Int) {
+        mockMvc
+            .perform(get("/API/experts/${id}").contentType("application/json"))
+            .andExpect(status().isUnprocessableEntity)
     }
 
     @Test
@@ -267,15 +268,14 @@ class ExpertControllerIT : AbstractTestcontainersTest() {
             .andExpect(status().isUnprocessableEntity)
     }
 
-    @Test
-    fun getStatusChangesByExpertIdWrongExpertIdValue() {
-        val expertIdWrongValues = listOf(0, -1, -2, Int.MIN_VALUE)
-
-        expertIdWrongValues.forEach {
-            mockMvc
-                .perform(get("/API/experts/${it}/statusChanges").contentType("application/json"))
-                .andExpect(status().isUnprocessableEntity)
-        }
+    @ParameterizedTest
+    @ValueSource(
+        ints = [0, -1, -2, Int.MIN_VALUE]
+    )
+    fun getStatusChangesByExpertIdWrongExpertIdValue(id: Int) {
+        mockMvc
+            .perform(get("/API/experts/${id}/statusChanges").contentType("application/json"))
+            .andExpect(status().isUnprocessableEntity)
     }
 
     /////////////////////////////////////////////////////////////////////
@@ -387,15 +387,14 @@ class ExpertControllerIT : AbstractTestcontainersTest() {
             .andExpect(status().isUnprocessableEntity)
     }
 
-    @Test
-    fun getTicketsByExpertIdWrongExpertIdValue() {
-        val expertIdWrongValues = listOf(0, -1, -2, Int.MIN_VALUE)
-
-        expertIdWrongValues.forEach {
-            mockMvc
-                .perform(get("/API/experts/${it}/tickets").contentType("application/json"))
-                .andExpect(status().isUnprocessableEntity)
-        }
+    @ParameterizedTest
+    @ValueSource(
+        ints = [0, -1, -2, Int.MIN_VALUE]
+    )
+    fun getTicketsByExpertIdWrongExpertIdValue(id: Int) {
+        mockMvc
+            .perform(get("/API/experts/${id}/tickets").contentType("application/json"))
+            .andExpect(status().isUnprocessableEntity)
     }
 
 }

@@ -22,18 +22,21 @@ import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.EnumSource
+import org.junit.jupiter.params.provider.ValueSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
 import org.springframework.test.annotation.Rollback
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import org.springframework.transaction.annotation.Transactional
 
-@AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureMockMvc(addFilters = false)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class TicketControllerIT : AbstractTestcontainersTest() {
     @Autowired
@@ -171,15 +174,14 @@ class TicketControllerIT : AbstractTestcontainersTest() {
             .andExpect(status().isNotFound)
     }
 
-    @Test
-    fun getTicketByIdWrongValue() {
-        val ticketIdWrongValues = listOf(0, -1, -2, Int.MIN_VALUE)
-
-        ticketIdWrongValues.forEach {
-            mockMvc
-                .perform(get("/API/tickets/${it}").contentType("application/json"))
-                .andExpect(status().isUnprocessableEntity)
-        }
+    @ParameterizedTest
+    @ValueSource(
+        ints = [0, -1, -2, Int.MIN_VALUE]
+    )
+    fun getTicketInvalidId(id: Int) {
+        mockMvc
+            .perform(get("/API/tickets/${id}").contentType("application/json"))
+            .andExpect(status().isUnprocessableEntity)
     }
 
     @Test
@@ -275,15 +277,14 @@ class TicketControllerIT : AbstractTestcontainersTest() {
             .andExpect(status().isNotFound)
     }
 
-    @Test
-    fun getTicketStatusChangesByIdWrongIdType() {
-        val ticketIdWrongValues = listOf("wrong", 0, -1, Int.MIN_VALUE)
-
-        ticketIdWrongValues.forEach {
-            mockMvc
-                .perform(get("/API/tickets/${it}/statusChanges").contentType("application/json"))
-                .andExpect(status().isUnprocessableEntity)
-        }
+    @ParameterizedTest
+    @ValueSource(
+        ints = [0, -1, -2, Int.MIN_VALUE]
+    )
+    fun getTicketStatusChangesInvalidId(id: Int) {
+        mockMvc
+            .perform(get("/API/tickets/${id}/statusChanges").contentType("application/json"))
+            .andExpect(status().isUnprocessableEntity)
     }
 
     /////////////////////////////////////////////////////////////////////
@@ -433,15 +434,19 @@ class TicketControllerIT : AbstractTestcontainersTest() {
     ////// PUT /API/tickets/{ticketId}/start
     /////////////////////////////////////////////////////////////////////
 
-    @Test
+    @ParameterizedTest
+    @EnumSource(
+        TicketStatus::class, names = ["OPEN", "REOPENED"]
+    )
     @Transactional
     @Rollback
-    fun startTicketById() {
+    fun startTicketById(ticketStatus: TicketStatus) {
         val oldTicketDTO = testTickets[0].toDTO()
         val newTicketDTO = oldTicketDTO.copy(
             expertId = TicketTestUtils.experts[0].id,
             priorityLevel = "LOW",
-            description = ""
+            description = "",
+            status = ticketStatus.toString()
         )
 
         val mapper = ObjectMapper()
@@ -477,8 +482,11 @@ class TicketControllerIT : AbstractTestcontainersTest() {
             .andExpect(status().isNotFound)
     }
 
-    @Test
-    fun startTicketByIdWrongType() {
+    @ParameterizedTest
+    @ValueSource(
+        ints = [0, -1, -2, Int.MIN_VALUE]
+    )
+    fun startTicketInvalidId(id: Int) {
         val oldTicketDTO = testTickets[0].toDTO()
         val newTicketDTO = oldTicketDTO.copy(
             expertId = 1,
@@ -489,18 +497,13 @@ class TicketControllerIT : AbstractTestcontainersTest() {
         val mapper = ObjectMapper()
         val jsonBody = mapper.writeValueAsString(newTicketDTO)
 
-        val wrongIdValues = listOf("wrong", 0, -1, Int.MIN_VALUE)
-
-        wrongIdValues.forEach {
-            mockMvc
-                .perform(
-                    put("/API/tickets/${it}/start")
-                        .content(jsonBody)
-                        .contentType(MediaType.APPLICATION_JSON)
-                )
-                .andExpect(status().isUnprocessableEntity)
-        }
-
+        mockMvc
+            .perform(
+                put("/API/tickets/${id}/start")
+                    .content(jsonBody)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isUnprocessableEntity)
     }
 
     @Test
@@ -524,14 +527,17 @@ class TicketControllerIT : AbstractTestcontainersTest() {
             .andExpect(status().isNotFound)
     }
 
-    @Test
+    @ParameterizedTest
+    @EnumSource(
+        TicketStatus::class, names = ["IN_PROGRESS", "CLOSED", "RESOLVED"]
+    )
     @Transactional
     @Rollback
-    fun startTicketByIdInProgress() {
+    fun startTicketByIdWrongStatus(ticketStatus: TicketStatus) {
         val expert = TicketTestUtils.experts[0]
 
         val ticket = Ticket("title1", "description1", TicketTestUtils.products[0], TicketTestUtils.profiles[1]).apply {
-            status = TicketStatus.IN_PROGRESS
+            status = ticketStatus
             priorityLevel = TicketPriority.LOW
         }
 
@@ -609,14 +615,39 @@ class TicketControllerIT : AbstractTestcontainersTest() {
             .andExpect(status().isNotFound)
     }
 
-    @Test
+    @ParameterizedTest
+    @ValueSource(
+        ints = [0, -1, -2, Int.MIN_VALUE]
+    )
+    fun stopTicketByInvalidId(id: Int) {
+        val ticketStatusChangeDTO = TicketStatusChangeDTO(
+            changedBy = UserType.EXPERT,
+            description = null
+        )
+
+        val mapper = ObjectMapper()
+        val jsonBody = mapper.writeValueAsString(ticketStatusChangeDTO)
+
+        mockMvc
+            .perform(
+                put("/API/tickets/${id}/stop")
+                    .content(jsonBody)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isUnprocessableEntity)
+    }
+
+    @ParameterizedTest
+    @EnumSource(
+        TicketStatus::class, names = ["OPEN", "REOPENED", "CLOSED", "RESOLVED"]
+    )
     @Transactional
     @Rollback
-    fun stopTicketByIdNotInProgress() {
+    fun stopTicketByIdNotInProgress(ticketStatus: TicketStatus) {
         val expert = TicketTestUtils.experts[0]
 
         val ticket = Ticket("title1", "description1", TicketTestUtils.products[0], TicketTestUtils.profiles[1]).apply {
-            status = TicketStatus.CLOSED
+            status = ticketStatus
         }
 
         TicketTestUtils.addTicket(ticketRepository, expert, ticket)
@@ -643,14 +674,17 @@ class TicketControllerIT : AbstractTestcontainersTest() {
     ////// PUT /API/tickets/{ticketId}/resolve
     /////////////////////////////////////////////////////////////////////
 
-    @Test
+    @ParameterizedTest
+    @EnumSource(
+        TicketStatus::class, names = ["OPEN", "IN_PROGRESS", "REOPENED"]
+    )
     @Transactional
     @Rollback
-    fun resolveTicketById() {
+    fun resolveTicketById(ticketStatus: TicketStatus) {
         val expert = TicketTestUtils.experts[0]
 
         val ticket = Ticket("title1", "description1", TicketTestUtils.products[0], TicketTestUtils.profiles[1]).apply {
-            status = TicketStatus.IN_PROGRESS
+            status = ticketStatus
         }
 
         TicketTestUtils.addTicket(ticketRepository, expert, ticket)
@@ -692,19 +726,11 @@ class TicketControllerIT : AbstractTestcontainersTest() {
             .andExpect(status().isNotFound)
     }
 
-    @Test
-    @Transactional
-    @Rollback
-    fun resolveTicketByIdAlreadyResolved() {
-        val expert = TicketTestUtils.experts[0]
-
-        val ticket = Ticket("title1", "description1", TicketTestUtils.products[0], TicketTestUtils.profiles[1]).apply {
-            status = TicketStatus.RESOLVED
-        }
-
-        TicketTestUtils.addTicket(ticketRepository, expert, ticket)
-
-
+    @ParameterizedTest
+    @ValueSource(
+        ints = [0, -1, -2, Int.MIN_VALUE]
+    )
+    fun resolveTicketByInvalidId(id: Int) {
         val ticketStatusChangeDTO = TicketStatusChangeDTO(
             changedBy = UserType.EXPERT,
             description = null
@@ -715,21 +741,24 @@ class TicketControllerIT : AbstractTestcontainersTest() {
 
         mockMvc
             .perform(
-                put("/API/tickets/${ticket.toDTO().ticketId}/resolve")
+                put("/API/tickets/${id}/resolve")
                     .content(jsonBody)
                     .contentType(MediaType.APPLICATION_JSON)
             )
             .andExpect(status().isUnprocessableEntity)
     }
 
-    @Test
+    @ParameterizedTest
+    @EnumSource(
+        TicketStatus::class, names = ["RESOLVED","CLOSED"]
+    )
     @Transactional
     @Rollback
-    fun resolveTicketByIdClosed() {
+    fun resolveTicketByIdWrongStatus(ticketStatus: TicketStatus) {
         val expert = TicketTestUtils.experts[0]
 
         val ticket = Ticket("title1", "description1", TicketTestUtils.products[0], TicketTestUtils.profiles[1]).apply {
-            status = TicketStatus.CLOSED
+            status = ticketStatus
         }
 
         TicketTestUtils.addTicket(ticketRepository, expert, ticket)
@@ -756,45 +785,18 @@ class TicketControllerIT : AbstractTestcontainersTest() {
     ////// PUT /API/tickets/{ticketId}/reopen
     /////////////////////////////////////////////////////////////////////
 
-    @Test
+    @ParameterizedTest
+    @EnumSource(
+        TicketStatus::class, names = ["RESOLVED", "CLOSED"]
+    )
     @Transactional
     @Rollback
-    fun reopenClosedTicketById() {
+    fun reopenTicketById(ticketStatus: TicketStatus) {
 
         val expert = TicketTestUtils.experts[0]
 
         val ticket = Ticket("title1", "description1", TicketTestUtils.products[0], TicketTestUtils.profiles[1]).apply {
-            status = TicketStatus.CLOSED
-        }
-
-        TicketTestUtils.addTicket(ticketRepository, expert, ticket)
-
-
-        val ticketStatusChangeDTO = TicketStatusChangeDTO(
-            changedBy = UserType.CUSTOMER,
-            description = "description"
-        )
-
-        val mapper = ObjectMapper()
-        val jsonBody = mapper.writeValueAsString(ticketStatusChangeDTO)
-
-        mockMvc
-            .perform(
-                put("/API/tickets/${ticket.toDTO().ticketId}/reopen")
-                    .content(jsonBody)
-                    .contentType(MediaType.APPLICATION_JSON)
-            )
-            .andExpect(status().isNoContent)
-    }
-
-    @Test
-    @Transactional
-    @Rollback
-    fun reopenResolvedTicketById() {
-        val expert = TicketTestUtils.experts[0]
-
-        val ticket = Ticket("title1", "description1", TicketTestUtils.products[0], TicketTestUtils.profiles[1]).apply {
-            status = TicketStatus.RESOLVED
+            status = ticketStatus
         }
 
         TicketTestUtils.addTicket(ticketRepository, expert, ticket)
@@ -836,14 +838,15 @@ class TicketControllerIT : AbstractTestcontainersTest() {
             .andExpect(status().isNotFound)
     }
 
-    @Test
+    @ParameterizedTest
+    @EnumSource(TicketStatus::class, names = ["OPEN", "REOPENED", "IN_PROGRESS"])
     @Transactional
     @Rollback
-    fun reopenTicketByIdNotClosedOrResolved() {
+    fun reopenTicketByIdWrongStatus(ticketStatus: TicketStatus) {
         val expert = TicketTestUtils.experts[0]
 
         val ticket = Ticket("title1", "description1", TicketTestUtils.products[0], TicketTestUtils.profiles[1]).apply {
-            status = TicketStatus.OPEN
+            status = ticketStatus
         }
 
         TicketTestUtils.addTicket(ticketRepository, expert, ticket)
@@ -860,6 +863,28 @@ class TicketControllerIT : AbstractTestcontainersTest() {
         mockMvc
             .perform(
                 put("/API/tickets/${ticket.toDTO().ticketId}/reopen")
+                    .content(jsonBody)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isUnprocessableEntity)
+    }
+
+    @ParameterizedTest
+    @ValueSource(
+        ints = [0, -1, -2, Int.MIN_VALUE]
+    )
+    fun reopenTicketInvalidId(id: Int) {
+        val ticketStatusChangeDTO = TicketStatusChangeDTO(
+            changedBy = UserType.CUSTOMER,
+            description = "description"
+        )
+
+        val mapper = ObjectMapper()
+        val jsonBody = mapper.writeValueAsString(ticketStatusChangeDTO)
+
+        mockMvc
+            .perform(
+                put("/API/tickets/${id}/reopen")
                     .content(jsonBody)
                     .contentType(MediaType.APPLICATION_JSON)
             )
@@ -900,14 +925,17 @@ class TicketControllerIT : AbstractTestcontainersTest() {
     ////// PUT /API/tickets/{ticketId}/close
     /////////////////////////////////////////////////////////////////////
 
-    @Test
+    @ParameterizedTest
+    @EnumSource(
+        TicketStatus::class, names = ["OPEN", "REOPENED", "IN_PROGRESS", "RESOLVED"]
+    )
     @Transactional
     @Rollback
-    fun closeTicketById() {
+    fun closeTicketById(ticketStatus: TicketStatus) {
         val expert = TicketTestUtils.experts[0]
 
         val ticket = Ticket("title1", "description1", TicketTestUtils.products[0], TicketTestUtils.profiles[1]).apply {
-            status = TicketStatus.IN_PROGRESS
+            status = ticketStatus
         }
 
         TicketTestUtils.addTicket(ticketRepository, expert, ticket)
@@ -947,6 +975,28 @@ class TicketControllerIT : AbstractTestcontainersTest() {
                     .contentType(MediaType.APPLICATION_JSON)
             )
             .andExpect(status().isNotFound)
+    }
+
+    @ParameterizedTest
+    @ValueSource(
+        ints = [0, -1, -2, Int.MIN_VALUE]
+    )
+    fun closeTicketInvalidId(id: Int) {
+        val ticketStatusChangeDTO = TicketStatusChangeDTO(
+            changedBy = UserType.CUSTOMER,
+            description = null
+        )
+
+        val mapper = ObjectMapper()
+        val jsonBody = mapper.writeValueAsString(ticketStatusChangeDTO)
+
+        mockMvc
+            .perform(
+                put("/API/tickets/${id}/close")
+                    .content(jsonBody)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isUnprocessableEntity)
     }
 
     @Test

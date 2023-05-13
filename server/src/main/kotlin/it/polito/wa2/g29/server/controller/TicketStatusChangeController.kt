@@ -15,9 +15,8 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/API")
 @Validated
 @RestController
-class TicketStatusChangeController(
-    private val ticketStatusChangeService: TicketStatusChangeService
-) {
+class TicketStatusChangeController(private val ticketStatusChangeService: TicketStatusChangeService) {
+
     // PUT /API/tickets/{ticketId}/start -Allows to start the progress of an "OPEN"/"REOPENED" ticket. The ticket status will be "IN_PROGRESS"
     @PutMapping("/tickets/{ticketId}/start")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -71,4 +70,5 @@ class TicketStatusChangeController(
     ) {
         ticketStatusChangeService.ticketStatusChange(ticketId, TicketStatus.CLOSED, statusChangeData)
     }
+
 }

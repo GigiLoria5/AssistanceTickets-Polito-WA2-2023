@@ -8,6 +8,7 @@ import org.springframework.core.annotation.Order
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageNotReadableException
+import org.springframework.security.core.AuthenticationException
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.MissingServletRequestParameterException
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -17,6 +18,13 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @RestControllerAdvice
 class ApplicationExceptionHandler {
+
+    // 401 - Unauthorized
+    @ExceptionHandler(value = [AuthenticationException::class, AccessDeniedException::class])
+    fun handleAuthenticationException(ex: AuthenticationException): ResponseEntity<Unit> {
+        return ResponseEntity(HttpStatus.UNAUTHORIZED)
+    }
+
     // 404 - Not Found
     @ExceptionHandler(value = [ProductNotFoundException::class, ProfileNotFoundException::class, ExpertNotFoundException::class, TicketNotFoundException::class, MessageNotFoundException::class, AttachmentNotFoundException::class])
     fun handleNotFoundException(exception: Exception): ResponseEntity<Unit> {
@@ -61,4 +69,5 @@ class ApplicationExceptionHandler {
         val errorMessage = ErrorMessage("an error occur, please retry")
         return ResponseEntity(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR)
     }
+
 }

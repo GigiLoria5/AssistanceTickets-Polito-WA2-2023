@@ -13,6 +13,8 @@ import it.polito.wa2.g29.server.service.ChatService
 import it.polito.wa2.g29.server.service.TicketStatusChangeService
 import it.polito.wa2.g29.server.utils.*
 import org.junit.jupiter.api.*
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.EnumSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.test.annotation.Rollback
@@ -193,39 +195,33 @@ class ChatServiceIT : AbstractTestcontainersTest() {
         assert(actualMessage?.attachments?.isEmpty() ?: false)
     }
 
-    @Test
+    @ParameterizedTest
+    @EnumSource(AttachmentType::class)
     @Transactional
     @Rollback
-    fun addMessageWithAttachmentsWithDifferentAttachmentType() {
+    fun addMessageWithAttachmentsWithDifferentAttachmentType(attachmentType: AttachmentType) {
         val ticket = testTickets[0]
         val ticketExpert = testExperts[0]
         TicketTestUtils.startTicket(ticketRepository, ticket, ticketExpert, TicketPriority.LOW)
-        val attachmentTypes = listOf(
-            AttachmentType.JPEG,
-            AttachmentType.PNG,
-            AttachmentType.PDF,
-            AttachmentType.DOC,
-            AttachmentType.OTHER
-        )
-        attachmentTypes.forEach {
-            val userType = if (it.ordinal % 2 == 0) UserType.EXPERT else UserType.CUSTOMER
-            val newMessageDTO = TestChatUtils.getNewMessageDTO(userType, "Message", it)
 
-            val messageId = chatService.addMessageWithAttachments(ticket.id!!, newMessageDTO).messageId
+        val userType = if (attachmentType.ordinal % 2 == 0) UserType.EXPERT else UserType.CUSTOMER
+        val newMessageDTO = TestChatUtils.getNewMessageDTO(userType, "Message", attachmentType)
 
-            val actualMessage = messageRepository.findByIdOrNull(messageId)
-            assert(actualMessage != null)
-            assert(newMessageDTO.sender == actualMessage?.sender)
-            assert(newMessageDTO.content == actualMessage?.content)
-            assert(ticketExpert == actualMessage?.expert)
-            assert(ticket == actualMessage?.ticket)
-            assert(actualMessage?.time != null)
-            assert(actualMessage?.attachments?.size == 1)
-            val expectedAttachment = newMessageDTO.attachments?.get(0)
-            val actualAttachment = actualMessage?.toDTO()?.attachments?.get(0)
-            assert(expectedAttachment?.name == actualAttachment?.name)
-            assert(it.toString() == actualAttachment?.type)
-        }
+        val messageId = chatService.addMessageWithAttachments(ticket.id!!, newMessageDTO).messageId
+
+        val actualMessage = messageRepository.findByIdOrNull(messageId)
+        assert(actualMessage != null)
+        assert(newMessageDTO.sender == actualMessage?.sender)
+        assert(newMessageDTO.content == actualMessage?.content)
+        assert(ticketExpert == actualMessage?.expert)
+        assert(ticket == actualMessage?.ticket)
+        assert(actualMessage?.time != null)
+        assert(actualMessage?.attachments?.size == 1)
+        val expectedAttachment = newMessageDTO.attachments?.get(0)
+        val actualAttachment = actualMessage?.toDTO()?.attachments?.get(0)
+        assert(expectedAttachment?.name == actualAttachment?.name)
+        assert(attachmentType.toString() == actualAttachment?.type)
+
     }
 
     /////////////////////////////////////////////////////////////////////
