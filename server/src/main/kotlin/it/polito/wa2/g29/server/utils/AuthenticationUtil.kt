@@ -12,7 +12,7 @@ object AuthenticationUtil {
 
     fun isClient():Boolean= hasAuthority("ROLE_CLIENT")
     fun isExpert():Boolean= hasAuthority("ROLE_EXPERT")
-    fun isManager():Boolean= hasAuthority("ROLE_MANAGER")
+    //fun isManager():Boolean= hasAuthority("ROLE_MANAGER")
 
     fun getUsername(): String {
         return getAuthContext().name
