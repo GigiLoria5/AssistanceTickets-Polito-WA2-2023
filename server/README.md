@@ -11,12 +11,12 @@
 
 ### Products
 
-- GET `/API/products/`
+- GET `/API/products`
 
     - Description: Allows to obtain all products within the system
     - Request body: _None_
     - Response: `200 OK` (success)
-    - Error responses: `500 Internal Server Error` (generic error)
+    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `500 Internal Server Error` (generic error)
     - Response body: An array of objects, for each containing productId, asin, brand, category,
       manufacturerNumber, name, price and weight (expressed in kg). An error message in case of error
 
@@ -42,7 +42,7 @@
     - Description: Allows to obtain all the information of a single product
     - Request parameter: productId of the requested product
     - Response: `200 OK` (success)
-    - Error responses: `404 Not Found` (productId not found), `422 Unprocessable Entity` (validation of productId
+    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (productId not found), `422 Unprocessable Entity` (validation of productId
       failed) or `500 Internal Server Error` (generic error)
     - Response body: An object containing productId, asin, brand, category, manufacturerNumber, name, price and
       weight (expressed in kg) of the requested product. An error message in case of error
