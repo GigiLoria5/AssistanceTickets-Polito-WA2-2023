@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Pattern
 import org.springframework.http.HttpStatus
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 
@@ -24,6 +25,7 @@ class ProfileController(private val profileService: ProfileService) {
     }
 
     // POST /API/profiles -- create a new profile or fail if some field is missing, or is not valid, or in case of duplicates
+    @PreAuthorize("hasAuthority('ROLE_MANAGER')")
     @PostMapping("/profiles")
     @ResponseStatus(HttpStatus.CREATED)
     fun createProfile(@RequestBody @Valid @NotNull profile: ProfileDTO) {

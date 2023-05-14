@@ -14,6 +14,8 @@
 - GET `/API/products`
 
     - Description: Allows to obtain all products within the system
+    - Permissions allowed: 
+      - authenticated users
     - Request body: _None_
     - Response: `200 OK` (success)
     - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `500 Internal Server Error` (generic error)
@@ -40,6 +42,8 @@
 - GET `/API/products/{productId}`
 
     - Description: Allows to obtain all the information of a single product
+    - Permissions allowed:
+      - authenticated users
     - Request parameter: productId of the requested product
     - Response: `200 OK` (success)
     - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (productId not found), `422 Unprocessable Entity` (validation of productId
@@ -65,9 +69,13 @@
 - GET `/API/profiles/{email}`
 
     - Description: Allows to obtain all the information of a single profile and the IDs of his tickets
+    - Permissions allowed:
+      - The client associated with the specified email address
+      - Experts who have a not closed ticket with the client
+      - Managers    
     - Request parameter: email of the requested user profile
     - Response: `200 OK` (success)
-    - Error responses: `404 Not Found` (email not found), `422 Unprocessable Entity` (validation of email failed) or
+    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (email not found), `422 Unprocessable Entity` (validation of email failed) or
       `500 Internal Server Error` (generic error)
     - Response body: An object containing profileId, email, name, surname, phoneNumber, address, city, country and
       ticketsIds (an array of int, each representing the id of a ticket opened by the user) of the
@@ -90,6 +98,8 @@
 - POST `/API/profiles`
 
     - Description: Allows to create a profile
+    - Permissions allowed:
+      - Managers
     - Request body: email, name, surname, phoneNumber, address, city and country of the profile
 
       ```
@@ -104,16 +114,16 @@
       }
       ```
 
-    - Response: `201 Created` (success)
-    - Error responses: `409 Conflict` (email already exists or phoneNumber already exists), `422 Unprocessable Entity`
-      (validation of request body failed) or `500 Internal Server Error` (generic error)
-    - Response body: An error message in case of error
+      - Response: `201 Created` (success)
+      - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `409 Conflict` (email already exists or phoneNumber already exists), `422 Unprocessable Entity`
+        (validation of request body failed) or `500 Internal Server Error` (generic error)
+      - Response body: An error message in case of error
 
-      ```
-      {
-        "error": "a profile with the same email already exists"
-      }
-      ```
+        ```
+        {
+          "error": "a profile with the same email already exists"
+        }
+        ```
 
 - PUT `/API/profiles/{email}`
 
