@@ -33,15 +33,14 @@ class ProfileController(private val profileService: ProfileService) {
         profileService.createProfile(profile)
     }
 
-    // PUT /API/profiles/{email} -- modify a user profile {email} or fail if it does not exist
-    @PreAuthorize("hasAuthority(@AuthUtil.ROLE_CLIENT) and #email == @AuthUtil.username")
-    @PutMapping("/profiles/{email}")
+    // PUT /API/profiles -- modify a user profile
+    @PreAuthorize("hasAuthority(@AuthUtil.ROLE_CLIENT)")
+    @PutMapping("/profiles")
     @ResponseStatus(HttpStatus.OK)
     fun modifyProfile(
         @RequestBody @Valid @NotNull newProfile: EditProfileDTO,
-        @PathVariable @NotBlank @Email @Pattern(regexp = ProfileDTO.EMAIL_PATTERN) email: String
     ) {
-        profileService.modifyProfile(email, newProfile)
+        profileService.modifyProfile(newProfile)
     }
 
 }

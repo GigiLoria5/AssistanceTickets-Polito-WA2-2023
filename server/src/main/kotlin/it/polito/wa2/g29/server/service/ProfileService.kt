@@ -8,5 +8,5 @@ interface ProfileService {
 
     fun createProfile(profileDTO: ProfileDTO)
 
-    fun modifyProfile(email: String, newProfile: EditProfileDTO)
+    fun modifyProfile(newProfile: EditProfileDTO)
 }

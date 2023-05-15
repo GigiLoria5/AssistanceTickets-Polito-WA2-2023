@@ -51,11 +51,11 @@ class ProfileServiceImpl(
         profileRepository.save(profile)
     }
 
-    override fun modifyProfile(email: String, newProfile: EditProfileDTO) {
-        val profile = profileRepository.findProfileByEmail(email) ?: throw ProfileNotFoundException()
+    override fun modifyProfile(newProfile: EditProfileDTO) {
+        val username = AuthenticationUtil.getUsername()
+        val profile = profileRepository.findProfileByEmail(username)!!
         if (newProfile.phoneNumber != profile.phoneNumber && profileRepository.findProfileByPhoneNumber(newProfile.phoneNumber) != null)
             throw DuplicateProfileException("a profile with the same phone number already exists")
-
         profile.update(newProfile)
         profileRepository.save(profile)
     }
