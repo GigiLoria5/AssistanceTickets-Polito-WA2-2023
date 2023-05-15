@@ -70,7 +70,7 @@
 
     - Description: Allows to obtain all the information of a single profile and the IDs of his tickets
     - Permissions allowed:
-      - The client associated with the specified email address
+      - The Client associated with the specified email address
       - Experts who have a not closed ticket with the client
       - Managers    
     - Request parameter: email of the requested user profile
@@ -195,7 +195,7 @@
 
     - Description: Allows to obtain all the information of an expert
     - Permissions allowed:
-      - The expert associated with the specified expertId
+      - The Expert associated with the specified expertId
       - Managers
     - Request body: _None_
     - Response: `200 OK` (success)
@@ -226,7 +226,7 @@
 
     - Description: Allows to obtain a list of all status changes made by a specific expert
     - Permissions allowed:
-      - The expert associated with the specified expertId
+      - The Expert associated with the specified expertId
       - Managers
     - Request body: _None_
     - Response: `200 OK` (success)
@@ -254,7 +254,7 @@
 
     - Description: Allows to obtain the list of tickets assigned to an expert
     - Permissions allowed:
-      - The expert associated with the specified expertId
+      - The Expert associated with the specified expertId
       - Managers
     - Request body: _None_
     - Response: `200 OK` (success)
