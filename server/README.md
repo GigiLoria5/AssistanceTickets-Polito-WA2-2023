@@ -495,17 +495,20 @@
 
     - Description: Allows to set a not closed ticket as resolved. Upon successful completion of the request, the ticket
       status will be "RESOLVED"
-    - Request body: changedBy and an optional description.
+    - Permissions allowed:
+      - The Client associated with the ticketId
+      - The Expert associated with the ticketId
+      - Managers
+    - Request body: an optional description.
 
       ```
       {
-        "changedBy":"EXPERT"
         "description": ""
       }
       ```
 
     - Response: `204 No Content` (success)
-    - Error responses: `404 Not Found` (ticketId not found), `422 Unprocessable Entity` (validation of request body or
+    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (ticketId not found), `422 Unprocessable Entity` (validation of request body or
       ticketId failed
       or ticket is already resolved or ticket is closed) or `500 Internal Server Error` (generic error)
     - Response body: An error message in case of error
