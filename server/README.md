@@ -440,8 +440,9 @@
 - PUT `/API/tickets/{ticketId}/start`
 
     - Description: Allows to start the progress of an "OPEN"/"REOPENED" ticket by assigning it to an expert and setting
-      a
-      priority level. Upon successful completion of the request, the ticket status will be "IN_PROGRESS"
+      a priority level. Upon successful completion of the request, the ticket status will be "IN_PROGRESS"
+    - Permissions allowed:
+      - Managers
     - Request body: the id of the assigned expert, the priority level of the ticket and an optional description.
 
       ```
@@ -453,7 +454,7 @@
       ```
 
     - Response: `204 No Content` (success)
-    - Error responses: `404 Not Found` (ticketId or expertId not found), `422 Unprocessable Entity` (validation of
+    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (ticketId or expertId not found), `422 Unprocessable Entity` (validation of
       request body or ticketId failed or tried to start a not open/reopened ticket)
       or `500 Internal Server Error` (generic error)
     - Response body: An error message in case of error

@@ -9,6 +9,7 @@ import jakarta.validation.Valid
 import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotNull
 import org.springframework.http.HttpStatus
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*
 class TicketStatusChangeController(private val ticketStatusChangeService: TicketStatusChangeService) {
 
     // PUT /API/tickets/{ticketId}/start -Allows to start the progress of an "OPEN"/"REOPENED" ticket. The ticket status will be "IN_PROGRESS"
+    @PreAuthorize("hasAuthority(@AuthUtil.ROLE_MANAGER)")
     @PutMapping("/tickets/{ticketId}/start")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun startTicket(
