@@ -31,12 +31,14 @@ class ExpertController(private val expertService: ExpertService) {
     }
 
     // GET /API/experts/{expertId}/tickets -- list all tickets assigned to an expert {expertId} or fail if it does not exist
+    @PreAuthorize("hasAuthority(@AuthUtil.ROLE_MANAGER) or hasAuthority(@AuthUtil.ROLE_EXPERT)")
     @GetMapping("/experts/{expertId}/tickets")
     fun getAllTicketsByExpertId(@PathVariable @Valid @Min(1) expertId: Int): List<TicketDTO> {
         return expertService.getAllTicketsByExpertId(expertId)
     }
 
     // GET /API/experts/{expertId}/statusChanges -- details of tickets status changes done by an expert {expertId} or fail if it does not exist
+    @PreAuthorize("hasAuthority(@AuthUtil.ROLE_MANAGER) or hasAuthority(@AuthUtil.ROLE_EXPERT)")
     @GetMapping("/experts/{expertId}/statusChanges")
     fun getTicketStatusChangesByExpertId(@PathVariable @Valid @Min(1) expertId: Int): List<TicketChangeDTO> {
         return expertService.getTicketStatusChangesByExpertId(expertId)

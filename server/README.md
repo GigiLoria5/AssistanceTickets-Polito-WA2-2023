@@ -225,10 +225,13 @@
 - GET `/API/experts/{expertId}/statusChanges`
 
     - Description: Allows to obtain a list of all status changes made by a specific expert
+    - Permissions allowed:
+      - The expert associated with the specified expertId
+      - Managers
     - Request body: _None_
     - Response: `200 OK` (success)
-    - Error responses: `404 Not Found` (expertId not found), `422 Unprocessable Entity` (validation of
-      expertId failed) or `500 Internal Server Error` (generic error)
+    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (expertId not found), `422 Unprocessable Entity` (validation of expertId
+      failed) or `500 Internal Server Error` (generic error)
     - Response body: An array of objects, sorted by time descending, for each containing ticketId, currentExpertId,
       oldStatus, newStatus, changedBy, description and time. An error message in case of error
     ```
@@ -250,10 +253,13 @@
 - GET `/API/experts/{expertId}/tickets`
 
     - Description: Allows to obtain the list of tickets assigned to an expert
+    - Permissions allowed:
+      - The expert associated with the specified expertId
+      - Managers
     - Request body: _None_
     - Response: `200 OK` (success)
-    - Error responses: `404 Not Found` (expertId not found), `422 Unprocessable Entity` (validation of
-      expertId failed) or `500 Internal Server Error` (generic error)
+    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (expertId not found), `422 Unprocessable Entity` (validation of expertId
+      failed) or `500 Internal Server Error` (generic error)
     - Response body: An array of objects (sorted by priorityLevel descending) for each containing
       ticketId, description, productId, customerId, expertId, totalExchangedMessages, status, priorityLevel, createdAt
       and lastModifiedAt.

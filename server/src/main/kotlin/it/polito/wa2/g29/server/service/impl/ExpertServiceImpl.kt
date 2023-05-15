@@ -22,6 +22,22 @@ class ExpertServiceImpl(private val expertRepository: ExpertRepository) : Expert
     }
 
     override fun getExpertById(expertId: Int): ExpertDTO {
+        val expert = getExpertObject(expertId)
+        return expert.toDTO()
+    }
+
+    override fun getAllTicketsByExpertId(expertId: Int): List<TicketDTO> {
+        val expert = getExpertObject(expertId)
+        return expert.tickets.sortedWith(compareByDescending { it.priorityLevel }).map { it.toDTO() }
+    }
+
+    override fun getTicketStatusChangesByExpertId(expertId: Int): List<TicketChangeDTO> {
+        val expert = getExpertObject(expertId)
+        return expert.ticketChanges.filter { it.changedBy == UserType.EXPERT }
+            .sortedWith(compareByDescending { it.time }).map { it.toDTO() }
+    }
+
+    private fun getExpertObject(expertId: Int): Expert {
         val username = AuthenticationUtil.getUsername()
         lateinit var expert: Expert
         if (AuthenticationUtil.isExpert()) {
@@ -30,18 +46,7 @@ class ExpertServiceImpl(private val expertRepository: ExpertRepository) : Expert
                 throw AccessDeniedException("")
         } else //ROLE_MANAGER
             expert = expertRepository.findByIdOrNull(expertId) ?: throw ExpertNotFoundException()
-        return expert.toDTO()
-    }
-
-    override fun getAllTicketsByExpertId(expertId: Int): List<TicketDTO> {
-        val expert = expertRepository.findByIdOrNull(expertId) ?: throw ExpertNotFoundException()
-        return expert.tickets.sortedWith(compareByDescending { it.priorityLevel }).map { it.toDTO() }
-    }
-
-    override fun getTicketStatusChangesByExpertId(expertId: Int): List<TicketChangeDTO> {
-        val expert = expertRepository.findByIdOrNull(expertId) ?: throw ExpertNotFoundException()
-        return expert.ticketChanges.filter { it.changedBy == UserType.EXPERT }
-            .sortedWith(compareByDescending { it.time }).map { it.toDTO() }
+        return expert
     }
 
 }
