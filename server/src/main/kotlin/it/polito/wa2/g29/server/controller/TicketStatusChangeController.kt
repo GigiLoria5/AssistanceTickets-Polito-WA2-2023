@@ -51,6 +51,7 @@ class TicketStatusChangeController(private val ticketStatusChangeService: Ticket
     }
 
     // PUT /API/tickets/{ticketId}/reopen -Allows to reopen a "CLOSED"/"RESOLVED" ticket. The ticket status will be "REOPENED"
+    @PreAuthorize("hasAuthority(@AuthUtil.ROLE_CLIENT)")
     @PutMapping("/tickets/{ticketId}/reopen")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun reopenTicket(

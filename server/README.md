@@ -523,17 +523,18 @@
 
     - Description: Allows to reopen a closed/resolved ticket. Upon successful completion of the request, the ticket
       status will be "REOPENED"
-    - Request body: changedBy and description.
+    - Permissions allowed:
+        - The Client associated with the ticketId
+    - Request body: description.
 
       ```
       {
-        "changedBy":"CUSTOMER"
         "description": "I encountered the same issue again after the ticket was closed."
       }
       ```
 
     - Response: `204 No Content` (success)
-    - Error responses: `404 Not Found` (ticketId not found), `422 Unprocessable Entity` (validation of request body or
+    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (ticketId not found), `422 Unprocessable Entity` (validation of request body or
       ticketId failed
       or ticket is not closed/resolved) or `500 Internal Server Error` (generic error)
     - Response body: An error message in case of error
