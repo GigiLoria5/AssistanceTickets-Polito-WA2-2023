@@ -3,7 +3,6 @@ package it.polito.wa2.g29.server.service.impl
 import it.polito.wa2.g29.server.dto.*
 import it.polito.wa2.g29.server.enums.AttachmentType
 import it.polito.wa2.g29.server.enums.TicketStatus
-import it.polito.wa2.g29.server.enums.UserType
 import it.polito.wa2.g29.server.exception.*
 import it.polito.wa2.g29.server.model.Attachment
 import it.polito.wa2.g29.server.model.Message
@@ -12,6 +11,7 @@ import it.polito.wa2.g29.server.repository.MessageRepository
 import it.polito.wa2.g29.server.repository.ProfileRepository
 import it.polito.wa2.g29.server.repository.TicketRepository
 import it.polito.wa2.g29.server.service.ChatService
+import it.polito.wa2.g29.server.utils.AuthenticationUtil
 import it.polito.wa2.g29.server.utils.TicketAssociationsUtil
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.access.AccessDeniedException
@@ -34,15 +34,15 @@ class ChatServiceImpl(
     }
 
     override fun addMessageWithAttachments(ticketId: Int, newMessage: NewMessageDTO): NewMessageIdDTO {
-        if (newMessage.sender == UserType.MANAGER)
-            throw UserTypeNotValidException("Impossible to send message as a MANAGER")
-
         val ticket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
+        val ticketAssociationsUtil = TicketAssociationsUtil(expertRepository, profileRepository)
+        if (!ticketAssociationsUtil.authenticatedUserIsAssociatedWithTicket(ticket))
+            throw AccessDeniedException("")
         if (ticket.status !in setOf(TicketStatus.RESOLVED, TicketStatus.IN_PROGRESS))
             throw ChatIsInactiveException("impossible to send the message as the chat is inactive")
 
         val message = Message(
-            sender = newMessage.sender,
+            sender = AuthenticationUtil.getUserTypeEnum(),
             content = newMessage.content,
             ticket = ticket,
             expert = ticket.expert
@@ -62,6 +62,9 @@ class ChatServiceImpl(
 
     override fun getAttachment(ticketId: Int, messageId: Int, attachmentId: Int): FileAttachmentDTO {
         val ticket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
+        val ticketAssociationsUtil = TicketAssociationsUtil(expertRepository, profileRepository)
+        if (!ticketAssociationsUtil.authenticatedUserIsAssociatedWithTicket(ticket))
+            throw AccessDeniedException("")
         val message = ticket.messages.find { it.id == messageId } ?: throw MessageNotFoundException()
         val attachment = message.attachments.find { it.id == attachmentId } ?: throw AttachmentNotFoundException()
         return FileAttachmentDTO(attachment.name, attachment.type, attachment.file)

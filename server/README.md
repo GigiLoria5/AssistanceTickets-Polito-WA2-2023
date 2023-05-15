@@ -622,14 +622,16 @@
 - POST `/API/chats/{ticketId}/messages`
 
     - Description: Allows to send a message and optionally some attachments
+    - Permissions allowed:
+      - The Client associated with the ticketId
+      - The Expert associated with the ticketId
     - Headers: {"Content-Type" : "multipart/form-data"}
     - Request Parameters:
-        - sender(required) - the sender's user type. Allowed values:CUSTOMER,EXPERT
         - content(required) - the content of the message.
     - Request Parts:
         - attachments(optional) - the files to be attached to the message.
     - Response: `201 Created` (success)
-    - Error responses: `404 Not Found` (ticketId not found), `422 Unprocessable Entity` (validation of request
+    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (ticketId not found), `422 Unprocessable Entity` (validation of request
       body or ticketId failed or ticket is not in progress/resolve) or `500 Internal Server Error` (generic error)
     - Response body: The id of the message sent. An error message in case of error
       ```
@@ -647,9 +649,12 @@
 - GET `/API/chats/{ticketId}/messages/{messageId}/attachments/{attachmentId}`
 
     - Description: Allows to download an attachment related to a message
+    - Permissions allowed:
+      - The Client associated with the ticketId
+      - The Expert associated with the ticketId
     - Request body: _None_
     - Response: `200 OK` (success)
-    - Error responses: `404 Not Found` (ticketId, messageId or attachmentId not found), `422 Unprocessable Entity` (
+    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (ticketId, messageId or attachmentId not found), `422 Unprocessable Entity` (
       validation of ticketId, messageId or attachmentId failed) or `500 Internal Server Error` (generic error)
     - Response body: The binary contents of the attachment file. An error message in case of error
       ```
