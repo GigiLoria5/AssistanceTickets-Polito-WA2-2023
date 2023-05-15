@@ -549,17 +549,19 @@
 
     - Description: Allows to close any ticket. Upon successful completion of the request, the ticket status will be "
       CLOSED"
-    - Request body: changedBy and an optional description.
+    - Permissions allowed:
+      - The Expert associated with the ticketId
+      - Managers
+    - Request body: an optional description.
 
       ```
       {
-        "changedBy":"CUSTOMER"
         "description": ""
       }
       ```   
 
     - Response: `204 No Content` (success)
-    - Error responses: `404 Not Found` (ticketId not found), `422 Unprocessable Entity` (validation of ticketId failed
+    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (ticketId not found), `422 Unprocessable Entity` (validation of ticketId failed
       or ticket is already closed) or `500 Internal Server Error` (generic error)
     - Response body: An error message in case of error
 

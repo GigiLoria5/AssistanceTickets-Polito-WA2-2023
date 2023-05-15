@@ -66,6 +66,7 @@ class TicketStatusChangeController(private val ticketStatusChangeService: Ticket
     }
 
     // PUT /API/tickets/{ticketId}/close -Allows to close a "OPEN"/"RESOLVED"/"IN_PROGRESS"/"REOPENED" ticket. The ticket status will be "CLOSED"
+    @PreAuthorize("hasAuthority(@AuthUtil.ROLE_MANAGER) or hasAuthority(@AuthUtil.ROLE_EXPERT)")
     @PutMapping("/tickets/{ticketId}/close")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun closeTicket(

@@ -43,6 +43,7 @@ class TicketStatusChangeServiceImpl(
         newStatus: TicketStatus,
         statusChangeData: TicketStatusChangeDTO
     ) {
+        //generic check. Authorization first level check done in controller
         if (AuthenticationUtil.isExpert() || AuthenticationUtil.isClient()) {
             val ticketAssociationsUtil = TicketAssociationsUtil(expertRepository, profileRepository)
             if (!ticketAssociationsUtil.authenticatedUserIsAssociatedWithTicket(ticketId))
