@@ -24,6 +24,7 @@ class ExpertController(private val expertService: ExpertService) {
         return expertService.getAllExperts()
     }
 
+    @PreAuthorize("hasAuthority(@AuthUtil.ROLE_MANAGER) or hasAuthority(@AuthUtil.ROLE_EXPERT)")
     @GetMapping("/experts/{expertId}")
     fun getExpertById(@PathVariable @Valid @Min(1) expertId: Int): ExpertDTO? {
         return expertService.getExpertById(expertId)

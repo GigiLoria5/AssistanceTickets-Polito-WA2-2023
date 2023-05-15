@@ -6,9 +6,12 @@ import it.polito.wa2.g29.server.dto.TicketDTO
 import it.polito.wa2.g29.server.dto.toDTO
 import it.polito.wa2.g29.server.enums.UserType
 import it.polito.wa2.g29.server.exception.ExpertNotFoundException
+import it.polito.wa2.g29.server.model.Expert
 import it.polito.wa2.g29.server.repository.ExpertRepository
 import it.polito.wa2.g29.server.service.ExpertService
+import it.polito.wa2.g29.server.utils.AuthenticationUtil
 import org.springframework.data.repository.findByIdOrNull
+import org.springframework.security.access.AccessDeniedException
 import org.springframework.stereotype.Service
 
 @Service
@@ -19,7 +22,14 @@ class ExpertServiceImpl(private val expertRepository: ExpertRepository) : Expert
     }
 
     override fun getExpertById(expertId: Int): ExpertDTO {
-        val expert = expertRepository.findByIdOrNull(expertId) ?: throw ExpertNotFoundException()
+        val username = AuthenticationUtil.getUsername()
+        lateinit var expert: Expert
+        if (AuthenticationUtil.isExpert()) {
+            expert = expertRepository.findExpertByEmail(username)!!
+            if (expert.id != expertId)
+                throw AccessDeniedException("")
+        } else //ROLE_MANAGER
+            expert = expertRepository.findByIdOrNull(expertId) ?: throw ExpertNotFoundException()
         return expert.toDTO()
     }
 
