@@ -289,6 +289,8 @@
 - GET `/API/tickets`
 
     - Description: Allows to obtain all the tickets in the system, optionally filtered by status
+    - Permissions allowed:
+      - Managers
     - Request body: _None_
     - Query parameters:
 
@@ -299,7 +301,7 @@
       ```
 
     - Response: `200 OK` (success)
-    - Error responses: `422 Unprocessable Entity` (validation of status failed) or `500 Internal Server Error` (generic
+    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `422 Unprocessable Entity` (validation of status failed) or `500 Internal Server Error` (generic
       error)
     - Response body: An array of objects, for each containing ticketId, title, description, productId, customerId,
       expertId, totalExchangedMessages, status, priorityLevel, createdAt and lastModifiedAt.
@@ -340,9 +342,13 @@
 - GET `/API/tickets/{ticketId}`
 
     - Description: Allows to obtain all the information of a ticket
+    - Permissions allowed:
+      - The Client associated with the ticketId
+      - The Expert associated with the ticketId
+      - Managers
     - Request body: _None_
     - Response: `200 OK` (success)
-    - Error responses: `404 Not Found` (ticketId not found), `422 Unprocessable Entity` (validation of
+    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (ticketId not found), `422 Unprocessable Entity` (validation of
       ticketId failed) or `500 Internal Server Error` (generic error)
     - Response body: An object containing ticketId, description, productId, customerId,
       expertId, totalExchangedMessages, status, priorityLevel, createdAt and lastModifiedAt.

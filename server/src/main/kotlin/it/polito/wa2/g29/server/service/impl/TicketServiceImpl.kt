@@ -9,18 +9,22 @@ import it.polito.wa2.g29.server.enums.TicketStatus
 import it.polito.wa2.g29.server.exception.DuplicateTicketException
 import it.polito.wa2.g29.server.exception.TicketNotFoundException
 import it.polito.wa2.g29.server.model.toEntity
+import it.polito.wa2.g29.server.repository.ExpertRepository
 import it.polito.wa2.g29.server.repository.ProductRepository
 import it.polito.wa2.g29.server.repository.ProfileRepository
 import it.polito.wa2.g29.server.repository.TicketRepository
 import it.polito.wa2.g29.server.service.TicketService
+import it.polito.wa2.g29.server.utils.AuthenticationUtil
 import org.springframework.data.repository.findByIdOrNull
+import org.springframework.security.access.AccessDeniedException
 import org.springframework.stereotype.Service
 
 @Service
 class TicketServiceImpl(
     private val ticketRepository: TicketRepository,
     private val productRepository: ProductRepository,
-    private val profileRepository: ProfileRepository
+    private val profileRepository: ProfileRepository,
+    private val expertRepository: ExpertRepository
 ) : TicketService {
 
     override fun getAllTickets(): List<TicketDTO> {
@@ -32,6 +36,14 @@ class TicketServiceImpl(
     }
 
     override fun getTicketById(ticketId: Int): TicketDTO {
+        val username = AuthenticationUtil.getUsername()
+
+        if (AuthenticationUtil.isExpert() && !expertHasTicket(ticketId, username))
+            throw AccessDeniedException("")
+
+        if (AuthenticationUtil.isClient() && !clientHasTicket(ticketId, username))
+            throw AccessDeniedException("")
+
         val ticket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
         return ticket.toDTO()
     }
@@ -53,6 +65,19 @@ class TicketServiceImpl(
         )
             throw DuplicateTicketException("A not closed ticket with the same customer and product already exists")
         return NewTicketIdDTO(ticketRepository.save(ticket).id!!)
+    }
+
+    private fun expertHasTicket(ticketId: Int, username: String): Boolean {
+        val expert = expertRepository.findExpertByEmail(username)!!
+        return expert.tickets.any {
+            it.id == ticketId
+        }
+    }
+    private fun clientHasTicket(ticketId: Int, username: String): Boolean {
+        val client = profileRepository.findProfileByEmail(username)!!
+        return client.tickets.any {
+            it.id == ticketId
+        }
     }
 
 }

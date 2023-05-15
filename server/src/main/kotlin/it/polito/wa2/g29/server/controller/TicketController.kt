@@ -8,6 +8,7 @@ import jakarta.validation.Valid
 import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotNull
 import org.springframework.http.HttpStatus
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 
@@ -16,7 +17,8 @@ import org.springframework.web.bind.annotation.*
 @RestController
 class TicketController(private val ticketService: TicketService) {
 
-    // GET /API/tickets/ -- list all tickets in the DB
+    // GET /API/tickets -- list all tickets in the DB
+    @PreAuthorize("hasAuthority(@AuthUtil.ROLE_MANAGER)")
     @GetMapping("/tickets")
     fun getAllTickets(
         @RequestParam("status", required = false) status: TicketStatus?
