@@ -6,6 +6,7 @@ import it.polito.wa2.g29.server.dto.TicketDTO
 import it.polito.wa2.g29.server.service.ExpertService
 import jakarta.validation.Valid
 import jakarta.validation.constraints.Min
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class ExpertController(private val expertService: ExpertService) {
 
+    @PreAuthorize("hasAuthority(@AuthUtil.ROLE_MANAGER)")
     @GetMapping("/experts")
     fun getAllExperts(): List<ExpertDTO> {
         return expertService.getAllExperts()

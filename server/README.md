@@ -158,12 +158,14 @@
 
 ### Experts
 
-- GET `/API/experts/`
+- GET `/API/experts`
 
     - Description: Allows to obtain all experts within the system
+    - Permissions allowed:
+      - Managers
     - Request body: _None_
     - Response: `200 OK` (success)
-    - Error responses: `500 Internal Server Error` (generic error)
+    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `500 Internal Server Error` (generic error)
     - Response body: An array of objects, for each containing expertId, name, surname, email and skills (array of
       objects, for each containing expertise and level). An error message in case of error
 
