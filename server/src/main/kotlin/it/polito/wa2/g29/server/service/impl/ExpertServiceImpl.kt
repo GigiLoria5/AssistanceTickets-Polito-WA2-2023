@@ -39,14 +39,15 @@ class ExpertServiceImpl(private val expertRepository: ExpertRepository) : Expert
 
     private fun getExpertObject(expertId: Int): Expert {
         val username = AuthenticationUtil.getUsername()
-        lateinit var expert: Expert
-        if (AuthenticationUtil.isExpert()) {
-            expert = expertRepository.findExpertByEmail(username)!!
-            if (expert.id != expertId)
-                throw AccessDeniedException("")
-        } else //ROLE_MANAGER
-            expert = expertRepository.findByIdOrNull(expertId) ?: throw ExpertNotFoundException()
-        return expert
+        return when(AuthenticationUtil.getUserTypeEnum()) {
+            UserType.EXPERT -> {
+                val expert = expertRepository.findExpertByEmail(username)!!
+                if (expert.id != expertId)
+                    throw AccessDeniedException("")
+                expert
+            }
+            //ROLE_MANAGER
+            else -> expertRepository.findByIdOrNull(expertId) ?: throw ExpertNotFoundException()
+        }
     }
-
 }

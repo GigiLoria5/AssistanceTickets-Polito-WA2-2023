@@ -4,6 +4,7 @@ import it.polito.wa2.g29.server.dto.ProfileDTO
 import it.polito.wa2.g29.server.dto.profile.EditProfileDTO
 import it.polito.wa2.g29.server.dto.toDTO
 import it.polito.wa2.g29.server.enums.TicketStatus
+import it.polito.wa2.g29.server.enums.UserType
 import it.polito.wa2.g29.server.exception.DuplicateProfileException
 import it.polito.wa2.g29.server.exception.ProfileNotFoundException
 import it.polito.wa2.g29.server.model.toEntity
@@ -21,22 +22,7 @@ class ProfileServiceImpl(
 ) : ProfileService {
 
     override fun getProfileByEmail(email: String): ProfileDTO {
-        val username = AuthenticationUtil.getUsername()
-        if (
-            AuthenticationUtil.isClient() &&
-            username != email
-        )
-            throw AccessDeniedException("")
-
-        if (AuthenticationUtil.isExpert()) {
-            val expert = expertRepository.findExpertByEmail(username)!!
-            val foundCustomer = expert.tickets.any {
-                it.customer.email == email && it.status != TicketStatus.CLOSED
-            }
-            if (!foundCustomer)
-                throw AccessDeniedException("")
-        }
-
+        checkUserAuthorisation(email)
         val profile = profileRepository.findProfileByEmail(email) ?: throw ProfileNotFoundException()
         return profile.toDTO()
     }
@@ -58,6 +44,26 @@ class ProfileServiceImpl(
             throw DuplicateProfileException("a profile with the same phone number already exists")
         profile.update(newProfile)
         profileRepository.save(profile)
+    }
+
+    private fun checkUserAuthorisation(email: String){
+        val username = AuthenticationUtil.getUsername()
+
+        when (AuthenticationUtil.getUserTypeEnum()) {
+            UserType.CUSTOMER -> {
+                if (username != email)
+                    throw AccessDeniedException("")
+            }
+            UserType.EXPERT -> {
+                val expert = expertRepository.findExpertByEmail(username)!!
+                val foundCustomer = expert.tickets.any {
+                    it.customer.email == email && it.status != TicketStatus.CLOSED
+                }
+                if (!foundCustomer)
+                    throw AccessDeniedException("")
+            }
+            UserType.MANAGER -> Unit
+        }
     }
 
 }

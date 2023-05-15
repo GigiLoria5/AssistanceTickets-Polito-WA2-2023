@@ -14,7 +14,6 @@ import it.polito.wa2.g29.server.repository.ProfileRepository
 import it.polito.wa2.g29.server.repository.TicketRepository
 import it.polito.wa2.g29.server.service.TicketStatusChangeService
 import it.polito.wa2.g29.server.utils.AuthenticationUtil
-import it.polito.wa2.g29.server.utils.TicketAssociationsUtil
 import it.polito.wa2.g29.server.utils.TicketStatusChangeRules
 import jakarta.transaction.Transactional
 import org.springframework.data.repository.findByIdOrNull
@@ -45,11 +44,7 @@ class TicketStatusChangeServiceImpl(
     ) {
         val ticket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
         //generic check. Authorization first level check done in controller
-        if (AuthenticationUtil.isExpert() || AuthenticationUtil.isClient()) {
-            val ticketAssociationsUtil = TicketAssociationsUtil(expertRepository, profileRepository)
-            if (!ticketAssociationsUtil.authenticatedUserIsAssociatedWithTicket(ticket))
-                throw AccessDeniedException("")
-        }
+        checkUserAuthorisation(ticket)
         updateTicketStatus(ticket, newStatus, AuthenticationUtil.getUserTypeEnum(), statusChangeData.description)
     }
 
@@ -75,4 +70,19 @@ class TicketStatusChangeServiceImpl(
         ticketRepository.save(ticket)
     }
 
+    private fun checkUserAuthorisation(ticket: Ticket) {
+        when (AuthenticationUtil.getUserTypeEnum()) {
+            UserType.EXPERT, UserType.CUSTOMER -> {
+                if (!AuthenticationUtil.authenticatedUserIsAssociatedWithTicket(
+                        ticket,
+                        { expertRepository.findExpertByEmail(it)!! },
+                        { profileRepository.findProfileByEmail(it)!! }
+                    )
+                )
+                    throw AccessDeniedException("")
+            }
+
+            UserType.MANAGER -> Unit
+        }
+    }
 }
