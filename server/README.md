@@ -576,9 +576,12 @@
 - GET `/API/chats/{ticketId}/messages`
 
     - Description: Allows to obtain all chat messages of a ticket
+    - Permissions allowed:
+      - The Client associated with the ticketId
+      - The Expert associated with the ticketId
     - Request body: _None_
     - Response: `200 OK` (success)
-    - Error responses: `404 Not Found` (ticketId not found), `422 Unprocessable Entity` (validation of
+    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (ticketId not found), `422 Unprocessable Entity` (validation of
       ticketId) or `500 Internal Server Error` (generic error)
     - Response body: An array of objects, ordered chronologically, for each containing messageId, sender, expertId (
       expert to whom the ticket was assigned),

@@ -43,13 +43,13 @@ class TicketStatusChangeServiceImpl(
         newStatus: TicketStatus,
         statusChangeData: TicketStatusChangeDTO
     ) {
+        val ticket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
         //generic check. Authorization first level check done in controller
         if (AuthenticationUtil.isExpert() || AuthenticationUtil.isClient()) {
             val ticketAssociationsUtil = TicketAssociationsUtil(expertRepository, profileRepository)
-            if (!ticketAssociationsUtil.authenticatedUserIsAssociatedWithTicket(ticketId))
+            if (!ticketAssociationsUtil.authenticatedUserIsAssociatedWithTicket(ticket))
                 throw AccessDeniedException("")
         }
-        val ticket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
         updateTicketStatus(ticket, newStatus, AuthenticationUtil.getUserTypeEnum(), statusChangeData.description)
     }
 

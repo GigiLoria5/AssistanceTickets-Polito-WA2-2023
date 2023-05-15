@@ -12,6 +12,7 @@ import jakarta.validation.constraints.NotBlank
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
@@ -21,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile
 @RestController
 class ChatController(private val chatService: ChatService) {
 
+    @PreAuthorize("hasAuthority(@AuthUtil.ROLE_CLIENT) or hasAuthority(@AuthUtil.ROLE_EXPERT)")
     @GetMapping("/chats/{ticketId}/messages")
     fun getMessagesByTicketId(@PathVariable @Min(1) @Valid ticketId: Int): List<MessageDTO> {
         return chatService.getMessagesByTicketId(ticketId)

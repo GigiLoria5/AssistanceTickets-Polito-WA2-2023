@@ -38,22 +38,22 @@ class TicketServiceImpl(
     }
 
     override fun getTicketById(ticketId: Int): TicketDTO {
+        val ticket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
         if (AuthenticationUtil.isExpert() || AuthenticationUtil.isClient()) {
             val ticketAssociationsUtil = TicketAssociationsUtil(expertRepository, profileRepository)
-            if (!ticketAssociationsUtil.authenticatedUserIsAssociatedWithTicket(ticketId))
+            if (!ticketAssociationsUtil.authenticatedUserIsAssociatedWithTicket(ticket))
                 throw AccessDeniedException("")
         }
-        val ticket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
         return ticket.toDTO()
     }
 
     override fun getTicketStatusChangesByTicketId(ticketId: Int): List<TicketChangeDTO> {
+        val ticket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
         if (AuthenticationUtil.isExpert() || AuthenticationUtil.isClient()) {
             val ticketAssociationsUtil = TicketAssociationsUtil(expertRepository, profileRepository)
-            if (!ticketAssociationsUtil.authenticatedUserIsAssociatedWithTicket(ticketId))
+            if (!ticketAssociationsUtil.authenticatedUserIsAssociatedWithTicket(ticket))
                 throw AccessDeniedException("")
         }
-        val ticket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
         return ticket.ticketChanges.sortedWith(compareByDescending { it.time }).map { it.toDTO() }
     }
 
