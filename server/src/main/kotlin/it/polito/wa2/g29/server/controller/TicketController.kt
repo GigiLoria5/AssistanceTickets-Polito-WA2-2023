@@ -42,10 +42,10 @@ class TicketController(private val ticketService: TicketService) {
     }
 
     // POST /API/tickets -- create a new ticket or fail if some field is missing, or is not valid, or does not has correspondence or in case of duplicates
+    @PreAuthorize("hasAuthority(@AuthUtil.ROLE_CLIENT)")
     @PostMapping("/tickets")
     @ResponseStatus(HttpStatus.CREATED)
     fun createTicket(@RequestBody @Valid @NotNull ticket: NewTicketDTO): NewTicketIdDTO {
         return ticketService.createTicket(ticket)
     }
-
 }

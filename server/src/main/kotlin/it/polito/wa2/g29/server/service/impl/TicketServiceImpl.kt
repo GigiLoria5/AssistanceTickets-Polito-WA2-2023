@@ -7,6 +7,7 @@ import it.polito.wa2.g29.server.dto.ticket.NewTicketIdDTO
 import it.polito.wa2.g29.server.dto.toDTO
 import it.polito.wa2.g29.server.enums.TicketStatus
 import it.polito.wa2.g29.server.exception.DuplicateTicketException
+import it.polito.wa2.g29.server.exception.ProductNotFoundException
 import it.polito.wa2.g29.server.exception.TicketNotFoundException
 import it.polito.wa2.g29.server.model.toEntity
 import it.polito.wa2.g29.server.repository.ExpertRepository
@@ -36,26 +37,25 @@ class TicketServiceImpl(
     }
 
     override fun getTicketById(ticketId: Int): TicketDTO {
-        val username = AuthenticationUtil.getUsername()
-
-        if (AuthenticationUtil.isExpert() && !expertHasTicket(ticketId, username))
-            throw AccessDeniedException("")
-
-        if (AuthenticationUtil.isClient() && !clientHasTicket(ticketId, username))
-            throw AccessDeniedException("")
-
+        if (AuthenticationUtil.isExpert() || AuthenticationUtil.isClient())
+            checkExpertOrClientIsAssociatedWithTicket(ticketId)
         val ticket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
         return ticket.toDTO()
     }
 
     override fun getTicketStatusChangesByTicketId(ticketId: Int): List<TicketChangeDTO> {
+        if (AuthenticationUtil.isExpert() || AuthenticationUtil.isClient())
+            checkExpertOrClientIsAssociatedWithTicket(ticketId)
         val ticket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
         return ticket.ticketChanges.sortedWith(compareByDescending { it.time }).map { it.toDTO() }
     }
 
     override fun createTicket(newTicketDTO: NewTicketDTO): NewTicketIdDTO {
-        //in this function I try to create a new ticket, and I throw exceptions if it is not possible
-        val ticket = newTicketDTO.toEntity(productRepository, profileRepository)
+        val username = AuthenticationUtil.getUsername()
+        val customer = profileRepository.findProfileByEmail(username)!!
+        val product = productRepository.findByIdOrNull(newTicketDTO.productId) ?: throw ProductNotFoundException()
+        val ticket = newTicketDTO.toEntity(product, customer)
+
         //throw an exception if a not closed ticket for the same customer and product already exists
         if (ticketRepository.findTicketByCustomerAndProductAndStatusNot(
                 ticket.customer,
@@ -67,12 +67,23 @@ class TicketServiceImpl(
         return NewTicketIdDTO(ticketRepository.save(ticket).id!!)
     }
 
+    private fun checkExpertOrClientIsAssociatedWithTicket(ticketId: Int) {
+        val username = AuthenticationUtil.getUsername()
+        if (
+            (AuthenticationUtil.isExpert() && !expertHasTicket(ticketId, username))
+            ||
+            (AuthenticationUtil.isClient() && !clientHasTicket(ticketId, username))
+        )
+            throw AccessDeniedException("")
+    }
+
     private fun expertHasTicket(ticketId: Int, username: String): Boolean {
         val expert = expertRepository.findExpertByEmail(username)!!
         return expert.tickets.any {
             it.id == ticketId
         }
     }
+
     private fun clientHasTicket(ticketId: Int, username: String): Boolean {
         val client = profileRepository.findProfileByEmail(username)!!
         return client.tickets.any {

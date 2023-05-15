@@ -4,14 +4,9 @@ import it.polito.wa2.g29.server.dto.ticket.NewTicketDTO
 import it.polito.wa2.g29.server.enums.TicketPriority
 import it.polito.wa2.g29.server.enums.TicketStatus
 import it.polito.wa2.g29.server.enums.UserType
-import it.polito.wa2.g29.server.exception.ProductNotFoundException
-import it.polito.wa2.g29.server.exception.ProfileNotFoundException
-import it.polito.wa2.g29.server.repository.ProductRepository
-import it.polito.wa2.g29.server.repository.ProfileRepository
 import jakarta.persistence.*
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
-import org.springframework.data.repository.findByIdOrNull
 
 @Entity
 @EntityListeners(AuditingEntityListener::class)
@@ -86,10 +81,8 @@ class Ticket(
 }
 
 fun NewTicketDTO.toEntity(
-    productRepository: ProductRepository,
-    profileRepository: ProfileRepository
+    product: Product,
+    customer: Profile
 ): Ticket {
-    val product = productRepository.findByIdOrNull(productId) ?: throw ProductNotFoundException()
-    val customer = profileRepository.findByIdOrNull(customerId) ?: throw ProfileNotFoundException()
     return Ticket(title, description, product, customer)
 }

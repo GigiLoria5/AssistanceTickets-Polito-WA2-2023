@@ -373,9 +373,13 @@
 - GET `/API/tickets/{ticketId}/statusChanges`
 
     - Description: Allows to obtain a list of all status changes for a specific ticket
+    - Permissions allowed:
+      - The Client associated with the ticketId
+      - The Expert associated with the ticketId
+      - Managers
     - Request body: _None_
     - Response: `200 OK` (success)
-    - Error responses: `404 Not Found` (ticketId not found), `422 Unprocessable Entity` (validation of
+    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (ticketId not found), `422 Unprocessable Entity` (validation of
       ticketId failed) or `500 Internal Server Error` (generic error)
     - Response body: An array of objects, sorted by time descending, for each containing ticketId, currentExpertId,
       oldStatus, newStatus, description, changedBy and time. An error message in case of error
@@ -409,12 +413,13 @@
 - POST `/API/tickets`
 
     - Description: Allows to create a ticket
-    - Request body: customerId of the customer who opened the ticket, productId of the related product with issues and a
+    - Permissions allowed:
+      - Clients
+    - Request body: productId of the related product with issues and a
       title and description of the issue
 
       ```
       {
-        "customerId": 1,
         "productId": 1,
         "title": "No sound from TV speakers",
         "description": "I've checked all the connections and tried adjusting the settings, but I still can't hear any sound from the TV speakers."
@@ -422,7 +427,7 @@
       ```
 
     - Response: `201 Created` (success)
-    - Error responses: `404 Not Found` (customerId or productId not found), `409 Conflict` (a not closed
+    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (productId not found), `409 Conflict` (a not closed
       ticket for the same customer and product already exists), `422 Unprocessable Entity` (validation of
       request body failed) or `500 Internal Server Error` (generic error)
     - Response body: An object containing the id of the ticket created. An error message in case of error
