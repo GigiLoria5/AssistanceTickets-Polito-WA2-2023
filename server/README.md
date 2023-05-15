@@ -128,12 +128,13 @@
 - PUT `/API/profiles/{email}`
 
     - Description: Allows to update information of an existing profile
+    - Permissions allowed:
+      - The client associated with the specified email address
     - Request parameter: email of the user profile to update
-    - Request body: email, name, surname, phoneNumber, address, city and country of the profile to be updated
+    - Request body: name, surname, phoneNumber, address, city and country of the profile to be updated
 
       ```
       {
-        "email": "johnatan@group.com",
         "name": "John",
         "surname": "Green",
         "phoneNumber": "3163122442",
@@ -144,7 +145,7 @@
       ```
 
     - Response: `200 OK` (success)
-    - Error responses: `404 Not Found` (email not found), `409 Conflict` (email already exists or phoneNumber already
+    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (email not found), `409 Conflict` (phoneNumber already
       exists), `422 Unprocessable Entity` (validation of request body or email failed) or `500 Internal Server Error` (
       generic error)
     - Response body: An error message in case of error

@@ -1,6 +1,7 @@
 package it.polito.wa2.g29.server.controller
 
 import it.polito.wa2.g29.server.dto.ProfileDTO
+import it.polito.wa2.g29.server.dto.profile.EditProfileDTO
 import it.polito.wa2.g29.server.service.ProfileService
 import jakarta.validation.Valid
 import jakarta.validation.constraints.Email
@@ -25,7 +26,7 @@ class ProfileController(private val profileService: ProfileService) {
     }
 
     // POST /API/profiles -- create a new profile or fail if some field is missing, or is not valid, or in case of duplicates
-    @PreAuthorize("hasAuthority('ROLE_MANAGER')")
+    @PreAuthorize("hasAuthority(@AuthUtil.ROLE_MANAGER)")
     @PostMapping("/profiles")
     @ResponseStatus(HttpStatus.CREATED)
     fun createProfile(@RequestBody @Valid @NotNull profile: ProfileDTO) {
@@ -33,10 +34,11 @@ class ProfileController(private val profileService: ProfileService) {
     }
 
     // PUT /API/profiles/{email} -- modify a user profile {email} or fail if it does not exist
+    @PreAuthorize("hasAuthority(@AuthUtil.ROLE_CLIENT) and #email == @AuthUtil.username")
     @PutMapping("/profiles/{email}")
     @ResponseStatus(HttpStatus.OK)
     fun modifyProfile(
-        @RequestBody @Valid @NotNull newProfile: ProfileDTO,
+        @RequestBody @Valid @NotNull newProfile: EditProfileDTO,
         @PathVariable @NotBlank @Email @Pattern(regexp = ProfileDTO.EMAIL_PATTERN) email: String
     ) {
         profileService.modifyProfile(email, newProfile)

@@ -1,6 +1,7 @@
 package it.polito.wa2.g29.server.service.impl
 
 import it.polito.wa2.g29.server.dto.ProfileDTO
+import it.polito.wa2.g29.server.dto.profile.EditProfileDTO
 import it.polito.wa2.g29.server.dto.toDTO
 import it.polito.wa2.g29.server.enums.TicketStatus
 import it.polito.wa2.g29.server.exception.DuplicateProfileException
@@ -50,15 +51,10 @@ class ProfileServiceImpl(
         profileRepository.save(profile)
     }
 
-    override fun modifyProfile(email: String, newProfile: ProfileDTO) {
+    override fun modifyProfile(email: String, newProfile: EditProfileDTO) {
         val profile = profileRepository.findProfileByEmail(email) ?: throw ProfileNotFoundException()
-
-        if (newProfile.email != profile.email && profileRepository.findProfileByEmail(newProfile.email) != null)
-            throw DuplicateProfileException("a profile with the same email already exists")
         if (newProfile.phoneNumber != profile.phoneNumber && profileRepository.findProfileByPhoneNumber(newProfile.phoneNumber) != null)
             throw DuplicateProfileException("a profile with the same phone number already exists")
-
-        newProfile.profileId = profile.id
 
         profile.update(newProfile)
         profileRepository.save(profile)
