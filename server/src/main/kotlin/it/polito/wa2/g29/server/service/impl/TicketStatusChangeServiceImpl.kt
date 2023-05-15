@@ -10,17 +10,22 @@ import it.polito.wa2.g29.server.exception.NotValidStatusChangeException
 import it.polito.wa2.g29.server.exception.TicketNotFoundException
 import it.polito.wa2.g29.server.model.Ticket
 import it.polito.wa2.g29.server.repository.ExpertRepository
+import it.polito.wa2.g29.server.repository.ProfileRepository
 import it.polito.wa2.g29.server.repository.TicketRepository
 import it.polito.wa2.g29.server.service.TicketStatusChangeService
+import it.polito.wa2.g29.server.utils.AuthenticationUtil
+import it.polito.wa2.g29.server.utils.TicketAssociationsUtil
 import it.polito.wa2.g29.server.utils.TicketStatusChangeRules
 import jakarta.transaction.Transactional
 import org.springframework.data.repository.findByIdOrNull
+import org.springframework.security.access.AccessDeniedException
 import org.springframework.stereotype.Service
 
 @Service
 class TicketStatusChangeServiceImpl(
     private val ticketRepository: TicketRepository,
-    private val expertRepository: ExpertRepository
+    private val expertRepository: ExpertRepository,
+    private val profileRepository: ProfileRepository
 ) : TicketStatusChangeService {
 
     @Transactional
@@ -38,8 +43,13 @@ class TicketStatusChangeServiceImpl(
         newStatus: TicketStatus,
         statusChangeData: TicketStatusChangeDTO
     ) {
+        if (AuthenticationUtil.isExpert() || AuthenticationUtil.isClient()) {
+            val ticketAssociationsUtil = TicketAssociationsUtil(expertRepository, profileRepository)
+            if (!ticketAssociationsUtil.authenticatedUserIsAssociatedWithTicket(ticketId))
+                throw AccessDeniedException("")
+        }
         val ticket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
-        updateTicketStatus(ticket, newStatus, statusChangeData.changedBy, statusChangeData.description)
+        updateTicketStatus(ticket, newStatus, AuthenticationUtil.getUserTypeEnum(), statusChangeData.description)
     }
 
     //In this function I try to create a status change and its log, and thrown an exception if it not possible

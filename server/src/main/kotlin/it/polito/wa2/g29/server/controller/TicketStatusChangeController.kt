@@ -30,6 +30,7 @@ class TicketStatusChangeController(private val ticketStatusChangeService: Ticket
     }
 
     // PUT /API/tickets/{ticketId}/stop -Allows to stop the progress of an "IN_PROGRESS" ticket. The ticket status will be "OPEN"
+    @PreAuthorize("hasAuthority(@AuthUtil.ROLE_MANAGER) or hasAuthority(@AuthUtil.ROLE_EXPERT)")
     @PutMapping("/tickets/{ticketId}/stop")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun stopTicket(
@@ -59,7 +60,7 @@ class TicketStatusChangeController(private val ticketStatusChangeService: Ticket
         ticketStatusChangeService.ticketStatusChange(
             ticketId,
             TicketStatus.REOPENED,
-            TicketStatusChangeDTO(statusChangeData.changedBy, statusChangeData.description)
+            TicketStatusChangeDTO(statusChangeData.description)
         )
     }
 

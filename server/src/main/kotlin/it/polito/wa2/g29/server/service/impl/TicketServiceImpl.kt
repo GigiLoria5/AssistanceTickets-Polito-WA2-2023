@@ -16,6 +16,7 @@ import it.polito.wa2.g29.server.repository.ProfileRepository
 import it.polito.wa2.g29.server.repository.TicketRepository
 import it.polito.wa2.g29.server.service.TicketService
 import it.polito.wa2.g29.server.utils.AuthenticationUtil
+import it.polito.wa2.g29.server.utils.TicketAssociationsUtil
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.stereotype.Service
@@ -37,15 +38,21 @@ class TicketServiceImpl(
     }
 
     override fun getTicketById(ticketId: Int): TicketDTO {
-        if (AuthenticationUtil.isExpert() || AuthenticationUtil.isClient())
-            checkExpertOrClientIsAssociatedWithTicket(ticketId)
+        if (AuthenticationUtil.isExpert() || AuthenticationUtil.isClient()) {
+            val ticketAssociationsUtil = TicketAssociationsUtil(expertRepository, profileRepository)
+            if (!ticketAssociationsUtil.authenticatedUserIsAssociatedWithTicket(ticketId))
+                throw AccessDeniedException("")
+        }
         val ticket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
         return ticket.toDTO()
     }
 
     override fun getTicketStatusChangesByTicketId(ticketId: Int): List<TicketChangeDTO> {
-        if (AuthenticationUtil.isExpert() || AuthenticationUtil.isClient())
-            checkExpertOrClientIsAssociatedWithTicket(ticketId)
+        if (AuthenticationUtil.isExpert() || AuthenticationUtil.isClient()) {
+            val ticketAssociationsUtil = TicketAssociationsUtil(expertRepository, profileRepository)
+            if (!ticketAssociationsUtil.authenticatedUserIsAssociatedWithTicket(ticketId))
+                throw AccessDeniedException("")
+        }
         val ticket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
         return ticket.ticketChanges.sortedWith(compareByDescending { it.time }).map { it.toDTO() }
     }
@@ -67,28 +74,5 @@ class TicketServiceImpl(
         return NewTicketIdDTO(ticketRepository.save(ticket).id!!)
     }
 
-    private fun checkExpertOrClientIsAssociatedWithTicket(ticketId: Int) {
-        val username = AuthenticationUtil.getUsername()
-        if (
-            (AuthenticationUtil.isExpert() && !expertHasTicket(ticketId, username))
-            ||
-            (AuthenticationUtil.isClient() && !clientHasTicket(ticketId, username))
-        )
-            throw AccessDeniedException("")
-    }
-
-    private fun expertHasTicket(ticketId: Int, username: String): Boolean {
-        val expert = expertRepository.findExpertByEmail(username)!!
-        return expert.tickets.any {
-            it.id == ticketId
-        }
-    }
-
-    private fun clientHasTicket(ticketId: Int, username: String): Boolean {
-        val client = profileRepository.findProfileByEmail(username)!!
-        return client.tickets.any {
-            it.id == ticketId
-        }
-    }
 
 }

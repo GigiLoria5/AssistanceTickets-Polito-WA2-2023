@@ -448,7 +448,7 @@
       ```
       {
         "expertId": 1,
-        "priorityLevel": LOW
+        "priorityLevel": "LOW"
         "description": ""
       }
       ```
@@ -469,17 +469,19 @@
 
     - Description: Allows to stop an "IN_PROGRESS" ticket. Upon successful completion of the request, the ticket status
       will be "OPEN"
-    - Request body: changedBy and an optional description.
+    - Permissions allowed:
+      - The Expert associated with the ticketId
+      - Managers
+    - Request body: an optional description.
 
       ```
       {
-        "changedBy":"EXPERT"
         "description": "I'm not able to solve this issue"
       }
       ```
 
     - Response: `204 No Content` (success)
-    - Error responses: `404 Not Found` (ticketId not found), `422 Unprocessable Entity` (validation of
+    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (ticketId not found), `422 Unprocessable Entity` (validation of
       request body or ticketId failed or ticket is not in progress) or `500 Internal Server Error` (generic error)
     - Response body: An error message in case of error
 
