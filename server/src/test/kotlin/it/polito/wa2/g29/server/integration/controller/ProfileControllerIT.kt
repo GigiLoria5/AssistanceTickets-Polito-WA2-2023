@@ -7,9 +7,7 @@ import it.polito.wa2.g29.server.model.Profile
 import it.polito.wa2.g29.server.repository.ProductRepository
 import it.polito.wa2.g29.server.repository.ProfileRepository
 import it.polito.wa2.g29.server.repository.TicketRepository
-import it.polito.wa2.g29.server.utils.ProductTestUtils
-import it.polito.wa2.g29.server.utils.ProfileTestUtils
-import it.polito.wa2.g29.server.utils.TicketTestUtils
+import it.polito.wa2.g29.server.utils.*
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance

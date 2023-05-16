@@ -580,7 +580,7 @@ class TicketControllerIT : AbstractTestcontainersTest() {
 
 
         val ticketStatusChangeDTO = TicketStatusChangeDTO(
-            changedBy = UserType.EXPERT,
+           // changedBy = UserType.EXPERT,
             description = null
         )
 
@@ -599,7 +599,7 @@ class TicketControllerIT : AbstractTestcontainersTest() {
     @Test
     fun stopTicketByIdNotFound() {
         val ticketStatusChangeDTO = TicketStatusChangeDTO(
-            changedBy = UserType.EXPERT,
+           // changedBy = UserType.EXPERT,
             description = null
         )
 
@@ -621,7 +621,7 @@ class TicketControllerIT : AbstractTestcontainersTest() {
     )
     fun stopTicketByInvalidId(id: Int) {
         val ticketStatusChangeDTO = TicketStatusChangeDTO(
-            changedBy = UserType.EXPERT,
+          //  changedBy = UserType.EXPERT,
             description = null
         )
 
@@ -654,7 +654,7 @@ class TicketControllerIT : AbstractTestcontainersTest() {
 
 
         val ticketStatusChangeDTO = TicketStatusChangeDTO(
-            changedBy = UserType.EXPERT,
+           // changedBy = UserType.EXPERT,
             description = null
         )
 
@@ -691,7 +691,7 @@ class TicketControllerIT : AbstractTestcontainersTest() {
 
 
         val ticketStatusChangeDTO = TicketStatusChangeDTO(
-            changedBy = UserType.EXPERT,
+          //  changedBy = UserType.EXPERT,
             description = null
         )
 
@@ -710,7 +710,7 @@ class TicketControllerIT : AbstractTestcontainersTest() {
     @Test
     fun resolveTicketByIdNotFound() {
         val ticketStatusChangeDTO = TicketStatusChangeDTO(
-            changedBy = UserType.EXPERT,
+         //   changedBy = UserType.EXPERT,
             description = null
         )
 
@@ -732,7 +732,7 @@ class TicketControllerIT : AbstractTestcontainersTest() {
     )
     fun resolveTicketByInvalidId(id: Int) {
         val ticketStatusChangeDTO = TicketStatusChangeDTO(
-            changedBy = UserType.EXPERT,
+         //   changedBy = UserType.EXPERT,
             description = null
         )
 
@@ -765,7 +765,7 @@ class TicketControllerIT : AbstractTestcontainersTest() {
 
 
         val ticketStatusChangeDTO = TicketStatusChangeDTO(
-            changedBy = UserType.EXPERT,
+         //   changedBy = UserType.EXPERT,
             description = null
         )
 
@@ -803,7 +803,7 @@ class TicketControllerIT : AbstractTestcontainersTest() {
 
 
         val ticketStatusChangeDTO = TicketStatusChangeDTO(
-            changedBy = UserType.CUSTOMER,
+        //    changedBy = UserType.CUSTOMER,
             description = "description"
         )
 
@@ -822,7 +822,7 @@ class TicketControllerIT : AbstractTestcontainersTest() {
     @Test
     fun reopenTicketByIdNotFound() {
         val ticketStatusChangeDTO = TicketStatusChangeDTO(
-            changedBy = UserType.CUSTOMER,
+         //   changedBy = UserType.CUSTOMER,
             description = "description"
         )
 
@@ -853,7 +853,7 @@ class TicketControllerIT : AbstractTestcontainersTest() {
 
 
         val ticketStatusChangeDTO = TicketStatusChangeDTO(
-            changedBy = UserType.CUSTOMER,
+         //   changedBy = UserType.CUSTOMER,
             description = "description"
         )
 
@@ -875,7 +875,7 @@ class TicketControllerIT : AbstractTestcontainersTest() {
     )
     fun reopenTicketInvalidId(id: Int) {
         val ticketStatusChangeDTO = TicketStatusChangeDTO(
-            changedBy = UserType.CUSTOMER,
+        //    changedBy = UserType.CUSTOMER,
             description = "description"
         )
 
@@ -905,7 +905,7 @@ class TicketControllerIT : AbstractTestcontainersTest() {
 
 
         val ticketStatusChangeDTO = TicketStatusChangeDTO(
-            changedBy = UserType.CUSTOMER,
+          //  changedBy = UserType.CUSTOMER,
             description = null
         )
 
@@ -942,7 +942,7 @@ class TicketControllerIT : AbstractTestcontainersTest() {
 
 
         val ticketStatusChangeDTO = TicketStatusChangeDTO(
-            changedBy = UserType.CUSTOMER,
+         //   changedBy = UserType.CUSTOMER,
             description = null
         )
 
@@ -961,7 +961,7 @@ class TicketControllerIT : AbstractTestcontainersTest() {
     @Test
     fun closeTicketByIdNotFound() {
         val ticketStatusChangeDTO = TicketStatusChangeDTO(
-            changedBy = UserType.CUSTOMER,
+        //    changedBy = UserType.CUSTOMER,
             description = null
         )
 
@@ -983,7 +983,7 @@ class TicketControllerIT : AbstractTestcontainersTest() {
     )
     fun closeTicketInvalidId(id: Int) {
         val ticketStatusChangeDTO = TicketStatusChangeDTO(
-            changedBy = UserType.CUSTOMER,
+         //   changedBy = UserType.CUSTOMER,
             description = null
         )
 
@@ -1013,7 +1013,7 @@ class TicketControllerIT : AbstractTestcontainersTest() {
 
 
         val ticketStatusChangeDTO = TicketStatusChangeDTO(
-            changedBy = UserType.CUSTOMER,
+        //    changedBy = UserType.CUSTOMER,
             description = null
         )
 

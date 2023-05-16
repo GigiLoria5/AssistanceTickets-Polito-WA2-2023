@@ -126,7 +126,7 @@ class ChatServiceIT : AbstractTestcontainersTest() {
         val ticket = testTickets[0]
         val ticketExpert = testExperts[0]
         TicketTestUtils.startTicket(ticketRepository, ticket, ticketExpert, TicketPriority.LOW)
-        val newMessageDTO = TestChatUtils.getNewMessageDTO(UserType.MANAGER, "Message", null)
+        val newMessageDTO = TestChatUtils.getNewMessageDTO("Message", null)
 
         assertThrows<UserTypeNotValidException> {
             chatService.addMessageWithAttachments(ticket.id!!, newMessageDTO)
@@ -140,7 +140,7 @@ class ChatServiceIT : AbstractTestcontainersTest() {
         val ticket = testTickets[0]
         val ticketExpert = testExperts[0]
         TicketTestUtils.startTicket(ticketRepository, ticket, ticketExpert, TicketPriority.LOW)
-        val newMessageDTO = TestChatUtils.getNewMessageDTO(UserType.EXPERT, "Message", null)
+        val newMessageDTO = TestChatUtils.getNewMessageDTO("Message", null)
 
         assertThrows<TicketNotFoundException> {
             chatService.addMessageWithAttachments(Int.MAX_VALUE, newMessageDTO)
@@ -154,7 +154,7 @@ class ChatServiceIT : AbstractTestcontainersTest() {
         val ticket = testTickets[0]
         val ticketExpert = testExperts[0]
         TicketTestUtils.startTicket(ticketRepository, ticket, ticketExpert, TicketPriority.LOW)
-        val newMessageDTO = TestChatUtils.getNewMessageDTO(UserType.CUSTOMER, "Message", AttachmentType.OTHER)
+        val newMessageDTO = TestChatUtils.getNewMessageDTO("Message", AttachmentType.OTHER)
         val chatStatusTransactions =
             listOf(TicketStatus.OPEN, TicketStatus.IN_PROGRESS, TicketStatus.CLOSED, TicketStatus.REOPENED)
 
@@ -181,13 +181,12 @@ class ChatServiceIT : AbstractTestcontainersTest() {
         val ticket = testTickets[0]
         val ticketExpert = testExperts[0]
         TicketTestUtils.startTicket(ticketRepository, ticket, ticketExpert, TicketPriority.LOW)
-        val newMessageDTO = TestChatUtils.getNewMessageDTO(UserType.EXPERT, "Message", null)
+        val newMessageDTO = TestChatUtils.getNewMessageDTO("Message", null)
 
         val messageId = chatService.addMessageWithAttachments(ticket.id!!, newMessageDTO).messageId
 
         val actualMessage = messageRepository.findByIdOrNull(messageId)
         assert(actualMessage != null)
-        assert(newMessageDTO.sender == actualMessage?.sender)
         assert(newMessageDTO.content == actualMessage?.content)
         assert(ticketExpert == actualMessage?.expert)
         assert(ticket == actualMessage?.ticket)
@@ -204,14 +203,12 @@ class ChatServiceIT : AbstractTestcontainersTest() {
         val ticketExpert = testExperts[0]
         TicketTestUtils.startTicket(ticketRepository, ticket, ticketExpert, TicketPriority.LOW)
 
-        val userType = if (attachmentType.ordinal % 2 == 0) UserType.EXPERT else UserType.CUSTOMER
-        val newMessageDTO = TestChatUtils.getNewMessageDTO(userType, "Message", attachmentType)
+        val newMessageDTO = TestChatUtils.getNewMessageDTO("Message", attachmentType)
 
         val messageId = chatService.addMessageWithAttachments(ticket.id!!, newMessageDTO).messageId
 
         val actualMessage = messageRepository.findByIdOrNull(messageId)
         assert(actualMessage != null)
-        assert(newMessageDTO.sender == actualMessage?.sender)
         assert(newMessageDTO.content == actualMessage?.content)
         assert(ticketExpert == actualMessage?.expert)
         assert(ticket == actualMessage?.ticket)

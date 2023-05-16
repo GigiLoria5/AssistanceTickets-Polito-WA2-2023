@@ -240,7 +240,6 @@ class TicketServiceIT : AbstractTestcontainersTest() {
     @Rollback
     fun createTicket() {
         val newTicketDTO = NewTicketDTO(
-            customerId = TicketTestUtils.profiles[0].id!!,
             productId = TicketTestUtils.products[1].id!!,
             title = "newtitle",
             description = "newdescription"
@@ -256,7 +255,6 @@ class TicketServiceIT : AbstractTestcontainersTest() {
     @Rollback
     fun createTicketDuplicateCustomerProduct() {
         val newTicketDTO = NewTicketDTO(
-            customerId = TicketTestUtils.profiles[0].id!!,
             productId = TicketTestUtils.products[1].id!!,
             title = "newtitle",
             description = "newdescription"
@@ -337,7 +335,7 @@ class TicketServiceIT : AbstractTestcontainersTest() {
         val expectedStatus = TicketStatus.RESOLVED
 
         val statusChangeData = TicketStatusChangeDTO(
-            changedBy = UserType.CUSTOMER,
+            //changedBy = UserType.CUSTOMER,
             description = null
         )
 
@@ -352,7 +350,7 @@ class TicketServiceIT : AbstractTestcontainersTest() {
     @Transactional
     fun ticketStatusChangeNotFound() {
         val statusChangeData = TicketStatusChangeDTO(
-            changedBy = UserType.CUSTOMER,
+            //changedBy = UserType.CUSTOMER,
             description = null
         )
 
@@ -368,7 +366,7 @@ class TicketServiceIT : AbstractTestcontainersTest() {
         val newStatus = TicketStatus.REOPENED
 
         val statusChangeData = TicketStatusChangeDTO(
-            changedBy = UserType.CUSTOMER,
+            //changedBy = UserType.CUSTOMER,
             description = null
         )
 

@@ -1,5 +1,6 @@
 package it.polito.wa2.g29.server.integration.service
 
+import it.polito.wa2.g29.server.dto.profile.EditProfileDTO
 import it.polito.wa2.g29.server.dto.toDTO
 import it.polito.wa2.g29.server.exception.DuplicateProfileException
 import it.polito.wa2.g29.server.exception.ProfileNotFoundException
@@ -127,16 +128,20 @@ class ProfileServiceIT : AbstractTestcontainersTest() {
     @Rollback
     fun modifyProfilePartial() {
         val oldProfileDTO = testProfiles[0].toDTO()
-        val newProfileDTO = oldProfileDTO.copy(
-            email = "new_mail@test.com",
-            phoneNumber = "3333333333"
+        val newProfileDTO = EditProfileDTO(
+            oldProfileDTO.name,
+            oldProfileDTO.surname,
+            phoneNumber = "3333333333",
+            oldProfileDTO.address,
+            oldProfileDTO.city,
+            oldProfileDTO.country,
+            null
         )
 
-        profileService.modifyProfile(oldProfileDTO.email, newProfileDTO)
+        profileService.modifyProfile(newProfileDTO)
 
         assert(profileRepository.findAll().size == testProfiles.size)
-        val actualNewProfileDTO = profileService.getProfileByEmail(newProfileDTO.email)
-        assert(actualNewProfileDTO.email == newProfileDTO.email)
+        val actualNewProfileDTO = profileService.getProfileByEmail(oldProfileDTO.email)
         assert(actualNewProfileDTO.name == oldProfileDTO.name)
         assert(actualNewProfileDTO.surname == oldProfileDTO.surname)
         assert(actualNewProfileDTO.phoneNumber == newProfileDTO.phoneNumber)
@@ -150,48 +155,20 @@ class ProfileServiceIT : AbstractTestcontainersTest() {
     @Rollback
     fun modifyProfileComplete() {
         val oldProfileDTO = testProfiles[0].toDTO()
-        val newProfileDTO = oldProfileDTO.copy(
-            email = "new_mail@test.com",
+        val newProfileDTO = EditProfileDTO(
             name = "NewName",
             surname = "NewSurname",
             phoneNumber = "333-333-3333",
             address = "NewAddress",
             city = "NewCity",
-            country = "NewCountry"
+            country = "NewCountry",
+            null
         )
 
-        profileService.modifyProfile(oldProfileDTO.email, newProfileDTO)
+        profileService.modifyProfile(newProfileDTO)
 
         assert(profileRepository.findAll().size == testProfiles.size)
-        val actualNewProfileDTO = profileService.getProfileByEmail(newProfileDTO.email)
-        assert(actualNewProfileDTO.email == newProfileDTO.email)
-        assert(actualNewProfileDTO.name == newProfileDTO.name)
-        assert(actualNewProfileDTO.surname == newProfileDTO.surname)
-        assert(actualNewProfileDTO.phoneNumber == newProfileDTO.phoneNumber)
-        assert(actualNewProfileDTO.address == newProfileDTO.address)
-        assert(actualNewProfileDTO.city == newProfileDTO.city)
-        assert(actualNewProfileDTO.country == newProfileDTO.country)
-    }
-
-    @Test
-    @Transactional
-    @Rollback
-    fun modifyProfileCompleteSameEmail() {
-        val oldProfileDTO = testProfiles[0].toDTO()
-        val newProfileDTO = oldProfileDTO.copy(
-            name = "NewName",
-            surname = "NewSurname",
-            phoneNumber = "333-333-3333",
-            address = "NewAddress",
-            city = "NewCity",
-            country = "NewCountry"
-        )
-
-        profileService.modifyProfile(oldProfileDTO.email, newProfileDTO)
-
-        assert(profileRepository.findAll().size == testProfiles.size)
-        val actualNewProfileDTO = profileService.getProfileByEmail(newProfileDTO.email)
-        assert(actualNewProfileDTO.email == oldProfileDTO.email)
+        val actualNewProfileDTO = profileService.getProfileByEmail(oldProfileDTO.email)
         assert(actualNewProfileDTO.name == newProfileDTO.name)
         assert(actualNewProfileDTO.surname == newProfileDTO.surname)
         assert(actualNewProfileDTO.phoneNumber == newProfileDTO.phoneNumber)
@@ -205,87 +182,42 @@ class ProfileServiceIT : AbstractTestcontainersTest() {
     @Rollback
     fun modifyProfileCompleteSamePhoneNumber() {
         val oldProfileDTO = testProfiles[0].toDTO()
-        val newProfileDTO = oldProfileDTO.copy(
-            email = "new_mail@test.com",
+        val newProfileDTO = EditProfileDTO(
             name = "NewName",
             surname = "NewSurname",
+            phoneNumber = oldProfileDTO.phoneNumber,
             address = "NewAddress",
             city = "NewCity",
-            country = "NewCountry"
+            country = "NewCountry",
+            null
         )
 
-        profileService.modifyProfile(oldProfileDTO.email, newProfileDTO)
+        profileService.modifyProfile(newProfileDTO)
 
         assert(profileRepository.findAll().size == testProfiles.size)
-        val actualNewProfileDTO = profileService.getProfileByEmail(newProfileDTO.email)
-        assert(actualNewProfileDTO.email == newProfileDTO.email)
+        val actualNewProfileDTO = profileService.getProfileByEmail(oldProfileDTO.email)
         assert(actualNewProfileDTO.name == newProfileDTO.name)
         assert(actualNewProfileDTO.surname == newProfileDTO.surname)
         assert(actualNewProfileDTO.phoneNumber == oldProfileDTO.phoneNumber)
         assert(actualNewProfileDTO.address == newProfileDTO.address)
         assert(actualNewProfileDTO.city == newProfileDTO.city)
         assert(actualNewProfileDTO.country == newProfileDTO.country)
-    }
-
-    @Test
-    @Transactional
-    @Rollback
-    fun modifyProfileCompleteSameEmailAndPhoneNumber() {
-        val oldProfileDTO = testProfiles[0].toDTO()
-        val newProfileDTO = oldProfileDTO.copy(
-            name = "NewName",
-            surname = "NewSurname",
-            address = "NewAddress",
-            city = "NewCity",
-            country = "NewCountry"
-        )
-
-        profileService.modifyProfile(oldProfileDTO.email, newProfileDTO)
-
-        assert(profileRepository.findAll().size == testProfiles.size)
-        val actualNewProfileDTO = profileService.getProfileByEmail(newProfileDTO.email)
-        assert(actualNewProfileDTO.email == oldProfileDTO.email)
-        assert(actualNewProfileDTO.name == newProfileDTO.name)
-        assert(actualNewProfileDTO.surname == newProfileDTO.surname)
-        assert(actualNewProfileDTO.phoneNumber == oldProfileDTO.phoneNumber)
-        assert(actualNewProfileDTO.address == newProfileDTO.address)
-        assert(actualNewProfileDTO.city == newProfileDTO.city)
-        assert(actualNewProfileDTO.country == newProfileDTO.country)
-    }
-
-    @Test
-    fun modifyProfileEmailNotFound() {
-        val oldProfileDTO = testProfiles[0].toDTO()
-        val newProfileDTO = oldProfileDTO.copy(
-            phoneNumber = "333-333-3333"
-        )
-
-        assertThrows<ProfileNotFoundException> {
-            profileService.modifyProfile("non_existing_email@fake.com", newProfileDTO)
-        }
-    }
-
-    @Test
-    fun modifyProfileDuplicateEmail() {
-        val oldProfileDTO = testProfiles[0].toDTO()
-        val newProfileDTO = oldProfileDTO.copy(
-            email = testProfiles[1].email
-        )
-
-        assertThrows<DuplicateProfileException> {
-            profileService.modifyProfile(oldProfileDTO.email, newProfileDTO)
-        }
     }
 
     @Test
     fun modifyProfileDuplicatePhoneNumber() {
-        val oldProfileDTO = testProfiles[0].toDTO()
-        val newProfileDTO = oldProfileDTO.copy(
-            phoneNumber = testProfiles[1].phoneNumber
+        val newProfileDTO = EditProfileDTO(
+            name = "NewName",
+            surname = "NewSurname",
+            phoneNumber = testProfiles[1].phoneNumber,
+            address = "NewAddress",
+            city = "NewCity",
+            country = "NewCountry",
+            null
         )
 
         assertThrows<DuplicateProfileException> {
-            profileService.modifyProfile(oldProfileDTO.email, newProfileDTO)
+            profileService.modifyProfile(newProfileDTO)
         }
     }
 }
