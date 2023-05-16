@@ -15,6 +15,7 @@ import it.polito.wa2.g29.server.service.TicketStatusChangeService
 import it.polito.wa2.g29.server.utils.ExpertTestUtils
 import it.polito.wa2.g29.server.utils.ProductTestUtils
 import it.polito.wa2.g29.server.utils.ProfileTestUtils
+import it.polito.wa2.g29.server.utils.SecurityTestUtils
 import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -33,7 +34,7 @@ import org.springframework.transaction.annotation.Transactional
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@AutoConfigureMockMvc(addFilters = false)
+@AutoConfigureMockMvc
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ExpertControllerIT : AbstractTestcontainersTest() {
     @Autowired
@@ -73,6 +74,7 @@ class ExpertControllerIT : AbstractTestcontainersTest() {
     @Transactional
     @Rollback
     fun getAllExpertsEmpty() {
+        SecurityTestUtils.setManager()
         expertRepository.deleteAll()
         mockMvc
             .perform(get("/API/experts").contentType("application/json"))
@@ -85,7 +87,8 @@ class ExpertControllerIT : AbstractTestcontainersTest() {
     }
 
     @Test
-    fun getAllExperts() {
+    fun getAllExpertsManager() {
+        SecurityTestUtils.setManager()
         mockMvc
             .perform(get("/API/experts").contentType("application/json"))
             .andExpectAll(
@@ -105,12 +108,29 @@ class ExpertControllerIT : AbstractTestcontainersTest() {
             )
     }
 
+    @Test
+    fun getAllExpertsClient() {
+        SecurityTestUtils.setClient(testProfiles[0].email)
+        mockMvc
+            .perform(get("/API/experts").contentType("application/json"))
+            .andExpect(status().isUnauthorized)
+    }
+
+    @Test
+    fun getAllExpertsExpert() {
+        SecurityTestUtils.setExpert(testExperts[0].email)
+        mockMvc
+            .perform(get("/API/experts").contentType("application/json"))
+            .andExpect(status().isUnauthorized)
+    }
+
     /////////////////////////////////////////////////////////////////////
     ////// GET /API/experts/{expertId}
     /////////////////////////////////////////////////////////////////////
 
     @Test
-    fun getExpertById() {
+    fun getExpertByIdExpert() {
+        SecurityTestUtils.setExpert(testExperts[0].email)
         val expert = testExperts[0]
         mockMvc
             .perform(get("/API/experts/${expert.id}").contentType("application/json"))
@@ -129,7 +149,37 @@ class ExpertControllerIT : AbstractTestcontainersTest() {
     }
 
     @Test
+    fun getExpertByIdManager() {
+        SecurityTestUtils.setManager()
+        val expert = testExperts[0]
+        mockMvc
+            .perform(get("/API/experts/${expert.id}").contentType("application/json"))
+            .andExpectAll(
+                status().isOk,
+                content().contentType(MediaType.APPLICATION_JSON),
+                jsonPath("$.expertId").value(expert.id),
+                jsonPath("$.name").value(expert.name),
+                jsonPath("$.surname").value(expert.surname),
+                jsonPath("$.email").value(expert.email),
+                jsonPath("$.country").value(expert.country),
+                jsonPath("$.city").value(expert.city),
+                jsonPath("$.skills").isArray,
+                jsonPath<List<SkillDTO>>("$.skills", hasSize(expert.skills.size))
+            )
+    }
+
+    @Test
+    fun getExpertByIdClient() {
+        SecurityTestUtils.setClient(testProfiles[0].email)
+        val expert = testExperts[0]
+        mockMvc
+            .perform(get("/API/experts/${expert.id}").contentType("application/json"))
+            .andExpect(status().isUnauthorized)
+    }
+
+    @Test
     fun getExpertByIdNotFound() {
+        SecurityTestUtils.setManager()
         val expertId = Int.MAX_VALUE
 
         mockMvc
@@ -142,6 +192,7 @@ class ExpertControllerIT : AbstractTestcontainersTest() {
         ints = [0, -1, -2, Int.MIN_VALUE]
     )
     fun getExpertByIdWrongExpertIdValue(id: Int) {
+        SecurityTestUtils.setManager()
         mockMvc
             .perform(get("/API/experts/${id}").contentType("application/json"))
             .andExpect(status().isUnprocessableEntity)
@@ -149,6 +200,7 @@ class ExpertControllerIT : AbstractTestcontainersTest() {
 
     @Test
     fun getExpertByIdWrongExpertIdType() {
+        SecurityTestUtils.setManager()
         mockMvc
             .perform(get("/API/experts/wrongTypeId").contentType("application/json"))
             .andExpect(status().isUnprocessableEntity)
@@ -161,7 +213,7 @@ class ExpertControllerIT : AbstractTestcontainersTest() {
     @Test
     @Transactional
     @Rollback
-    fun getStatusChangesByExpertIdWithSomeChanges() {
+    fun getStatusChangesByExpertIdWithSomeChangesManager() {
         val expert = testExperts[0]
         val ticketOne = Ticket("title1", "description1", testProducts[0], testProfiles[0]).apply {
             status = TicketStatus.IN_PROGRESS
@@ -173,6 +225,7 @@ class ExpertControllerIT : AbstractTestcontainersTest() {
         }
         ExpertTestUtils.addTicket(ticketRepository, expert, ticketOne)
         ExpertTestUtils.addTicket(ticketRepository, expert, ticketTwo)
+        SecurityTestUtils.setExpert(expert.email)
         ExpertTestUtils.addTicketStatusChange(
             ticketStatusChangeService,
             expert,
@@ -181,6 +234,7 @@ class ExpertControllerIT : AbstractTestcontainersTest() {
             UserType.EXPERT,
             ""
         )
+        SecurityTestUtils.setClient(testProfiles[0].email)
         ExpertTestUtils.addTicketStatusChange(
             ticketStatusChangeService,
             expert,
@@ -189,6 +243,77 @@ class ExpertControllerIT : AbstractTestcontainersTest() {
             UserType.CUSTOMER,
             "It works now"
         )
+        SecurityTestUtils.setExpert(expert.email)
+        ExpertTestUtils.addTicketStatusChange(
+            ticketStatusChangeService,
+            expert,
+            ticketTwo,
+            TicketStatus.RESOLVED,
+            UserType.EXPERT,
+            "The issue has been resolved"
+        )
+        ExpertTestUtils.addTicketStatusChange(
+            ticketStatusChangeService,
+            expert,
+            ticketTwo,
+            TicketStatus.CLOSED,
+            UserType.EXPERT,
+            null
+        )
+
+        SecurityTestUtils.setManager()
+        mockMvc
+            .perform(get("/API/experts/${expert.id}/statusChanges").contentType("application/json"))
+            .andExpectAll(
+                status().isOk,
+                content().contentType(MediaType.APPLICATION_JSON),
+                jsonPath("$").isArray,
+                jsonPath("$").isNotEmpty,
+                jsonPath<List<TicketChangeDTO>>("$", hasSize(3)),
+                jsonPath("$[*].ticketId").value(containsInAnyOrder(ticketOne.id, ticketTwo.id, ticketTwo.id)),
+                jsonPath("$[*].currentExpertId").value(hasItem(expert.id)),
+                jsonPath("$[*].oldStatus").exists(),
+                jsonPath("$[*].newStatus").exists(),
+                jsonPath("$[*].changedBy").value(hasItem(UserType.EXPERT.toString())),
+                jsonPath("$[*].description").exists(),
+                jsonPath("$[*].time").exists()
+            )
+    }
+
+    @Test
+    @Transactional
+    @Rollback
+    fun getStatusChangesByExpertIdWithSomeChangesExpert() {
+        val expert = testExperts[0]
+        val ticketOne = Ticket("title1", "description1", testProducts[0], testProfiles[0]).apply {
+            status = TicketStatus.IN_PROGRESS
+            priorityLevel = TicketPriority.LOW
+        }
+        val ticketTwo = Ticket("title2", "description2", testProducts[0], testProfiles[1]).apply {
+            status = TicketStatus.IN_PROGRESS
+            priorityLevel = TicketPriority.LOW
+        }
+        ExpertTestUtils.addTicket(ticketRepository, expert, ticketOne)
+        ExpertTestUtils.addTicket(ticketRepository, expert, ticketTwo)
+        SecurityTestUtils.setExpert(expert.email)
+        ExpertTestUtils.addTicketStatusChange(
+            ticketStatusChangeService,
+            expert,
+            ticketOne,
+            TicketStatus.RESOLVED,
+            UserType.EXPERT,
+            ""
+        )
+        SecurityTestUtils.setClient(testProfiles[0].email)
+        ExpertTestUtils.addTicketStatusChange(
+            ticketStatusChangeService,
+            expert,
+            ticketOne,
+            TicketStatus.CLOSED,
+            UserType.CUSTOMER,
+            "It works now"
+        )
+        SecurityTestUtils.setExpert(expert.email)
         ExpertTestUtils.addTicketStatusChange(
             ticketStatusChangeService,
             expert,
@@ -227,7 +352,8 @@ class ExpertControllerIT : AbstractTestcontainersTest() {
     @Test
     @Transactional
     @Rollback
-    fun getStatusChangesByExpertIdWithNoChanges() {
+    fun getStatusChangesByExpertIdWithNoChangesManager() {
+        SecurityTestUtils.setManager()
         val expert = testExperts[0]
         val ticketOne = Ticket("title1", "description1", testProducts[0], testProfiles[0]).apply {
             status = TicketStatus.IN_PROGRESS
@@ -251,7 +377,30 @@ class ExpertControllerIT : AbstractTestcontainersTest() {
     }
 
     @Test
+    @Transactional
+    @Rollback
+    fun getStatusChangesByExpertIdWithNoChangesClient() {
+        SecurityTestUtils.setClient(testProfiles[0].email)
+        val expert = testExperts[0]
+        val ticketOne = Ticket("title1", "description1", testProducts[0], testProfiles[0]).apply {
+            status = TicketStatus.IN_PROGRESS
+            priorityLevel = TicketPriority.LOW
+        }
+        val ticketTwo = Ticket("title2", "description2", testProducts[0], testProfiles[1]).apply {
+            status = TicketStatus.IN_PROGRESS
+            priorityLevel = TicketPriority.LOW
+        }
+        ExpertTestUtils.addTicket(ticketRepository, expert, ticketOne)
+        ExpertTestUtils.addTicket(ticketRepository, expert, ticketTwo)
+
+        mockMvc
+            .perform(get("/API/experts/${expert.id}/statusChanges").contentType("application/json"))
+            .andExpectAll(status().isUnauthorized)
+    }
+
+    @Test
     fun getStatusChangesByExpertIdNotFound() {
+        SecurityTestUtils.setManager()
         val expertId = Int.MAX_VALUE
 
         mockMvc
@@ -261,6 +410,7 @@ class ExpertControllerIT : AbstractTestcontainersTest() {
 
     @Test
     fun getStatusChangesByExpertIdWrongExpertIdType() {
+        SecurityTestUtils.setManager()
         val expertId = "id-one"
 
         mockMvc
@@ -273,6 +423,7 @@ class ExpertControllerIT : AbstractTestcontainersTest() {
         ints = [0, -1, -2, Int.MIN_VALUE]
     )
     fun getStatusChangesByExpertIdWrongExpertIdValue(id: Int) {
+        SecurityTestUtils.setManager()
         mockMvc
             .perform(get("/API/experts/${id}/statusChanges").contentType("application/json"))
             .andExpect(status().isUnprocessableEntity)
@@ -287,6 +438,7 @@ class ExpertControllerIT : AbstractTestcontainersTest() {
     @Rollback
     fun getTicketsByExpertIdWithManyTickets() {
         val expertOne = testExperts[0]
+        SecurityTestUtils.setExpert(expertOne.email)
         val expertTwo = testExperts[1]
         val ticket1ForExpertOne = Ticket("title1", "description1", testProducts[0], testProfiles[0]).apply {
             status = TicketStatus.IN_PROGRESS
@@ -357,6 +509,7 @@ class ExpertControllerIT : AbstractTestcontainersTest() {
 
     @Test
     fun getTicketsByExpertIdWithNoTickets() {
+        SecurityTestUtils.setManager()
         val expert = testExperts[0]
 
         mockMvc
@@ -371,6 +524,7 @@ class ExpertControllerIT : AbstractTestcontainersTest() {
 
     @Test
     fun getTicketsByExpertIdNotFound() {
+        SecurityTestUtils.setManager()
         val expertId = Int.MAX_VALUE
 
         mockMvc
@@ -380,6 +534,7 @@ class ExpertControllerIT : AbstractTestcontainersTest() {
 
     @Test
     fun getTicketsByExpertIdWrongExpertIdType() {
+        SecurityTestUtils.setManager()
         val expertId = "id-one"
 
         mockMvc
@@ -392,6 +547,7 @@ class ExpertControllerIT : AbstractTestcontainersTest() {
         ints = [0, -1, -2, Int.MIN_VALUE]
     )
     fun getTicketsByExpertIdWrongExpertIdValue(id: Int) {
+        SecurityTestUtils.setManager()
         mockMvc
             .perform(get("/API/experts/${id}/tickets").contentType("application/json"))
             .andExpect(status().isUnprocessableEntity)
