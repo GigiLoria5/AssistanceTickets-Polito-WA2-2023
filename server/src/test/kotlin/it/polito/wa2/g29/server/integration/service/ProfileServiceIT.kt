@@ -5,14 +5,15 @@ import it.polito.wa2.g29.server.dto.toDTO
 import it.polito.wa2.g29.server.exception.DuplicateProfileException
 import it.polito.wa2.g29.server.exception.ProfileNotFoundException
 import it.polito.wa2.g29.server.integration.AbstractTestcontainersTest
+import it.polito.wa2.g29.server.model.Expert
+import it.polito.wa2.g29.server.model.Product
 import it.polito.wa2.g29.server.model.Profile
+import it.polito.wa2.g29.server.repository.ExpertRepository
 import it.polito.wa2.g29.server.repository.ProductRepository
 import it.polito.wa2.g29.server.repository.ProfileRepository
 import it.polito.wa2.g29.server.repository.TicketRepository
 import it.polito.wa2.g29.server.service.ProfileService
-import it.polito.wa2.g29.server.utils.ProductTestUtils
-import it.polito.wa2.g29.server.utils.ProfileTestUtils
-import it.polito.wa2.g29.server.utils.TicketTestUtils
+import it.polito.wa2.g29.server.utils.*
 import org.junit.jupiter.api.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.annotation.Rollback
@@ -27,6 +28,9 @@ class ProfileServiceIT : AbstractTestcontainersTest() {
     private lateinit var profileRepository: ProfileRepository
 
     @Autowired
+    private lateinit var expertRepository: ExpertRepository
+
+    @Autowired
     private lateinit var ticketRepository: TicketRepository
 
     @Autowired
@@ -34,9 +38,15 @@ class ProfileServiceIT : AbstractTestcontainersTest() {
 
     lateinit var testProfiles: List<Profile>
 
+    lateinit var testProducts: List<Product>
+
+    lateinit var testExperts: List<Expert>
+
     @BeforeAll
     fun setup() {
         testProfiles = ProfileTestUtils.insertProfiles(profileRepository)
+        testExperts = ExpertTestUtils.insertExperts(expertRepository)
+        testProducts = ProductTestUtils.insertProducts(productRepository)
     }
 
     /////////////////////////////////////////////////////////////////////
@@ -46,6 +56,7 @@ class ProfileServiceIT : AbstractTestcontainersTest() {
     @Test
     @Transactional
     fun getProfileByEmailWithoutTickets() {
+        SecurityTestUtils.setClient(testProfiles[0].email)
         val expectedProfileDTO = testProfiles[0].toDTO()
 
         val actualProfileDTO = profileService.getProfileByEmail(expectedProfileDTO.email)
@@ -56,9 +67,11 @@ class ProfileServiceIT : AbstractTestcontainersTest() {
 
     @Test
     @Transactional
-    fun getProfileByEmailWithTickets() {
+    @Rollback
+    fun getProfileByEmailWithTicketsClient() {
+        SecurityTestUtils.setClient(testProfiles[0].email)
         TicketTestUtils.profiles = testProfiles
-        TicketTestUtils.products = ProductTestUtils.insertProducts(productRepository)
+        TicketTestUtils.products = testProducts
         val tickets = TicketTestUtils.insertTickets(ticketRepository)
         testProfiles[0].tickets.add(tickets.first { it.customer.id == testProfiles[0].id })
         profileRepository.save(testProfiles[0])
@@ -73,6 +86,7 @@ class ProfileServiceIT : AbstractTestcontainersTest() {
 
     @Test
     fun getProfileByEmailNotFound() {
+        SecurityTestUtils.setManager()
         assertThrows<ProfileNotFoundException> {
             profileService.getProfileByEmail("non_existing_email@fake.com")
         }
@@ -127,6 +141,7 @@ class ProfileServiceIT : AbstractTestcontainersTest() {
     @Transactional
     @Rollback
     fun modifyProfilePartial() {
+        SecurityTestUtils.setClient(testProfiles[0].email)
         val oldProfileDTO = testProfiles[0].toDTO()
         val newProfileDTO = EditProfileDTO(
             oldProfileDTO.name,
@@ -154,6 +169,7 @@ class ProfileServiceIT : AbstractTestcontainersTest() {
     @Transactional
     @Rollback
     fun modifyProfileComplete() {
+        SecurityTestUtils.setClient(testProfiles[0].email)
         val oldProfileDTO = testProfiles[0].toDTO()
         val newProfileDTO = EditProfileDTO(
             name = "NewName",
@@ -181,6 +197,7 @@ class ProfileServiceIT : AbstractTestcontainersTest() {
     @Transactional
     @Rollback
     fun modifyProfileCompleteSamePhoneNumber() {
+        SecurityTestUtils.setClient(testProfiles[0].email)
         val oldProfileDTO = testProfiles[0].toDTO()
         val newProfileDTO = EditProfileDTO(
             name = "NewName",
@@ -206,6 +223,7 @@ class ProfileServiceIT : AbstractTestcontainersTest() {
 
     @Test
     fun modifyProfileDuplicatePhoneNumber() {
+        SecurityTestUtils.setClient(testProfiles[0].email)
         val newProfileDTO = EditProfileDTO(
             name = "NewName",
             surname = "NewSurname",
