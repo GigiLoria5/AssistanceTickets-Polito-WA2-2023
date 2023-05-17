@@ -23,8 +23,8 @@ jib {
         image = "eclipse-temurin:17-jre"
     }
     to {
-        image = "pepaunz/ticket-assistance"
-        tags = setOf("latest")
+        image = "pepaunz/assistance-tickets"
+        tags = setOf("v0.3")
     }
 
     container {

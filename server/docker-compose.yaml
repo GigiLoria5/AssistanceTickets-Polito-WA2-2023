@@ -24,23 +24,31 @@ services:
       db:
         condition: service_healthy
     volumes:
-      - ./db-init/dump.sql:/dump.sql
+      - ./init-data/dump.sql:/dump.sql
   
   app:
     container_name: g29-assistance-tickets-container
-    image: pepaunz/ticket-assistance:latest
+    image: pepaunz/assistance-tickets:v0.3
     depends_on:
+      keycloak:
+        condition: service_started
       db-init:
         condition: service_completed_successfully
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/assistance_tickets
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=p4ssw0rd
-      - SPRING_JPA_SHOW-SQL=true
-      - SPRING_JPA_HIBERNATE_DDL-AUTO=validate
-      - SPRING_JPA_DEFER-DATASOURCE-INITIALIZATION=true
-      - SPRING_JPA_INIT_MODE=never
+    env_file:
+      - ./init-data/app.env
     restart: unless-stopped
     ports:
       - "8080:8080"
+  keycloak:
+    container_name: keycloak
+    image: quay.io/keycloak/keycloak:21.1.1
+    command:
+      - start-dev --import-realm --hostname-port=3000
+    environment:
+     - KEYCLOAK_ADMIN=admin
+     - KEYCLOAK_ADMIN_PASSWORD=admin
+    ports:
+      - "3000:8080"
+    volumes:
+      - ./init-data/SpringBootKeycloak-realm.json:/opt/keycloak/data/import/myrealm.json
 
