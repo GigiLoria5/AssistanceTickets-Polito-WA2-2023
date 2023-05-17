@@ -13,27 +13,16 @@ services:
       POSTGRES_DB: assistance_tickets
     ports:
       - "5432:5432"
-
-  db-init:
-    container_name: db-init
-    image: postgres
-    environment:
-      PGPASSWORD: p4ssw0rd
-    command: sh -c "psql -h db -U postgres -d assistance_tickets < dump.sql && echo 'Database initialized!'"
-    depends_on:
-      db:
-        condition: service_healthy
     volumes:
-      - ./init-data/dump.sql:/dump.sql
-  
+      - ./init-data/dump.sql:/docker-entrypoint-initdb.d/dump.sql
   app:
     container_name: g29-assistance-tickets-container
     image: pepaunz/assistance-tickets:v0.3
     depends_on:
+      db:
+        condition: service_healthy
       keycloak:
         condition: service_started
-      db-init:
-        condition: service_completed_successfully
     env_file:
       - ./init-data/app.env
     restart: unless-stopped
