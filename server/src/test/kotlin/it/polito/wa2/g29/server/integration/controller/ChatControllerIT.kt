@@ -12,7 +12,6 @@ import it.polito.wa2.g29.server.utils.*
 import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.*
 import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.EnumSource
 import org.junit.jupiter.params.provider.NullAndEmptySource
 import org.junit.jupiter.params.provider.ValueSource
 import org.springframework.beans.factory.annotation.Autowired
@@ -28,7 +27,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import org.springframework.transaction.annotation.Transactional
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@AutoConfigureMockMvc(addFilters = false)
+@AutoConfigureMockMvc
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ChatControllerIT : AbstractTestcontainersTest() {
     @Autowired
@@ -93,6 +92,7 @@ class ChatControllerIT : AbstractTestcontainersTest() {
 
     @Test
     fun getAllChatMessagesWithChatWithoutMessages() {
+        SecurityTestUtils.setClient(ticketWithoutMessages.customer.email)
         mockMvc
             .perform(get("/API/chats/${ticketWithoutMessages.id!!}/messages").contentType("application/json"))
             .andExpectAll(
@@ -105,7 +105,8 @@ class ChatControllerIT : AbstractTestcontainersTest() {
 
     @Test
     @Transactional
-    fun getAllChatMessagesWithChatWithManyMessages() {
+    fun getAllChatMessagesWithChatWithManyMessagesClient() {
+        SecurityTestUtils.setClient(ticketWithMessages.customer.email)
         mockMvc
             .perform(get("/API/chats/${ticketWithMessages.id!!}/messages").contentType("application/json"))
             .andExpectAll(
@@ -124,6 +125,44 @@ class ChatControllerIT : AbstractTestcontainersTest() {
 
     @Test
     @Transactional
+    fun getAllChatMessagesWithChatWithManyMessagesExpert() {
+        SecurityTestUtils.setExpert(ticketWithMessages.expert?.email!!)
+        mockMvc
+            .perform(get("/API/chats/${ticketWithMessages.id!!}/messages").contentType("application/json"))
+            .andExpectAll(
+                status().isOk,
+                content().contentType(MediaType.APPLICATION_JSON),
+                jsonPath("$").isArray,
+                jsonPath("$").isNotEmpty,
+                jsonPath("$[*].messageId").exists(),
+                jsonPath("$[*].sender").exists(),
+                jsonPath("$[*].content").exists(),
+                jsonPath("$[*].attachments").isArray,
+                jsonPath("$[*].attachments[0]").isNotEmpty,
+                jsonPath("$[*].time").exists()
+            )
+    }
+
+    @Test
+    @Transactional
+    fun getAllChatMessagesWithChatWithManyMessagesManager() {
+        SecurityTestUtils.setManager()
+        mockMvc
+            .perform(get("/API/chats/${ticketWithMessages.id!!}/messages").contentType("application/json"))
+            .andExpect(status().isUnauthorized)
+    }
+
+    @Test
+    @Transactional
+    fun getAllChatMessagesWithChatWithManyMessagesOtherClient() {
+        SecurityTestUtils.setClient(testProfiles[1].email)
+        mockMvc
+            .perform(get("/API/chats/${ticketWithMessages.id!!}/messages").contentType("application/json"))
+            .andExpect(status().isUnauthorized)
+    }
+
+    @Test
+    @Transactional
     @Rollback
     fun getAllChatMessagesInAnyTicketStatus() {
         val chatStatusTransactions =
@@ -136,6 +175,7 @@ class ChatControllerIT : AbstractTestcontainersTest() {
             )
 
         chatStatusTransactions.forEach {
+            SecurityTestUtils.setManager()
             ExpertTestUtils.addTicketStatusChange(
                 ticketStatusChangeService,
                 ticketExpert,
@@ -144,6 +184,7 @@ class ChatControllerIT : AbstractTestcontainersTest() {
                 UserType.MANAGER,
                 null
             )
+            SecurityTestUtils.setClient(ticketWithMessages.customer.email)
             mockMvc
                 .perform(get("/API/chats/${ticketWithMessages.id!!}/messages").contentType("application/json"))
                 .andExpectAll(
@@ -158,6 +199,7 @@ class ChatControllerIT : AbstractTestcontainersTest() {
     @Test
     fun getAllChatMessagesWithNonExistingTicketId() {
         val ticketId = Int.MAX_VALUE
+        SecurityTestUtils.setClient(ticketWithMessages.customer.email)
 
         mockMvc
             .perform(get("/API/chats/$ticketId/messages").contentType("application/json"))
@@ -169,6 +211,7 @@ class ChatControllerIT : AbstractTestcontainersTest() {
         ints = [0, -1, -2, Int.MIN_VALUE]
     )
     fun getAllChatMessagesWithInvalidTicketIdValue(id: Int) {
+        SecurityTestUtils.setClient(ticketWithMessages.customer.email)
         mockMvc
             .perform(get("/API/chats/${id}/messages").contentType("application/json"))
             .andExpect(status().isUnprocessableEntity)
@@ -176,6 +219,7 @@ class ChatControllerIT : AbstractTestcontainersTest() {
 
     @Test
     fun getAllChatMessagesWithInvalidTicketIdType() {
+        SecurityTestUtils.setClient(ticketWithMessages.customer.email)
         mockMvc
             .perform(get("/API/chats/wrongTypeId/messages").contentType("application/json"))
             .andExpect(status().isUnprocessableEntity)
@@ -185,21 +229,19 @@ class ChatControllerIT : AbstractTestcontainersTest() {
     ////// POST `/API/chats/{ticketId}/messages`
     /////////////////////////////////////////////////////////////////////
 
-    @ParameterizedTest
-    @EnumSource(UserType::class, names = ["CUSTOMER", "EXPERT"])
+    @Test
     @Transactional
     @Rollback
-    fun sendMessage(userType: UserType) {
+    fun sendMessageClient() {
         val contentBytes = "file content".toByteArray()
         val file1 = MockMultipartFile("attachments", "file1.pdf", "application/pdf", contentBytes)
         val file2 = MockMultipartFile("attachments", "file2.txt", "text/plain", contentBytes)
-
+        SecurityTestUtils.setClient(ticketWithMessages.customer.email)
         mockMvc
             .perform(
                 multipart("/API/chats/${ticketWithMessages.id!!}/messages")
                     .file(file1)
                     .file(file2)
-                    .param("sender", userType.toString())
                     .param("content", "Message")
                     .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
             )
@@ -211,34 +253,97 @@ class ChatControllerIT : AbstractTestcontainersTest() {
     }
 
     @Test
+    @Transactional
+    @Rollback
+    fun sendMessageExpert() {
+        val contentBytes = "file content".toByteArray()
+        val file1 = MockMultipartFile("attachments", "file1.pdf", "application/pdf", contentBytes)
+        val file2 = MockMultipartFile("attachments", "file2.txt", "text/plain", contentBytes)
+        SecurityTestUtils.setExpert(ticketWithMessages.expert?.email!!)
+        mockMvc
+            .perform(
+                multipart("/API/chats/${ticketWithMessages.id!!}/messages")
+                    .file(file1)
+                    .file(file2)
+                    .param("content", "Message")
+                    .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+            )
+            .andExpectAll(
+                status().isCreated,
+                content().contentType(MediaType.APPLICATION_JSON),
+                jsonPath("$.messageId").isNumber
+            )
+    }
+
+    @Test
+    @Transactional
+    @Rollback
+    fun sendMessageManager() {
+        val contentBytes = "file content".toByteArray()
+        val file1 = MockMultipartFile("attachments", "file1.pdf", "application/pdf", contentBytes)
+        val file2 = MockMultipartFile("attachments", "file2.txt", "text/plain", contentBytes)
+        SecurityTestUtils.setManager()
+        mockMvc
+            .perform(
+                multipart("/API/chats/${ticketWithMessages.id!!}/messages")
+                    .file(file1)
+                    .file(file2)
+                    .param("content", "Message")
+                    .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+            )
+            .andExpect(status().isUnauthorized)
+    }
+
+    @Test
+    @Transactional
+    @Rollback
+    fun sendMessageOtherClient() {
+        val contentBytes = "file content".toByteArray()
+        val file1 = MockMultipartFile("attachments", "file1.pdf", "application/pdf", contentBytes)
+        val file2 = MockMultipartFile("attachments", "file2.txt", "text/plain", contentBytes)
+        SecurityTestUtils.setClient(testProfiles[1].email)
+        mockMvc
+            .perform(
+                multipart("/API/chats/${ticketWithMessages.id!!}/messages")
+                    .file(file1)
+                    .file(file2)
+                    .param("content", "Message")
+                    .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+            )
+            .andExpect(status().isUnauthorized)
+    }
+
+    @Test
+    @Transactional
+    @Rollback
+    fun sendMessageOtherExpert() {
+        val contentBytes = "file content".toByteArray()
+        val file1 = MockMultipartFile("attachments", "file1.pdf", "application/pdf", contentBytes)
+        val file2 = MockMultipartFile("attachments", "file2.txt", "text/plain", contentBytes)
+        SecurityTestUtils.setExpert(testExperts[1].email)
+        mockMvc
+            .perform(
+                multipart("/API/chats/${ticketWithMessages.id!!}/messages")
+                    .file(file1)
+                    .file(file2)
+                    .param("content", "Message")
+                    .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+            )
+            .andExpect(status().isUnauthorized)
+    }
+
+    @Test
     fun sendMessageNonExistingTicket() {
+        SecurityTestUtils.setExpert(testExperts[0].email)
         mockMvc
             .perform(
                 multipart("/API/chats/${Int.MAX_VALUE}/messages")
-                    .param("sender", UserType.EXPERT.toString())
                     .param("content", "Message")
                     .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
             )
             .andExpectAll(
                 status().isNotFound,
                 content().string("")
-            )
-    }
-
-
-    @Test
-    fun sendMessageWithManagerShouldBeForbidden() {
-        mockMvc
-            .perform(
-                multipart("/API/chats/${ticketWithMessages.id!!}/messages")
-                    .param("sender", UserType.MANAGER.toString())
-                    .param("content", "Message")
-                    .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
-            )
-            .andExpectAll(
-                status().isUnprocessableEntity,
-                content().contentType(MediaType.APPLICATION_JSON),
-                jsonPath("$.error").isString
             )
     }
 
@@ -259,6 +364,7 @@ class ChatControllerIT : AbstractTestcontainersTest() {
             )
 
         chatStatusTransactions.forEach {
+            SecurityTestUtils.setManager()
             ExpertTestUtils.addTicketStatusChange(
                 ticketStatusChangeService,
                 ticketExpert,
@@ -267,13 +373,13 @@ class ChatControllerIT : AbstractTestcontainersTest() {
                 UserType.MANAGER,
                 null
             )
-            if (it != TicketStatus.IN_PROGRESS && it != TicketStatus.RESOLVED)
+            if (it != TicketStatus.IN_PROGRESS && it != TicketStatus.RESOLVED) {
+                SecurityTestUtils.setClient(ticketWithMessages.customer.email)
                 mockMvc
                     .perform(
                         multipart("/API/chats/${ticketWithMessages.id!!}/messages")
                             .file(file1)
                             .file(file2)
-                            .param("sender", UserType.CUSTOMER.toString())
                             .param("content", "Message")
                             .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
                     )
@@ -282,53 +388,17 @@ class ChatControllerIT : AbstractTestcontainersTest() {
                         content().contentType(MediaType.APPLICATION_JSON),
                         jsonPath("$.error").isString
                     )
+            }
         }
     }
 
     @ParameterizedTest
-    @ValueSource(
-        strings = ["FakeSender", "ADMIN"]
-    )
-    fun sendMessageWithInvalidSender(sender: String) {
-        mockMvc
-            .perform(
-                multipart("/API/chats/${ticketWithMessages.id!!}/messages")
-                    .param("sender", sender)
-                    .param("content", "Message")
-                    .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
-            )
-            .andExpectAll(
-                status().isUnprocessableEntity,
-                content().contentType(MediaType.APPLICATION_JSON),
-                jsonPath("$.error").isString
-            )
-    }
-
-    @ParameterizedTest
-    @NullAndEmptySource
-    fun sendMessageWithEmptySender(sender: String?) {
-        mockMvc
-            .perform(
-                multipart("/API/chats/${ticketWithMessages.id!!}/messages")
-                    .param("sender", sender)
-                    .param("content", "Message")
-                    .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
-            )
-            .andExpectAll(
-                status().isUnprocessableEntity,
-                content().contentType(MediaType.APPLICATION_JSON),
-                jsonPath("$.error").isString
-            )
-    }
-
-
-    @ParameterizedTest
     @NullAndEmptySource
     fun sendMessageWithInvalidContent(content: String?) {
+        SecurityTestUtils.setExpert(ticketWithMessages.expert?.email!!)
         mockMvc
             .perform(
                 multipart("/API/chats/${ticketWithMessages.id!!}/messages")
-                    .param("sender", UserType.EXPERT.toString())
                     .param("content", content)
                     .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
             )
@@ -385,6 +455,7 @@ class ChatControllerIT : AbstractTestcontainersTest() {
         TestChatUtils.addMessages(messageRepository, messages, ticketWithMessages, ticketExpert)
         val expectedMessage = messages[0]
 
+        SecurityTestUtils.setClient(ticketWithMessages.customer.email)
         expectedMessage.attachments.forEach {
             mockMvc
                 .perform(
@@ -422,6 +493,7 @@ class ChatControllerIT : AbstractTestcontainersTest() {
         val expectedMessage = messages[0]
         val expectedAttachment = expectedMessage.attachments.toList()[0]
 
+        SecurityTestUtils.setClient(ticketWithMessages.customer.email)
         mockMvc
             .perform(
                 get("/API/chats/${Int.MAX_VALUE}/messages/${expectedMessage.id}/attachments/${expectedAttachment.id}").contentType(
@@ -456,6 +528,7 @@ class ChatControllerIT : AbstractTestcontainersTest() {
         val expectedMessage = messages[0]
         val expectedAttachment = expectedMessage.attachments.toList()[0]
 
+        SecurityTestUtils.setClient(ticketWithMessages.customer.email)
         mockMvc
             .perform(
                 get("/API/chats/${ticket.id!!}/messages/${Int.MAX_VALUE}/attachments/${expectedAttachment.id}").contentType(
@@ -471,7 +544,7 @@ class ChatControllerIT : AbstractTestcontainersTest() {
     @Test
     @Transactional
     @Rollback
-    fun getAttachmentAttachmentIdNotFound() {
+    fun getAttachmentManager() {
         val ticket = testTickets[0]
         val ticketExpert = testExperts[0]
         TicketTestUtils.startTicket(ticketRepository, ticket, ticketExpert, TicketPriority.LOW)
@@ -488,15 +561,87 @@ class ChatControllerIT : AbstractTestcontainersTest() {
         }
         TestChatUtils.addMessages(messageRepository, messages, ticket, ticketExpert)
         val expectedMessage = messages[0]
+        val expectedAttachment = expectedMessage.attachments.toList()[0]
 
+        SecurityTestUtils.setManager()
         mockMvc
             .perform(
-                get("/API/chats/${ticket.id!!}/messages/${expectedMessage.id}/attachments/${Int.MAX_VALUE}").contentType(
+                get("/API/chats/${ticket.id!!}/messages/${expectedMessage.id}/attachments/${expectedAttachment.id}").contentType(
                     "application/json"
                 )
             )
             .andExpectAll(
-                status().isNotFound,
+                status().isUnauthorized,
+                content().string("")
+            )
+    }
+
+    @Test
+    @Transactional
+    @Rollback
+    fun getAttachmentOtherClient() {
+        val ticket = testTickets[0]
+        val ticketExpert = testExperts[0]
+        TicketTestUtils.startTicket(ticketRepository, ticket, ticketExpert, TicketPriority.LOW)
+        val messages = listOf(Message(UserType.CUSTOMER, "Message2", ticket, null))
+        messages[0].apply {
+            attachments = setOf(
+                Attachment(
+                    "Filename.png",
+                    byteArrayOf(0x00, 0x01, 0x02),
+                    AttachmentType.PNG,
+                    this
+                )
+            )
+        }
+        TestChatUtils.addMessages(messageRepository, messages, ticket, ticketExpert)
+        val expectedMessage = messages[0]
+        val expectedAttachment = expectedMessage.attachments.toList()[0]
+
+        SecurityTestUtils.setClient(testProfiles[1].email)
+        mockMvc
+            .perform(
+                get("/API/chats/${ticket.id!!}/messages/${expectedMessage.id}/attachments/${expectedAttachment.id}").contentType(
+                    "application/json"
+                )
+            )
+            .andExpectAll(
+                status().isUnauthorized,
+                content().string("")
+            )
+    }
+
+    @Test
+    @Transactional
+    @Rollback
+    fun getAttachmentOtherExpert() {
+        val ticket = testTickets[0]
+        val ticketExpert = testExperts[0]
+        TicketTestUtils.startTicket(ticketRepository, ticket, ticketExpert, TicketPriority.LOW)
+        val messages = listOf(Message(UserType.CUSTOMER, "Message2", ticket, null))
+        messages[0].apply {
+            attachments = setOf(
+                Attachment(
+                    "Filename.png",
+                    byteArrayOf(0x00, 0x01, 0x02),
+                    AttachmentType.PNG,
+                    this
+                )
+            )
+        }
+        TestChatUtils.addMessages(messageRepository, messages, ticket, ticketExpert)
+        val expectedMessage = messages[0]
+        val expectedAttachment = expectedMessage.attachments.toList()[0]
+
+        SecurityTestUtils.setExpert(testExperts[1].email)
+        mockMvc
+            .perform(
+                get("/API/chats/${ticket.id!!}/messages/${expectedMessage.id}/attachments/${expectedAttachment.id}").contentType(
+                    "application/json"
+                )
+            )
+            .andExpectAll(
+                status().isUnauthorized,
                 content().string("")
             )
     }
@@ -525,6 +670,7 @@ class ChatControllerIT : AbstractTestcontainersTest() {
         TestChatUtils.addMessages(messageRepository, messages, ticket, ticketExpert)
         val expectedMessage = messages[0]
         val expectedAttachment = expectedMessage.attachments.toList()[0]
+        SecurityTestUtils.setClient(ticketWithMessages.customer.email)
         mockMvc
             .perform(
                 get("/API/chats/${ticketId}/messages/${expectedMessage.id}/attachments/${expectedAttachment.id}").contentType(
@@ -562,6 +708,7 @@ class ChatControllerIT : AbstractTestcontainersTest() {
         TestChatUtils.addMessages(messageRepository, messages, ticket, ticketExpert)
         val expectedMessage = messages[0]
         val expectedAttachment = expectedMessage.attachments.toList()[0]
+        SecurityTestUtils.setClient(ticketWithMessages.customer.email)
 
         mockMvc
             .perform(
@@ -584,6 +731,7 @@ class ChatControllerIT : AbstractTestcontainersTest() {
     @Transactional
     fun getAttachmentAttachmentIdInvalid(attachmentId: Int) {
         val messageWithAttachment = ticketWithMessages.messages.toList()[messageWithAttachmentIndex]
+        SecurityTestUtils.setClient(ticketWithMessages.customer.email)
         mockMvc
             .perform(
                 get("/API/chats/${ticketWithMessages.id!!}/messages/${messageWithAttachment.id}/attachments/${attachmentId}").contentType(
