@@ -1,6 +1,6 @@
 package it.polito.wa2.g29.server.utils
 
-import it.polito.wa2.g29.server.dto.TicketDTO
+import it.polito.wa2.g29.server.dto.ticket.NewTicketDTO
 import it.polito.wa2.g29.server.dto.ticket.TicketStatusChangeDTO
 import it.polito.wa2.g29.server.enums.TicketPriority
 import it.polito.wa2.g29.server.enums.TicketStatus
@@ -60,19 +60,11 @@ object TicketTestUtils {
         )
     }
 
-    fun getNewTicketDTO(): TicketDTO {
-        return TicketDTO(
-            ticketId = null,
+    fun getNewTicketDTO(): NewTicketDTO {
+        return NewTicketDTO(
             title = "newtitle",
             description = "newdescription",
-            productId = products[0].id,
-            customerId = profiles[1].id,
-            expertId = null,
-            totalExchangedMessages = 0,
-            status = "OPEN",
-            priorityLevel = null,
-            createdAt = 0,
-            lastModifiedAt = 0
+            productId = products[0].id!!
         )
     }
 
