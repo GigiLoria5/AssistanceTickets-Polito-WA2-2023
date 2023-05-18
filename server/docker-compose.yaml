@@ -1,46 +1,52 @@
 version: '3.8'
 services:
   db:
-    container_name: pg_container
     image: postgres
+    container_name: pg_container
     restart: unless-stopped
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres" ]
-      interval: 1s
+      interval: 5s
+      retries: 2
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: p4ssw0rd
-      POSTGRES_DB: assistance_tickets
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=p4ssw0rd
+      - POSTGRES_DB=assistance_tickets
     ports:
       - "5432:5432"
+    volumes:
+      - ./init-data/dump.sql:/docker-entrypoint-initdb.d/dump.sql
 
-  db-init:
-    container_name: db-init
-    image: postgres
+  keycloak-curl-test:
+    container_name: keycloak-curl-test
+    image: alpine:latest
+    command: sh -c "apk add --no-cache curl && while true; do sleep 5; if curl --head -fsS http://keycloak:8080/health/ready; then echo 'Keycloak ready' && exit 0; else echo 'Keycloak not ready'; fi; done"
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:21.1.1
+    container_name: keycloak
+    command:
+      - start-dev --import-realm --hostname-port=3000 --health-enabled=true
     environment:
-      PGPASSWORD: p4ssw0rd
-    command: sh -c "psql -h db -U postgres -d assistance_tickets < dump.sql && echo 'Database initialized!'"
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+    ports:
+      - "3000:8080"
+    volumes:
+      - ./init-data/SpringBootKeycloak-realm.json:/opt/keycloak/data/import/myrealm.json
+      - ./init-data/keycloak-healthcheck.sh:/test/healthcheck.sh
+
+  app:
+    image: pepaunz/assistance-tickets:v0.3
+    container_name: g29-assistance-tickets-container
+    restart: unless-stopped
     depends_on:
       db:
         condition: service_healthy
-    volumes:
-      - ./db-init/dump.sql:/dump.sql
-  
-  app:
-    container_name: g29-assistance-tickets-container
-    image: pepaunz/ticket-assistance:latest
-    depends_on:
-      db-init:
+      keycloak-curl-test:
         condition: service_completed_successfully
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/assistance_tickets
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=p4ssw0rd
-      - SPRING_JPA_SHOW-SQL=true
-      - SPRING_JPA_HIBERNATE_DDL-AUTO=validate
-      - SPRING_JPA_DEFER-DATASOURCE-INITIALIZATION=true
-      - SPRING_JPA_INIT_MODE=never
-    restart: unless-stopped
+    env_file:
+      - ./init-data/app.env
     ports:
       - "8080:8080"
 
