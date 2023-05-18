@@ -1,12 +1,13 @@
 package it.polito.wa2.g29.server.model
 
 import it.polito.wa2.g29.server.dto.ProfileDTO
+import it.polito.wa2.g29.server.dto.profile.EditProfileDTO
 import jakarta.persistence.*
 
 @Entity
 @Table(name = "profiles")
 class Profile(
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true, updatable = false)
     var email: String,
     @Column(nullable = false)
     var name: String,
@@ -22,11 +23,10 @@ class Profile(
     var country: String
 ) : EntityBase<Int>() {
 
-    @OneToMany(mappedBy = "customer",cascade = [CascadeType.ALL])
+    @OneToMany(mappedBy = "customer", cascade = [CascadeType.ALL])
     var tickets: MutableSet<Ticket> = mutableSetOf()
 
-    fun update(newProfile: ProfileDTO) {
-        email = newProfile.email
+    fun update(newProfile: EditProfileDTO) {
         name = newProfile.name
         surname = newProfile.surname
         phoneNumber = newProfile.phoneNumber

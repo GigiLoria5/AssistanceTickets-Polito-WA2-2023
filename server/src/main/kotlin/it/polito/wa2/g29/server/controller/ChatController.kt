@@ -3,7 +3,6 @@ package it.polito.wa2.g29.server.controller
 import it.polito.wa2.g29.server.dto.MessageDTO
 import it.polito.wa2.g29.server.dto.NewMessageDTO
 import it.polito.wa2.g29.server.dto.NewMessageIdDTO
-import it.polito.wa2.g29.server.enums.UserType
 import it.polito.wa2.g29.server.service.ChatService
 import it.polito.wa2.g29.server.utils.MediaTypeUtil
 import jakarta.validation.Valid
@@ -12,6 +11,7 @@ import jakarta.validation.constraints.NotBlank
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
@@ -20,23 +20,26 @@ import org.springframework.web.multipart.MultipartFile
 @Validated
 @RestController
 class ChatController(private val chatService: ChatService) {
+
+    @PreAuthorize("hasAuthority(@AuthUtil.ROLE_CLIENT) or hasAuthority(@AuthUtil.ROLE_EXPERT)")
     @GetMapping("/chats/{ticketId}/messages")
     fun getMessagesByTicketId(@PathVariable @Min(1) @Valid ticketId: Int): List<MessageDTO> {
         return chatService.getMessagesByTicketId(ticketId)
     }
 
+    @PreAuthorize("hasAuthority(@AuthUtil.ROLE_CLIENT) or hasAuthority(@AuthUtil.ROLE_EXPERT)")
     @PostMapping("/chats/{ticketId}/messages")
     @ResponseStatus(HttpStatus.CREATED)
     fun addMessageWithAttachments(
         @PathVariable @Min(1) @Valid ticketId: Int,
-        @RequestParam("sender") sender: UserType,
         @RequestParam("content") @NotBlank content: String,
         @RequestPart("attachments") attachments: List<MultipartFile>?
     ): NewMessageIdDTO {
-        val newMessage = NewMessageDTO(sender, content, attachments)
+        val newMessage = NewMessageDTO(content, attachments)
         return chatService.addMessageWithAttachments(ticketId, newMessage)
     }
 
+    @PreAuthorize("hasAuthority(@AuthUtil.ROLE_CLIENT) or hasAuthority(@AuthUtil.ROLE_EXPERT)")
     @GetMapping("/chats/{ticketId}/messages/{messageId}/attachments/{attachmentId}")
     fun getAttachments(
         @PathVariable @Min(1) @Valid ticketId: Int,
@@ -51,4 +54,5 @@ class ChatController(private val chatService: ChatService) {
             .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"${attachment.name}\"")
             .body(attachment.file)
     }
+
 }

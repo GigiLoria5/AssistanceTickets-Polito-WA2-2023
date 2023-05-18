@@ -36,13 +36,13 @@ object TestChatUtils {
         )
     }
 
-    fun getNewMessageDTO(sender: UserType, content: String, attachmentType: AttachmentType?): NewMessageDTO {
+    fun getNewMessageDTO(content: String, attachmentType: AttachmentType?): NewMessageDTO {
         if (attachmentType == null)
-            return NewMessageDTO(sender, content, null)
+            return NewMessageDTO(content, null)
 
         val attachment = createAttachment(attachmentType)
         val attachments = listOf(attachment)
-        return NewMessageDTO(sender, content, attachments)
+        return NewMessageDTO(content, attachments)
     }
 
     fun createAttachment(attachmentType: AttachmentType): MultipartFile {

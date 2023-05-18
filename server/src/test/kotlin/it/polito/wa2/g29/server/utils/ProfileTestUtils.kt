@@ -1,6 +1,7 @@
 package it.polito.wa2.g29.server.utils
 
 import it.polito.wa2.g29.server.dto.ProfileDTO
+import it.polito.wa2.g29.server.dto.profile.EditProfileDTO
 import it.polito.wa2.g29.server.model.Profile
 import it.polito.wa2.g29.server.repository.ProfileRepository
 
@@ -21,6 +22,18 @@ object ProfileTestUtils {
         return ProfileDTO(
             profileId = null,
             email = "new_mail@test.com",
+            name = "Name",
+            surname = "Surname",
+            phoneNumber = "3333333333",
+            address = "New Address",
+            city = "New City",
+            country = "New Country",
+            ticketsIds = mutableListOf()
+        )
+    }
+
+    fun getNewEditProfileDTO(): EditProfileDTO {
+        return EditProfileDTO(
             name = "Name",
             surname = "Surname",
             phoneNumber = "3333333333",

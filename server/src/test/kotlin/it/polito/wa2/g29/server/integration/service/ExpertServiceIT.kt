@@ -13,11 +13,13 @@ import it.polito.wa2.g29.server.service.TicketStatusChangeService
 import it.polito.wa2.g29.server.utils.ExpertTestUtils
 import it.polito.wa2.g29.server.utils.ProductTestUtils
 import it.polito.wa2.g29.server.utils.ProfileTestUtils
+import it.polito.wa2.g29.server.utils.SecurityTestUtils
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.access.AccessDeniedException
 import org.springframework.test.annotation.Rollback
 import org.springframework.transaction.annotation.Transactional
 
@@ -85,7 +87,8 @@ class ExpertServiceIT : AbstractTestcontainersTest() {
     /////////////////////////////////////////////////////////////////////
 
     @Test
-    fun getExpertById() {
+    fun getExpertByIdManager() {
+        SecurityTestUtils.setManager()
         val expectedExpertDTO = testExperts[0].toDTO()
 
         val actualExpertDTO = expertService.getExpertById(expectedExpertDTO.expertId!!)
@@ -94,7 +97,28 @@ class ExpertServiceIT : AbstractTestcontainersTest() {
     }
 
     @Test
+    fun getExpertByIdExpert() {
+        SecurityTestUtils.setExpert(testExperts[0].email)
+        val expectedExpertDTO = testExperts[0].toDTO()
+
+        val actualExpertDTO = expertService.getExpertById(expectedExpertDTO.expertId!!)
+
+        assert(actualExpertDTO == expectedExpertDTO)
+    }
+
+    @Test
+    fun getExpertByIdOtherExpert() {
+        SecurityTestUtils.setExpert(testExperts[1].email)
+        val expectedExpertDTO = testExperts[0].toDTO()
+
+        assertThrows<AccessDeniedException> {
+            expertService.getExpertById(expectedExpertDTO.expertId!!)
+        }
+    }
+
+    @Test
     fun getExpertByIdNotFound() {
+        SecurityTestUtils.setManager()
         assertThrows<ExpertNotFoundException> {
             expertService.getExpertById(Int.MAX_VALUE)
         }
@@ -121,7 +145,9 @@ class ExpertServiceIT : AbstractTestcontainersTest() {
         ExpertTestUtils.addTicket(ticketRepository, expertOne, ticketForExpertOne)
         ExpertTestUtils.addTicket(ticketRepository, expertTwo, ticketForExpertTwo)
 
+        SecurityTestUtils.setExpert(expertOne.email)
         val expertOneActualTickets = expertService.getAllTicketsByExpertId(expertOne.id!!)
+        SecurityTestUtils.setExpert(expertTwo.email)
         val expertTwoActualTickets = expertService.getAllTicketsByExpertId(expertTwo.id!!)
 
         assert(expertOneActualTickets.isNotEmpty())
@@ -162,6 +188,7 @@ class ExpertServiceIT : AbstractTestcontainersTest() {
             ExpertTestUtils.addTicket(ticketRepository, expert, it)
         }
 
+        SecurityTestUtils.setExpert(expert.email)
         val actualExpertTicketsDTO = expertService.getAllTicketsByExpertId(expert.id!!)
 
         assert(expectedExpertTickets.size == actualExpertTicketsDTO.size)
@@ -174,16 +201,37 @@ class ExpertServiceIT : AbstractTestcontainersTest() {
     @Transactional
     fun getAllTicketsByExpertIdWithoutTickets() {
         val expert = testExperts[0]
-
+        SecurityTestUtils.setExpert(expert.email)
         val actualExpertTicketsDTO = expertService.getAllTicketsByExpertId(expert.id!!)
 
         assert(actualExpertTicketsDTO.isEmpty())
     }
 
     @Test
+    @Transactional
+    fun getAllTicketsByExpertIdWithoutTicketsManager() {
+        val expert = testExperts[0]
+        SecurityTestUtils.setManager()
+        val actualExpertTicketsDTO = expertService.getAllTicketsByExpertId(expert.id!!)
+
+        assert(actualExpertTicketsDTO.isEmpty())
+    }
+
+    @Test
+    @Transactional
+    fun getAllTicketsByExpertIdWithoutTicketsClient() {
+        val expert = testExperts[0]
+        SecurityTestUtils.setExpert(testExperts[1].email)
+
+        assertThrows<AccessDeniedException> {
+            expertService.getAllTicketsByExpertId(expert.id!!)
+        }
+    }
+
+    @Test
     fun getAllTicketsByExpertIdNotFound() {
         val nonExistingExpertId = Int.MAX_VALUE
-
+        SecurityTestUtils.setManager()
         assertThrows<ExpertNotFoundException> {
             expertService.getAllTicketsByExpertId(nonExistingExpertId)
         }
@@ -209,6 +257,7 @@ class ExpertServiceIT : AbstractTestcontainersTest() {
         }
         ExpertTestUtils.addTicket(ticketRepository, expertOne, ticketForExpertOne)
         ExpertTestUtils.addTicket(ticketRepository, expertTwo, ticketForExpertTwo)
+        SecurityTestUtils.setExpert(expertOne.email)
         ExpertTestUtils.addTicketStatusChange(
             ticketStatusChangeService,
             expertOne,
@@ -217,6 +266,7 @@ class ExpertServiceIT : AbstractTestcontainersTest() {
             UserType.EXPERT,
             "The issue has been resolved"
         )
+        SecurityTestUtils.setExpert(expertTwo.email)
         ExpertTestUtils.addTicketStatusChange(
             ticketStatusChangeService,
             expertTwo,
@@ -226,7 +276,9 @@ class ExpertServiceIT : AbstractTestcontainersTest() {
             null
         )
 
+        SecurityTestUtils.setExpert(expertOne.email)
         val expertOneActualTicketsStatusChangesDTO = expertService.getTicketStatusChangesByExpertId(expertOne.id!!)
+        SecurityTestUtils.setExpert(expertTwo.email)
         val expertTwoActualTicketsStatusChangesDTO = expertService.getTicketStatusChangesByExpertId(expertTwo.id!!)
 
         assert(expertOneActualTicketsStatusChangesDTO.isNotEmpty())
@@ -239,7 +291,7 @@ class ExpertServiceIT : AbstractTestcontainersTest() {
     @Transactional
     fun getTicketStatusChangesByExpertIdWithoutTickets() {
         val expert = testExperts[0]
-
+        SecurityTestUtils.setExpert(expert.email)
         val expertActualTicketsStatusChangesDTO = expertService.getTicketStatusChangesByExpertId(expert.id!!)
 
         assert(expertActualTicketsStatusChangesDTO.isEmpty())
@@ -248,7 +300,7 @@ class ExpertServiceIT : AbstractTestcontainersTest() {
     @Test
     fun getTicketStatusChangesByExpertIdNotFound() {
         val nonExistingExpertId = Int.MAX_VALUE
-
+        SecurityTestUtils.setManager()
         assertThrows<ExpertNotFoundException> {
             expertService.getTicketStatusChangesByExpertId(nonExistingExpertId)
         }

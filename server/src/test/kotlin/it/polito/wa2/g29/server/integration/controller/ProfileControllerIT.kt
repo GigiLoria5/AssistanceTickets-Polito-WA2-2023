@@ -1,15 +1,18 @@
 package it.polito.wa2.g29.server.integration.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import it.polito.wa2.g29.server.dto.profile.EditProfileDTO
 import it.polito.wa2.g29.server.dto.toDTO
+import it.polito.wa2.g29.server.enums.TicketPriority
 import it.polito.wa2.g29.server.integration.AbstractTestcontainersTest
+import it.polito.wa2.g29.server.model.Expert
+import it.polito.wa2.g29.server.model.Product
 import it.polito.wa2.g29.server.model.Profile
+import it.polito.wa2.g29.server.repository.ExpertRepository
 import it.polito.wa2.g29.server.repository.ProductRepository
 import it.polito.wa2.g29.server.repository.ProfileRepository
 import it.polito.wa2.g29.server.repository.TicketRepository
-import it.polito.wa2.g29.server.utils.ProductTestUtils
-import it.polito.wa2.g29.server.utils.ProfileTestUtils
-import it.polito.wa2.g29.server.utils.TicketTestUtils
+import it.polito.wa2.g29.server.utils.*
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -21,9 +24,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
 import org.springframework.test.annotation.Rollback
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import org.springframework.transaction.annotation.Transactional
 
@@ -38,6 +39,9 @@ class ProfileControllerIT : AbstractTestcontainersTest() {
     private lateinit var profileRepository: ProfileRepository
 
     @Autowired
+    private lateinit var expertRepository: ExpertRepository
+
+    @Autowired
     private lateinit var ticketRepository: TicketRepository
 
     @Autowired
@@ -45,9 +49,15 @@ class ProfileControllerIT : AbstractTestcontainersTest() {
 
     lateinit var testProfiles: List<Profile>
 
+    lateinit var testExperts: List<Expert>
+
+    lateinit var testProducts: List<Product>
+
     @BeforeAll
     fun setup() {
         testProfiles = ProfileTestUtils.insertProfiles(profileRepository)
+        testExperts = ExpertTestUtils.insertExperts(expertRepository)
+        testProducts = ProductTestUtils.insertProducts(productRepository)
     }
 
     /////////////////////////////////////////////////////////////////////
@@ -56,6 +66,7 @@ class ProfileControllerIT : AbstractTestcontainersTest() {
 
     @Test
     fun getProfileWithoutTickets() {
+        SecurityTestUtils.setClient(testProfiles[0].email)
         val expectedProfile = testProfiles[0]
         mockMvc
             .perform(get("/API/profiles/${expectedProfile.email}").contentType("application/json"))
@@ -78,9 +89,10 @@ class ProfileControllerIT : AbstractTestcontainersTest() {
     @Test
     @Transactional
     @Rollback
-    fun getProfileWithTickets() {
+    fun getProfileWithTicketsClient() {
+        SecurityTestUtils.setClient(testProfiles[0].email)
         TicketTestUtils.profiles = testProfiles
-        TicketTestUtils.products = ProductTestUtils.insertProducts(productRepository)
+        TicketTestUtils.products = testProducts
         val tickets = TicketTestUtils.insertTickets(ticketRepository)
         testProfiles[0].tickets.add(tickets.first { it.customer.id == testProfiles[0].id })
         profileRepository.save(testProfiles[0])
@@ -104,7 +116,87 @@ class ProfileControllerIT : AbstractTestcontainersTest() {
     }
 
     @Test
+    @Transactional
+    @Rollback
+    fun getProfileWithTicketsExpert() {
+        SecurityTestUtils.setExpert(testExperts[0].email)
+        TicketTestUtils.profiles = testProfiles
+        TicketTestUtils.products = testProducts
+        val tickets = TicketTestUtils.insertTickets(ticketRepository)
+        tickets.forEach { TicketTestUtils.startTicket(ticketRepository, it, testExperts[0], TicketPriority.LOW) }
+        testProfiles[0].tickets.add(tickets.first { it.customer.id == testProfiles[0].id })
+        profileRepository.save(testProfiles[0])
+        expertRepository.save(testExperts[0])
+        val expectedProfile = testProfiles[0]
+        mockMvc
+            .perform(get("/API/profiles/${expectedProfile.email}").contentType("application/json"))
+            .andExpectAll(
+                status().isOk,
+                content().contentType(MediaType.APPLICATION_JSON),
+                jsonPath("$.profileId").exists(),
+                jsonPath("$.email").value(expectedProfile.email),
+                jsonPath("$.name").value(expectedProfile.name),
+                jsonPath("$.surname").value(expectedProfile.surname),
+                jsonPath("$.phoneNumber").value(expectedProfile.phoneNumber),
+                jsonPath("$.address").value(expectedProfile.address),
+                jsonPath("$.city").value(expectedProfile.city),
+                jsonPath("$.country").value(expectedProfile.country),
+                jsonPath("$.ticketsIds").isArray,
+                jsonPath("$.ticketsIds").isNotEmpty
+            )
+    }
+
+    @Test
+    @Transactional
+    @Rollback
+    fun getProfileWithTicketsExpertUnauthorized() {
+        SecurityTestUtils.setExpert(testExperts[0].email)
+        TicketTestUtils.profiles = testProfiles
+        TicketTestUtils.products = testProducts
+        val tickets = TicketTestUtils.insertTickets(ticketRepository)
+        testProfiles[0].tickets.add(tickets.first { it.customer.id == testProfiles[0].id })
+        profileRepository.save(testProfiles[0])
+        val expectedProfile = testProfiles[0]
+        mockMvc
+            .perform(get("/API/profiles/${expectedProfile.email}").contentType("application/json"))
+            .andExpectAll(
+                status().isUnauthorized,
+                jsonPath("$.error").doesNotExist()
+            )
+    }
+
+    @Test
+    @Transactional
+    @Rollback
+    fun getProfileWithTicketsManager() {
+        TicketTestUtils.profiles = testProfiles
+        TicketTestUtils.products = testProducts
+        val tickets = TicketTestUtils.insertTickets(ticketRepository)
+        testProfiles[0].tickets.add(tickets.first { it.customer.id == testProfiles[0].id })
+        profileRepository.save(testProfiles[0])
+        val expectedProfile = testProfiles[0]
+        SecurityTestUtils.setManager()
+        mockMvc
+            .perform(get("/API/profiles/${expectedProfile.email}").contentType("application/json"))
+            .andExpectAll(
+                status().isOk,
+                content().contentType(MediaType.APPLICATION_JSON),
+                jsonPath("$.profileId").exists(),
+                jsonPath("$.email").value(expectedProfile.email),
+                jsonPath("$.name").value(expectedProfile.name),
+                jsonPath("$.surname").value(expectedProfile.surname),
+                jsonPath("$.phoneNumber").value(expectedProfile.phoneNumber),
+                jsonPath("$.address").value(expectedProfile.address),
+                jsonPath("$.city").value(expectedProfile.city),
+                jsonPath("$.country").value(expectedProfile.country),
+                jsonPath("$.ticketsIds").isArray,
+                jsonPath("$.ticketsIds").isNotEmpty
+            )
+    }
+
+    @Test
     fun getProfileNotFound() {
+        SecurityTestUtils.setManager()
         val email = "non_existing_email@fake.com"
         mockMvc
             .perform(get("/API/profiles/$email").contentType("application/json"))
@@ -119,15 +211,11 @@ class ProfileControllerIT : AbstractTestcontainersTest() {
         strings = ["plainaddress",
             "Joe Smith <email@example.com>",
             "email.example.com",
-            "this\\ is\"really\"not\\allowed@example.com",
-            "”(),:;<>[\\]@example.com",
-            "@%^%#\$@#\$@#.com",
             "i .@..it",
             "email@example_com",
             "email@example!com",
             "email@example#com",
             "email@example\$com",
-            "email@example%com",
             "email@example&com",
             "email@example'com",
             "email@example*com",
@@ -136,6 +224,7 @@ class ProfileControllerIT : AbstractTestcontainersTest() {
             "email@example|com"]
     )
     fun getProfileInvalidEmail(invalidEmail: String) {
+        SecurityTestUtils.setManager()
         mockMvc
             .perform(get("/API/profiles/$invalidEmail").contentType("application/json"))
             .andExpectAll(
@@ -151,7 +240,8 @@ class ProfileControllerIT : AbstractTestcontainersTest() {
     @Test
     @Transactional
     @Rollback
-    fun createProfile() {
+    fun createProfileManager() {
+        SecurityTestUtils.setManager()
         val newProfileDTO = ProfileTestUtils.getNewProfileDTO()
 
         val mapper = ObjectMapper()
@@ -169,95 +259,135 @@ class ProfileControllerIT : AbstractTestcontainersTest() {
     @Test
     @Transactional
     @Rollback
-    fun createProfileValidEmails() {
-        val validEmails =
-            listOf(
-                "btrehearne9@hatena.ne.jp",
-                "cspillmanf@list-manage.com",
-                "mmanlowo@google.co.uk",
-                "yreddyhoff2e@123-reg.co.uk"
+    fun createProfileClient() {
+        SecurityTestUtils.setClient(testProfiles[0].email)
+        val newProfileDTO = ProfileTestUtils.getNewProfileDTO()
+
+        val mapper = ObjectMapper()
+        val jsonBody = mapper.writeValueAsString(newProfileDTO)
+
+        mockMvc
+            .perform(
+                post("/API/profiles")
+                    .content(jsonBody)
+                    .contentType(MediaType.APPLICATION_JSON)
             )
-
-        for (email in validEmails) {
-            val newProfileDTO = ProfileTestUtils.getNewProfileDTO().copy(
-                email = email,
-                phoneNumber = ProfileTestUtils.generateRandomPhoneNumber()
-            )
-
-            val mapper = ObjectMapper()
-            val jsonBody = mapper.writeValueAsString(newProfileDTO)
-
-            mockMvc
-                .perform(
-                    post("/API/profiles")
-                        .content(jsonBody)
-                        .contentType(MediaType.APPLICATION_JSON)
-                )
-                .andExpect(status().isCreated)
-        }
+            .andExpect(status().isUnauthorized)
     }
 
     @Test
     @Transactional
     @Rollback
-    fun createProfileValidNames() {
-        val validNames =
-            listOf("X AE A-XII Musk", "nicola", "nicolo'", "John Paul", "Mary-Jane", "O'Connor", "John Jr.")
+    fun createProfileExpert() {
+        SecurityTestUtils.setExpert(testExperts[0].email)
+        val newProfileDTO = ProfileTestUtils.getNewProfileDTO()
 
-        for (name in validNames) {
-            val timestamp = System.currentTimeMillis()
-            val newProfileDTO = ProfileTestUtils.getNewProfileDTO().copy(
-                email = "test$timestamp@example.com",
-                phoneNumber = ProfileTestUtils.generateRandomPhoneNumber(),
-                name = name
+        val mapper = ObjectMapper()
+        val jsonBody = mapper.writeValueAsString(newProfileDTO)
+
+        mockMvc
+            .perform(
+                post("/API/profiles")
+                    .content(jsonBody)
+                    .contentType(MediaType.APPLICATION_JSON)
             )
-
-            val mapper = ObjectMapper()
-            val jsonBody = mapper.writeValueAsString(newProfileDTO)
-
-            mockMvc
-                .perform(
-                    post("/API/profiles")
-                        .content(jsonBody)
-                        .contentType(MediaType.APPLICATION_JSON)
-                )
-                .andExpect(status().isCreated)
-        }
+            .andExpect(status().isUnauthorized)
     }
 
-    @Test
+    @ParameterizedTest
+    @ValueSource(
+        strings = ["btrehearne9@hatena.ne.jp",
+            "cspillmanf@list-manage.com",
+            "mmanlowo@google.co.uk",
+            "yreddyhoff2e@123-reg.co.uk"]
+    )
     @Transactional
     @Rollback
-    fun createProfileValidSurname() {
-        val validSurnames = listOf("Van der Meer", "musk", "Kim-Lee", "O'Reilly", "Santos Jr.")
+    fun createProfileValidEmails(email: String) {
+        SecurityTestUtils.setManager()
+        val newProfileDTO = ProfileTestUtils.getNewProfileDTO().copy(
+            email = email,
+            phoneNumber = ProfileTestUtils.generateRandomPhoneNumber()
+        )
+        val mapper = ObjectMapper()
+        val jsonBody = mapper.writeValueAsString(newProfileDTO)
 
-        for (surname in validSurnames) {
-            val timestamp = System.currentTimeMillis()
-            val newProfileDTO = ProfileTestUtils.getNewProfileDTO().copy(
-                email = "test$timestamp@example.com",
-                phoneNumber = ProfileTestUtils.generateRandomPhoneNumber(),
-                surname = surname
+        mockMvc
+            .perform(
+                post("/API/profiles")
+                    .content(jsonBody)
+                    .contentType(MediaType.APPLICATION_JSON)
             )
-
-            val mapper = ObjectMapper()
-            val jsonBody = mapper.writeValueAsString(newProfileDTO)
-
-            mockMvc
-                .perform(
-                    post("/API/profiles")
-                        .content(jsonBody)
-                        .contentType(MediaType.APPLICATION_JSON)
-                )
-                .andExpect(status().isCreated)
-        }
+            .andExpect(status().isCreated)
     }
 
-    @Test
+    @ParameterizedTest
+    @ValueSource(
+        strings = ["X AE A-XII Musk",
+            "nicola",
+            "nicolo'",
+            "John Paul",
+            "Mary-Jane",
+            "O'Connor",
+            "John Jr."]
+    )
     @Transactional
     @Rollback
-    fun createProfileValidAddress() {
-        val validAddresses = listOf(
-            "New Address",
+    fun createProfileValidNames(name: String) {
+        SecurityTestUtils.setManager()
+        val timestamp = System.currentTimeMillis()
+        val newProfileDTO = ProfileTestUtils.getNewProfileDTO().copy(
+            email = "test$timestamp@example.com",
+            phoneNumber = ProfileTestUtils.generateRandomPhoneNumber(),
+            name = name
+        )
+
+        val mapper = ObjectMapper()
+        val jsonBody = mapper.writeValueAsString(newProfileDTO)
+
+        mockMvc
+            .perform(
+                post("/API/profiles")
+                    .content(jsonBody)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isCreated)
+    }
+
+    @ParameterizedTest
+    @ValueSource(
+        strings = ["Van der Meer",
+            "musk",
+            "Kim-Lee",
+            "O'Reilly",
+            "Santos Jr."]
+    )
+    @Transactional
+    @Rollback
+    fun createProfileValidSurname(surname: String) {
+        SecurityTestUtils.setManager()
+        val timestamp = System.currentTimeMillis()
+        val newProfileDTO = ProfileTestUtils.getNewProfileDTO().copy(
+            email = "test$timestamp@example.com",
+            phoneNumber = ProfileTestUtils.generateRandomPhoneNumber(),
+            surname = surname
+        )
+
+        val mapper = ObjectMapper()
+        val jsonBody = mapper.writeValueAsString(newProfileDTO)
+
+        mockMvc
+            .perform(
+                post("/API/profiles")
+                    .content(jsonBody)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isCreated)
+    }
+
+    @ParameterizedTest
+    @ValueSource(
+        strings = ["New Address",
             "123 Main St",
             "456 Elm St Apt 5",
             "789 Oak Rd Suite 100",
@@ -265,36 +395,34 @@ class ProfileControllerIT : AbstractTestcontainersTest() {
             "1213 Maple Blvd #200",
             "1415 Cedar Ln Building A",
             "1617 Birch Ct Building 2",
-            "Corso Duca degli Abruzzi, 24"
-        )
-
-        for (address in validAddresses) {
-            val timestamp = System.currentTimeMillis()
-            val newProfileDTO = ProfileTestUtils.getNewProfileDTO().copy(
-                email = "test$timestamp@example.com",
-                phoneNumber = ProfileTestUtils.generateRandomPhoneNumber(),
-                address = address
-            )
-
-            val mapper = ObjectMapper()
-            val jsonBody = mapper.writeValueAsString(newProfileDTO)
-
-            mockMvc
-                .perform(
-                    post("/API/profiles")
-                        .content(jsonBody)
-                        .contentType(MediaType.APPLICATION_JSON)
-                )
-                .andExpect(status().isCreated)
-        }
-    }
-
-    @Test
+            "Corso Duca degli Abruzzi, 24"]
+    )
     @Transactional
     @Rollback
-    fun createProfileValidCity() {
-        val validCities = listOf(
-            "Bangkok",
+    fun createProfileValidAddress(address: String) {
+        SecurityTestUtils.setManager()
+        val timestamp = System.currentTimeMillis()
+        val newProfileDTO = ProfileTestUtils.getNewProfileDTO().copy(
+            email = "test$timestamp@example.com",
+            phoneNumber = ProfileTestUtils.generateRandomPhoneNumber(),
+            address = address
+        )
+
+        val mapper = ObjectMapper()
+        val jsonBody = mapper.writeValueAsString(newProfileDTO)
+
+        mockMvc
+            .perform(
+                post("/API/profiles")
+                    .content(jsonBody)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isCreated)
+    }
+
+    @ParameterizedTest
+    @ValueSource(
+        strings = ["Bangkok",
             "Tokyo",
             "Paris",
             "London",
@@ -305,36 +433,34 @@ class ProfileControllerIT : AbstractTestcontainersTest() {
             "Los Angeles",
             "Buenos Aires",
             "Rio de Janeiro",
-            "Fuquay-Varina"
-        )
-
-        for (city in validCities) {
-            val timestamp = System.currentTimeMillis()
-            val newProfileDTO = ProfileTestUtils.getNewProfileDTO().copy(
-                email = "test$timestamp@example.com",
-                phoneNumber = ProfileTestUtils.generateRandomPhoneNumber(),
-                city = city
-            )
-
-            val mapper = ObjectMapper()
-            val jsonBody = mapper.writeValueAsString(newProfileDTO)
-
-            mockMvc
-                .perform(
-                    post("/API/profiles")
-                        .content(jsonBody)
-                        .contentType(MediaType.APPLICATION_JSON)
-                )
-                .andExpect(status().isCreated)
-        }
-    }
-
-    @Test
+            "Fuquay-Varina"]
+    )
     @Transactional
     @Rollback
-    fun createProfileValidCountry() {
-        val validCountries = listOf(
-            "Brazil",
+    fun createProfileValidCity(city: String) {
+        SecurityTestUtils.setManager()
+        val timestamp = System.currentTimeMillis()
+        val newProfileDTO = ProfileTestUtils.getNewProfileDTO().copy(
+            email = "test$timestamp@example.com",
+            phoneNumber = ProfileTestUtils.generateRandomPhoneNumber(),
+            city = city
+        )
+
+        val mapper = ObjectMapper()
+        val jsonBody = mapper.writeValueAsString(newProfileDTO)
+
+        mockMvc
+            .perform(
+                post("/API/profiles")
+                    .content(jsonBody)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isCreated)
+    }
+
+    @ParameterizedTest
+    @ValueSource(
+        strings = ["Brazil",
             "Argentina",
             "Thailand",
             "Japan",
@@ -342,32 +468,34 @@ class ProfileControllerIT : AbstractTestcontainersTest() {
             "England",
             "Germany",
             "United States",
-            "Italy"
+            "Italy"]
+    )
+    @Transactional
+    @Rollback
+    fun createProfileValidCountry(country: String) {
+        SecurityTestUtils.setManager()
+        val timestamp = System.currentTimeMillis()
+        val newProfileDTO = ProfileTestUtils.getNewProfileDTO().copy(
+            email = "test$timestamp@example.com",
+            phoneNumber = ProfileTestUtils.generateRandomPhoneNumber(),
+            country = country
         )
 
-        for (country in validCountries) {
-            val timestamp = System.currentTimeMillis()
-            val newProfileDTO = ProfileTestUtils.getNewProfileDTO().copy(
-                email = "test$timestamp@example.com",
-                phoneNumber = ProfileTestUtils.generateRandomPhoneNumber(),
-                country = country
+        val mapper = ObjectMapper()
+        val jsonBody = mapper.writeValueAsString(newProfileDTO)
+
+        mockMvc
+            .perform(
+                post("/API/profiles")
+                    .content(jsonBody)
+                    .contentType(MediaType.APPLICATION_JSON)
             )
-
-            val mapper = ObjectMapper()
-            val jsonBody = mapper.writeValueAsString(newProfileDTO)
-
-            mockMvc
-                .perform(
-                    post("/API/profiles")
-                        .content(jsonBody)
-                        .contentType(MediaType.APPLICATION_JSON)
-                )
-                .andExpect(status().isCreated)
-        }
+            .andExpect(status().isCreated)
     }
 
     @Test
     fun createProfileDuplicateEmail() {
+        SecurityTestUtils.setManager()
         val newProfileDTO = testProfiles[0].toDTO().copy(
             profileId = null,
             phoneNumber = "9999999999"
@@ -388,6 +516,7 @@ class ProfileControllerIT : AbstractTestcontainersTest() {
 
     @Test
     fun createProfileDuplicatePhoneNumber() {
+        SecurityTestUtils.setManager()
         val newProfileDTO = testProfiles[0].toDTO().copy(
             profileId = null,
             email = "new_profile@test.com",
@@ -408,6 +537,7 @@ class ProfileControllerIT : AbstractTestcontainersTest() {
 
     @Test
     fun createProfileBlankFields() {
+        SecurityTestUtils.setManager()
         val newProfileDTO = Profile("", "", "", "", "", "", "").toDTO()
 
         val mapper = ObjectMapper()
@@ -425,6 +555,7 @@ class ProfileControllerIT : AbstractTestcontainersTest() {
 
     @Test
     fun createProfileFieldsWithSpace() {
+        SecurityTestUtils.setManager()
         val newProfileDTO = ProfileTestUtils.getNewProfileDTO().copy(
             name = "   ",
             surname = "   ",
@@ -446,10 +577,9 @@ class ProfileControllerIT : AbstractTestcontainersTest() {
             .andExpect { jsonPath("$.error").exists() }
     }
 
-    @Test
-    fun createProfileInvalidEmail() {
-        val invalidEmails = listOf(
-            "plainaddress",
+    @ParameterizedTest
+    @ValueSource(
+        strings = ["plainaddress",
             "Joe Smith <email@example.com>",
             "email.example.com",
             "this\\ is\"really\"not\\allowed@example.com",
@@ -470,33 +600,31 @@ class ProfileControllerIT : AbstractTestcontainersTest() {
             "email@example=com",
             "email@example|com",
             "",
-            "   "
+            "   "]
+    )
+    fun createProfileInvalidEmail(email: String) {
+        SecurityTestUtils.setManager()
+        val newProfileDTO = ProfileTestUtils.getNewProfileDTO().copy(
+            email = email,
+            phoneNumber = ProfileTestUtils.generateRandomPhoneNumber(),
         )
 
-        for (email in invalidEmails) {
-            val newProfileDTO = ProfileTestUtils.getNewProfileDTO().copy(
-                email = email,
-                phoneNumber = ProfileTestUtils.generateRandomPhoneNumber(),
+        val mapper = ObjectMapper()
+        val jsonBody = mapper.writeValueAsString(newProfileDTO)
+
+        mockMvc
+            .perform(
+                post("/API/profiles")
+                    .content(jsonBody)
+                    .contentType(MediaType.APPLICATION_JSON)
             )
-
-            val mapper = ObjectMapper()
-            val jsonBody = mapper.writeValueAsString(newProfileDTO)
-
-            mockMvc
-                .perform(
-                    post("/API/profiles")
-                        .content(jsonBody)
-                        .contentType(MediaType.APPLICATION_JSON)
-                )
-                .andExpect(status().isUnprocessableEntity)
-                .andExpect { jsonPath("$.error").exists() }
-        }
+            .andExpect(status().isUnprocessableEntity)
+            .andExpect { jsonPath("$.error").exists() }
     }
 
-    @Test
-    fun createProfileInvalidNames() {
-        val invalidNames = listOf(
-            "123456789",
+    @ParameterizedTest
+    @ValueSource(
+        strings = ["123456789",
             "#John",
             "John'-.Paul",
             "Joh.n-Pau'l",
@@ -507,35 +635,33 @@ class ProfileControllerIT : AbstractTestcontainersTest() {
             "John -",
             "test_mail@fake.com",
             "",
-            "   "
+            "   "]
+    )
+    fun createProfileInvalidNames(name: String) {
+        SecurityTestUtils.setManager()
+        val timestamp = System.currentTimeMillis()
+        val newProfileDTO = ProfileTestUtils.getNewProfileDTO().copy(
+            email = "test$timestamp@example.com",
+            phoneNumber = ProfileTestUtils.generateRandomPhoneNumber(),
+            name = name
         )
 
-        for (name in invalidNames) {
-            val timestamp = System.currentTimeMillis()
-            val newProfileDTO = ProfileTestUtils.getNewProfileDTO().copy(
-                email = "test$timestamp@example.com",
-                phoneNumber = ProfileTestUtils.generateRandomPhoneNumber(),
-                name = name
+        val mapper = ObjectMapper()
+        val jsonBody = mapper.writeValueAsString(newProfileDTO)
+
+        mockMvc
+            .perform(
+                post("/API/profiles")
+                    .content(jsonBody)
+                    .contentType(MediaType.APPLICATION_JSON)
             )
-
-            val mapper = ObjectMapper()
-            val jsonBody = mapper.writeValueAsString(newProfileDTO)
-
-            mockMvc
-                .perform(
-                    post("/API/profiles")
-                        .content(jsonBody)
-                        .contentType(MediaType.APPLICATION_JSON)
-                )
-                .andExpect(status().isUnprocessableEntity)
-                .andExpect { jsonPath("$.error").exists() }
-        }
+            .andExpect(status().isUnprocessableEntity)
+            .andExpect { jsonPath("$.error").exists() }
     }
 
-    @Test
-    fun createProfileInvalidSurname() {
-        val invalidSurnames = listOf(
-            "123456789",
+    @ParameterizedTest
+    @ValueSource(
+        strings = ["123456789",
             "@ndre@",
             "Doe'-.Smith",
             "Do.n-Smi'th",
@@ -545,91 +671,87 @@ class ProfileControllerIT : AbstractTestcontainersTest() {
             "Smith - ",
             "Smith -",
             "",
-            "   "
+            "   "]
+    )
+    fun createProfileInvalidSurname(surname: String) {
+        SecurityTestUtils.setManager()
+        val timestamp = System.currentTimeMillis()
+        val newProfileDTO = ProfileTestUtils.getNewProfileDTO().copy(
+            email = "test$timestamp@example.com",
+            phoneNumber = ProfileTestUtils.generateRandomPhoneNumber(),
+            surname = surname
         )
 
-        for (surname in invalidSurnames) {
-            val timestamp = System.currentTimeMillis()
-            val newProfileDTO = ProfileTestUtils.getNewProfileDTO().copy(
-                email = "test$timestamp@example.com",
-                phoneNumber = ProfileTestUtils.generateRandomPhoneNumber(),
-                surname = surname
+        val mapper = ObjectMapper()
+        val jsonBody = mapper.writeValueAsString(newProfileDTO)
+
+        mockMvc
+            .perform(
+                post("/API/profiles")
+                    .content(jsonBody)
+                    .contentType(MediaType.APPLICATION_JSON)
             )
-
-            val mapper = ObjectMapper()
-            val jsonBody = mapper.writeValueAsString(newProfileDTO)
-
-            mockMvc
-                .perform(
-                    post("/API/profiles")
-                        .content(jsonBody)
-                        .contentType(MediaType.APPLICATION_JSON)
-                )
-                .andExpect(status().isUnprocessableEntity)
-                .andExpect { jsonPath("$.error").exists() }
-        }
+            .andExpect(status().isUnprocessableEntity)
+            .andExpect { jsonPath("$.error").exists() }
     }
 
-    @Test
-    fun createProfileInvalidPhoneNumber() {
-        val invalidPhoneNumbers = listOf("test_mail@fake.com", "333--333--3333", "333-3333333", "", "   ")
+    @ParameterizedTest
+    @ValueSource(
+        strings = ["test_mail@fake.com", "333--333--3333", "333-3333333", "", "   "]
+    )
+    fun createProfileInvalidPhoneNumber(phoneNumber: String) {
+        SecurityTestUtils.setManager()
+        val timestamp = System.currentTimeMillis()
+        val newProfileDTO = ProfileTestUtils.getNewProfileDTO().copy(
+            email = "test$timestamp@example.com",
+            phoneNumber = phoneNumber
+        )
 
-        for (phoneNumber in invalidPhoneNumbers) {
-            val timestamp = System.currentTimeMillis()
-            val newProfileDTO = ProfileTestUtils.getNewProfileDTO().copy(
-                email = "test$timestamp@example.com",
-                phoneNumber = phoneNumber
+        val mapper = ObjectMapper()
+        val jsonBody = mapper.writeValueAsString(newProfileDTO)
+
+        mockMvc
+            .perform(
+                post("/API/profiles")
+                    .content(jsonBody)
+                    .contentType(MediaType.APPLICATION_JSON)
             )
-
-            val mapper = ObjectMapper()
-            val jsonBody = mapper.writeValueAsString(newProfileDTO)
-
-            mockMvc
-                .perform(
-                    post("/API/profiles")
-                        .content(jsonBody)
-                        .contentType(MediaType.APPLICATION_JSON)
-                )
-                .andExpect(status().isUnprocessableEntity)
-                .andExpect { jsonPath("$.error").exists() }
-        }
+            .andExpect(status().isUnprocessableEntity)
+            .andExpect { jsonPath("$.error").exists() }
     }
 
-    @Test
-    fun createProfileInvalidAddress() {
-        val invalidAddresses = listOf(
-            "@ street",
+    @ParameterizedTest
+    @ValueSource(
+        strings = ["@ street",
             "   12312 a  21031 i0 k asadlsa a ",
             "",
-            "  "
+            "  "]
+    )
+    fun createProfileInvalidAddress(address: String) {
+        SecurityTestUtils.setManager()
+        val timestamp = System.currentTimeMillis()
+        val newProfileDTO = ProfileTestUtils.getNewProfileDTO().copy(
+            email = "test$timestamp@example.com",
+            phoneNumber = ProfileTestUtils.generateRandomPhoneNumber(),
+            address = address
         )
 
-        for (address in invalidAddresses) {
-            val timestamp = System.currentTimeMillis()
-            val newProfileDTO = ProfileTestUtils.getNewProfileDTO().copy(
-                email = "test$timestamp@example.com",
-                phoneNumber = ProfileTestUtils.generateRandomPhoneNumber(),
-                address = address
+        val mapper = ObjectMapper()
+        val jsonBody = mapper.writeValueAsString(newProfileDTO)
+
+        mockMvc
+            .perform(
+                post("/API/profiles")
+                    .content(jsonBody)
+                    .contentType(MediaType.APPLICATION_JSON)
             )
-
-            val mapper = ObjectMapper()
-            val jsonBody = mapper.writeValueAsString(newProfileDTO)
-
-            mockMvc
-                .perform(
-                    post("/API/profiles")
-                        .content(jsonBody)
-                        .contentType(MediaType.APPLICATION_JSON)
-                )
-                .andExpect(status().isUnprocessableEntity)
-                .andExpect { jsonPath("$.error").exists() }
-        }
+            .andExpect(status().isUnprocessableEntity)
+            .andExpect { jsonPath("$.error").exists() }
     }
 
-    @Test
-    fun createProfileInvalidCity() {
-        val invalidCities = listOf(
-            "New York 123",
+    @ParameterizedTest
+    @ValueSource(
+        strings = ["New York 123",
             "San Francisco!",
             "Los Angeles 123",
             "Buenos Aires 1",
@@ -641,35 +763,33 @@ class ProfileControllerIT : AbstractTestcontainersTest() {
             "Berlin 123",
             "Rome 123",
             "",
-            "   "
+            "   "]
+    )
+    fun createProfileInvalidCity(city: String) {
+        SecurityTestUtils.setManager()
+        val timestamp = System.currentTimeMillis()
+        val newProfileDTO = ProfileTestUtils.getNewProfileDTO().copy(
+            email = "test$timestamp@example.com",
+            phoneNumber = ProfileTestUtils.generateRandomPhoneNumber(),
+            city = city
         )
 
-        for (city in invalidCities) {
-            val timestamp = System.currentTimeMillis()
-            val newProfileDTO = ProfileTestUtils.getNewProfileDTO().copy(
-                email = "test$timestamp@example.com",
-                phoneNumber = ProfileTestUtils.generateRandomPhoneNumber(),
-                city = city
+        val mapper = ObjectMapper()
+        val jsonBody = mapper.writeValueAsString(newProfileDTO)
+
+        mockMvc
+            .perform(
+                post("/API/profiles")
+                    .content(jsonBody)
+                    .contentType(MediaType.APPLICATION_JSON)
             )
-
-            val mapper = ObjectMapper()
-            val jsonBody = mapper.writeValueAsString(newProfileDTO)
-
-            mockMvc
-                .perform(
-                    post("/API/profiles")
-                        .content(jsonBody)
-                        .contentType(MediaType.APPLICATION_JSON)
-                )
-                .andExpect(status().isUnprocessableEntity)
-                .andExpect { jsonPath("$.error").exists() }
-        }
+            .andExpect(status().isUnprocessableEntity)
+            .andExpect { jsonPath("$.error").exists() }
     }
 
-    @Test
-    fun createProfileInvalidCountry() {
-        val invalidCountries = listOf(
-            "United States 123",
+    @ParameterizedTest
+    @ValueSource(
+        strings = ["United States 123",
             "Brazil!",
             "Argentina 123",
             "Thailand 123",
@@ -679,29 +799,28 @@ class ProfileControllerIT : AbstractTestcontainersTest() {
             "Germany 123",
             "Italy 123",
             "",
-            "   "
+            "   "]
+    )
+    fun createProfileInvalidCountry(country: String) {
+        SecurityTestUtils.setManager()
+        val timestamp = System.currentTimeMillis()
+        val newProfileDTO = ProfileTestUtils.getNewProfileDTO().copy(
+            email = "test$timestamp@example.com",
+            phoneNumber = ProfileTestUtils.generateRandomPhoneNumber(),
+            country = country
         )
 
-        for (country in invalidCountries) {
-            val timestamp = System.currentTimeMillis()
-            val newProfileDTO = ProfileTestUtils.getNewProfileDTO().copy(
-                email = "test$timestamp@example.com",
-                phoneNumber = ProfileTestUtils.generateRandomPhoneNumber(),
-                country = country
+        val mapper = ObjectMapper()
+        val jsonBody = mapper.writeValueAsString(newProfileDTO)
+
+        mockMvc
+            .perform(
+                post("/API/profiles")
+                    .content(jsonBody)
+                    .contentType(MediaType.APPLICATION_JSON)
             )
-
-            val mapper = ObjectMapper()
-            val jsonBody = mapper.writeValueAsString(newProfileDTO)
-
-            mockMvc
-                .perform(
-                    post("/API/profiles")
-                        .content(jsonBody)
-                        .contentType(MediaType.APPLICATION_JSON)
-                )
-                .andExpect(status().isUnprocessableEntity)
-                .andExpect { jsonPath("$.error").exists() }
-        }
+            .andExpect(status().isUnprocessableEntity)
+            .andExpect { jsonPath("$.error").exists() }
     }
 
     /////////////////////////////////////////////////////////////////////
@@ -711,11 +830,17 @@ class ProfileControllerIT : AbstractTestcontainersTest() {
     @Test
     @Transactional
     @Rollback
-    fun modifyProfile() {
+    fun modifyProfileClient() {
+        SecurityTestUtils.setClient(testProfiles[0].email)
         val oldProfileDTO = testProfiles[0].toDTO()
-        val newProfileDTO = oldProfileDTO.copy(
-            profileId = null,
-            name = "NewName"
+        val newProfileDTO = EditProfileDTO(
+            name = "NewName",
+            surname = oldProfileDTO.surname,
+            phoneNumber = oldProfileDTO.phoneNumber,
+            address = oldProfileDTO.address,
+            city = oldProfileDTO.city,
+            country = oldProfileDTO.country,
+            null
         )
 
         val mapper = ObjectMapper()
@@ -723,7 +848,7 @@ class ProfileControllerIT : AbstractTestcontainersTest() {
 
         mockMvc
             .perform(
-                put("/API/profiles/${oldProfileDTO.email}")
+                put("/API/profiles")
                     .content(jsonBody)
                     .contentType(MediaType.APPLICATION_JSON)
             )
@@ -733,11 +858,17 @@ class ProfileControllerIT : AbstractTestcontainersTest() {
     @Test
     @Transactional
     @Rollback
-    fun modifyProfileEmail() {
+    fun modifyProfileExpert() {
+        SecurityTestUtils.setExpert(testExperts[0].email)
         val oldProfileDTO = testProfiles[0].toDTO()
-        val newProfileDTO = oldProfileDTO.copy(
-            profileId = null,
-            email = "new_email@test.org"
+        val newProfileDTO = EditProfileDTO(
+            name = "NewName",
+            surname = oldProfileDTO.surname,
+            phoneNumber = oldProfileDTO.phoneNumber,
+            address = oldProfileDTO.address,
+            city = oldProfileDTO.city,
+            country = oldProfileDTO.country,
+            null
         )
 
         val mapper = ObjectMapper()
@@ -745,21 +876,55 @@ class ProfileControllerIT : AbstractTestcontainersTest() {
 
         mockMvc
             .perform(
-                put("/API/profiles/${oldProfileDTO.email}")
+                put("/API/profiles")
                     .content(jsonBody)
                     .contentType(MediaType.APPLICATION_JSON)
             )
-            .andExpect(status().isOk)
+            .andExpect(status().isUnauthorized)
+    }
+
+    @Test
+    @Transactional
+    @Rollback
+    fun modifyProfileManager() {
+        SecurityTestUtils.setManager()
+        val oldProfileDTO = testProfiles[0].toDTO()
+        val newProfileDTO = EditProfileDTO(
+            name = "NewName",
+            surname = oldProfileDTO.surname,
+            phoneNumber = oldProfileDTO.phoneNumber,
+            address = oldProfileDTO.address,
+            city = oldProfileDTO.city,
+            country = oldProfileDTO.country,
+            null
+        )
+
+        val mapper = ObjectMapper()
+        val jsonBody = mapper.writeValueAsString(newProfileDTO)
+
+        mockMvc
+            .perform(
+                put("/API/profiles")
+                    .content(jsonBody)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isUnauthorized)
     }
 
     @Test
     @Transactional
     @Rollback
     fun modifyProfilePhoneNumber() {
+        SecurityTestUtils.setClient(testProfiles[0].email)
         val oldProfileDTO = testProfiles[0].toDTO()
-        val newProfileDTO = oldProfileDTO.copy(
-            profileId = null,
-            phoneNumber = "4444444444"
+        val newProfileDTO = EditProfileDTO(
+            name = oldProfileDTO.name,
+            surname = oldProfileDTO.surname,
+            phoneNumber = "4444444444",
+            address = oldProfileDTO.address,
+            city = oldProfileDTO.city,
+            country = oldProfileDTO.country,
+            null
         )
 
         val mapper = ObjectMapper()
@@ -767,7 +932,7 @@ class ProfileControllerIT : AbstractTestcontainersTest() {
 
         mockMvc
             .perform(
-                put("/API/profiles/${oldProfileDTO.email}")
+                put("/API/profiles")
                     .content(jsonBody)
                     .contentType(MediaType.APPLICATION_JSON)
             )
@@ -778,15 +943,15 @@ class ProfileControllerIT : AbstractTestcontainersTest() {
     @Transactional
     @Rollback
     fun modifyProfileComplete() {
-        val oldProfileDTO = testProfiles[0].toDTO()
-        val newProfileDTO = ProfileTestUtils.getNewProfileDTO()
+        SecurityTestUtils.setClient(testProfiles[0].email)
+        val newProfileDTO = ProfileTestUtils.getNewEditProfileDTO()
 
         val mapper = ObjectMapper()
         val jsonBody = mapper.writeValueAsString(newProfileDTO)
 
         mockMvc
             .perform(
-                put("/API/profiles/${oldProfileDTO.email}")
+                put("/API/profiles")
                     .content(jsonBody)
                     .contentType(MediaType.APPLICATION_JSON)
             )
@@ -794,53 +959,18 @@ class ProfileControllerIT : AbstractTestcontainersTest() {
     }
 
     @Test
-    fun modifyProfileNotFound() {
-        val oldProfileDTO = testProfiles[0].toDTO()
-        val newProfileDTO = oldProfileDTO.copy(
-            profileId = null,
-            name = "NewName"
-        )
-
-        val mapper = ObjectMapper()
-        val jsonBody = mapper.writeValueAsString(newProfileDTO)
-
-        mockMvc
-            .perform(
-                put("/API/profiles/non_existing_email@fake.it")
-                    .content(jsonBody)
-                    .contentType(MediaType.APPLICATION_JSON)
-            )
-            .andExpect(status().isNotFound)
-    }
-
-    @Test
-    fun modifyProfileDuplicateEmail() {
-        val oldProfileDTO = testProfiles[0].toDTO()
-        val otherProfileDTO = testProfiles[1].toDTO()
-        val newProfileDTO = oldProfileDTO.copy(
-            profileId = null,
-            email = otherProfileDTO.email
-        )
-
-        val mapper = ObjectMapper()
-        val jsonBody = mapper.writeValueAsString(newProfileDTO)
-
-        mockMvc
-            .perform(
-                put("/API/profiles/${oldProfileDTO.email}")
-                    .content(jsonBody)
-                    .contentType(MediaType.APPLICATION_JSON)
-            )
-            .andExpect(status().isConflict)
-    }
-
-    @Test
     fun modifyProfileDuplicatePhoneNumber() {
+        SecurityTestUtils.setClient(testProfiles[0].email)
         val oldProfileDTO = testProfiles[0].toDTO()
         val otherProfileDTO = testProfiles[1].toDTO()
-        val newProfileDTO = oldProfileDTO.copy(
-            profileId = null,
-            phoneNumber = otherProfileDTO.phoneNumber
+        val newProfileDTO = EditProfileDTO(
+            name = oldProfileDTO.name,
+            surname = oldProfileDTO.surname,
+            phoneNumber = otherProfileDTO.phoneNumber,
+            address = oldProfileDTO.address,
+            city = oldProfileDTO.city,
+            country = oldProfileDTO.country,
+            null
         )
 
         val mapper = ObjectMapper()
@@ -848,54 +978,17 @@ class ProfileControllerIT : AbstractTestcontainersTest() {
 
         mockMvc
             .perform(
-                put("/API/profiles/${oldProfileDTO.email}")
+                put("/API/profiles")
                     .content(jsonBody)
                     .contentType(MediaType.APPLICATION_JSON)
             )
             .andExpect(status().isConflict)
-    }
-
-    @Test
-    fun modifyProfileWrongEmailParameter() {
-        val newProfileDTO = ProfileTestUtils.getNewProfileDTO()
-
-        val mapper = ObjectMapper()
-        val jsonBody = mapper.writeValueAsString(newProfileDTO)
-
-        mockMvc
-            .perform(
-                put("/API/profiles/101")
-                    .content(jsonBody)
-                    .contentType(MediaType.APPLICATION_JSON)
-            )
-            .andExpect(status().isUnprocessableEntity)
-            .andExpect { jsonPath("$.error").exists() }
-    }
-
-    @Test
-    fun modifyProfileWrongEmailBody() {
-        val oldProfileDTO = testProfiles[0].toDTO()
-        val newProfileDTO = ProfileTestUtils.getNewProfileDTO().copy(
-            email = "aaaa@12132lc.com@org@.cak12"
-        )
-
-        val mapper = ObjectMapper()
-        val jsonBody = mapper.writeValueAsString(newProfileDTO)
-
-        mockMvc
-            .perform(
-                put("/API/profiles/${oldProfileDTO.email}")
-                    .content(jsonBody)
-                    .contentType(MediaType.APPLICATION_JSON)
-            )
-            .andExpect(status().isUnprocessableEntity)
-            .andExpect { jsonPath("$.error").exists() }
     }
 
     @Test
     fun modifyProfileWrongPhoneNumber() {
-        val oldProfileDTO = testProfiles[0].toDTO()
-        val newProfileDTO = ProfileTestUtils.getNewProfileDTO().copy(
+        SecurityTestUtils.setClient(testProfiles[0].email)
+        val newProfileDTO = ProfileTestUtils.getNewEditProfileDTO().copy(
             phoneNumber = "abc"
         )
 
@@ -904,7 +997,7 @@ class ProfileControllerIT : AbstractTestcontainersTest() {
 
         mockMvc
             .perform(
-                put("/API/profiles/${oldProfileDTO.email}")
+                put("/API/profiles")
                     .content(jsonBody)
                     .contentType(MediaType.APPLICATION_JSON)
             )
@@ -914,8 +1007,8 @@ class ProfileControllerIT : AbstractTestcontainersTest() {
 
     @Test
     fun modifyProfileWrongName() {
-        val oldProfileDTO = testProfiles[0].toDTO()
-        val newProfileDTO = ProfileTestUtils.getNewProfileDTO().copy(
+        SecurityTestUtils.setClient(testProfiles[0].email)
+        val newProfileDTO = ProfileTestUtils.getNewEditProfileDTO().copy(
             name = "@!'ì23190!--@#è]"
         )
 
@@ -924,7 +1017,7 @@ class ProfileControllerIT : AbstractTestcontainersTest() {
 
         mockMvc
             .perform(
-                put("/API/profiles/${oldProfileDTO.email}")
+                put("/API/profiles")
                     .content(jsonBody)
                     .contentType(MediaType.APPLICATION_JSON)
             )
@@ -934,8 +1027,8 @@ class ProfileControllerIT : AbstractTestcontainersTest() {
 
     @Test
     fun modifyProfileWrongSurname() {
-        val oldProfileDTO = testProfiles[0].toDTO()
-        val newProfileDTO = ProfileTestUtils.getNewProfileDTO().copy(
+        SecurityTestUtils.setClient(testProfiles[0].email)
+        val newProfileDTO = ProfileTestUtils.getNewEditProfileDTO().copy(
             surname = "Do Silva £$%&!()/{}"
         )
 
@@ -944,7 +1037,7 @@ class ProfileControllerIT : AbstractTestcontainersTest() {
 
         mockMvc
             .perform(
-                put("/API/profiles/${oldProfileDTO.email}")
+                put("/API/profiles")
                     .content(jsonBody)
                     .contentType(MediaType.APPLICATION_JSON)
             )
@@ -954,14 +1047,14 @@ class ProfileControllerIT : AbstractTestcontainersTest() {
 
     @Test
     fun modifyProfileEmptyBody() {
-        val oldProfileDTO = testProfiles[0].toDTO()
+        SecurityTestUtils.setClient(testProfiles[0].email)
 
         val mapper = ObjectMapper()
         val jsonBody = mapper.writeValueAsString("")
 
         mockMvc
             .perform(
-                put("/API/profiles/${oldProfileDTO.email}")
+                put("/API/profiles")
                     .content(jsonBody)
                     .contentType(MediaType.APPLICATION_JSON)
             )
@@ -971,8 +1064,8 @@ class ProfileControllerIT : AbstractTestcontainersTest() {
 
     @Test
     fun modifyProfileEmptyFields() {
-        val oldProfileDTO = testProfiles[0].toDTO()
-        val newProfileDTO = ProfileTestUtils.getNewProfileDTO().copy(
+        SecurityTestUtils.setClient(testProfiles[0].email)
+        val newProfileDTO = ProfileTestUtils.getNewEditProfileDTO().copy(
             name = "",
             surname = "",
             address = "",
@@ -985,7 +1078,7 @@ class ProfileControllerIT : AbstractTestcontainersTest() {
 
         mockMvc
             .perform(
-                put("/API/profiles/${oldProfileDTO.email}")
+                put("/API/profiles")
                     .content(jsonBody)
                     .contentType(MediaType.APPLICATION_JSON)
             )

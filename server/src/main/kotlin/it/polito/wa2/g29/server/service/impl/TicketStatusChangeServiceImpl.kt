@@ -10,18 +10,23 @@ import it.polito.wa2.g29.server.exception.NotValidStatusChangeException
 import it.polito.wa2.g29.server.exception.TicketNotFoundException
 import it.polito.wa2.g29.server.model.Ticket
 import it.polito.wa2.g29.server.repository.ExpertRepository
+import it.polito.wa2.g29.server.repository.ProfileRepository
 import it.polito.wa2.g29.server.repository.TicketRepository
 import it.polito.wa2.g29.server.service.TicketStatusChangeService
+import it.polito.wa2.g29.server.utils.AuthenticationUtil
 import it.polito.wa2.g29.server.utils.TicketStatusChangeRules
 import jakarta.transaction.Transactional
 import org.springframework.data.repository.findByIdOrNull
+import org.springframework.security.access.AccessDeniedException
 import org.springframework.stereotype.Service
 
 @Service
 class TicketStatusChangeServiceImpl(
     private val ticketRepository: TicketRepository,
-    private val expertRepository: ExpertRepository
+    private val expertRepository: ExpertRepository,
+    private val profileRepository: ProfileRepository
 ) : TicketStatusChangeService {
+
     @Transactional
     override fun ticketStatusChangeInProgress(ticketId: Int, statusChangeData: TicketStatusChangeInProgressDTO) {
         val ticket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
@@ -38,7 +43,9 @@ class TicketStatusChangeServiceImpl(
         statusChangeData: TicketStatusChangeDTO
     ) {
         val ticket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
-        updateTicketStatus(ticket, newStatus, statusChangeData.changedBy, statusChangeData.description)
+        //generic check. Authorization first level check done in controller
+        checkUserAuthorisation(ticket)
+        updateTicketStatus(ticket, newStatus, AuthenticationUtil.getUserTypeEnum(), statusChangeData.description)
     }
 
     //In this function I try to create a status change and its log, and thrown an exception if it not possible
@@ -61,5 +68,21 @@ class TicketStatusChangeServiceImpl(
 
         ticket.changeStatus(newStatus, changedBy, description)
         ticketRepository.save(ticket)
+    }
+
+    private fun checkUserAuthorisation(ticket: Ticket) {
+        when (AuthenticationUtil.getUserTypeEnum()) {
+            UserType.EXPERT, UserType.CUSTOMER -> {
+                if (!AuthenticationUtil.authenticatedUserIsAssociatedWithTicket(
+                        ticket,
+                        { expertRepository.findExpertByEmail(it)!! },
+                        { profileRepository.findProfileByEmail(it)!! }
+                    )
+                )
+                    throw AccessDeniedException("")
+            }
+
+            UserType.MANAGER -> Unit
+        }
     }
 }

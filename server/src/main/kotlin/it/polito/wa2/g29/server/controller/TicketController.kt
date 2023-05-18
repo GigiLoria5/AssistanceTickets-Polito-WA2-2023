@@ -8,16 +8,17 @@ import jakarta.validation.Valid
 import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotNull
 import org.springframework.http.HttpStatus
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 
 @RequestMapping("/API")
 @Validated
 @RestController
-class TicketController(
-    private val ticketService: TicketService
-) {
-    // GET /API/tickets/ -- list all tickets in the DB
+class TicketController(private val ticketService: TicketService) {
+
+    // GET /API/tickets -- list all tickets in the DB
+    @PreAuthorize("hasAuthority(@AuthUtil.ROLE_MANAGER)")
     @GetMapping("/tickets")
     fun getAllTickets(
         @RequestParam("status", required = false) status: TicketStatus?
@@ -41,6 +42,7 @@ class TicketController(
     }
 
     // POST /API/tickets -- create a new ticket or fail if some field is missing, or is not valid, or does not has correspondence or in case of duplicates
+    @PreAuthorize("hasAuthority(@AuthUtil.ROLE_CLIENT)")
     @PostMapping("/tickets")
     @ResponseStatus(HttpStatus.CREATED)
     fun createTicket(@RequestBody @Valid @NotNull ticket: NewTicketDTO): NewTicketIdDTO {

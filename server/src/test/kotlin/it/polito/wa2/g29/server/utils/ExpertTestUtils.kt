@@ -43,7 +43,7 @@ object ExpertTestUtils {
         ticketStatusChangeService.ticketStatusChange(
             ticket.id!!,
             newStatus,
-            TicketStatusChangeDTO(userType, description)
+            TicketStatusChangeDTO(description)
         )
         expert.ticketChanges.add(TicketChange(ticket, oldStatus, userType, description))
     }

@@ -9,16 +9,17 @@ import jakarta.validation.Valid
 import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotNull
 import org.springframework.http.HttpStatus
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 
 @RequestMapping("/API")
 @Validated
 @RestController
-class TicketStatusChangeController(
-    private val ticketStatusChangeService: TicketStatusChangeService
-) {
+class TicketStatusChangeController(private val ticketStatusChangeService: TicketStatusChangeService) {
+
     // PUT /API/tickets/{ticketId}/start -Allows to start the progress of an "OPEN"/"REOPENED" ticket. The ticket status will be "IN_PROGRESS"
+    @PreAuthorize("hasAuthority(@AuthUtil.ROLE_MANAGER)")
     @PutMapping("/tickets/{ticketId}/start")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun startTicket(
@@ -29,6 +30,7 @@ class TicketStatusChangeController(
     }
 
     // PUT /API/tickets/{ticketId}/stop -Allows to stop the progress of an "IN_PROGRESS" ticket. The ticket status will be "OPEN"
+    @PreAuthorize("hasAuthority(@AuthUtil.ROLE_MANAGER) or hasAuthority(@AuthUtil.ROLE_EXPERT)")
     @PutMapping("/tickets/{ticketId}/stop")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun stopTicket(
@@ -49,6 +51,7 @@ class TicketStatusChangeController(
     }
 
     // PUT /API/tickets/{ticketId}/reopen -Allows to reopen a "CLOSED"/"RESOLVED" ticket. The ticket status will be "REOPENED"
+    @PreAuthorize("hasAuthority(@AuthUtil.ROLE_CLIENT)")
     @PutMapping("/tickets/{ticketId}/reopen")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun reopenTicket(
@@ -58,11 +61,12 @@ class TicketStatusChangeController(
         ticketStatusChangeService.ticketStatusChange(
             ticketId,
             TicketStatus.REOPENED,
-            TicketStatusChangeDTO(statusChangeData.changedBy, statusChangeData.description)
+            TicketStatusChangeDTO(statusChangeData.description)
         )
     }
 
     // PUT /API/tickets/{ticketId}/close -Allows to close a "OPEN"/"RESOLVED"/"IN_PROGRESS"/"REOPENED" ticket. The ticket status will be "CLOSED"
+    @PreAuthorize("hasAuthority(@AuthUtil.ROLE_MANAGER) or hasAuthority(@AuthUtil.ROLE_EXPERT)")
     @PutMapping("/tickets/{ticketId}/close")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun closeTicket(
@@ -71,4 +75,5 @@ class TicketStatusChangeController(
     ) {
         ticketStatusChangeService.ticketStatusChange(ticketId, TicketStatus.CLOSED, statusChangeData)
     }
+
 }

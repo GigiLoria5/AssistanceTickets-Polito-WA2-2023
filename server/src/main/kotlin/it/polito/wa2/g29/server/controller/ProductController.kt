@@ -13,9 +13,8 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/API")
 @Validated
 @RestController
-class ProductController(
-    private val productService: ProductService
-) {
+class ProductController(private val productService: ProductService) {
+
     // GET /API/products/ -- list all registered products in the DB
     @GetMapping("/products")
     fun getAllProducts(): List<ProductDTO> {
@@ -27,4 +26,5 @@ class ProductController(
     fun getProductById(@PathVariable @Valid @Min(1) productId: Int): ProductDTO {
         return productService.getProductById(productId)
     }
+
 }
