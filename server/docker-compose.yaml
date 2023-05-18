@@ -6,7 +6,8 @@ services:
     restart: unless-stopped
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres" ]
-      interval: 1s
+      interval: 5s
+      retries: 2
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=p4ssw0rd
@@ -20,14 +21,21 @@ services:
     image: quay.io/keycloak/keycloak:21.1.1
     container_name: keycloak
     command:
-      - start-dev --import-realm --hostname-port=3000
+      - start-dev --import-realm --hostname-port=3000 --health-enabled=true
     environment:
       - KEYCLOAK_ADMIN=admin
       - KEYCLOAK_ADMIN_PASSWORD=admin
+    healthcheck:
+      test: ["CMD-SHELL","bin/bash /test/healthcheck.sh | grep -o '\"status\": \"UP\"' || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
     ports:
       - "3000:8080"
     volumes:
       - ./init-data/SpringBootKeycloak-realm.json:/opt/keycloak/data/import/myrealm.json
+      - ./init-data/keycloak-healthcheck.sh:/test/healthcheck.sh
 
   app:
     image: pepaunz/assistance-tickets:v0.3
@@ -37,7 +45,7 @@ services:
       db:
         condition: service_healthy
       keycloak:
-        condition: service_started
+        condition: service_healthy
     env_file:
       - ./init-data/app.env
     ports:
