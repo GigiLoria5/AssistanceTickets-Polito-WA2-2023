@@ -17,6 +17,11 @@ services:
     volumes:
       - ./init-data/dump.sql:/docker-entrypoint-initdb.d/dump.sql
 
+  keycloak-curl-test:
+    container_name: keycloak-curl-test
+    image: alpine:latest
+    command: sh -c "apk add --no-cache curl && while true; do sleep 5; if curl --head -fsS http://keycloak:8080/health/ready; then echo 'Keycloak ready' && exit 0; else echo 'Keycloak not ready'; fi; done"
+
   keycloak:
     image: quay.io/keycloak/keycloak:21.1.1
     container_name: keycloak
@@ -25,12 +30,6 @@ services:
     environment:
       - KEYCLOAK_ADMIN=admin
       - KEYCLOAK_ADMIN_PASSWORD=admin
-    healthcheck:
-      test: ["CMD-SHELL","bin/bash /test/healthcheck.sh | grep -o '\"status\": \"UP\"' || exit 1"]
-      interval: 15s
-      timeout: 5s
-      retries: 10
-      start_period: 30s
     ports:
       - "3000:8080"
     volumes:
@@ -44,8 +43,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
-      keycloak:
-        condition: service_healthy
+      keycloak-curl-test:
+        condition: service_completed_successfully
     env_file:
       - ./init-data/app.env
     ports:
