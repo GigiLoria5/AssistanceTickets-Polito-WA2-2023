@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.security.core.AuthenticationException
+import org.springframework.security.access.AccessDeniedException
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.MissingServletRequestParameterException
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -21,7 +22,7 @@ class ApplicationExceptionHandler {
 
     // 401 - Unauthorized
     @ExceptionHandler(value = [AuthenticationException::class, AccessDeniedException::class])
-    fun handleAuthenticationException(ex: AuthenticationException): ResponseEntity<Unit> {
+    fun handleAuthenticationException(exception: Exception): ResponseEntity<Unit> {
         return ResponseEntity(HttpStatus.UNAUTHORIZED)
     }
 
@@ -57,7 +58,7 @@ class ApplicationExceptionHandler {
     }
 
     // 422 - Error message
-    @ExceptionHandler(value = [NotValidStatusChangeException::class, ChatIsInactiveException::class, UserTypeNotValidException::class])
+    @ExceptionHandler(value = [NotValidStatusChangeException::class, ChatIsInactiveException::class])
     fun handleValidationFailedExceptionWithErrorMessage(exception: Exception): ResponseEntity<ErrorMessage> {
         val errorMessage = ErrorMessage(exception.message.orEmpty())
         return ResponseEntity(errorMessage, HttpStatus.UNPROCESSABLE_ENTITY)
