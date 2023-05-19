@@ -28,6 +28,7 @@ class AuthController(private val keycloakProperties: KeycloakProperties) {
         body.add("client_id", keycloakProperties.clientId)
         body.add("username", request.username)
         body.add("password", request.password)
+        body.add("client_secret", keycloakProperties.clientSecret)
         body.add("grant_type", "password")
 
         val requestEntity = HttpEntity(body, headers)
