@@ -11,7 +11,7 @@ plugins {
 }
 
 group = "it.polito.wa2.g29"
-version = "0.3"
+version = "0.4"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
@@ -46,6 +46,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
+    implementation("org.keycloak:keycloak-admin-client:21.1.1")
     runtimeOnly("org.postgresql:postgresql")
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
