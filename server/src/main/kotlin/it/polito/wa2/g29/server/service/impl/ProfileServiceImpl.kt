@@ -11,8 +11,8 @@ import it.polito.wa2.g29.server.model.toEntity
 import it.polito.wa2.g29.server.repository.ExpertRepository
 import it.polito.wa2.g29.server.repository.ProfileRepository
 import it.polito.wa2.g29.server.service.ProfileService
-import org.springframework.security.access.AccessDeniedException
 import it.polito.wa2.g29.server.utils.AuthenticationUtil
+import org.springframework.security.access.AccessDeniedException
 import org.springframework.stereotype.Service
 
 @Service
@@ -46,7 +46,7 @@ class ProfileServiceImpl(
         profileRepository.save(profile)
     }
 
-    private fun checkUserAuthorisation(email: String){
+    private fun checkUserAuthorisation(email: String) {
         val username = AuthenticationUtil.getUsername()
 
         when (AuthenticationUtil.getUserTypeEnum()) {
@@ -54,6 +54,7 @@ class ProfileServiceImpl(
                 if (username != email)
                     throw AccessDeniedException("")
             }
+
             UserType.EXPERT -> {
                 val expert = expertRepository.findExpertByEmail(username)!!
                 val foundCustomer = expert.tickets.any {
@@ -62,6 +63,7 @@ class ProfileServiceImpl(
                 if (!foundCustomer)
                     throw AccessDeniedException("")
             }
+
             UserType.MANAGER -> Unit
         }
     }

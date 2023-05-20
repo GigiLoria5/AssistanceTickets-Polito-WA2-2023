@@ -25,21 +25,11 @@ class ProfileController(private val profileService: ProfileService) {
         return profileService.getProfileByEmail(email)
     }
 
-    // POST /API/profiles -- create a new profile or fail if some field is missing, or is not valid, or in case of duplicates
-    @PreAuthorize("hasAuthority(@AuthUtil.ROLE_MANAGER)")
-    @PostMapping("/profiles")
-    @ResponseStatus(HttpStatus.CREATED)
-    fun createProfile(@RequestBody @Valid @NotNull profile: ProfileDTO) {
-        profileService.createProfile(profile)
-    }
-
     // PUT /API/profiles -- modify a user profile
     @PreAuthorize("hasAuthority(@AuthUtil.ROLE_CLIENT)")
     @PutMapping("/profiles")
     @ResponseStatus(HttpStatus.OK)
-    fun modifyProfile(
-        @RequestBody @Valid @NotNull newProfile: EditProfileDTO,
-    ) {
+    fun modifyProfile(@RequestBody @Valid @NotNull newProfile: EditProfileDTO) {
         profileService.modifyProfile(newProfile)
     }
 

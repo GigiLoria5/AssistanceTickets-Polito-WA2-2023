@@ -1,22 +1,17 @@
 package it.polito.wa2.g29.server.dto
 
 import it.polito.wa2.g29.server.model.Profile
-import jakarta.annotation.Nullable
-import jakarta.validation.constraints.Email
-import jakarta.validation.constraints.NotBlank
-import jakarta.validation.constraints.Null
-import jakarta.validation.constraints.Pattern
 
 data class ProfileDTO(
-    @field:Null var profileId: Int?,
-    @field:NotBlank @field:Email @field:Pattern(regexp = EMAIL_PATTERN) val email: String,
-    @field:NotBlank @field:Pattern(regexp = NAME_PATTERN) val name: String,
-    @field:NotBlank @field:Pattern(regexp = NAME_PATTERN) val surname: String,
-    @field:NotBlank @field:Pattern(regexp = PHONE_NUMBER_PATTERN) val phoneNumber: String,
-    @field:NotBlank @field:Pattern(regexp = ADDRESS_PATTERN) val address: String,
-    @field:NotBlank @field:Pattern(regexp = CITY_PATTERN) val city: String,
-    @field:NotBlank @field:Pattern(regexp = COUNTRY_PATTERN) val country: String,
-    @field:Nullable val ticketsIds: List<Int?>?
+    var profileId: Int?,
+    val email: String,
+    val name: String,
+    val surname: String,
+    val phoneNumber: String,
+    val address: String,
+    val city: String,
+    val country: String,
+    val ticketsIds: List<Int?>?
 ) {
     companion object {
         const val EMAIL_PATTERN = ".+@([^.]+\\.)+[a-z]*\$"
