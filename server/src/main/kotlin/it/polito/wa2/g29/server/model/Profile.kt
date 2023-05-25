@@ -1,6 +1,6 @@
 package it.polito.wa2.g29.server.model
 
-import it.polito.wa2.g29.server.dto.ProfileDTO
+import it.polito.wa2.g29.server.dto.auth.CreateClientDTO
 import it.polito.wa2.g29.server.dto.profile.EditProfileDTO
 import jakarta.persistence.*
 
@@ -37,7 +37,7 @@ class Profile(
 
 }
 
-fun ProfileDTO.toEntity(): Profile {
+fun CreateClientDTO.toEntity(): Profile {
     return Profile(email, name, surname, phoneNumber, address, city, country)
 }
 

@@ -1,12 +1,13 @@
 package it.polito.wa2.g29.server.service
 
 import it.polito.wa2.g29.server.dto.ProfileDTO
+import it.polito.wa2.g29.server.dto.auth.CreateClientDTO
 import it.polito.wa2.g29.server.dto.profile.EditProfileDTO
 
 interface ProfileService {
     fun getProfileByEmail(email: String): ProfileDTO
 
-    fun createProfile(profileDTO: ProfileDTO)
+    fun createProfile(createClientDTO: CreateClientDTO)
 
     fun modifyProfile(newProfile: EditProfileDTO)
 }

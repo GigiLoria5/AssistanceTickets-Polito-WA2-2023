@@ -1,6 +1,7 @@
 package it.polito.wa2.g29.server.service.impl
 
 import it.polito.wa2.g29.server.dto.ProfileDTO
+import it.polito.wa2.g29.server.dto.auth.CreateClientDTO
 import it.polito.wa2.g29.server.dto.profile.EditProfileDTO
 import it.polito.wa2.g29.server.dto.toDTO
 import it.polito.wa2.g29.server.enums.TicketStatus
@@ -27,13 +28,13 @@ class ProfileServiceImpl(
         return profile.toDTO()
     }
 
-    override fun createProfile(profileDTO: ProfileDTO) {
-        if (profileRepository.findProfileByEmail(profileDTO.email) != null)
+    override fun createProfile(createClientDTO: CreateClientDTO) {
+        if (profileRepository.findProfileByEmail(createClientDTO.email) != null)
             throw DuplicateProfileException("a profile with the same email already exists")
-        if (profileRepository.findProfileByPhoneNumber(profileDTO.phoneNumber) != null)
+        if (profileRepository.findProfileByPhoneNumber(createClientDTO.phoneNumber) != null)
             throw DuplicateProfileException("a profile with the same phone number already exists")
 
-        val profile = profileDTO.toEntity()
+        val profile = createClientDTO.toEntity()
         profileRepository.save(profile)
     }
 
