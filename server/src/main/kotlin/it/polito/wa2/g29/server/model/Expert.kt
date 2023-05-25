@@ -1,5 +1,6 @@
 package it.polito.wa2.g29.server.model
 
+import it.polito.wa2.g29.server.dto.CreateExpertDTO
 import jakarta.persistence.*
 
 @Entity
@@ -47,4 +48,14 @@ class Expert(
         messages.forEach { it.expert = null }
         ticketChanges.forEach { it.currentExpert = null }
     }
+}
+
+fun CreateExpertDTO.toEntity() : Expert {
+    val expertSkills = mutableSetOf<Skill>()
+
+    val expert = Expert(name, surname, email, country, city, expertSkills)
+    skills.map {
+        expert.skills.add(it.toEntity(expert))
+    }
+    return expert
 }
