@@ -5,6 +5,7 @@ import it.polito.wa2.g29.server.config.KeycloakProperties
 import it.polito.wa2.g29.server.dto.auth.AccessTokenRequestDTO
 import it.polito.wa2.g29.server.dto.auth.CreateClientDTO
 import it.polito.wa2.g29.server.dto.auth.TokenResponseDTO
+import it.polito.wa2.g29.server.exception.DuplicateKeycloakUserException
 import it.polito.wa2.g29.server.service.AuthService
 import it.polito.wa2.g29.server.service.ProfileService
 import it.polito.wa2.g29.server.utils.AuthenticationUtil.KEYCLOAK_ROLE_CLIENT
@@ -48,17 +49,26 @@ class AuthServiceImpl(
 
     @Transactional
     override fun addClient(createClientDTO: CreateClientDTO) {
-        //it will check that the client's email/phone number does not already exist in our system
-        profileService.createProfile(createClientDTO)
-        // Get keycloak instance
-        val keycloakResources = getKeycloakResources()
-        // insert user in keycloak
-        insertUserInKeycloak(keycloakResources,createClientDTO.email,createClientDTO.password)
+        //it will check that a profile with these email/phone number does not already exist (if exists, it thrown an exception)
+        profileService.alreadyExistenceCheck(createClientDTO)
+
+        val email = createClientDTO.email
+        val password = createClientDTO.password
+
+        // Get realm resource
+        val realmResource = getRealmResource()
+
+        // insert user in keycloak (it thrown an exception if not possible)
+        insertUserInKeycloak(realmResource, email, password)
+
         //define user Role
-        setKeycloakUserRole(keycloakResources, createClientDTO.email, KEYCLOAK_ROLE_CLIENT)
+        setKeycloakUserRole(realmResource, email, KEYCLOAK_ROLE_CLIENT)
+
+        //insert user in our System
+        profileService.createProfile(createClientDTO)
     }
 
-    private fun getKeycloakResources(): RealmResource {
+    private fun getRealmResource(): RealmResource {
         // Get realm
         val realm = keycloakProperties.realm
 
@@ -77,6 +87,7 @@ class AuthServiceImpl(
             )
             .build().realm(realm)
     }
+
     private fun createPasswordCredentials(password: String): CredentialRepresentation {
         val passwordCredentials = CredentialRepresentation()
         passwordCredentials.isTemporary = false
@@ -84,7 +95,16 @@ class AuthServiceImpl(
         passwordCredentials.value = password
         return passwordCredentials
     }
-    private fun insertUserInKeycloak(keycloakResources: RealmResource, email: String, password: String) {
+
+    private fun manageKeycloakResponseStatus(responseStatus: Int) {
+        when (responseStatus) {
+            201 -> Unit
+            409 -> throw DuplicateKeycloakUserException("a user with the same email already exists")
+            else -> throw Exception()
+        }
+    }
+
+    private fun insertUserInKeycloak(realmResource: RealmResource, email: String, password: String) {
         val credentialRepresentation = createPasswordCredentials(password)
         val user = UserRepresentation()
         user.username = email
@@ -92,20 +112,22 @@ class AuthServiceImpl(
         user.credentials = listOf(credentialRepresentation)
         user.isEmailVerified = true
         user.isEnabled = true
-        val userResource = keycloakResources.users()
-        userResource?.create(user)
+        val userResource = realmResource.users()
+        val responseStatus = userResource?.create(user)?.status ?: 500
+        manageKeycloakResponseStatus(responseStatus)
     }
-    private fun setKeycloakUserRole(keycloakResources: RealmResource, email: String, userRole: String) {
 
-        val userId = keycloakResources
+    private fun setKeycloakUserRole(realmResource: RealmResource, email: String, userRole: String) {
+
+        val userId = realmResource
             .users()
             .search(email)[0]
             .id
 
-        val user = keycloakResources
+        val user = realmResource
             .users()[userId]
 
-        val roleToAdd = keycloakResources
+        val roleToAdd = realmResource
             .roles()[userRole]
             .toRepresentation()
 

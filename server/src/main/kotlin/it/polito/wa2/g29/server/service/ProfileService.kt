@@ -9,5 +9,7 @@ interface ProfileService {
 
     fun createProfile(createClientDTO: CreateClientDTO)
 
+    fun alreadyExistenceCheck(createClientDTO: CreateClientDTO)
+
     fun modifyProfile(newProfile: EditProfileDTO)
 }

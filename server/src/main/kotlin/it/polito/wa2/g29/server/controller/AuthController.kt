@@ -29,7 +29,7 @@ class AuthController(private val authService: AuthService) {
 
     @PostMapping("/signup")
     @ResponseStatus(HttpStatus.CREATED)
-    fun login(@RequestBody @Valid @NotNull createClientDTO: CreateClientDTO) {
+    fun signup(@RequestBody @Valid @NotNull createClientDTO: CreateClientDTO) {
         authService.addClient(createClientDTO)
     }
 
