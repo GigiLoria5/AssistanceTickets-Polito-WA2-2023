@@ -430,6 +430,29 @@
   "webAuthnPolicyPasswordlessAvoidSameAuthenticatorRegister" : false,
   "webAuthnPolicyPasswordlessAcceptableAaguids" : [ ],
   "users" : [ {
+    "id" : "13c2bed7-ed0d-4e94-b19c-d27caba3b98d",
+    "createdTimestamp" : 1683967027400,
+    "username" : "admin_total",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : true,
+    "email" : "admin_total@wa2.com",
+    "credentials" : [ {
+      "id" : "ed2d33d7-10bd-44f7-8114-50fb3f61ee96",
+      "type" : "password",
+      "createdDate" : 1685100546504,
+      "secretData" : "{\"value\":\"swLnIL75w9gd6LnLqcm+jnrd1TEvh+cn3HPqY8oaI/k=\",\"salt\":\"IXP2+mS3rfz3DOKImhN9IA==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "clientRoles" : {
+      "realm-management" : [ "realm-admin" ],
+      "account" : [ "manage-account" ]
+    },
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
     "id" : "085d94f5-a7c2-4831-8c24-dbbb72d64003",
     "createdTimestamp" : 1683966978587,
     "username" : "bbowering4",
@@ -921,6 +944,7 @@
     "enabled" : true,
     "alwaysDisplayInConsole" : false,
     "clientAuthenticatorType" : "client-secret",
+    "secret" : "iHW6iXOu2XtXvQy0gX7V5zSbXhdwDeYX",
     "redirectUris" : [ "http://localhost:8080/*" ],
     "webOrigins" : [ "http://localhost:8080" ],
     "notBefore" : 0,
@@ -930,14 +954,16 @@
     "implicitFlowEnabled" : false,
     "directAccessGrantsEnabled" : true,
     "serviceAccountsEnabled" : false,
-    "publicClient" : true,
+    "publicClient" : false,
     "frontchannelLogout" : true,
     "protocol" : "openid-connect",
     "attributes" : {
       "oidc.ciba.grant.enabled" : "false",
+      "client.secret.creation.time" : "1685094292",
+      "backchannel.logout.session.required" : "true",
+      "post.logout.redirect.uris" : "+",
       "oauth2.device.authorization.grant.enabled" : "false",
       "display.on.consent.screen" : "false",
-      "backchannel.logout.session.required" : "true",
       "backchannel.logout.revoke.offline.tokens" : "false"
     },
     "authenticationFlowBindingOverrides" : { },
