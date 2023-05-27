@@ -28,12 +28,14 @@ class ProfileServiceImpl(
         return profile.toDTO()
     }
 
-    override fun createProfile(createClientDTO: CreateClientDTO) {
+    override fun alreadyExistenceCheck(createClientDTO: CreateClientDTO) {
         if (profileRepository.findProfileByEmail(createClientDTO.email) != null)
             throw DuplicateProfileException("a profile with the same email already exists")
         if (profileRepository.findProfileByPhoneNumber(createClientDTO.phoneNumber) != null)
             throw DuplicateProfileException("a profile with the same phone number already exists")
+    }
 
+    override fun createProfile(createClientDTO: CreateClientDTO) {
         val profile = createClientDTO.toEntity()
         profileRepository.save(profile)
     }
