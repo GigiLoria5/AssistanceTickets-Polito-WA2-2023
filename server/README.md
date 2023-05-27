@@ -338,7 +338,7 @@
     }
     ```
   - Response: `201 Created` (success)
-  - Error responses: `409 Conflict` (email already exists), `422 Unprocessable Entity` (validation of 
+  - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `409 Conflict` (email already exists), `422 Unprocessable Entity` (validation of 
     request body failed) or `500 Internal Server Error` (generic error)
   - Response body: An error message in case of error
 
