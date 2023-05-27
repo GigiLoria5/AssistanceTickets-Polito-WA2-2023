@@ -44,7 +44,7 @@ class ExpertController(private val expertService: ExpertService) {
         return expertService.getTicketStatusChangesByExpertId(expertId)
     }
 
-    // POST /API/experts -- create a new expert or fail if some field is missing, or is not valid, or in case of duplicates
+    // POST /API/experts/createExpert -- create a new expert or fail if some field is missing, or is not valid, or in case of duplicates
     @PreAuthorize("hasAuthority(@AuthUtil.ROLE_MANAGER)")
     @PostMapping("/experts/createExpert")
     @ResponseStatus(HttpStatus.CREATED)

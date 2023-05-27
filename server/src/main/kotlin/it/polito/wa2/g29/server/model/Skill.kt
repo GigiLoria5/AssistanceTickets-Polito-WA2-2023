@@ -1,6 +1,6 @@
 package it.polito.wa2.g29.server.model
 
-import it.polito.wa2.g29.server.dto.SkillDTO
+import it.polito.wa2.g29.server.dto.CreateSkillDTO
 import it.polito.wa2.g29.server.enums.Expertise
 import it.polito.wa2.g29.server.enums.Level
 import jakarta.persistence.*
@@ -21,6 +21,6 @@ class Skill(
     var expert: Expert
 ) : EntityBase<Int>()
 
-fun SkillDTO.toEntity(expert: Expert) : Skill {
-    return Skill(Expertise.valueOf(expertise), Level.valueOf(level), expert)
+fun CreateSkillDTO.toEntity(expert: Expert): Skill {
+    return Skill(expertise, level, expert)
 }
