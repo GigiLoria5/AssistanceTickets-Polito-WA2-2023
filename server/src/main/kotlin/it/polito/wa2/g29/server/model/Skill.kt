@@ -1,6 +1,5 @@
 package it.polito.wa2.g29.server.model
 
-import it.polito.wa2.g29.server.dto.CreateSkillDTO
 import it.polito.wa2.g29.server.enums.Expertise
 import it.polito.wa2.g29.server.enums.Level
 import jakarta.persistence.*
@@ -27,8 +26,7 @@ class Skill(
         val that = other as Skill
         return this.expertise == that.expertise && this.level == that.level && this.expert.email == that.expert.email
     }
-}
-
-fun CreateSkillDTO.toEntity(expert: Expert): Skill {
-    return Skill(expertise, level, expert)
+    override fun hashCode(): Int {
+        return 5
+    }
 }
