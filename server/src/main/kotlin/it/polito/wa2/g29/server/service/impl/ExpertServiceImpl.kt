@@ -44,12 +44,12 @@ class ExpertServiceImpl(private val expertRepository: ExpertRepository,
 
     @Transactional
     override fun createExpert(createExpertDTO: CreateExpertDTO) {
+        if (!createExpertDTO.validateExpertSkillsList())
+            throw DuplicateSkillInExpertException()
+
         //it will check that an expert with these email/phone number does not already exist (if exists, it will throw an exception)
         if (expertRepository.findExpertByEmail(createExpertDTO.email) != null)
             throw DuplicateExpertException("an expert with the same email already exists")
-
-        if (!createExpertDTO.validateExpertSkillsList())
-            throw DuplicateSkillInExpertException()
 
         val email = createExpertDTO.email
         val password = createExpertDTO.password
