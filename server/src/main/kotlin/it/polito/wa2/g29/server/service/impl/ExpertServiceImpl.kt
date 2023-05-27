@@ -4,6 +4,7 @@ import it.polito.wa2.g29.server.config.KeycloakProperties
 import it.polito.wa2.g29.server.dto.*
 import it.polito.wa2.g29.server.enums.UserType
 import it.polito.wa2.g29.server.exception.DuplicateExpertException
+import it.polito.wa2.g29.server.exception.DuplicateSkillInExpertException
 import it.polito.wa2.g29.server.exception.ExpertNotFoundException
 import it.polito.wa2.g29.server.model.Expert
 import it.polito.wa2.g29.server.model.toEntity
@@ -46,6 +47,9 @@ class ExpertServiceImpl(private val expertRepository: ExpertRepository,
         //it will check that an expert with these email/phone number does not already exist (if exists, it will throw an exception)
         if (expertRepository.findExpertByEmail(createExpertDTO.email) != null)
             throw DuplicateExpertException("an expert with the same email already exists")
+
+        if (!createExpertDTO.validateExpertSkillsList())
+            throw DuplicateSkillInExpertException()
 
         val email = createExpertDTO.email
         val password = createExpertDTO.password

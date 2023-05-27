@@ -24,3 +24,11 @@ data class CreateSkillDTO(
     val level: Level
 )
 
+fun CreateExpertDTO.validateExpertSkillsList(): Boolean {
+    skills.forEach { skill ->
+            if (skills.count { it.expertise == skill.expertise } > 1)
+                return false
+        }
+    return true
+}
+

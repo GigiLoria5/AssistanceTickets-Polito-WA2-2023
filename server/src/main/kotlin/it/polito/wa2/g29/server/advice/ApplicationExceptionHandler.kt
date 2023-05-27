@@ -50,7 +50,7 @@ class ApplicationExceptionHandler {
      */
     @ExceptionHandler(
         value = [ConstraintViolationException::class, MethodArgumentNotValidException::class, HttpMessageNotReadableException::class,
-            MethodArgumentTypeMismatchException::class, MissingServletRequestParameterException::class]
+            MethodArgumentTypeMismatchException::class, MissingServletRequestParameterException::class, DuplicateSkillInExpertException::class]
     )
     fun handleValidationFailedException(exception: Exception): ResponseEntity<ErrorMessage> {
         val errorMessage = ErrorMessage("validation of request failed")
