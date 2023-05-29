@@ -1,5 +1,6 @@
 package it.polito.wa2.g29.server.controller
 
+import io.micrometer.observation.annotation.Observed
 import it.polito.wa2.g29.server.dto.*
 import it.polito.wa2.g29.server.dto.ticket.*
 import it.polito.wa2.g29.server.enums.TicketStatus
@@ -11,12 +12,17 @@ import org.springframework.http.HttpStatus
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
+import mu.KotlinLogging
+
 
 @RequestMapping("/API")
 @Validated
 @RestController
+
+@Observed(name="ticket")
 class TicketController(private val ticketService: TicketService) {
 
+    private val logger = KotlinLogging.logger {}
     // GET /API/tickets -- list all tickets in the DB
     @PreAuthorize("hasAuthority(@AuthUtil.ROLE_MANAGER)")
     @GetMapping("/tickets")
@@ -25,8 +31,10 @@ class TicketController(private val ticketService: TicketService) {
     ): List<TicketDTO> {
         return if (status == null)
             ticketService.getAllTickets()
-        else
+        else {
+            logger.info{"AllegriOUT"}
             ticketService.getTicketsByStatus(status)
+        }
     }
 
     // GET /API/tickets/{ticketId} -- details of ticket {ticketId} or fail if it does not exist

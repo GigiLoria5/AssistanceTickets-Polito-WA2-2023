@@ -1,5 +1,55 @@
 version: '3.8'
 services:
+
+  #Observability
+  tempo:
+    image: grafana/tempo
+    extra_hosts: ['host.docker.internal:host-gateway']
+    command: [ "-config.file=/etc/tempo.yaml" ]
+    volumes:
+      - ./docker/observability-config/tempo/tempo-local.yaml:/etc/tempo.yaml:ro
+      - ./tempo-data:/tmp/tempo
+    ports:
+      - "14268"  # jaeger ingest
+      - "9411:9411" # zipkin
+
+  loki:
+    image: grafana/loki
+    extra_hosts: ['host.docker.internal:host-gateway']
+    command: [ "-config.file=/etc/loki/local-config.yaml" ]
+    ports:
+      - "3100:3100"                                   # loki needs to be exposed so it receives logs
+    environment:
+      - JAEGER_AGENT_HOST=tempo
+      - JAEGER_ENDPOINT=http://tempo:14268/api/traces # send traces to Tempo
+      - JAEGER_SAMPLER_TYPE=const
+      - JAEGER_SAMPLER_PARAM=1
+
+  prometheus:
+    image: prom/prometheus
+    extra_hosts: ['host.docker.internal:host-gateway']
+    command:
+      - --enable-feature=exemplar-storage
+      - --config.file=/etc/prometheus/prometheus.yml
+    volumes:
+      - ./docker/observability-config/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "9090:9090"
+
+  grafana:
+    image: grafana/grafana
+    extra_hosts: ['host.docker.internal:host-gateway']
+    volumes:
+      - ./observability-config/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro
+      - ./observability-config/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards:ro
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_DISABLE_LOGIN_FORM=true
+    ports:
+      - "3001:3000"
+
+  #Database
   db:
     image: postgres
     container_name: pg_container
@@ -7,7 +57,7 @@ services:
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 5s
-      retries: 2
+      retries: 5
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=p4ssw0rd
@@ -15,11 +65,15 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ./init-data/dump.sql:/docker-entrypoint-initdb.d/dump.sql
+      - ./docker/dump.sql:/docker-entrypoint-initdb.d/dump.sql
 
+  #Authentication
   keycloak-curl-test:
     container_name: keycloak-curl-test
     image: alpine:latest
+    depends_on:
+      keycloak:
+        condition: service_started
     command: sh -c "apk add --no-cache curl && while true; do sleep 5; if curl --head -fsS http://keycloak:8080/health/ready; then echo 'Keycloak ready' && exit 0; else echo 'Keycloak not ready'; fi; done"
 
   keycloak:
@@ -33,11 +87,12 @@ services:
     ports:
       - "3000:8080"
     volumes:
-      - ./init-data/SpringBootKeycloak-realm.json:/opt/keycloak/data/import/myrealm.json
-      - ./init-data/keycloak-healthcheck.sh:/test/healthcheck.sh
+      - ./docker/SpringBootKeycloak-realm.json:/opt/keycloak/data/import/myrealm.json
+      - ./docker/keycloak-healthcheck.sh:/test/healthcheck.sh
 
+  #Springboot app
   app:
-    image: pepaunz/assistance-tickets:v0.3
+    image: pepaunz/assistance-tickets:v0.4
     container_name: g29-assistance-tickets-container
     restart: unless-stopped
     depends_on:
@@ -45,8 +100,6 @@ services:
         condition: service_healthy
       keycloak-curl-test:
         condition: service_completed_successfully
-    env_file:
-      - ./init-data/app.env
     ports:
       - "8080:8080"
 
