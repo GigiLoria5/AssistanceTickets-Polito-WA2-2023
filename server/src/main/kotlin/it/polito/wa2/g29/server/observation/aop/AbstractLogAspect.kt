@@ -1,4 +1,4 @@
-package it.polito.wa2.g13.server.observer.aop
+package it.polito.wa2.g29.server.observation.aop
 
 import jakarta.annotation.Nullable
 import jakarta.validation.constraints.NotNull

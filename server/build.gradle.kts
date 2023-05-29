@@ -8,6 +8,7 @@ plugins {
     id("com.google.cloud.tools.jib") version "3.3.1"
     kotlin("jvm") version "1.7.22"
     kotlin("plugin.spring") version "1.7.22"
+    id("io.freefair.lombok") version "6.2.0"
 }
 
 group = "it.polito.wa2.g29"
@@ -46,6 +47,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
+    compileOnly("org.projectlombok:lombok:1.18.26")
+    annotationProcessor("org.projectlombok:lombok:1.18.26")
 
     // Observability and logging
     implementation ("org.springframework.boot:spring-boot-starter-aop")

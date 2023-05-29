@@ -1,7 +1,7 @@
-package it.polito.wa2.g13.server.observer.config
+package it.polito.wa2.g29.server.observation.config
 
-import it.polito.wa2.g13.server.observer.aop.AbstractLogAspect
-import it.polito.wa2.g13.server.observer.aop.DefaultLogAspect
+import it.polito.wa2.g29.server.observation.aop.AbstractLogAspect
+import it.polito.wa2.g29.server.observation.aop.DefaultLogAspect
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

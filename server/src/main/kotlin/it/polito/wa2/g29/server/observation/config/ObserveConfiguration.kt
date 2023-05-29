@@ -1,9 +1,9 @@
-package it.polito.wa2.g13.server.observer.config
+package it.polito.wa2.g29.server.observation.config
 
 import io.micrometer.observation.ObservationRegistry
 import io.micrometer.observation.aop.ObservedAspect
-import it.polito.wa2.g13.server.observer.aop.AbstractObserveAroundMethodHandler
-import it.polito.wa2.g13.server.observer.aop.DefaultObserveAroundMethodHandler
+import it.polito.wa2.g29.server.observation.aop.AbstractObserveAroundMethodHandler
+import it.polito.wa2.g29.server.observation.aop.DefaultObserveAroundMethodHandler
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

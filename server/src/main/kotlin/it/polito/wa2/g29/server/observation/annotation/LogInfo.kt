@@ -1,5 +1,4 @@
-package it.polito.wa2.g13.server.observer.annotation
-
+package it.polito.wa2.g29.server.observation.annotation
 
 @Target(
     AnnotationTarget.FUNCTION,
