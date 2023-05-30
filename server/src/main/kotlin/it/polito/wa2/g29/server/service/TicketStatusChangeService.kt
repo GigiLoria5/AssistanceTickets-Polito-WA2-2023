@@ -6,9 +6,6 @@ import it.polito.wa2.g29.server.enums.TicketStatus
 
 interface TicketStatusChangeService {
     fun ticketStatusChangeInProgress(ticketId: Int, statusChangeData: TicketStatusChangeInProgressDTO)
-    fun ticketStatusChange(
-        ticketId: Int,
-        newStatus: TicketStatus,
-        statusChangeData: TicketStatusChangeDTO
-    )
+
+    fun ticketStatusChange(ticketId: Int, newStatus: TicketStatus, statusChangeData: TicketStatusChangeDTO)
 }

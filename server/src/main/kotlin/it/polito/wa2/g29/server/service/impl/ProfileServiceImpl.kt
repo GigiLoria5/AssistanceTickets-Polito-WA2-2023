@@ -1,6 +1,7 @@
 package it.polito.wa2.g29.server.service.impl
 
 import it.polito.wa2.g29.server.dto.ProfileDTO
+import it.polito.wa2.g29.server.dto.auth.CreateClientDTO
 import it.polito.wa2.g29.server.dto.profile.EditProfileDTO
 import it.polito.wa2.g29.server.dto.toDTO
 import it.polito.wa2.g29.server.enums.TicketStatus
@@ -11,8 +12,8 @@ import it.polito.wa2.g29.server.model.toEntity
 import it.polito.wa2.g29.server.repository.ExpertRepository
 import it.polito.wa2.g29.server.repository.ProfileRepository
 import it.polito.wa2.g29.server.service.ProfileService
-import org.springframework.security.access.AccessDeniedException
 import it.polito.wa2.g29.server.utils.AuthenticationUtil
+import org.springframework.security.access.AccessDeniedException
 import org.springframework.stereotype.Service
 
 @Service
@@ -27,13 +28,15 @@ class ProfileServiceImpl(
         return profile.toDTO()
     }
 
-    override fun createProfile(profileDTO: ProfileDTO) {
-        if (profileRepository.findProfileByEmail(profileDTO.email) != null)
+    override fun alreadyExistenceCheck(createClientDTO: CreateClientDTO) {
+        if (profileRepository.findProfileByEmail(createClientDTO.email) != null)
             throw DuplicateProfileException("a profile with the same email already exists")
-        if (profileRepository.findProfileByPhoneNumber(profileDTO.phoneNumber) != null)
+        if (profileRepository.findProfileByPhoneNumber(createClientDTO.phoneNumber) != null)
             throw DuplicateProfileException("a profile with the same phone number already exists")
+    }
 
-        val profile = profileDTO.toEntity()
+    override fun createProfile(createClientDTO: CreateClientDTO) {
+        val profile = createClientDTO.toEntity()
         profileRepository.save(profile)
     }
 
@@ -46,7 +49,7 @@ class ProfileServiceImpl(
         profileRepository.save(profile)
     }
 
-    private fun checkUserAuthorisation(email: String){
+    private fun checkUserAuthorisation(email: String) {
         val username = AuthenticationUtil.getUsername()
 
         when (AuthenticationUtil.getUserTypeEnum()) {
@@ -54,6 +57,7 @@ class ProfileServiceImpl(
                 if (username != email)
                     throw AccessDeniedException("")
             }
+
             UserType.EXPERT -> {
                 val expert = expertRepository.findExpertByEmail(username)!!
                 val foundCustomer = expert.tickets.any {
@@ -62,6 +66,7 @@ class ProfileServiceImpl(
                 if (!foundCustomer)
                     throw AccessDeniedException("")
             }
+
             UserType.MANAGER -> Unit
         }
     }

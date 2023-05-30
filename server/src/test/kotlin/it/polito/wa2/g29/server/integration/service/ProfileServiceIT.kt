@@ -1,5 +1,6 @@
 package it.polito.wa2.g29.server.integration.service
 
+import it.polito.wa2.g29.server.dto.auth.CreateClientDTO
 import it.polito.wa2.g29.server.dto.profile.EditProfileDTO
 import it.polito.wa2.g29.server.dto.toDTO
 import it.polito.wa2.g29.server.exception.DuplicateProfileException
@@ -100,37 +101,21 @@ class ProfileServiceIT : AbstractTestcontainersTest() {
     @Transactional
     @Rollback
     fun createProfile() {
-        val newProfileDTO = testProfiles[0].toDTO().copy(
-            profileId = null,
+        val profile = testProfiles[0].toDTO()
+        val newProfileDTO = CreateClientDTO(
             email = "new_mail@test.com",
-            phoneNumber = "3333333333"
+            password = "123",
+            name = profile.name,
+            surname = profile.surname,
+            phoneNumber = "3333333333",
+            address = profile.address,
+            city = profile.city,
+            country = profile.country
         )
 
         profileService.createProfile(newProfileDTO)
 
         assert(profileRepository.findAll().size == (testProfiles.size + 1))
-    }
-
-    @Test
-    fun createProfileDuplicateEmail() {
-        val newProfileDTO = testProfiles[0].toDTO().copy(
-            phoneNumber = "3333333333"
-        )
-
-        assertThrows<DuplicateProfileException> {
-            profileService.createProfile(newProfileDTO)
-        }
-    }
-
-    @Test
-    fun createProfileDuplicatePhoneNumber() {
-        val newProfileDTO = testProfiles[0].toDTO().copy(
-            email = "new_mail@test.com"
-        )
-
-        assertThrows<DuplicateProfileException> {
-            profileService.createProfile(newProfileDTO)
-        }
     }
 
     /////////////////////////////////////////////////////////////////////
@@ -149,8 +134,7 @@ class ProfileServiceIT : AbstractTestcontainersTest() {
             phoneNumber = "3333333333",
             oldProfileDTO.address,
             oldProfileDTO.city,
-            oldProfileDTO.country,
-            null
+            oldProfileDTO.country
         )
 
         profileService.modifyProfile(newProfileDTO)
@@ -177,8 +161,7 @@ class ProfileServiceIT : AbstractTestcontainersTest() {
             phoneNumber = "333-333-3333",
             address = "NewAddress",
             city = "NewCity",
-            country = "NewCountry",
-            null
+            country = "NewCountry"
         )
 
         profileService.modifyProfile(newProfileDTO)
@@ -205,8 +188,7 @@ class ProfileServiceIT : AbstractTestcontainersTest() {
             phoneNumber = oldProfileDTO.phoneNumber,
             address = "NewAddress",
             city = "NewCity",
-            country = "NewCountry",
-            null
+            country = "NewCountry"
         )
 
         profileService.modifyProfile(newProfileDTO)
@@ -230,8 +212,7 @@ class ProfileServiceIT : AbstractTestcontainersTest() {
             phoneNumber = testProfiles[1].phoneNumber,
             address = "NewAddress",
             city = "NewCity",
-            country = "NewCountry",
-            null
+            country = "NewCountry"
         )
 
         assertThrows<DuplicateProfileException> {
