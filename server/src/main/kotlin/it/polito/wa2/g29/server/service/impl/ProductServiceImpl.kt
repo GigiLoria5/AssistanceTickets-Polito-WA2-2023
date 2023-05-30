@@ -16,7 +16,6 @@ class ProductServiceImpl(private val productRepository: ProductRepository) : Pro
     private val log = LoggerFactory.getLogger(ProductServiceImpl::class.java)
 
     override fun getAllProducts(): List<ProductDTO> {
-        log.info("inside product service")
         return productRepository.findAll().map { it.toDTO() }
     }
 

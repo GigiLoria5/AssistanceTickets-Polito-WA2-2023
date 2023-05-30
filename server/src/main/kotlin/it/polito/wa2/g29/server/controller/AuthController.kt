@@ -1,12 +1,14 @@
 package it.polito.wa2.g29.server.controller
 
 import com.nimbusds.jose.shaded.gson.Gson
+import io.micrometer.observation.annotation.Observed
 import it.polito.wa2.g29.server.config.KeycloakProperties
 import it.polito.wa2.g29.server.dto.auth.AccessTokenRequestDTO
 import it.polito.wa2.g29.server.dto.auth.ErrorResponseDTO
 import it.polito.wa2.g29.server.dto.auth.TokenResponseDTO
 import jakarta.validation.Valid
 import jakarta.validation.constraints.NotNull
+import org.slf4j.LoggerFactory
 import org.springframework.http.*
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.bind.annotation.PostMapping
@@ -17,7 +19,9 @@ import org.springframework.web.client.HttpServerErrorException
 import org.springframework.web.client.RestTemplate
 
 @RestController
+@Observed
 class AuthController(private val keycloakProperties: KeycloakProperties) {
+    private val log = LoggerFactory.getLogger(AuthController::class.java)
     @PostMapping("/API/auth/login")
     fun login(@RequestBody @Valid @NotNull request: AccessTokenRequestDTO): ResponseEntity<*> {
         val restTemplate = RestTemplate()

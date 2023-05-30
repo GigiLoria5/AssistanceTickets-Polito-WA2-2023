@@ -10,13 +10,13 @@ import it.polito.wa2.g29.server.model.Expert
 import it.polito.wa2.g29.server.repository.ExpertRepository
 import it.polito.wa2.g29.server.service.ExpertService
 import it.polito.wa2.g29.server.utils.AuthenticationUtil
+import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.stereotype.Service
 
 @Service
 class ExpertServiceImpl(private val expertRepository: ExpertRepository) : ExpertService {
-
     override fun getAllExperts(): List<ExpertDTO> {
         return expertRepository.findAll().map { it.toDTO() }
     }
