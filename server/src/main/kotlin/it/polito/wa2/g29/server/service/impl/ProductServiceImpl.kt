@@ -1,6 +1,5 @@
 package it.polito.wa2.g29.server.service.impl
 
-import io.micrometer.observation.annotation.Observed
 import it.polito.wa2.g29.server.dto.ProductDTO
 import it.polito.wa2.g29.server.dto.toDTO
 import it.polito.wa2.g29.server.exception.ProductNotFoundException
@@ -11,7 +10,7 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
 @Service
-@Observed
+
 class ProductServiceImpl(private val productRepository: ProductRepository) : ProductService {
     private val log = LoggerFactory.getLogger(ProductServiceImpl::class.java)
 
@@ -20,7 +19,11 @@ class ProductServiceImpl(private val productRepository: ProductRepository) : Pro
     }
 
     override fun getProductById(productId: Int): ProductDTO {
-        val product = productRepository.findByIdOrNull(productId) ?: throw ProductNotFoundException()
+        val product = productRepository.findByIdOrNull(productId)
+            ?: run{
+                log.info("Product not found")
+                throw ProductNotFoundException()
+            }
         return product.toDTO()
     }
 

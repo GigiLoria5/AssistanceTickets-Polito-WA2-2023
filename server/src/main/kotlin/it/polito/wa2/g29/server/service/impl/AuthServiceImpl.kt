@@ -1,6 +1,7 @@
 package it.polito.wa2.g29.server.service.impl
 
 import com.nimbusds.jose.shaded.gson.Gson
+import io.micrometer.observation.annotation.Observed
 import it.polito.wa2.g29.server.config.KeycloakProperties
 import it.polito.wa2.g29.server.dto.auth.AccessTokenRequestDTO
 import it.polito.wa2.g29.server.dto.auth.CreateClientDTO
@@ -42,6 +43,7 @@ class AuthServiceImpl(
     }
 
     @Transactional
+    @Observed
     override fun addClient(createClientDTO: CreateClientDTO) {
         //it will check that a profile with these email/phone number does not already exist (if exists, it will throw an exception)
         profileService.alreadyExistenceCheck(createClientDTO)

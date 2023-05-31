@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service
 
 @Service
 class ExpertServiceImpl(private val expertRepository: ExpertRepository) : ExpertService {
+    private val log = LoggerFactory.getLogger(ExpertServiceImpl::class.java)
     override fun getAllExperts(): List<ExpertDTO> {
         return expertRepository.findAll().map { it.toDTO() }
     }
@@ -42,12 +43,18 @@ class ExpertServiceImpl(private val expertRepository: ExpertRepository) : Expert
         return when(AuthenticationUtil.getUserTypeEnum()) {
             UserType.EXPERT -> {
                 val expert = expertRepository.findExpertByEmail(username)!!
-                if (expert.id != expertId)
+                if (expert.id != expertId){
+                    log.info("Access denied for expert:{}", expertId)
                     throw AccessDeniedException("")
+                }
                 expert
             }
             //ROLE_MANAGER
-            else -> expertRepository.findByIdOrNull(expertId) ?: throw ExpertNotFoundException()
+            else -> expertRepository.findByIdOrNull(expertId)
+                ?: run{
+                    log.info("Expert not found")
+                    throw ExpertNotFoundException()
+                }
         }
     }
 }

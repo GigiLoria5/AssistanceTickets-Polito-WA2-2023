@@ -1,6 +1,5 @@
 package it.polito.wa2.g29.server.service.impl
 
-import io.micrometer.observation.annotation.Observed
 import it.polito.wa2.g29.server.dto.*
 import it.polito.wa2.g29.server.enums.AttachmentType
 import it.polito.wa2.g29.server.enums.TicketStatus
@@ -31,7 +30,7 @@ class ChatServiceImpl(
     override fun getMessagesByTicketId(ticketId: Int): List<MessageDTO> {
         val ticket = ticketRepository.findByIdOrNull(ticketId)
             ?: run{
-                log.error("Ticket not found")
+                log.info("Ticket not found")
                 throw TicketNotFoundException()
             }
         checkUserAuthorisation(ticket)
@@ -41,7 +40,7 @@ class ChatServiceImpl(
     override fun addMessageWithAttachments(ticketId: Int, newMessage: NewMessageDTO): NewMessageIdDTO {
         val ticket = ticketRepository.findByIdOrNull(ticketId)
             ?: run {
-                log.error("Ticket not found")
+                log.info("Ticket not found")
                 throw TicketNotFoundException()
             }
         checkUserAuthorisation(ticket)
@@ -70,18 +69,18 @@ class ChatServiceImpl(
     override fun getAttachment(ticketId: Int, messageId: Int, attachmentId: Int): FileAttachmentDTO {
         val ticket = ticketRepository.findByIdOrNull(ticketId)
             ?: run {
-                log.error("Ticket not found")
+                log.info("Ticket not found")
                 throw TicketNotFoundException()
             }
         checkUserAuthorisation(ticket)
         val message = ticket.messages.find { it.id == messageId }
             ?: run {
-                log.error("Message not found")
+                log.info("Message not found")
                 throw  MessageNotFoundException()
             }
         val attachment = message.attachments.find { it.id == attachmentId }
             ?: run {
-                log.error("Attachment not found")
+                log.info("Attachment not found")
                 throw AttachmentNotFoundException()
             }
         return FileAttachmentDTO(attachment.name, attachment.type, attachment.file)
@@ -94,7 +93,7 @@ class ChatServiceImpl(
                 { profileRepository.findProfileByEmail(it)!! }
             )
         )
-            throw AccessDeniedException("dffakfad")
+            throw AccessDeniedException("")
     }
 
 }

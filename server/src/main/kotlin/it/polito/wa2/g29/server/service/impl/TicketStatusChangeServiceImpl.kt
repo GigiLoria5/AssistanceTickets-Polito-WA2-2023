@@ -16,6 +16,7 @@ import it.polito.wa2.g29.server.service.TicketStatusChangeService
 import it.polito.wa2.g29.server.utils.AuthenticationUtil
 import it.polito.wa2.g29.server.utils.TicketStatusChangeRules
 import jakarta.transaction.Transactional
+import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.stereotype.Service
@@ -27,10 +28,19 @@ class TicketStatusChangeServiceImpl(
     private val profileRepository: ProfileRepository
 ) : TicketStatusChangeService {
 
+    private val log = LoggerFactory.getLogger(TicketStatusChangeServiceImpl::class.java)
     @Transactional
     override fun ticketStatusChangeInProgress(ticketId: Int, statusChangeData: TicketStatusChangeInProgressDTO) {
-        val ticket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
-        val expert = expertRepository.findByIdOrNull(statusChangeData.expertId) ?: throw ExpertNotFoundException()
+        val ticket = ticketRepository.findByIdOrNull(ticketId)
+            ?: run  {
+                log.info("Ticket not found")
+                throw TicketNotFoundException()
+            }
+        val expert = expertRepository.findByIdOrNull(statusChangeData.expertId)
+            ?: run {
+                log.info("Expert not found")
+                throw ExpertNotFoundException()
+            }
         ticket.expert = expert
         ticket.priorityLevel = statusChangeData.priorityLevel
         updateTicketStatus(ticket, TicketStatus.IN_PROGRESS, UserType.MANAGER, statusChangeData.description)
@@ -42,7 +52,11 @@ class TicketStatusChangeServiceImpl(
         newStatus: TicketStatus,
         statusChangeData: TicketStatusChangeDTO
     ) {
-        val ticket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
+        val ticket = ticketRepository.findByIdOrNull(ticketId)
+            ?: run {
+                log.info("Ticket not found.")
+                throw TicketNotFoundException()
+            }
         //generic check. Authorization first level check done in controller
         checkUserAuthorisation(ticket)
         updateTicketStatus(ticket, newStatus, AuthenticationUtil.getUserTypeEnum(), statusChangeData.description)
@@ -50,8 +64,11 @@ class TicketStatusChangeServiceImpl(
 
     //In this function I try to create a status change and its log, and thrown an exception if it not possible
     private fun updateTicketStatus(ticket: Ticket, newStatus: TicketStatus, changedBy: UserType, description: String?) {
-        if (!TicketStatusChangeRules.isValidStatusChange(ticket.status, newStatus))
-            throw NotValidStatusChangeException("Could not ${TicketStatusChangeRules.getTaskToAchieveStatus(newStatus)} the ticket with id ${ticket.id} because its current status is '${ticket.status}'")
+        if (!TicketStatusChangeRules.isValidStatusChange(ticket.status, newStatus)){
+            val task = TicketStatusChangeRules.getTaskToAchieveStatus(newStatus)
+            log.info("Could not {} the ticket: {} because its current status is: {}",task, ticket.id,ticket.status)
+            throw NotValidStatusChangeException("Could not $task the ticket with id ${ticket.id} because its current status is '${ticket.status}'")
+        }
 
         if (newStatus == TicketStatus.REOPENED) {
             val notClosedAndNotResolvedTicket = ticketRepository.findTicketByCustomerAndProductAndStatusNotAndStatusNot(

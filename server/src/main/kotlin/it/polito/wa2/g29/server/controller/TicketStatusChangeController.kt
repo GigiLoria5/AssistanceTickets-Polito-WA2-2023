@@ -30,7 +30,7 @@ class TicketStatusChangeController(private val ticketStatusChangeService: Ticket
         @PathVariable @Valid @Min(1) ticketId: Int,
         @RequestBody @Valid @NotNull statusChangeData: TicketStatusChangeInProgressDTO
     ) {
-        log.info("Change status into IN_PROGRESS for ticket: {}",ticketId)
+        log.info("Change status into IN_PROGRESS for ticket: {} and assign it to expert: {} ",ticketId,statusChangeData.expertId)
         ticketStatusChangeService.ticketStatusChangeInProgress(ticketId, statusChangeData)
     }
 
