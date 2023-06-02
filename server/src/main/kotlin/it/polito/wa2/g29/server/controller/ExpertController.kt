@@ -1,6 +1,7 @@
 package it.polito.wa2.g29.server.controller
 
 import io.micrometer.observation.annotation.Observed
+import it.polito.wa2.g29.server.dto.CreateExpertDTO
 import it.polito.wa2.g29.server.dto.ExpertDTO
 import it.polito.wa2.g29.server.dto.TicketChangeDTO
 import it.polito.wa2.g29.server.dto.TicketDTO
@@ -8,6 +9,8 @@ import it.polito.wa2.g29.server.service.ExpertService
 import jakarta.validation.Valid
 import jakarta.validation.constraints.Min
 import org.slf4j.LoggerFactory
+import jakarta.validation.constraints.NotNull
+import org.springframework.http.HttpStatus
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import kotlin.math.exp
+import org.springframework.web.bind.annotation.*
 
 @RequestMapping("/API")
 @Validated
@@ -51,6 +55,14 @@ class ExpertController(private val expertService: ExpertService) {
     fun getTicketStatusChangesByExpertId(@PathVariable @Valid @Min(1) expertId: Int): List<TicketChangeDTO> {
         log.info("Retrieve details of ticket status change done by expert: {}", expertId)
         return expertService.getTicketStatusChangesByExpertId(expertId)
+    }
+
+    // POST /API/experts/createExpert -- create a new expert or fail if some field is missing, or is not valid, or in case of duplicates
+    @PreAuthorize("hasAuthority(@AuthUtil.ROLE_MANAGER)")
+    @PostMapping("/experts/createExpert")
+    @ResponseStatus(HttpStatus.CREATED)
+    fun createExpert(@RequestBody @Valid @NotNull expert: CreateExpertDTO) {
+        expertService.createExpert(expert)
     }
 
 }

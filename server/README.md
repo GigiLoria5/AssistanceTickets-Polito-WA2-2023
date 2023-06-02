@@ -313,6 +313,42 @@
       ]
       ```
 
+- POST `API/experts/createExpert`
+
+    - Description: Allows to create an expert account
+    - Permissions allowed: 
+        - Managers
+    - Request body: email, password, name, surname, country, city and skills of the new expert
+    ```
+    {
+        "email": "a.grigia@expert.org",
+        "password": "Zw86F442KgsZwb1r",
+        "name": "Ambra",
+        "surname": "Grigia",
+        "country": "Italy",
+        "city": "Turin",
+        "skills": [
+                    ..., 
+                    {
+                      "expertise":"APPLIANCES",
+                      "level":"SPECIALIST"
+                    }, 
+                    ...
+                  ]
+    }
+    ```
+  - Response: `201 Created` (success)
+  - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `409 Conflict` (email already exists), `422 Unprocessable Entity` (validation of 
+    request body failed) or `500 Internal Server Error` (generic error)
+  - Response body: An error message in case of error
+
+    ```
+    {
+        "error": "an expert with the same email already exists"
+    }
+    ```
+
+
 ### Tickets
 
 - GET `/API/tickets`

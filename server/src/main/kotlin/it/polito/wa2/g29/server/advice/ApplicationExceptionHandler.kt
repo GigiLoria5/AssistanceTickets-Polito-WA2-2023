@@ -33,7 +33,7 @@ class ApplicationExceptionHandler {
     }
 
     // 409 - Conflict
-    @ExceptionHandler(value = [DuplicateProfileException::class, DuplicateTicketException::class,DuplicateKeycloakUserException::class])
+    @ExceptionHandler(value = [DuplicateProfileException::class, DuplicateTicketException::class, DuplicateExpertException::class, DuplicateKeycloakUserException::class])
     fun handleDuplicateException(exception: Exception): ResponseEntity<ErrorMessage> {
         val errorMessage = ErrorMessage(exception.message.orEmpty())
         return ResponseEntity(errorMessage, HttpStatus.CONFLICT)
@@ -50,7 +50,7 @@ class ApplicationExceptionHandler {
      */
     @ExceptionHandler(
         value = [ConstraintViolationException::class, MethodArgumentNotValidException::class, HttpMessageNotReadableException::class,
-            MethodArgumentTypeMismatchException::class, MissingServletRequestParameterException::class]
+            MethodArgumentTypeMismatchException::class, MissingServletRequestParameterException::class, DuplicateSkillInExpertException::class]
     )
     fun handleValidationFailedException(exception: Exception): ResponseEntity<ErrorMessage> {
         val errorMessage = ErrorMessage("validation of request failed")

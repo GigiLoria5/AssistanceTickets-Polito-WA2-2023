@@ -1,5 +1,8 @@
 package it.polito.wa2.g29.server.model
 
+import it.polito.wa2.g29.server.dto.CreateExpertDTO
+import it.polito.wa2.g29.server.enums.Expertise
+import it.polito.wa2.g29.server.enums.Level
 import jakarta.persistence.*
 
 @Entity
@@ -41,10 +44,23 @@ class Expert(
         messages.add(msg)
     }
 
+    fun addSkill(expertise: Expertise, level: Level) {
+        val skill = Skill(expertise, level, this)
+        skills.add(skill)
+    }
+
     @PreRemove
     private fun preRemove() {
         tickets.forEach { it.expert = null }
         messages.forEach { it.expert = null }
         ticketChanges.forEach { it.currentExpert = null }
     }
+}
+
+fun CreateExpertDTO.toEntity(): Expert {
+    val expert = Expert(name, surname, email, country, city, mutableSetOf())
+    skills.forEach {
+        expert.addSkill(it.expertise, it.level)
+    }
+    return expert
 }
