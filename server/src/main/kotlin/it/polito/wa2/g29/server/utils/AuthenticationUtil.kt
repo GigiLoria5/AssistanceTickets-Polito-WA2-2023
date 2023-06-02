@@ -13,6 +13,8 @@ object AuthenticationUtil {
     const val ROLE_CLIENT = "ROLE_CLIENT"
     const val ROLE_EXPERT = "ROLE_EXPERT"
     const val ROLE_MANAGER = "ROLE_MANAGER"
+    const val KEYCLOAK_ROLE_CLIENT = "Client"
+    const val KEYCLOAK_ROLE_EXPERT = "Expert"
 
     fun getUsername(): String {
         return getAuthContext().name

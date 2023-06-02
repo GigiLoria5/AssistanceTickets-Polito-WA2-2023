@@ -18,6 +18,7 @@ import it.polito.wa2.g29.server.repository.ProfileRepository
 import it.polito.wa2.g29.server.repository.TicketRepository
 import it.polito.wa2.g29.server.service.TicketService
 import it.polito.wa2.g29.server.utils.AuthenticationUtil
+import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.stereotype.Service
@@ -30,6 +31,8 @@ class TicketServiceImpl(
     private val expertRepository: ExpertRepository
 ) : TicketService {
 
+    private val log = LoggerFactory.getLogger(TicketServiceImpl::class.java)
+
     override fun getAllTickets(): List<TicketDTO> {
         return ticketRepository.findAll().map { it.toDTO() }
     }
@@ -39,13 +42,21 @@ class TicketServiceImpl(
     }
 
     override fun getTicketById(ticketId: Int): TicketDTO {
-        val ticket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
+        val ticket = ticketRepository.findByIdOrNull(ticketId)
+            ?: run {
+                log.info("Ticket not found.")
+                throw TicketNotFoundException()
+            }
         checkUserAuthorisation(ticket)
         return ticket.toDTO()
     }
 
     override fun getTicketStatusChangesByTicketId(ticketId: Int): List<TicketChangeDTO> {
-        val ticket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
+        val ticket = ticketRepository.findByIdOrNull(ticketId)
+            ?: run {
+                log.info("Ticket not found.")
+                throw TicketNotFoundException()
+            }
         checkUserAuthorisation(ticket)
         return ticket.ticketChanges.sortedWith(compareByDescending { it.time }).map { it.toDTO() }
     }
@@ -82,6 +93,5 @@ class TicketServiceImpl(
             UserType.MANAGER -> Unit
         }
     }
-
 
 }

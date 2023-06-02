@@ -4,7 +4,6 @@ import it.polito.wa2.g29.server.enums.UserType
 import jakarta.persistence.*
 import org.springframework.data.annotation.CreatedDate
 
-
 @Entity
 @Table(
     name = "messages",

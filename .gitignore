@@ -36,3 +36,8 @@ out/
 ### VS Code ###
 .vscode/
 /.idea/
+/server/tempo-data/blocks/single-tenant/784a94f5-84c9-469d-ac19-82d534d93cd7/bloom-0
+/server/tempo-data/blocks/single-tenant/784a94f5-84c9-469d-ac19-82d534d93cd7/data.parquet
+/server/tempo-data/blocks/single-tenant/index.json.gz
+/server/tempo-data/blocks/single-tenant/784a94f5-84c9-469d-ac19-82d534d93cd7/meta.json
+/server/tempo-data/blocks/tempo_cluster_seed.json

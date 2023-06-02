@@ -1,5 +1,6 @@
 package it.polito.wa2.g29.server.controller
 
+import io.micrometer.observation.annotation.Observed
 import it.polito.wa2.g29.server.dto.MessageDTO
 import it.polito.wa2.g29.server.dto.NewMessageDTO
 import it.polito.wa2.g29.server.dto.NewMessageIdDTO
@@ -8,6 +9,7 @@ import it.polito.wa2.g29.server.utils.MediaTypeUtil
 import jakarta.validation.Valid
 import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotBlank
+import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -19,11 +21,15 @@ import org.springframework.web.multipart.MultipartFile
 @RequestMapping("/API")
 @Validated
 @RestController
+@Observed
 class ChatController(private val chatService: ChatService) {
+
+    private val log = LoggerFactory.getLogger(ChatController::class.java)
 
     @PreAuthorize("hasAuthority(@AuthUtil.ROLE_CLIENT) or hasAuthority(@AuthUtil.ROLE_EXPERT)")
     @GetMapping("/chats/{ticketId}/messages")
     fun getMessagesByTicketId(@PathVariable @Min(1) @Valid ticketId: Int): List<MessageDTO> {
+        log.info("Retrieve all messages for ticket: {}", ticketId)
         return chatService.getMessagesByTicketId(ticketId)
     }
 
@@ -36,6 +42,7 @@ class ChatController(private val chatService: ChatService) {
         @RequestPart("attachments") attachments: List<MultipartFile>?
     ): NewMessageIdDTO {
         val newMessage = NewMessageDTO(content, attachments)
+        log.info("Send message for ticket: {}", ticketId)
         return chatService.addMessageWithAttachments(ticketId, newMessage)
     }
 
@@ -48,6 +55,7 @@ class ChatController(private val chatService: ChatService) {
     ): ResponseEntity<ByteArray> {
         val attachment = chatService.getAttachment(ticketId, messageId, attachmentId)
         val mediaType = MediaTypeUtil.attachmentTypeToMediaType(attachment.type)
+        log.info("Retrieve attachment: {} of message: {} of ticket: {}",attachmentId, messageId,ticketId)
         return ResponseEntity
             .ok()
             .contentType(mediaType)

@@ -10,4 +10,6 @@ class KeycloakProperties {
     lateinit var realm: String
     lateinit var clientId: String
     lateinit var clientSecret: String
+    lateinit var signupAdminUsername:String
+    lateinit var signupAdminPassword: String
 }

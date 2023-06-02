@@ -2,23 +2,76 @@
 
 ## API
 
+- [Auth](#auth)
 - [Products](#products)
 - [Profiles](#profiles)
 - [Experts](#experts)
 - [Tickets](#tickets)
 - [Chats](#chats)
-- [Auth](#auth)
+
+### Auth
+
+- POST `/API/auth/signup`
+
+    - Description: Allows to create a client account
+    - Request body: email, password, name, surname, phoneNumber, address, city and country of the new client
+
+      ```
+      {
+        "email": "johngreen@group.com",
+        "password": "YouWontGuessThisOne",
+        "name": "John",
+        "surname": "Green",
+        "phoneNumber": "3466281644",
+        "address": "Corso Duca degli Abruzzi, 24",
+        "city": "Turin",
+        "country": "Italy"
+      }
+      ```
+
+    - Response: `201 Created` (success)
+    - Error responses: `409 Conflict` (email already exists or phoneNumber already exists), `422 Unprocessable Entity`(
+      validation of request body failed) or `500 Internal Server Error` (generic error)
+    - Response body: An error message in case of error
+
+      ```
+      {
+        "error": "a client with the same email already exists"
+      }
+      ```
+
+- POST `/API/auth/login`
+    - Description: Allows the user to authenticate
+    - Request body: username (i.e., email) and password
+
+      ```
+      {
+        "username": "expert1@wa2.it",
+        "password": "password"
+      }
+      ```
+
+    - Response: `200 Ok` (success)
+    - Error responses: `401 Unauthorized` (invalid username and/or password),`422 Unprocessable Entity` (validation of
+      request body failed) or `500 Internal Server Error` (generic error)
+    - Response body: An object containing the access_token. An error message in case of error
+      ```
+      {
+        "access_token": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJTdEl1VDdvRGJ5cDc2SFg5QmlfdzZIUUk0SVZ5TXhfZ2g2WmpGT0ItT0RrIn0.eyJleHAiOjE2ODM4ODcyMzcsImlhdCI6MTY4Mzg4N"
+      }
+      ```
 
 ### Products
 
 - GET `/API/products`
 
     - Description: Allows to obtain all products within the system
-    - Permissions allowed: 
-      - authenticated users
+    - Permissions allowed:
+        - authenticated users
     - Request body: _None_
     - Response: `200 OK` (success)
-    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `500 Internal Server Error` (generic error)
+    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `500 Internal Server Error` (generic
+      error)
     - Response body: An array of objects, for each containing productId, asin, brand, category,
       manufacturerNumber, name, price and weight (expressed in kg). An error message in case of error
 
@@ -43,10 +96,11 @@
 
     - Description: Allows to obtain all the information of a single product
     - Permissions allowed:
-      - authenticated users
+        - authenticated users
     - Request parameter: productId of the requested product
     - Response: `200 OK` (success)
-    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (productId not found), `422 Unprocessable Entity` (validation of productId
+    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (productId not
+      found), `422 Unprocessable Entity` (validation of productId
       failed) or `500 Internal Server Error` (generic error)
     - Response body: An object containing productId, asin, brand, category, manufacturerNumber, name, price and
       weight (expressed in kg) of the requested product. An error message in case of error
@@ -70,12 +124,13 @@
 
     - Description: Allows to obtain all the information of a single profile and the IDs of his tickets
     - Permissions allowed:
-      - The Client associated with the specified email address
-      - Experts who have a not closed ticket with the client
-      - Managers    
+        - The Client associated with the specified email address
+        - Experts who have a not closed ticket with the client
+        - Managers
     - Request parameter: email of the requested user profile
     - Response: `200 OK` (success)
-    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (email not found), `422 Unprocessable Entity` (validation of email failed) or
+    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (email not
+      found), `422 Unprocessable Entity` (validation of email failed) or
       `500 Internal Server Error` (generic error)
     - Response body: An object containing profileId, email, name, surname, phoneNumber, address, city, country and
       ticketsIds (an array of int, each representing the id of a ticket opened by the user) of the
@@ -95,41 +150,11 @@
       }
       ```
 
-- POST `/API/profiles`
-
-    - Description: Allows to create a profile
-    - Permissions allowed:
-      - Managers
-    - Request body: email, name, surname, phoneNumber, address, city and country of the profile
-
-      ```
-      {
-        "email": "johngreen@group.com",
-        "name": "John",
-        "surname": "Green",
-        "phoneNumber": "3466281644",
-        "address": "Corso Duca degli Abruzzi, 24",
-        "city": "Turin",
-        "country": "Italy"
-      }
-      ```
-
-      - Response: `201 Created` (success)
-      - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `409 Conflict` (email already exists or phoneNumber already exists), `422 Unprocessable Entity`
-        (validation of request body failed) or `500 Internal Server Error` (generic error)
-      - Response body: An error message in case of error
-
-        ```
-        {
-          "error": "a profile with the same email already exists"
-        }
-        ```
-
 - PUT `/API/profiles`
 
     - Description: Allows to update information of an existing profile
     - Permissions allowed:
-      - Clients, each only with their own profile
+        - Clients, each only with their own profile
     - Request body: name, surname, phoneNumber, address, city and country of the profile to be updated
 
       ```
@@ -161,10 +186,11 @@
 
     - Description: Allows to obtain all experts within the system
     - Permissions allowed:
-      - Managers
+        - Managers
     - Request body: _None_
     - Response: `200 OK` (success)
-    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `500 Internal Server Error` (generic error)
+    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `500 Internal Server Error` (generic
+      error)
     - Response body: An array of objects, for each containing expertId, name, surname, email and skills (array of
       objects, for each containing expertise and level). An error message in case of error
 
@@ -195,11 +221,12 @@
 
     - Description: Allows to obtain all the information of an expert
     - Permissions allowed:
-      - The Expert associated with the specified expertId
-      - Managers
+        - The Expert associated with the specified expertId
+        - Managers
     - Request body: _None_
     - Response: `200 OK` (success)
-    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (expertId not found), `422 Unprocessable Entity` (validation of expertId
+    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (expertId not
+      found), `422 Unprocessable Entity` (validation of expertId
       failed) or `500 Internal Server Error` (generic error)
     - Response body: An object containing expertId, name, surname, email and skills (array of objects, for each
       containing expertise and level). An error message in case of error
@@ -226,11 +253,12 @@
 
     - Description: Allows to obtain a list of all status changes made by a specific expert
     - Permissions allowed:
-      - The Expert associated with the specified expertId
-      - Managers
+        - The Expert associated with the specified expertId
+        - Managers
     - Request body: _None_
     - Response: `200 OK` (success)
-    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (expertId not found), `422 Unprocessable Entity` (validation of expertId
+    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (expertId not
+      found), `422 Unprocessable Entity` (validation of expertId
       failed) or `500 Internal Server Error` (generic error)
     - Response body: An array of objects, sorted by time descending, for each containing ticketId, currentExpertId,
       oldStatus, newStatus, changedBy, description and time. An error message in case of error
@@ -254,11 +282,12 @@
 
     - Description: Allows to obtain the list of tickets assigned to an expert
     - Permissions allowed:
-      - The Expert associated with the specified expertId
-      - Managers
+        - The Expert associated with the specified expertId
+        - Managers
     - Request body: _None_
     - Response: `200 OK` (success)
-    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (expertId not found), `422 Unprocessable Entity` (validation of expertId
+    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (expertId not
+      found), `422 Unprocessable Entity` (validation of expertId
       failed) or `500 Internal Server Error` (generic error)
     - Response body: An array of objects (sorted by priorityLevel descending) for each containing
       ticketId, description, productId, customerId, expertId, totalExchangedMessages, status, priorityLevel, createdAt
@@ -284,13 +313,49 @@
       ]
       ```
 
+- POST `API/experts/createExpert`
+
+    - Description: Allows to create an expert account
+    - Permissions allowed:
+        - Managers
+    - Request body: email, password, name, surname, country, city and skills of the new expert
+    ```
+    {
+        "email": "a.grigia@expert.org",
+        "password": "Zw86F442KgsZwb1r",
+        "name": "Ambra",
+        "surname": "Grigia",
+        "country": "Italy",
+        "city": "Turin",
+        "skills": [
+                    ..., 
+                    {
+                      "expertise":"APPLIANCES",
+                      "level":"SPECIALIST"
+                    }, 
+                    ...
+                  ]
+    }
+    ```
+    - Response: `201 Created` (success)
+    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `409 Conflict` (email already
+      exists), `422 Unprocessable Entity` (validation of
+      request body failed) or `500 Internal Server Error` (generic error)
+    - Response body: An error message in case of error
+
+      ```
+      {
+          "error": "an expert with the same email already exists"
+      }
+      ```
+
 ### Tickets
 
 - GET `/API/tickets`
 
     - Description: Allows to obtain all the tickets in the system, optionally filtered by status
     - Permissions allowed:
-      - Managers
+        - Managers
     - Request body: _None_
     - Query parameters:
 
@@ -301,7 +366,8 @@
       ```
 
     - Response: `200 OK` (success)
-    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `422 Unprocessable Entity` (validation of status failed) or `500 Internal Server Error` (generic
+    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `422 Unprocessable Entity` (
+      validation of status failed) or `500 Internal Server Error` (generic
       error)
     - Response body: An array of objects, for each containing ticketId, title, description, productId, customerId,
       expertId, totalExchangedMessages, status, priorityLevel, createdAt and lastModifiedAt.
@@ -343,12 +409,13 @@
 
     - Description: Allows to obtain all the information of a ticket
     - Permissions allowed:
-      - The Client associated with the ticketId
-      - The Expert associated with the ticketId
-      - Managers
+        - The Client associated with the ticketId
+        - The Expert associated with the ticketId
+        - Managers
     - Request body: _None_
     - Response: `200 OK` (success)
-    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (ticketId not found), `422 Unprocessable Entity` (validation of
+    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (ticketId not
+      found), `422 Unprocessable Entity` (validation of
       ticketId failed) or `500 Internal Server Error` (generic error)
     - Response body: An object containing ticketId, description, productId, customerId,
       expertId, totalExchangedMessages, status, priorityLevel, createdAt and lastModifiedAt.
@@ -374,12 +441,13 @@
 
     - Description: Allows to obtain a list of all status changes for a specific ticket
     - Permissions allowed:
-      - The Client associated with the ticketId
-      - The Expert associated with the ticketId
-      - Managers
+        - The Client associated with the ticketId
+        - The Expert associated with the ticketId
+        - Managers
     - Request body: _None_
     - Response: `200 OK` (success)
-    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (ticketId not found), `422 Unprocessable Entity` (validation of
+    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (ticketId not
+      found), `422 Unprocessable Entity` (validation of
       ticketId failed) or `500 Internal Server Error` (generic error)
     - Response body: An array of objects, sorted by time descending, for each containing ticketId, currentExpertId,
       oldStatus, newStatus, description, changedBy and time. An error message in case of error
@@ -414,7 +482,7 @@
 
     - Description: Allows to create a ticket
     - Permissions allowed:
-      - Clients
+        - Clients
     - Request body: productId of the related product with issues and a
       title and description of the issue
 
@@ -427,7 +495,8 @@
       ```
 
     - Response: `201 Created` (success)
-    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (productId not found), `409 Conflict` (a not closed
+    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (productId not
+      found), `409 Conflict` (a not closed
       ticket for the same customer and product already exists), `422 Unprocessable Entity` (validation of
       request body failed) or `500 Internal Server Error` (generic error)
     - Response body: An object containing the id of the ticket created. An error message in case of error
@@ -442,7 +511,7 @@
     - Description: Allows to start the progress of an "OPEN"/"REOPENED" ticket by assigning it to an expert and setting
       a priority level. Upon successful completion of the request, the ticket status will be "IN_PROGRESS"
     - Permissions allowed:
-      - Managers
+        - Managers
     - Request body: the id of the assigned expert, the priority level of the ticket and an optional description.
 
       ```
@@ -454,7 +523,8 @@
       ```
 
     - Response: `204 No Content` (success)
-    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (ticketId or expertId not found), `422 Unprocessable Entity` (validation of
+    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (ticketId or
+      expertId not found), `422 Unprocessable Entity` (validation of
       request body or ticketId failed or tried to start a not open/reopened ticket)
       or `500 Internal Server Error` (generic error)
     - Response body: An error message in case of error
@@ -470,8 +540,8 @@
     - Description: Allows to stop an "IN_PROGRESS" ticket. Upon successful completion of the request, the ticket status
       will be "OPEN"
     - Permissions allowed:
-      - The Expert associated with the ticketId
-      - Managers
+        - The Expert associated with the ticketId
+        - Managers
     - Request body: an optional description.
 
       ```
@@ -481,7 +551,8 @@
       ```
 
     - Response: `204 No Content` (success)
-    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (ticketId not found), `422 Unprocessable Entity` (validation of
+    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (ticketId not
+      found), `422 Unprocessable Entity` (validation of
       request body or ticketId failed or ticket is not in progress) or `500 Internal Server Error` (generic error)
     - Response body: An error message in case of error
 
@@ -496,9 +567,9 @@
     - Description: Allows to set a not closed ticket as resolved. Upon successful completion of the request, the ticket
       status will be "RESOLVED"
     - Permissions allowed:
-      - The Client associated with the ticketId
-      - The Expert associated with the ticketId
-      - Managers
+        - The Client associated with the ticketId
+        - The Expert associated with the ticketId
+        - Managers
     - Request body: an optional description.
 
       ```
@@ -508,7 +579,8 @@
       ```
 
     - Response: `204 No Content` (success)
-    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (ticketId not found), `422 Unprocessable Entity` (validation of request body or
+    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (ticketId not
+      found), `422 Unprocessable Entity` (validation of request body or
       ticketId failed
       or ticket is already resolved or ticket is closed) or `500 Internal Server Error` (generic error)
     - Response body: An error message in case of error
@@ -534,7 +606,8 @@
       ```
 
     - Response: `204 No Content` (success)
-    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (ticketId not found), `422 Unprocessable Entity` (validation of request body or
+    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (ticketId not
+      found), `422 Unprocessable Entity` (validation of request body or
       ticketId failed
       or ticket is not closed/resolved) or `500 Internal Server Error` (generic error)
     - Response body: An error message in case of error
@@ -550,8 +623,8 @@
     - Description: Allows to close any ticket. Upon successful completion of the request, the ticket status will be "
       CLOSED"
     - Permissions allowed:
-      - The Expert associated with the ticketId
-      - Managers
+        - The Expert associated with the ticketId
+        - Managers
     - Request body: an optional description.
 
       ```
@@ -561,7 +634,8 @@
       ```   
 
     - Response: `204 No Content` (success)
-    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (ticketId not found), `422 Unprocessable Entity` (validation of ticketId failed
+    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (ticketId not
+      found), `422 Unprocessable Entity` (validation of ticketId failed
       or ticket is already closed) or `500 Internal Server Error` (generic error)
     - Response body: An error message in case of error
 
@@ -577,11 +651,12 @@
 
     - Description: Allows to obtain all chat messages of a ticket
     - Permissions allowed:
-      - The Client associated with the ticketId
-      - The Expert associated with the ticketId
+        - The Client associated with the ticketId
+        - The Expert associated with the ticketId
     - Request body: _None_
     - Response: `200 OK` (success)
-    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (ticketId not found), `422 Unprocessable Entity` (validation of
+    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (ticketId not
+      found), `422 Unprocessable Entity` (validation of
       ticketId) or `500 Internal Server Error` (generic error)
     - Response body: An array of objects, ordered chronologically, for each containing messageId, sender, expertId (
       expert to whom the ticket was assigned),
@@ -623,15 +698,16 @@
 
     - Description: Allows to send a message and optionally some attachments
     - Permissions allowed:
-      - The Client associated with the ticketId
-      - The Expert associated with the ticketId
+        - The Client associated with the ticketId
+        - The Expert associated with the ticketId
     - Headers: {"Content-Type" : "multipart/form-data"}
     - Request Parameters:
         - content(required) - the content of the message.
     - Request Parts:
         - attachments(optional) - the files to be attached to the message.
     - Response: `201 Created` (success)
-    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (ticketId not found), `422 Unprocessable Entity` (validation of request
+    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (ticketId not
+      found), `422 Unprocessable Entity` (validation of request
       body or ticketId failed or ticket is not in progress/resolve) or `500 Internal Server Error` (generic error)
     - Response body: The id of the message sent. An error message in case of error
       ```
@@ -650,11 +726,12 @@
 
     - Description: Allows to download an attachment related to a message
     - Permissions allowed:
-      - The Client associated with the ticketId
-      - The Expert associated with the ticketId
+        - The Client associated with the ticketId
+        - The Expert associated with the ticketId
     - Request body: _None_
     - Response: `200 OK` (success)
-    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (ticketId, messageId or attachmentId not found), `422 Unprocessable Entity` (
+    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (ticketId, messageId
+      or attachmentId not found), `422 Unprocessable Entity` (
       validation of ticketId, messageId or attachmentId failed) or `500 Internal Server Error` (generic error)
     - Response body: The binary contents of the attachment file. An error message in case of error
       ```
@@ -662,27 +739,3 @@
         "error": "validation of request failed"
       }
       ```
-
-### Auth
-
-- POST `/API/auth/login`
-    - Description: Allows the user to authenticate
-    - Request body: username and password
-
-      ```
-      {
-        "username": "expert1",
-        "password": "password"
-      }
-      ```
-
-    - Response: `200 Ok` (success)
-    - Error responses: `401 Unauthorized` (invalid username and/or password),`422 Unprocessable Entity` (validation of
-      request body failed) or `500 Internal Server Error` (generic error)
-    - Response body: An object containing the access_token. An error message in case of error
-      ```
-      {
-        "access_token": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJTdEl1VDdvRGJ5cDc2SFg5QmlfdzZIUUk0SVZ5TXhfZ2g2WmpGT0ItT0RrIn0.eyJleHAiOjE2ODM4ODcyMzcsImlhdCI6MTY4Mzg4N"
-      }
-      ```
-

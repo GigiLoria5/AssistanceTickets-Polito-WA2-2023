@@ -31,7 +31,8 @@ class ServerConfig(private val jwtAuthConverter: JwtAuthConverter) : WebMvcConfi
             .csrf()
             .disable()
             .authorizeHttpRequests()
-            .requestMatchers("/API/auth/login").permitAll()
+            .requestMatchers("/API/auth/*").permitAll()
+            .requestMatchers("/actuator/**").permitAll()
             .anyRequest().authenticated()
         http
             .oauth2ResourceServer()
