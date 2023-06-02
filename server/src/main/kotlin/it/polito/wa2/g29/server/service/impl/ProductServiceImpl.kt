@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service
 @Service
 
 class ProductServiceImpl(private val productRepository: ProductRepository) : ProductService {
+
     private val log = LoggerFactory.getLogger(ProductServiceImpl::class.java)
 
     override fun getAllProducts(): List<ProductDTO> {
@@ -20,7 +21,7 @@ class ProductServiceImpl(private val productRepository: ProductRepository) : Pro
 
     override fun getProductById(productId: Int): ProductDTO {
         val product = productRepository.findByIdOrNull(productId)
-            ?: run{
+            ?: run {
                 log.info("Product not found")
                 throw ProductNotFoundException()
             }

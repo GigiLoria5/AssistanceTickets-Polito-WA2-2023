@@ -20,9 +20,9 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @Observed
 class ProfileController(private val profileService: ProfileService) {
+
     private val log = LoggerFactory.getLogger(ProfileController::class.java)
 
-    // GET /API/profiles/{email} -- details of profiles {email} or fail if it does not exist
     @GetMapping("/profiles/{email}")
     @ResponseStatus(HttpStatus.OK)
     fun getProfileByEmail(@PathVariable @NotBlank @Email @Pattern(regexp = ProfileDTO.EMAIL_PATTERN) email: String): ProfileDTO {
@@ -31,7 +31,6 @@ class ProfileController(private val profileService: ProfileService) {
 
     }
 
-    // PUT /API/profiles -- modify a user profile
     @PreAuthorize("hasAuthority(@AuthUtil.ROLE_CLIENT)")
     @PutMapping("/profiles")
     @ResponseStatus(HttpStatus.OK)

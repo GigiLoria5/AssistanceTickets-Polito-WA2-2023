@@ -20,9 +20,9 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @Observed
 class TicketStatusChangeController(private val ticketStatusChangeService: TicketStatusChangeService) {
+
     private val log = LoggerFactory.getLogger(TicketStatusChangeController::class.java)
 
-    // PUT /API/tickets/{ticketId}/start -Allows to start the progress of an "OPEN"/"REOPENED" ticket. The ticket status will be "IN_PROGRESS"
     @PreAuthorize("hasAuthority(@AuthUtil.ROLE_MANAGER)")
     @PutMapping("/tickets/{ticketId}/start")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -30,11 +30,14 @@ class TicketStatusChangeController(private val ticketStatusChangeService: Ticket
         @PathVariable @Valid @Min(1) ticketId: Int,
         @RequestBody @Valid @NotNull statusChangeData: TicketStatusChangeInProgressDTO
     ) {
-        log.info("Change status into IN_PROGRESS for ticket: {} and assign it to expert: {} ",ticketId,statusChangeData.expertId)
+        log.info(
+            "Change status into IN_PROGRESS for ticket: {} and assign it to expert: {} ",
+            ticketId,
+            statusChangeData.expertId
+        )
         ticketStatusChangeService.ticketStatusChangeInProgress(ticketId, statusChangeData)
     }
 
-    // PUT /API/tickets/{ticketId}/stop -Allows to stop the progress of an "IN_PROGRESS" ticket. The ticket status will be "OPEN"
     @PreAuthorize("hasAuthority(@AuthUtil.ROLE_MANAGER) or hasAuthority(@AuthUtil.ROLE_EXPERT)")
     @PutMapping("/tickets/{ticketId}/stop")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -46,7 +49,6 @@ class TicketStatusChangeController(private val ticketStatusChangeService: Ticket
         ticketStatusChangeService.ticketStatusChange(ticketId, TicketStatus.OPEN, statusChangeData)
     }
 
-    // PUT /API/tickets/{ticketId}/resolve -Allows to resolve the progress of an "OPEN"/"REOPENED"/"IN_PROGRESS" ticket. The ticket status will be "RESOLVED"
     @PutMapping("/tickets/{ticketId}/resolve")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun resolveTicket(
@@ -57,7 +59,6 @@ class TicketStatusChangeController(private val ticketStatusChangeService: Ticket
         ticketStatusChangeService.ticketStatusChange(ticketId, TicketStatus.RESOLVED, statusChangeData)
     }
 
-    // PUT /API/tickets/{ticketId}/reopen -Allows to reopen a "CLOSED"/"RESOLVED" ticket. The ticket status will be "REOPENED"
     @PreAuthorize("hasAuthority(@AuthUtil.ROLE_CLIENT)")
     @PutMapping("/tickets/{ticketId}/reopen")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -73,7 +74,6 @@ class TicketStatusChangeController(private val ticketStatusChangeService: Ticket
         )
     }
 
-    // PUT /API/tickets/{ticketId}/close -Allows to close a "OPEN"/"RESOLVED"/"IN_PROGRESS"/"REOPENED" ticket. The ticket status will be "CLOSED"
     @PreAuthorize("hasAuthority(@AuthUtil.ROLE_MANAGER) or hasAuthority(@AuthUtil.ROLE_EXPERT)")
     @PutMapping("/tickets/{ticketId}/close")
     @ResponseStatus(HttpStatus.NO_CONTENT)

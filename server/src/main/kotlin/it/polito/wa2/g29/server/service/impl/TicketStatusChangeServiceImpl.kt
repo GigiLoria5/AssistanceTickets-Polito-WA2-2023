@@ -29,10 +29,11 @@ class TicketStatusChangeServiceImpl(
 ) : TicketStatusChangeService {
 
     private val log = LoggerFactory.getLogger(TicketStatusChangeServiceImpl::class.java)
+
     @Transactional
     override fun ticketStatusChangeInProgress(ticketId: Int, statusChangeData: TicketStatusChangeInProgressDTO) {
         val ticket = ticketRepository.findByIdOrNull(ticketId)
-            ?: run  {
+            ?: run {
                 log.info("Ticket not found")
                 throw TicketNotFoundException()
             }
@@ -64,9 +65,9 @@ class TicketStatusChangeServiceImpl(
 
     //In this function I try to create a status change and its log, and thrown an exception if it not possible
     private fun updateTicketStatus(ticket: Ticket, newStatus: TicketStatus, changedBy: UserType, description: String?) {
-        if (!TicketStatusChangeRules.isValidStatusChange(ticket.status, newStatus)){
+        if (!TicketStatusChangeRules.isValidStatusChange(ticket.status, newStatus)) {
             val task = TicketStatusChangeRules.getTaskToAchieveStatus(newStatus)
-            log.info("Could not {} the ticket: {} because its current status is: {}",task, ticket.id,ticket.status)
+            log.info("Could not {} the ticket: {} because its current status is: {}", task, ticket.id, ticket.status)
             throw NotValidStatusChangeException("Could not $task the ticket with id ${ticket.id} because its current status is '${ticket.status}'")
         }
 
@@ -102,4 +103,5 @@ class TicketStatusChangeServiceImpl(
             UserType.MANAGER -> Unit
         }
     }
+
 }

@@ -11,8 +11,12 @@ import org.keycloak.representations.idm.UserRepresentation
 
 object KeycloakUtil {
 
-    fun insertUserInKeycloak(keycloakProperties: KeycloakProperties, email: String, password: String, userRole: String) {
-
+    fun insertUserInKeycloak(
+        keycloakProperties: KeycloakProperties,
+        email: String,
+        password: String,
+        userRole: String
+    ) {
         // Get realm resource
         val realmResource = getRealmResource(keycloakProperties)
 
@@ -21,7 +25,6 @@ object KeycloakUtil {
 
         //set user Role
         setUserRole(realmResource, email, userRole)
-
     }
 
     private fun getRealmResource(keycloakProperties: KeycloakProperties): RealmResource {
@@ -74,7 +77,6 @@ object KeycloakUtil {
     }
 
     private fun setUserRole(realmResource: RealmResource, email: String, userRole: String) {
-
         val userId = realmResource
             .users()
             .search(email)[0]
@@ -93,4 +95,5 @@ object KeycloakUtil {
 
         user.roles().realmLevel().add(listOf(roleToAdd))
     }
+
 }

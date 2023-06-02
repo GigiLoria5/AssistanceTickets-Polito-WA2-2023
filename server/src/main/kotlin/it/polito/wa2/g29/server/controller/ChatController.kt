@@ -23,7 +23,9 @@ import org.springframework.web.multipart.MultipartFile
 @RestController
 @Observed
 class ChatController(private val chatService: ChatService) {
+
     private val log = LoggerFactory.getLogger(ChatController::class.java)
+
     @PreAuthorize("hasAuthority(@AuthUtil.ROLE_CLIENT) or hasAuthority(@AuthUtil.ROLE_EXPERT)")
     @GetMapping("/chats/{ticketId}/messages")
     fun getMessagesByTicketId(@PathVariable @Min(1) @Valid ticketId: Int): List<MessageDTO> {

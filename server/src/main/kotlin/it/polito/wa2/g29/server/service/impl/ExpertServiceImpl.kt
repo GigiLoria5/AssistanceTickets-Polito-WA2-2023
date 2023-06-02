@@ -11,19 +11,19 @@ import it.polito.wa2.g29.server.model.toEntity
 import it.polito.wa2.g29.server.repository.ExpertRepository
 import it.polito.wa2.g29.server.service.ExpertService
 import it.polito.wa2.g29.server.utils.AuthenticationUtil
-import org.slf4j.LoggerFactory
 import it.polito.wa2.g29.server.utils.AuthenticationUtil.KEYCLOAK_ROLE_EXPERT
 import it.polito.wa2.g29.server.utils.KeycloakUtil.insertUserInKeycloak
+import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
-class ExpertServiceImpl(private val expertRepository: ExpertRepository,
-                        private val keycloakProperties: KeycloakProperties) : ExpertService {
-
-class ExpertServiceImpl(private val expertRepository: ExpertRepository) : ExpertService {
+class ExpertServiceImpl(
+    private val expertRepository: ExpertRepository,
+    private val keycloakProperties: KeycloakProperties
+) : ExpertService {
     private val log = LoggerFactory.getLogger(ExpertServiceImpl::class.java)
     override fun getAllExperts(): List<ExpertDTO> {
         return expertRepository.findAll().map { it.toDTO() }
@@ -67,17 +67,18 @@ class ExpertServiceImpl(private val expertRepository: ExpertRepository) : Expert
 
     private fun getExpertObject(expertId: Int): Expert {
         val username = AuthenticationUtil.getUsername()
-        return when(AuthenticationUtil.getUserTypeEnum()) {
+        return when (AuthenticationUtil.getUserTypeEnum()) {
             UserType.EXPERT -> {
                 val expert = expertRepository.findExpertByEmail(username)!!
-                if (expert.id != expertId){
-                    log.info("Access denied for expert:{}", expertId)
+                if (expert.id != expertId) {
+                    log.info("Access denied for expert: {}", expertId)
                     throw AccessDeniedException("")
+                }
                 expert
             }
-            //ROLE_MANAGER
+
             else -> expertRepository.findByIdOrNull(expertId)
-                ?: run{
+                ?: run {
                     log.info("Expert not found")
                     throw ExpertNotFoundException()
                 }

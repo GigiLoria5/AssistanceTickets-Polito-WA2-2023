@@ -18,7 +18,9 @@ import org.springframework.web.client.HttpClientErrorException
 @RestController
 @Observed()
 class AuthController(private val authService: AuthService) {
+
     private val log = LoggerFactory.getLogger(AuthController::class.java)
+
     @PostMapping("/login")
     fun login(@RequestBody @Valid @NotNull request: AccessTokenRequestDTO): ResponseEntity<*> {
         return try {

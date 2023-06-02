@@ -32,6 +32,7 @@ class TicketServiceImpl(
 ) : TicketService {
 
     private val log = LoggerFactory.getLogger(TicketServiceImpl::class.java)
+
     override fun getAllTickets(): List<TicketDTO> {
         return ticketRepository.findAll().map { it.toDTO() }
     }
@@ -92,6 +93,5 @@ class TicketServiceImpl(
             UserType.MANAGER -> Unit
         }
     }
-
 
 }

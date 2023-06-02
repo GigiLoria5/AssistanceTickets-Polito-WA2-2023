@@ -8,16 +8,11 @@ import it.polito.wa2.g29.server.dto.TicketDTO
 import it.polito.wa2.g29.server.service.ExpertService
 import jakarta.validation.Valid
 import jakarta.validation.constraints.Min
-import org.slf4j.LoggerFactory
 import jakarta.validation.constraints.NotNull
+import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
-import kotlin.math.exp
 import org.springframework.web.bind.annotation.*
 
 @RequestMapping("/API")
@@ -25,6 +20,7 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @Observed
 class ExpertController(private val expertService: ExpertService) {
+
     private val log = LoggerFactory.getLogger(ExpertController::class.java)
 
     @PreAuthorize("hasAuthority(@AuthUtil.ROLE_MANAGER)")
@@ -41,7 +37,6 @@ class ExpertController(private val expertService: ExpertService) {
         return expertService.getExpertById(expertId)
     }
 
-    // GET /API/experts/{expertId}/tickets -- list all tickets assigned to an expert {expertId} or fail if it does not exist
     @PreAuthorize("hasAuthority(@AuthUtil.ROLE_MANAGER) or hasAuthority(@AuthUtil.ROLE_EXPERT)")
     @GetMapping("/experts/{expertId}/tickets")
     fun getAllTicketsByExpertId(@PathVariable @Valid @Min(1) expertId: Int): List<TicketDTO> {
@@ -49,7 +44,6 @@ class ExpertController(private val expertService: ExpertService) {
         return expertService.getAllTicketsByExpertId(expertId)
     }
 
-    // GET /API/experts/{expertId}/statusChanges -- details of tickets status changes done by an expert {expertId} or fail if it does not exist
     @PreAuthorize("hasAuthority(@AuthUtil.ROLE_MANAGER) or hasAuthority(@AuthUtil.ROLE_EXPERT)")
     @GetMapping("/experts/{expertId}/statusChanges")
     fun getTicketStatusChangesByExpertId(@PathVariable @Valid @Min(1) expertId: Int): List<TicketChangeDTO> {
@@ -57,7 +51,6 @@ class ExpertController(private val expertService: ExpertService) {
         return expertService.getTicketStatusChangesByExpertId(expertId)
     }
 
-    // POST /API/experts/createExpert -- create a new expert or fail if some field is missing, or is not valid, or in case of duplicates
     @PreAuthorize("hasAuthority(@AuthUtil.ROLE_MANAGER)")
     @PostMapping("/experts/createExpert")
     @ResponseStatus(HttpStatus.CREATED)

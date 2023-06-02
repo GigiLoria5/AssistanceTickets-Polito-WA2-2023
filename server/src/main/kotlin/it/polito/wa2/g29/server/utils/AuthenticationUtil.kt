@@ -15,8 +15,6 @@ object AuthenticationUtil {
     const val ROLE_MANAGER = "ROLE_MANAGER"
     const val KEYCLOAK_ROLE_CLIENT = "Client"
     const val KEYCLOAK_ROLE_EXPERT = "Expert"
-    const val KEYCLOAK_ROLE_MANAGER = "Manager"
-
 
     fun getUsername(): String {
         return getAuthContext().name

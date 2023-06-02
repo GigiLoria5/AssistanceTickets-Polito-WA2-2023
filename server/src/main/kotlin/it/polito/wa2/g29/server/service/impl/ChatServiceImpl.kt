@@ -3,7 +3,10 @@ package it.polito.wa2.g29.server.service.impl
 import it.polito.wa2.g29.server.dto.*
 import it.polito.wa2.g29.server.enums.AttachmentType
 import it.polito.wa2.g29.server.enums.TicketStatus
-import it.polito.wa2.g29.server.exception.*
+import it.polito.wa2.g29.server.exception.AttachmentNotFoundException
+import it.polito.wa2.g29.server.exception.ChatIsInactiveException
+import it.polito.wa2.g29.server.exception.MessageNotFoundException
+import it.polito.wa2.g29.server.exception.TicketNotFoundException
 import it.polito.wa2.g29.server.model.Attachment
 import it.polito.wa2.g29.server.model.Message
 import it.polito.wa2.g29.server.model.Ticket
@@ -27,20 +30,23 @@ class ChatServiceImpl(
 ) : ChatService {
 
     private val log = LoggerFactory.getLogger(ChatServiceImpl::class.java)
+
+    private val ticketNotFoundLog = "Ticket not found"
+
     override fun getMessagesByTicketId(ticketId: Int): List<MessageDTO> {
         val ticket = ticketRepository.findByIdOrNull(ticketId)
-            ?: run{
-                log.info("Ticket not found")
+            ?: run {
+                log.info(ticketNotFoundLog)
                 throw TicketNotFoundException()
             }
         checkUserAuthorisation(ticket)
-        return ticket.messages.sortedWith(compareBy { it.time }).map { it.toDTO() }
+        return ticket.messages.sortedBy { it.time }.map { it.toDTO() }
     }
 
     override fun addMessageWithAttachments(ticketId: Int, newMessage: NewMessageDTO): NewMessageIdDTO {
         val ticket = ticketRepository.findByIdOrNull(ticketId)
             ?: run {
-                log.info("Ticket not found")
+                log.info(ticketNotFoundLog)
                 throw TicketNotFoundException()
             }
         checkUserAuthorisation(ticket)
@@ -69,14 +75,14 @@ class ChatServiceImpl(
     override fun getAttachment(ticketId: Int, messageId: Int, attachmentId: Int): FileAttachmentDTO {
         val ticket = ticketRepository.findByIdOrNull(ticketId)
             ?: run {
-                log.info("Ticket not found")
+                log.info(ticketNotFoundLog)
                 throw TicketNotFoundException()
             }
         checkUserAuthorisation(ticket)
         val message = ticket.messages.find { it.id == messageId }
             ?: run {
                 log.info("Message not found")
-                throw  MessageNotFoundException()
+                throw MessageNotFoundException()
             }
         val attachment = message.attachments.find { it.id == attachmentId }
             ?: run {

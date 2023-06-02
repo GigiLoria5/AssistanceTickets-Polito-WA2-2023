@@ -45,16 +45,17 @@ class AuthServiceImpl(
     @Transactional
     @Observed
     override fun addClient(createClientDTO: CreateClientDTO) {
-        //it will check that a profile with these email/phone number does not already exist (if exists, it will throw an exception)
+        // it will check that a profile with these email/phone number does not already exist (if exists, it will throw an exception)
         profileService.alreadyExistenceCheck(createClientDTO)
 
         val email = createClientDTO.email
         val password = createClientDTO.password
 
         // insert user in keycloak (it will throw an exception if not possible)
-        insertUserInKeycloak(keycloakProperties, email, password,KEYCLOAK_ROLE_CLIENT)
+        insertUserInKeycloak(keycloakProperties, email, password, KEYCLOAK_ROLE_CLIENT)
 
-        //insert user in our System
+        // insert user in our System
         profileService.createProfile(createClientDTO)
     }
+
 }
