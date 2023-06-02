@@ -39,8 +39,7 @@ object ProfileTestUtils {
             phoneNumber = "3333333333",
             address = "New Address",
             city = "New City",
-            country = "New Country",
-            ticketsIds = mutableListOf()
+            country = "New Country"
         )
     }
 
