@@ -1,8 +1,8 @@
+import {BrowserRouter as Router, Link, Route, Routes, useNavigate} from 'react-router-dom';
+import {Button, Col, Row} from "react-bootstrap";
 import Products from "./components/Products";
 import Profiles from "./components/Profiles";
-import {Button, Col, Row} from "react-bootstrap";
-import {BrowserRouter as Router, Link, Route, Routes, useNavigate} from 'react-router-dom';
-import CommonTopSide from "./components/CommonTopSide";
+import Navbar from "./components/Navbar";
 
 function App() {
     return (
@@ -15,7 +15,7 @@ function App() {
 function Root() {
     return (
         <Routes>
-            <Route path="/" element={<CommonTopSide/>}>
+            <Route path="/" element={<Navbar/>}>
                 <Route index element={<Home/>}/>
                 <Route path='/products' element={<Products/>}/>
                 <Route path='/profiles' element={<Profiles/>}/>

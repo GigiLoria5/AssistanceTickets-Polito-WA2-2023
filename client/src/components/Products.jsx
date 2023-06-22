@@ -1,9 +1,57 @@
 import React, {useEffect, useState} from "react";
-import {Alert, Button, Col, Form, Row, Table} from "react-bootstrap";
+import {Button, Col, Form, Row, Table} from "react-bootstrap";
 import API from "../API";
+import StatusAlert from "./StatusAlert";
+
+const Products = () => {
+    const [data, setData] = useState(null);
+    const [error, setError] = useState("")
+
+    const getAllProducts = () => {
+        API.getAllProducts().then((x) => {
+                setData(x)
+                setError("")
+            }
+        ).catch(err => {
+            setError(err.error);
+        })
+    }
+
+    const searchProduct = (productId) => {
+        API.searchProduct(productId).then((x) => {
+                setData([x])
+                setError("")
+            }
+        ).catch(err => {
+            setError(err.error);
+        })
+    }
+
+    useEffect(() => {
+            getAllProducts()
+        }, []
+    );
+
+    return (
+        <>
+            {
+                error ?
+                    <StatusAlert error={error}/>
+                    : null
+            }
+            {
+                data ?
+                    <>
+                        <ProdSearchBar getAllProducts={getAllProducts} searchProduct={searchProduct}/>
+                        <ProdTable data={data}/>
+                    </>
+                    : null
+            }
+        </>
+    );
+};
 
 const ProdSearchBar = ({getAllProducts, searchProduct}) => {
-
     const [searchValue, setSearchValue] = useState("");
 
     const handleSearch = () => {
@@ -70,8 +118,8 @@ const ProdTable = ({data}) => {
                     </tr>
                     </thead>
                     <tbody>
-                    {data.map((product, index) => (
-                        <tr key={index}>
+                    {data.map((product) => (
+                        <tr key={product.productId}>
                             <td>{product.productId}</td>
                             <td>{product.asin}</td>
                             <td>{product.brand}</td>
@@ -86,66 +134,6 @@ const ProdTable = ({data}) => {
                 </Table>
             </Col>
         </Row>
-    );
-};
-
-const ErrorPopup = ({error}) => {
-    return (
-        <Row className="mt-3">
-            <Col>
-                <Alert variant="danger" className="roundedError">
-                    <Alert.Heading>{error}</Alert.Heading>
-                </Alert>
-            </Col>
-        </Row>
-    )
-}
-
-const Products = () => {
-    const [data, setData] = useState(null);
-    const [error, setError] = useState("")
-
-    const getAllProducts = () => {
-        API.getAllProducts().then((x) => {
-                setData(x)
-                setError("")
-            }
-        ).catch(err => {
-            setError(err.error);
-        })
-    }
-
-    const searchProduct = (productId) => {
-        API.searchProduct(productId).then((x) => {
-                setData([x])
-                setError("")
-            }
-        ).catch(err => {
-            setError(err.error);
-        })
-    }
-
-    useEffect(() => {
-            getAllProducts()
-        }, []
-    );
-
-    return (
-        <>
-            {
-                error ?
-                    <ErrorPopup error={error}/>
-                    : null
-            }
-            {
-                data ?
-                    <>
-                        <ProdSearchBar getAllProducts={getAllProducts} searchProduct={searchProduct}/>
-                        <ProdTable data={data}/>
-                    </>
-                    : null
-            }
-        </>
     );
 };
 

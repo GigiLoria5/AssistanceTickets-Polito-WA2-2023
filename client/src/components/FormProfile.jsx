@@ -23,9 +23,8 @@ function FormProfile(props) {
         return namePattern.test(input);
     }
 
-
     function validatePhone(input) {
-        const phonePattern = /([0-9]{10})/;
+        const phonePattern = /(\d{10})/;
         return phonePattern.test(input);
     }
 
