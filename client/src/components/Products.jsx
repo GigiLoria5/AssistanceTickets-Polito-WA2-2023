@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Alert, Row, Col, Form, Button, Table} from "react-bootstrap";
+import {Alert, Button, Col, Form, Row, Table} from "react-bootstrap";
 import API from "../API";
 
 const ProdSearchBar = ({getAllProducts, searchProduct}) => {
@@ -70,16 +70,16 @@ const ProdTable = ({data}) => {
                     </tr>
                     </thead>
                     <tbody>
-                    {data.map((item, index) => (
+                    {data.map((product, index) => (
                         <tr key={index}>
-                            <td>{item.id}</td>
-                            <td>{item.asin}</td>
-                            <td>{item.brand}</td>
-                            <td>{item.category}</td>
-                            <td>{item.manufacturerNumber}</td>
-                            <td>{item.name}</td>
-                            <td>{item.price}</td>
-                            <td>{item.weight}</td>
+                            <td>{product.productId}</td>
+                            <td>{product.asin}</td>
+                            <td>{product.brand}</td>
+                            <td>{product.category}</td>
+                            <td>{product.manufacturerNumber}</td>
+                            <td>{product.name}</td>
+                            <td>{product.price}</td>
+                            <td>{product.weight}</td>
                         </tr>
                     ))}
                     </tbody>

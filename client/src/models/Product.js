@@ -1,6 +1,5 @@
-
-function Product(id, asin, brand, category, manufacturerNumber, name, price,weight) {
-    this.id = id;
+export function Product(productId, asin, brand, category, manufacturerNumber, name, price, weight) {
+    this.productId = productId;
     this.asin = asin;
     this.brand = brand;
     this.category = category;
@@ -9,5 +8,3 @@ function Product(id, asin, brand, category, manufacturerNumber, name, price,weig
     this.price = price;
     this.weight = weight;
 }
-
-exports.Product = Product;
