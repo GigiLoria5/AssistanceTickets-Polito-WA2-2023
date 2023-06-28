@@ -16,7 +16,9 @@ async function getAllProducts() {
                     reject(error);
                 }
             })
-            .catch(() => reject({error: SERVER_COMMUNICATION_ERROR}));
+            .catch((_error) => {
+                reject({error: SERVER_COMMUNICATION_ERROR})
+            });
     });
 }
 
@@ -33,7 +35,9 @@ async function searchProduct(productId) {
                     reject(error);
                 }
             })
-            .catch(() => reject({error: SERVER_COMMUNICATION_ERROR}));
+            .catch((_error) => {
+                reject({error: SERVER_COMMUNICATION_ERROR})
+            });
     });
 }
 

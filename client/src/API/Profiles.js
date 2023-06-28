@@ -25,7 +25,9 @@ async function getProfileByEmail(email) {
                     reject(error);
                 }
             })
-            .catch(() => reject({error: SERVER_COMMUNICATION_ERROR}));
+            .catch((_error) => {
+                reject({error: SERVER_COMMUNICATION_ERROR})
+            });
     });
 }
 
@@ -48,7 +50,9 @@ function addProfile(profile) {
                     reject(error);
                 }
             })
-            .catch(() => reject({error: SERVER_COMMUNICATION_ERROR}));
+            .catch((_error) => {
+                reject({error: SERVER_COMMUNICATION_ERROR})
+            });
     });
 }
 
@@ -71,7 +75,9 @@ function updateProfile(profile, email) {
                     reject(error);
                 }
             })
-            .catch(() => reject({error: SERVER_COMMUNICATION_ERROR}));
+            .catch((_error) => {
+                reject({error: SERVER_COMMUNICATION_ERROR})
+            });
     });
 }
 

@@ -1,8 +1,9 @@
-import {BrowserRouter as Router, Link, Route, Routes, useNavigate} from 'react-router-dom';
+import {BrowserRouter as Router, Route, Routes, useNavigate} from 'react-router-dom';
 import {Button, Col, Row} from "react-bootstrap";
 import Products from "./components/Products";
 import Profiles from "./components/Profiles";
 import Navbar from "./components/Navbar";
+import NotFoundPage from "./components/NotFoundPage";
 
 function App() {
     return (
@@ -21,9 +22,7 @@ function Root() {
                 <Route path='/profiles' element={<Profiles/>}/>
             </Route>
 
-            <Route path='*'
-                   element={<><h1>Oh no! Page not found.</h1> <p>Return to our <Link to="/">homepage</ Link>. </p></>}
-            />
+            <Route path='*' element={<NotFoundPage/>}/>
         </Routes>
     );
 }
