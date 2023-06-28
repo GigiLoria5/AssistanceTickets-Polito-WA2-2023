@@ -5,6 +5,7 @@ import FormProfile from "./FormProfile";
 import React, {useState} from "react";
 import API from "../API";
 import StatusAlert from "./StatusAlert";
+import {AlertType} from "../../enums/AlertType";
 
 function Profiles() {
     const [editMode, setEditMode] = useState(false);
@@ -61,7 +62,10 @@ function Profiles() {
                     </>
                     :
                     <Container style={{maxWidth: "75%"}}>
-                        {error ? <StatusAlert error={error} resetError={resetError}/> : null}
+                        {error ?
+                            <StatusAlert type={error === "Success" ? AlertType.SUCCESS : AlertType.ERROR}
+                                         message={error}
+                                         resetMessage={resetError}/> : null}
                         <Row>
                             <Col>
                                 <SearchProfile getProfileByEmail={getProfileByEmail}></SearchProfile>

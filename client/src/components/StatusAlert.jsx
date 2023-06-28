@@ -1,13 +1,14 @@
 import {Alert, Col, Row} from "react-bootstrap";
 import React from "react";
+import {AlertType} from "../../enums/AlertType";
 
-const StatusAlert = ({error, resetError}) => {
+const StatusAlert = ({type, message, resetMessage}) => {
     return (
         <Row className="mt-3">
             <Col>
-                <Alert variant={error === "Success" ? "success" : "danger"} dismissible onClose={resetError}
+                <Alert variant={type === AlertType.SUCCESS ? "success" : "danger"} dismissible onClose={resetMessage}
                        className="roundedError">
-                    <Alert.Heading>{error}</Alert.Heading>
+                    <Alert.Heading>{message}</Alert.Heading>
                 </Alert>
             </Col>
         </Row>

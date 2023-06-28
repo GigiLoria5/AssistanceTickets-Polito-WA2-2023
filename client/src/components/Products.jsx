@@ -36,7 +36,7 @@ const Products = () => {
         <>
             {
                 error ?
-                    <StatusAlert error={error}/>
+                    <StatusAlert message={error}/>
                     : null
             }
             {

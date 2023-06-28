@@ -2,7 +2,6 @@ import {Alert, Button, Form} from "react-bootstrap";
 import {useState} from "react";
 import {Profile} from "../models/Profile";
 
-
 function FormProfile(props) {
     const [errorMsg, setErrorMsg] = useState('');
     const [email, setEmail] = useState(props.profile ? props.profile.email : '');
