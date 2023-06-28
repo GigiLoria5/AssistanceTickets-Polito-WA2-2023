@@ -4,36 +4,35 @@ import DisplayProfile from "./DisplayProfile";
 import FormProfile from "./FormProfile";
 import React, {useState} from "react";
 import API from "../API";
-import StatusAlert from "./StatusAlert";
-import {AlertType} from "../../enums/AlertType";
+import {useStatusAlert} from "../../hooks/useStatusAlert";
 
 function Profiles() {
     const [editMode, setEditMode] = useState(false);
     const [profile, setProfile] = useState({});
     const [isFormVisible, setIsFormVisible] = useState(false);
-    const [error, setError] = useState('');
+    const {StatusAlertComponent, showSuccess, showError, resetStatusAlert} = useStatusAlert();
 
     function getProfileByEmail(email) {
         API.getProfileByEmail(email)
-            .then((prof) => {
-                setProfile(prof);
-                setError('');
+            .then((profile) => {
+                setProfile(profile);
+                resetStatusAlert();
             })
-            .catch(err => setError(err.error))
+            .catch(err => showError(err.error))
     }
 
     function addProfile(newProfile) {
         setProfile({});
         API.addProfile(newProfile)
-            .then(() => setError('Success'))
-            .catch(err => setError(err.error))
+            .then(() => showSuccess("Profile added successfully"))
+            .catch(err => showError(err.error))
     }
 
     function updateProfile(newProfile, email) {
         setProfile({});
         API.updateProfile(newProfile, email)
-            .then(() => setError('Success'))
-            .catch(err => setError(err.error))
+            .then(() => showSuccess("Profile updated successfully"))
+            .catch(err => showError(err.error))
     }
 
     const changeVisible = () => {
@@ -42,10 +41,6 @@ function Profiles() {
 
     const changeEditMode = () => {
         setEditMode(editMode => !editMode);
-    }
-
-    const resetError = () => {
-        setError('');
     }
 
     return (
@@ -62,10 +57,7 @@ function Profiles() {
                     </>
                     :
                     <Container style={{maxWidth: "75%"}}>
-                        {error ?
-                            <StatusAlert type={error === "Success" ? AlertType.SUCCESS : AlertType.ERROR}
-                                         message={error}
-                                         resetMessage={resetError}/> : null}
+                        <StatusAlertComponent/>
                         <Row>
                             <Col>
                                 <SearchProfile getProfileByEmail={getProfileByEmail}></SearchProfile>

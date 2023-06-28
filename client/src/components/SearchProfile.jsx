@@ -1,9 +1,10 @@
-import {Alert, Button, Form} from "react-bootstrap";
+import {Button, Form} from "react-bootstrap";
 import {useState} from "react";
+import {useStatusAlert} from "../../hooks/useStatusAlert";
 
 function SearchProfile(props) {
     const [email, setEmail] = useState('');
-    const [error, setError] = useState('');
+    const {StatusAlertComponent, showError, resetStatusAlert} = useStatusAlert();
 
     function validateEmail(input) {
         const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
@@ -12,16 +13,16 @@ function SearchProfile(props) {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        setError('');
+        resetStatusAlert();
         if (!validateEmail(email))
-            setError('Email format not valid')
+            showError('Email format not valid');
         else
             props.getProfileByEmail(email);
     }
 
     return (
         <Form className="mt-3" onSubmit={handleSubmit}>
-            {error ? <Alert variant='danger' onClose={() => setError('')} dismissible>{error}</Alert> : false}
+            <StatusAlertComponent/>
             <Form.Group className="mb-3" controlId="formBasicEmail">
                 <Form.Label>Search profile</Form.Label>
                 <Form.Control type="email" placeholder="Enter email"

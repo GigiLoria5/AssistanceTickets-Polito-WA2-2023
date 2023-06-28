@@ -1,44 +1,40 @@
 import React, {useEffect, useState} from "react";
 import {Button, Col, Form, Row, Table} from "react-bootstrap";
 import API from "../API";
-import StatusAlert from "./StatusAlert";
+import {useStatusAlert} from "../../hooks/useStatusAlert";
 
 const Products = () => {
     const [data, setData] = useState(null);
-    const [error, setError] = useState("")
-
-    const getAllProducts = () => {
-        API.getAllProducts().then((x) => {
-                setData(x)
-                setError("")
-            }
-        ).catch(err => {
-            setError(err.error);
-        })
-    }
-
-    const searchProduct = (productId) => {
-        API.searchProduct(productId).then((x) => {
-                setData([x])
-                setError("")
-            }
-        ).catch(err => {
-            setError(err.error);
-        })
-    }
+    const {StatusAlertComponent, showError, resetStatusAlert} = useStatusAlert();
 
     useEffect(() => {
             getAllProducts()
         }, []
     );
 
+    const getAllProducts = () => {
+        API.getAllProducts()
+            .then((x) => {
+                    setData(x)
+                    resetStatusAlert()
+                }
+            )
+            .catch(err => showError(err.error))
+    }
+
+    const searchProduct = (productId) => {
+        API.searchProduct(productId)
+            .then((x) => {
+                    setData([x])
+                    resetStatusAlert()
+                }
+            )
+            .catch(err => showError(err.error))
+    }
+
     return (
         <>
-            {
-                error ?
-                    <StatusAlert message={error}/>
-                    : null
-            }
+            <StatusAlertComponent/>
             {
                 data ?
                     <>

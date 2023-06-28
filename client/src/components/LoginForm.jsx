@@ -1,24 +1,26 @@
-import {Alert, Button, Container, Form} from 'react-bootstrap';
+import {Button, Container, Form} from 'react-bootstrap';
 import {useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import API from "../API";
+import {useStatusAlert} from "../../hooks/useStatusAlert";
+import {HttpStatusCode} from "../../enums/HttpStatusCode";
 
 const validator = require("email-validator");
 
-function LoginForm(props) {
+function LoginForm() {
+    const navigate = useNavigate();
+    const {StatusAlertComponent, showError, resetStatusAlert} = useStatusAlert();
     const [validated, setValidated] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [isUsernameValid, setIsUsernameValid] = useState(true);
     const [isPasswordValid, setIsPasswordValid] = useState(true);
-    const [errorMsg, setErrorMsg] = useState('');
-    const navigate = useNavigate();
 
     const handleSubmit = async (event) => {
         event.preventDefault();
         setIsLoading(true);
-        setErrorMsg('');
+        resetStatusAlert();
         const form = event.currentTarget;
         const validUsername = username && validator.validate(username);
         if (form.checkValidity() && validUsername && password) {
@@ -38,8 +40,8 @@ function LoginForm(props) {
             .then(_ => {
                 navigate('/');
             })
-            .catch(_err => {
-                setErrorMsg("Wrong Credentials. Please try again")
+            .catch(err => {
+                showError(err.status === HttpStatusCode.UNAUTHORIZED ? "Wrong Credentials. Please try again" : err.error)
             })
     };
 
@@ -86,9 +88,8 @@ function LoginForm(props) {
                         {isLoading ? "In progress..." : "Login"}
                     </Button>
                 </Container>
-
-                {errorMsg ? <Alert variant='danger' onClose={() => setErrorMsg("")} dismissible>{errorMsg}</Alert> : ''}
             </Form>
+            <StatusAlertComponent/>
         </div>
     )
 }

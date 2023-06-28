@@ -1,9 +1,10 @@
-import {Alert, Button, Form} from "react-bootstrap";
+import {Button, Form} from "react-bootstrap";
 import {useState} from "react";
 import {Profile} from "../models/Profile";
+import {useStatusAlert} from "../../hooks/useStatusAlert";
 
 function FormProfile(props) {
-    const [errorMsg, setErrorMsg] = useState('');
+    const {StatusAlertComponent, showError} = useStatusAlert();
     const [email, setEmail] = useState(props.profile ? props.profile.email : '');
     const [name, setName] = useState(props.profile ? props.profile.name : '');
     const [surname, setSurname] = useState(props.profile ? props.profile.surname : '');
@@ -46,19 +47,19 @@ function FormProfile(props) {
         event.preventDefault();
 
         if (!validateEmail(email))
-            setErrorMsg("Email format not valid")
+            showError("Email format not valid")
         else if (!validateName(name))
-            setErrorMsg("Name format not valid")
+            showError("Name format not valid")
         else if (!validateName(surname))
-            setErrorMsg("Surname format not valid")
+            showError("Surname format not valid")
         else if (!validatePhone(phoneNumber))
-            setErrorMsg("Phone number format not valid")
+            showError("Phone number format not valid")
         else if (!validateAddress(address))
-            setErrorMsg("Address format not valid")
+            showError("Address format not valid")
         else if (!validateCity(city))
-            setErrorMsg("City format not valid")
+            showError("City format not valid")
         else if (!validateCountry(country))
-            setErrorMsg("Country format not valid")
+            showError("Country format not valid")
         else {
             const newProfile = new Profile(email, name, surname, phoneNumber, address, city, country);
 
@@ -80,8 +81,7 @@ function FormProfile(props) {
     return (
         <>
             {props.changeEditMode ? <h1>Edit profile</h1> : <h1>Add profile</h1>}
-            {errorMsg ? <Alert variant='danger' onClose={() => setErrorMsg('')} className="roundedError"
-                               dismissible>{errorMsg}</Alert> : false}
+            <StatusAlertComponent/>
             <Form onSubmit={handleSubmit}>
                 <Form.Group className="mb-3" controlId="formBasicEmail">
                     <Form.Label>Email address</Form.Label>

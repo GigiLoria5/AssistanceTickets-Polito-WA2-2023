@@ -3,6 +3,7 @@ import {Navigate, Outlet} from 'react-router-dom';
 import API from '../API';
 import {HttpStatusCode} from "../../enums/HttpStatusCode";
 import {Col, Container, Row, Spinner} from "react-bootstrap";
+import {setAccessToken} from "./utils";
 
 /**
  *
@@ -18,11 +19,11 @@ const ProtectedRoute = ({userInfo, setUserInfo, rolesAllowed}) => {
         API.getUserInfo()
             .then(user => {
                 setUserInfo(user);
-                console.log(user)
             })
             .catch(error => {
                 if (error.status === HttpStatusCode.UNAUTHORIZED) {
-                    setUserInfo(null)
+                    setUserInfo(null);
+                    setAccessToken(null);
                 }
             })
             .finally(_ => {

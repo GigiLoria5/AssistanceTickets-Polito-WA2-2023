@@ -31,7 +31,7 @@ class ServerConfig(private val jwtAuthConverter: JwtAuthConverter) : WebMvcConfi
             .authorizeHttpRequests()
             .requestMatchers("/API/auth/user").authenticated()
             .requestMatchers("/API/auth/*").permitAll()
-            .requestMatchers("/API/**").permitAll() // TODO: switch to authenticated once frontend has login
+            .requestMatchers("/API/**").authenticated()
             .requestMatchers("/actuator/**").permitAll()
             .anyRequest().permitAll()
         http
