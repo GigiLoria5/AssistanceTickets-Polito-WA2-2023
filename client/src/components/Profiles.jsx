@@ -24,14 +24,14 @@ function Profiles() {
     function addProfile(newProfile) {
         setProfile({});
         API.addProfile(newProfile)
-            .then(() => showSuccess("Profile added successfully"))
+            .then(() => showSuccess("UserProfile added successfully"))
             .catch(err => showError(err.error))
     }
 
     function updateProfile(newProfile, email) {
         setProfile({});
         API.updateProfile(newProfile, email)
-            .then(() => showSuccess("Profile updated successfully"))
+            .then(() => showSuccess("UserProfile updated successfully"))
             .catch(err => showError(err.error))
     }
 

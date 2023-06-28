@@ -10,6 +10,7 @@ import ClientDashboard from "./components/ClientDashboard";
 import {UserRole} from "../enums/UserRole";
 import LoginForm from "./components/LoginForm";
 import ProtectedRoute from "./utils/ProtectedRoute";
+import {UserProfile} from "./components/UserProfile";
 
 function App() {
     return (
@@ -34,6 +35,7 @@ function Root() {
                     <Route index element={renderDashboard(userInfo ? userInfo.role : "")}/>
                     <Route path='/products' element={<Products/>}/>
                     <Route path='/profiles' element={<Profiles/>}/>
+                    <Route path='/profile' element={<UserProfile userInfo={userInfo} setUserInfo={setUserInfo}/>}/>
                 </Route>
             </Route>
 
