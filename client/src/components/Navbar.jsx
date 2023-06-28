@@ -1,7 +1,7 @@
 import {Outlet, useLocation, useNavigate} from "react-router-dom";
 import {Container, Nav, Navbar} from "react-bootstrap";
 
-function MyNavbar() {
+function MyNavbar({userInfo}) {
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -26,6 +26,12 @@ function MyNavbar() {
                         </Navbar.Brand>
                         <Nav className="me-auto">
                             <Nav.Link
+                                onClick={() => navigate('/')}
+                                active={location.pathname === '/'}
+                            >
+                                Dashboard
+                            </Nav.Link>
+                            <Nav.Link
                                 onClick={() => navigate('/products')}
                                 active={location.pathname === '/products'}
                             >
@@ -37,7 +43,7 @@ function MyNavbar() {
                                 onClick={() => navigate('/profile')}
                                 active={location.pathname === '/profile'}
                             >
-                                Profile
+                                {userInfo ? `${userInfo.name} [${userInfo.role}]` : 'Profile'}
                             </Nav.Link>
                         </Nav>
                     </Container>
