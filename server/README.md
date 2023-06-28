@@ -61,6 +61,20 @@
       }
       ```
 
+- GET `/API/auth/user`
+    - Description: Allows to retrieve information about the authenticated user
+    - Request body: _None_
+    - Response: `200 Ok` (success)
+    - Error responses: `401 Unauthorized` (not logged in) or `500 Internal Server Error` (generic error)
+    - Response body: An object containing main user information. An error message in case of error
+      ```
+      {
+        "email": "bbowering4@vistaprint.com",
+        "name": "Barr Bowering",
+        "role": "Expert"
+      }
+      ```
+
 ### Products
 
 - GET `/API/products`
