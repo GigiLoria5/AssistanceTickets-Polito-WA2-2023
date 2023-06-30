@@ -11,6 +11,7 @@ import {UserRole} from "../enums/UserRole";
 import LoginForm from "./components/LoginForm";
 import ProtectedRoute from "./utils/ProtectedRoute";
 import {UserProfile} from "./components/UserProfile";
+import TicketDetails from "./components/TicketDetails";
 
 function App() {
     return (
@@ -36,6 +37,7 @@ function Root() {
                     <Route path='/products' element={<Products/>}/>
                     <Route path='/profiles' element={<Profiles/>}/>
                     <Route path='/profile' element={<UserProfile userInfo={userInfo} setUserInfo={setUserInfo}/>}/>
+                    <Route path='/tickets/:ticketId' element={<TicketDetails userInfo={userInfo}/>}/>
                 </Route>
             </Route>
 
