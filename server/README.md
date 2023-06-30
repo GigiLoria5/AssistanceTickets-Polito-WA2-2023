@@ -136,7 +136,7 @@
 
 - GET `/API/profiles/{email}`
 
-    - Description: Allows to obtain all the information of a single profile and the IDs of his tickets
+    - Description: Allows to obtain all the information of a single profile
     - Permissions allowed:
         - The Client associated with the specified email address
         - Experts who have a not closed ticket with the client
@@ -146,8 +146,7 @@
     - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (email not
       found), `422 Unprocessable Entity` (validation of email failed) or
       `500 Internal Server Error` (generic error)
-    - Response body: An object containing profileId, email, name, surname, phoneNumber, address, city, country and
-      ticketsIds (an array of int, each representing the id of a ticket opened by the user) of the
+    - Response body: An object containing profileId, email, name, surname, phoneNumber, address, city, country of the
       requested user. An error message in case of error
 
       ```
@@ -160,9 +159,55 @@
           "address": "Corso Duca degli Abruzzi, 24",
           "city": "Turin",
           "country": "Italy",
-          "ticketsIds": [1, 2, 3]
       }
       ```
+
+- GET `/API/profiles/{email}/tickets`
+
+    - Description: Allows to obtain all the tickets of a single profile
+    - Permissions allowed:
+        - The Client associated with the specified email address
+        - Managers
+    - Request parameter: email of the requested user profile
+    - Response: `200 OK` (success)
+    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (email not
+      found), `422 Unprocessable Entity` (validation of email failed) or
+      `500 Internal Server Error` (generic error)
+    - Response body: An object containing all the tickets of the
+      requested user. An error message in case of error
+
+    ```
+      [
+          ...,
+          {
+            "ticketId": 5,
+            "title": "Smoke coming out of TV",
+            "description": "I was watching TV when I noticed smoke coming out of the back. I immediately unplugged it, but now I'm afraid to turn it back on.",
+            "productId": 1,
+            "customerId": 1,
+            "expertId": 1,
+            "totalExchangedMessages": 32,
+            "status": "IN PROGRESS",
+            "priorityLevel": "CRITICAL",
+            "createdAt": 1682087627,
+            "lastModifiedAt": 1682091233
+          },
+          {
+            "ticketId": 6,
+            "title": "Broken screen",
+            "description": "My computer fell and the screen is shattered",
+            "productId": 2,
+            "customerId": 1,
+            "expertId": null,
+            "totalExchangedMessages": 0,
+            "status": "OPEN",
+            "priorityLevel": null,
+            "createdAt": 1682087637,
+            "lastModifiedAt": 1682087637
+          },
+          ...
+      ]
+      
 
 - PUT `/API/profiles`
 

@@ -81,8 +81,6 @@ class ProfileControllerIT : AbstractTestcontainersTest() {
                 jsonPath("$.address").value(expectedProfile.address),
                 jsonPath("$.city").value(expectedProfile.city),
                 jsonPath("$.country").value(expectedProfile.country),
-                jsonPath("$.ticketsIds").isArray,
-                jsonPath("$.ticketsIds").isEmpty
             )
     }
 
@@ -110,8 +108,6 @@ class ProfileControllerIT : AbstractTestcontainersTest() {
                 jsonPath("$.address").value(expectedProfile.address),
                 jsonPath("$.city").value(expectedProfile.city),
                 jsonPath("$.country").value(expectedProfile.country),
-                jsonPath("$.ticketsIds").isArray,
-                jsonPath("$.ticketsIds").isNotEmpty
             )
     }
 
@@ -141,8 +137,6 @@ class ProfileControllerIT : AbstractTestcontainersTest() {
                 jsonPath("$.address").value(expectedProfile.address),
                 jsonPath("$.city").value(expectedProfile.city),
                 jsonPath("$.country").value(expectedProfile.country),
-                jsonPath("$.ticketsIds").isArray,
-                jsonPath("$.ticketsIds").isNotEmpty
             )
     }
 
@@ -189,8 +183,6 @@ class ProfileControllerIT : AbstractTestcontainersTest() {
                 jsonPath("$.address").value(expectedProfile.address),
                 jsonPath("$.city").value(expectedProfile.city),
                 jsonPath("$.country").value(expectedProfile.country),
-                jsonPath("$.ticketsIds").isArray,
-                jsonPath("$.ticketsIds").isNotEmpty
             )
     }
 

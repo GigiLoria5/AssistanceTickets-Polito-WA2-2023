@@ -62,7 +62,6 @@ class ProfileServiceIT : AbstractTestcontainersTest() {
 
         val actualProfileDTO = profileService.getProfileByEmail(expectedProfileDTO.email)
 
-        assert(actualProfileDTO.ticketsIds?.isEmpty() ?: false)
         assert(actualProfileDTO == expectedProfileDTO)
     }
 
@@ -80,8 +79,6 @@ class ProfileServiceIT : AbstractTestcontainersTest() {
 
         val actualProfileDTO = profileService.getProfileByEmail(expectedProfileDTO.email)
 
-        assert(actualProfileDTO.ticketsIds?.isNotEmpty() ?: false)
-        assert(actualProfileDTO.ticketsIds?.size == expectedProfileDTO.ticketsIds?.size)
         assert(actualProfileDTO == expectedProfileDTO)
     }
 
