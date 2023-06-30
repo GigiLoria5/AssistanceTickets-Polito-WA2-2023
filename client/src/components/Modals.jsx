@@ -28,7 +28,7 @@ function CustomModal({show, hide, backdrop, keyboard, type, desiredState, ticket
             centered
         >
             <CustomModalHeader type={type} desiredState={desiredState} StatusAlertComponent={StatusAlertComponent}/>
-            <CustomModalInterior type={type} desiredState={desiredState} ticketId={ticketId} handleClose={handleClose}
+            <getCustomModalBody type={type} desiredState={desiredState} ticketId={ticketId} handleClose={handleClose}
                                  completingAction={completingAction} resetStatusAlert={resetStatusAlert}
                                  showError={showError}/>
         </Modal>
@@ -60,8 +60,8 @@ function CustomModalHeader({type, desiredState, StatusAlertComponent}) {
     )
 }
 
-function CustomModalInterior({type, desiredState, ticketId, handleClose, completingAction,resetStatusAlert, showError}) {
-    const getModalInterior = () => {
+function getCustomModalBody({type, desiredState, ticketId, handleClose, completingAction,resetStatusAlert, showError}) {
+    const getBody = () => {
         switch (type) {
             case ModalType.STATUS_CHANGE:
                 if (desiredState === TicketStatus.IN_PROGRESS)
@@ -76,7 +76,7 @@ function CustomModalInterior({type, desiredState, ticketId, handleClose, complet
         }
     }
 
-    return getModalInterior()
+    return getBody()
 }
 
 function StatusChangeInProgressModal({ticketId,handleClose, resetStatusAlert, completingAction,showError}) {
@@ -361,4 +361,25 @@ function getUpdateApiForDesiredStatus(desiredStatus,desiredPostUpdateAction,show
         case TicketStatus.IN_PROGRESS: return (ticketId,expertId,priorityLevel,description)=>startTicket(ticketId,expertId,priorityLevel,description)
     }
 }
-export default CustomModal;
+
+function ConfirmModal(props){
+    return (
+        <Modal
+            {...props}
+            aria-labelledby="contained-modal-title-vcenter"
+            centered
+        >
+            <Modal.Header closeButton>
+                <Modal.Title>Status change completed</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>Status change transaction successfully concluded</Modal.Body>
+            <Modal.Footer>
+                <Button variant="primary" onClick={props.onHide}>
+                    Close
+                </Button>
+            </Modal.Footer>
+        </Modal>
+    )
+}
+
+export  {CustomModal,ConfirmModal};

@@ -7,7 +7,7 @@ import * as PropTypes from "prop-types";
 import {dateTimeMillisFormatted} from "../utils/utils";
 import {availableTicketStatusChanges, getTaskToAchieveStatus} from "../utils/ticketUtil";
 import {UserRole} from "../../enums/UserRole";
-import CustomModal from "./CustomModal";
+import {ConfirmModal, CustomModal} from "./Modals";
 import {ModalType} from "../../enums/ModalType";
 
 TicketDataTable.propTypes = {ticket: PropTypes.any};
@@ -21,6 +21,7 @@ function TicketDetails({userInfo}) {
     const [load, setLoad] = useState(true)
     const [errorPresence, setErrorPresence] = useState(false)
     const {StatusAlertComponent, showError, resetStatusAlert} = useStatusAlert();
+    const [confirmModalShow, setConfirmModalShow] = React.useState(false);
 
     useEffect(() => {
             const getData = async () => {
@@ -31,7 +32,9 @@ function TicketDetails({userInfo}) {
                 getData().then(() => {
                     setLoading(false)
                     resetStatusAlert()
-                }).catch(err => stopAnimationAndShowError(err)).finally(()=>{setLoad(false)})
+                }).catch(err => stopAnimationAndShowError(err)).finally(() => {
+                    setLoad(false)
+                })
             }
         }
         ,
@@ -89,19 +92,27 @@ function TicketDetails({userInfo}) {
                     <Spinner animation="border" variant="primary"/>
                     :
                     !errorPresence ?
-                        <TicketDetailComponents
-                            ticketData={ticketData}
-                            productData={productData}
-                            ticketStatusChangesData={ticketStatusChangesData}
-                            reload={()=>setLoad(true)}
-                            userRole={userInfo.role}/> :
+                        <>
+                            <TicketDetailComponents
+                                ticketData={ticketData}
+                                productData={productData}
+                                ticketStatusChangesData={ticketStatusChangesData}
+                                update={() => {setLoad(true); setConfirmModalShow(true)}}
+                                userRole={userInfo.role}/>
+                            <ConfirmModal
+                                show={confirmModalShow}
+                                onHide={() => setConfirmModalShow(false)}
+                            />
+                        </>
+                        :
                         null
             }
         </>
     )
 }
 
-function TicketDetailComponents({ticketData, productData, ticketStatusChangesData, reload,userRole}) {
+
+function TicketDetailComponents({ticketData, productData, ticketStatusChangesData, update, userRole}) {
     return (
         <>
             <Row className='mb-4'>
@@ -125,7 +136,7 @@ function TicketDetailComponents({ticketData, productData, ticketStatusChangesDat
                     <TicketStatusAvailableChanges
                         ticketId={ticketData.ticketId}
                         availableStatuses={availableTicketStatusChanges(userRole, ticketData.status)}
-                        reload={reload}
+                        update={update}
                     />
                 </Col>
             </Row>
@@ -230,7 +241,7 @@ function TicketChat({ticketId}) {
     )
 }
 
-function TicketStatusAvailableChanges({ticketId, availableStatuses,reload}) {
+function TicketStatusAvailableChanges({ticketId, availableStatuses, update}) {
 
     const [desiredState, setDesiredState] = useState(null)
     const [showCustomModal, setShowCustomModal] = useState(false);
@@ -261,7 +272,7 @@ function TicketStatusAvailableChanges({ticketId, availableStatuses,reload}) {
                                      type={ModalType.STATUS_CHANGE}
                                      desiredState={desiredState}
                                      ticketId={ticketId}
-                                     completingAction={reload}
+                                     completingAction={update}
                         />
                     </> : <div>No available changes</div>
             }
@@ -276,34 +287,34 @@ function TicketStatusChangesTable({ticketStatusChanges}) {
             {
                 ticketStatusChanges.length > 0 ?
                     <>
-            <Row className="mt-3">
-                <Col>
-                    <Table>
-                        <thead>
-                        <tr>
-                            <th>oldStatus</th>
-                            <th>newStatus</th>
-                            <th>changedBy</th>
-                            <th>currentExpertId</th>
-                            <th>time</th>
-                            <th>description</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {ticketStatusChanges.map((tsc) => (
-                            <tr key={tsc.time}>
-                                <td>{tsc.oldStatus}</td>
-                                <td>{tsc.newStatus}</td>
-                                <td>{tsc.changedBy}</td>
-                                <td>{tsc.currentExpertId}</td>
-                                <td>{dateTimeMillisFormatted(tsc.time)}</td>
-                                <td>{tsc.description}</td>
-                            </tr>
-                        ))}
-                        </tbody>
-                    </Table>
-                </Col>
-            </Row>
+                        <Row className="mt-3">
+                            <Col>
+                                <Table>
+                                    <thead>
+                                    <tr>
+                                        <th>oldStatus</th>
+                                        <th>newStatus</th>
+                                        <th>changedBy</th>
+                                        <th>currentExpertId</th>
+                                        <th>time</th>
+                                        <th>description</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {ticketStatusChanges.map((tsc) => (
+                                        <tr key={tsc.time}>
+                                            <td>{tsc.oldStatus}</td>
+                                            <td>{tsc.newStatus}</td>
+                                            <td>{tsc.changedBy}</td>
+                                            <td>{tsc.currentExpertId}</td>
+                                            <td>{dateTimeMillisFormatted(tsc.time)}</td>
+                                            <td>{tsc.description}</td>
+                                        </tr>
+                                    ))}
+                                    </tbody>
+                                </Table>
+                            </Col>
+                        </Row>
                     </> : <div>No available status changes</div>
             }
         </>
