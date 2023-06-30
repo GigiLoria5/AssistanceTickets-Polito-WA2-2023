@@ -1,8 +1,62 @@
-import {Button, Col, Row, Table} from "react-bootstrap";
-import React from "react";
+import {Button, Col, Row, Spinner, Table} from "react-bootstrap";
+import React, {useEffect, useState} from "react";
+import API from "../API";
+import {useStatusAlert} from "../../hooks/useStatusAlert";
 
-function Experts({experts, title,actionName, action}) {
+function Experts({title, actionName, action}) {
+    const [expertsData, setExpertsData] = useState(null);
+    const [loading, setLoading] = useState(true)
+    const {StatusAlertComponent, showError, resetStatusAlert} = useStatusAlert();
+    const [errorPresence, setErrorPresence] = useState(false)
+
+
+    useEffect(() => {
+            getAllExperts()
+        }, []
+    );
+    const getAllExperts = () => {
+        API.getAllExperts()
+            .then((x) => {
+                    setExpertsData(x)
+                    setLoading(false)
+                    resetStatusAlert()
+                }
+            )
+            .catch(err => stopAnimationAndShowError(err.error))
+    }
+    const stopAnimationAndShowError = (err) => {
+        setLoading(false)
+        setErrorPresence(true)
+        showError(err.error)
+    }
+
     /* TODO EVENTUALLY CREATE A SEARCH BAR BY SOMETHING*/
+
+    return (
+        <>
+            <StatusAlertComponent/>
+            {
+                loading ?
+                    <Spinner animation="border" variant="primary"/>
+                    :
+                    !errorPresence ?
+                        <>
+                            <h4>
+                                {title}
+                            </h4>
+                            <Row>
+                                <Col>
+                                    <ExpertsTable experts={expertsData} actionName={actionName}
+                                                  action={action}/>
+                                </Col>
+                            </Row>
+                        </>
+                        : null
+            }
+        </>
+    )
+}
+function ExpertsTable({experts,actionName,action}){
     return (
         <div className="table-responsive">
             <Table>

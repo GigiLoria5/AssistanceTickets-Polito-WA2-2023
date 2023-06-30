@@ -1,5 +1,4 @@
-export function TicketStatusChange(id, currentExpertId, oldStatus, newStatus, changedBy, description, time) {
-    this.id = id
+export function TicketStatusChange(currentExpertId, oldStatus, newStatus, changedBy, description, time) {
     this.currentExpertId = currentExpertId
     this.oldStatus = oldStatus
     this.newStatus = newStatus

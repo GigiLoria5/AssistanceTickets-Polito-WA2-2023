@@ -1,5 +1,5 @@
-export function Ticket(id, title, description, productId, customerId, expertId, totalExchangedMessages, status, priorityLevel, createdAt, lastModifiedAt) {
-    this.id = id
+export function Ticket(ticketId, title, description, productId, customerId, expertId, totalExchangedMessages, status, priorityLevel, createdAt, lastModifiedAt) {
+    this.ticketId = ticketId
     this.title = title
     this.description = description
     this.productId = productId

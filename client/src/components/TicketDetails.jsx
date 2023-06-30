@@ -31,7 +31,7 @@ function TicketDetails({userInfo}) {
                 getData().then(() => {
                     setLoading(false)
                     resetStatusAlert()
-                }).catch(err => stopAnimationAndShowError(err))
+                }).catch(err => stopAnimationAndShowError(err)).finally(()=>{setLoad(false)})
             }
         }
         ,
@@ -93,6 +93,7 @@ function TicketDetails({userInfo}) {
                             ticketData={ticketData}
                             productData={productData}
                             ticketStatusChangesData={ticketStatusChangesData}
+                            reload={()=>setLoad(true)}
                             userRole={userInfo.role}/> :
                         null
             }
@@ -100,7 +101,7 @@ function TicketDetails({userInfo}) {
     )
 }
 
-function TicketDetailComponents({ticketData, productData, ticketStatusChangesData, userRole}) {
+function TicketDetailComponents({ticketData, productData, ticketStatusChangesData, reload,userRole}) {
     return (
         <>
             <Row className='mb-4'>
@@ -115,18 +116,20 @@ function TicketDetailComponents({ticketData, productData, ticketStatusChangesDat
                 userRole === UserRole.CLIENT || userRole === UserRole.EXPERT ?
                     <Row className='mb-5'>
                         <Col md={4}>
-                            <TicketChat ticketId={ticketData.id}/>
+                            <TicketChat ticketId={ticketData.ticketId}/>
                         </Col>
                     </Row> : null
             }
             <Row className='mb-5'>
                 <Col md={4}>
                     <TicketStatusAvailableChanges
-                        ticketId={ticketData.id}
-                        availableStatuses={availableTicketStatusChanges(userRole, ticketData.status)}/>
+                        ticketId={ticketData.ticketId}
+                        availableStatuses={availableTicketStatusChanges(userRole, ticketData.status)}
+                        reload={reload}
+                    />
                 </Col>
             </Row>
-            <Row>
+            <Row className='mb-5'>
                 <Col>
                     <TicketStatusChangesTable ticketStatusChanges={ticketStatusChangesData}/>
                 </Col>
@@ -227,7 +230,7 @@ function TicketChat({ticketId}) {
     )
 }
 
-function TicketStatusAvailableChanges({ticketId, availableStatuses}) {
+function TicketStatusAvailableChanges({ticketId, availableStatuses,reload}) {
 
     const [desiredState, setDesiredState] = useState(null)
     const [showCustomModal, setShowCustomModal] = useState(false);
@@ -258,8 +261,9 @@ function TicketStatusAvailableChanges({ticketId, availableStatuses}) {
                                      type={ModalType.STATUS_CHANGE}
                                      desiredState={desiredState}
                                      ticketId={ticketId}
+                                     completingAction={reload}
                         />
-                    </> : <div>No available status changes</div>
+                    </> : <div>No available changes</div>
             }
         </>
     )
@@ -269,6 +273,9 @@ function TicketStatusChangesTable({ticketStatusChanges}) {
     return (
         <>
             <h2>Ticket Status Changes</h2>
+            {
+                ticketStatusChanges.length > 0 ?
+                    <>
             <Row className="mt-3">
                 <Col>
                     <Table>
@@ -297,6 +304,8 @@ function TicketStatusChangesTable({ticketStatusChanges}) {
                     </Table>
                 </Col>
             </Row>
+                    </> : <div>No available status changes</div>
+            }
         </>
     );
 }
