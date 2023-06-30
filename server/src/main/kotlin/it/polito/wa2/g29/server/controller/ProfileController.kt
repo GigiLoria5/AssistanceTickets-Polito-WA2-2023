@@ -2,6 +2,7 @@ package it.polito.wa2.g29.server.controller
 
 import io.micrometer.observation.annotation.Observed
 import it.polito.wa2.g29.server.dto.ProfileDTO
+import it.polito.wa2.g29.server.dto.TicketDTO
 import it.polito.wa2.g29.server.dto.profile.EditProfileDTO
 import it.polito.wa2.g29.server.service.ProfileService
 import jakarta.validation.Valid
@@ -28,8 +29,15 @@ class ProfileController(private val profileService: ProfileService) {
     fun getProfileByEmail(@PathVariable @NotBlank @Email @Pattern(regexp = ProfileDTO.EMAIL_PATTERN) email: String): ProfileDTO {
         log.info("Retrieve details of profile:{}", email)
         return profileService.getProfileByEmail(email)
-
     }
+    @PreAuthorize("hasAuthority(@AuthUtil.ROLE_MANAGER) or hasAuthority(@AuthUtil.ROLE_CLIENT)")
+    @GetMapping("/profiles/{email}/tickets")
+    @ResponseStatus(HttpStatus.OK)
+    fun getTicketsOfProfileByEmail(@PathVariable @NotBlank @Email @Pattern(regexp = ProfileDTO.EMAIL_PATTERN) email: String): List<TicketDTO> {
+        log.info("Retrieve tickets of profile:{}", email)
+        return profileService.getTicketsOfProfileByEmail(email)
+    }
+
 
     @PreAuthorize("hasAuthority(@AuthUtil.ROLE_CLIENT)")
     @PutMapping("/profiles")

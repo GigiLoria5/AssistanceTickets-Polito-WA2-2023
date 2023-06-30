@@ -1,6 +1,7 @@
 package it.polito.wa2.g29.server.service.impl
 
 import it.polito.wa2.g29.server.dto.ProfileDTO
+import it.polito.wa2.g29.server.dto.TicketDTO
 import it.polito.wa2.g29.server.dto.auth.CreateClientDTO
 import it.polito.wa2.g29.server.dto.profile.EditProfileDTO
 import it.polito.wa2.g29.server.dto.toDTO
@@ -27,19 +28,29 @@ class ProfileServiceImpl(
     override fun getProfileByEmail(email: String): ProfileDTO {
         checkUserAuthorisation(email)
         val profile = profileRepository.findProfileByEmail(email)
-            ?: run{
+            ?: run {
                 log.info("Profile not found")
                 throw ProfileNotFoundException()
             }
         return profile.toDTO()
     }
 
+    override fun getTicketsOfProfileByEmail(email: String): List<TicketDTO> {
+        checkUserAuthorisation(email)
+        val profile = profileRepository.findProfileByEmail(email)
+            ?: run {
+                log.info("Profile not found")
+                throw ProfileNotFoundException()
+            }
+        return profile.tickets.map { it.toDTO() }
+    }
+
     override fun alreadyExistenceCheck(createClientDTO: CreateClientDTO) {
-        if (profileRepository.findProfileByEmail(createClientDTO.email) != null){
+        if (profileRepository.findProfileByEmail(createClientDTO.email) != null) {
             log.info("a profile with the same email: {} already exists", createClientDTO.email)
             throw DuplicateProfileException("a profile with the same email already exists")
         }
-        if (profileRepository.findProfileByPhoneNumber(createClientDTO.phoneNumber) != null){
+        if (profileRepository.findProfileByPhoneNumber(createClientDTO.phoneNumber) != null) {
             log.info("a profile with the same phone number: {} already exists", createClientDTO.phoneNumber)
             throw DuplicateProfileException("a profile with the same phone number already exists")
         }
@@ -53,7 +64,7 @@ class ProfileServiceImpl(
     override fun modifyProfile(newProfile: EditProfileDTO) {
         val username = AuthenticationUtil.getUsername()
         val profile = profileRepository.findProfileByEmail(username)!!
-        if (newProfile.phoneNumber != profile.phoneNumber && profileRepository.findProfileByPhoneNumber(newProfile.phoneNumber) != null){
+        if (newProfile.phoneNumber != profile.phoneNumber && profileRepository.findProfileByPhoneNumber(newProfile.phoneNumber) != null) {
             log.info("a profile with the same phone number: {} already exists", newProfile.phoneNumber)
             throw DuplicateProfileException("a profile with the same phone number already exists")
         }
@@ -66,8 +77,8 @@ class ProfileServiceImpl(
 
         when (AuthenticationUtil.getUserTypeEnum()) {
             UserType.CUSTOMER -> {
-                if (username != email){
-                    log.info("Access denied. User: {} cannot access to {} details", username,email)
+                if (username != email) {
+                    log.info("Access denied. User: {} cannot access to {} details", username, email)
                     throw AccessDeniedException("")
                 }
             }
