@@ -1,14 +1,14 @@
 import {useStatusAlert} from "../../hooks/useStatusAlert";
 import {Button, Col, Form, Modal, Row} from "react-bootstrap";
 import {getTaskToAchieveStatus} from "../utils/ticketUtil";
-import React, { useState} from "react";
+import React, {useState} from "react";
 import {ModalType} from "../../enums/ModalType";
 import {TicketStatus} from "../../enums/TicketStatus";
 import {TicketPriority} from "../../enums/TicketPriority";
 import Experts from "./Experts";
 import API from "../API";
 
-function CustomModal({show, hide, backdrop, keyboard, type, desiredState, ticketId,completingAction}) {
+function CustomModal({show, hide, backdrop=true, keyboard=true, type, desiredState, ticketId, completingAction}) {
 
     const {StatusAlertComponent, showError, resetStatusAlert} = useStatusAlert();
 
@@ -16,6 +16,8 @@ function CustomModal({show, hide, backdrop, keyboard, type, desiredState, ticket
         hide();
         resetStatusAlert()
     }
+
+
 
 
     return (
@@ -28,9 +30,9 @@ function CustomModal({show, hide, backdrop, keyboard, type, desiredState, ticket
             centered
         >
             <CustomModalHeader type={type} desiredState={desiredState} StatusAlertComponent={StatusAlertComponent}/>
-            <getCustomModalBody type={type} desiredState={desiredState} ticketId={ticketId} handleClose={handleClose}
-                                 completingAction={completingAction} resetStatusAlert={resetStatusAlert}
-                                 showError={showError}/>
+            <GetCustomModalBody type={type} desiredState={desiredState} ticketId={ticketId} handleClose={handleClose}
+                                completingAction={completingAction} resetStatusAlert={resetStatusAlert}
+                                showError={showError}/>
         </Modal>
     )
 }
@@ -42,6 +44,12 @@ function CustomModalHeader({type, desiredState, StatusAlertComponent}) {
                 return `${getTaskToAchieveStatus(desiredState)} ticket`
             case ModalType.CREATE:
                 return "Create ticket"
+            case ModalType.CONFIRM_STATUS_CHANGE:
+                return "Status change completed"
+            case ModalType.CONFIRM_CREATE:
+                return "Ticket creation completed"
+            case ModalType.REGISTER_PRODUCT:
+                return "Register purchase"
         }
     }
     return (
@@ -60,26 +68,41 @@ function CustomModalHeader({type, desiredState, StatusAlertComponent}) {
     )
 }
 
-function getCustomModalBody({type, desiredState, ticketId, handleClose, completingAction,resetStatusAlert, showError}) {
+function GetCustomModalBody({
+                                type,
+                                desiredState,
+                                ticketId,
+                                handleClose,
+                                completingAction,
+                                resetStatusAlert,
+                                showError
+                            }) {
     const getBody = () => {
         switch (type) {
             case ModalType.STATUS_CHANGE:
                 if (desiredState === TicketStatus.IN_PROGRESS)
-                    return <StatusChangeInProgressModal ticketId={ticketId} handleClose={handleClose} resetStatusAlert={resetStatusAlert}
-                                                  completingAction={completingAction} showError={showError}/>
+                    return <StatusChangeInProgressModal ticketId={ticketId} handleClose={handleClose}
+                                                        completingAction={completingAction} showError={showError}/>
                 else
-                    return <StatusChangeStandardModal ticketId={ticketId} desiredState={desiredState} handleClose={handleClose}
+                    return <StatusChangeStandardModal ticketId={ticketId} desiredState={desiredState}
+                                                      handleClose={handleClose}
                                                       completingAction={completingAction} showError={showError}/>
 
             case ModalType.CREATE:
                 return <TicketCreationModal ticketId={ticketId} handleClose={handleClose} showError={showError}/>
+            case ModalType.CONFIRM_STATUS_CHANGE:
+                return <OperationCompletedModal handleClose={handleClose} description="Status change successfully concluded"/>
+            case ModalType.CONFIRM_CREATE:
+                return <OperationCompletedModal handleClose={handleClose} description="Ticket creation successfully concluded"/>
+            case ModalType.REGISTER_PRODUCT:
+                return <RegisterProductModal handleClose={handleClose} completingAction={completingAction} showError={showError} />
         }
     }
 
     return getBody()
 }
 
-function StatusChangeInProgressModal({ticketId,handleClose, resetStatusAlert, completingAction,showError}) {
+function StatusChangeInProgressModal({ticketId, handleClose,  completingAction, showError}) {
 
     const [selectedExpert, setSelectedExpert] = useState(null);
     const [ticketPriority, setTicketPriority] = useState(null);
@@ -92,7 +115,8 @@ function StatusChangeInProgressModal({ticketId,handleClose, resetStatusAlert, co
                 <Experts title={"Select expert"} actionName={"Select"} action={setSelectedExpert}/>
                 :
                 <ChangeStatusToInProgressForm
-                    ticketId={ticketId} selectedExpert={selectedExpert} cancelSelectedExpert={() => setSelectedExpert(null)}
+                    ticketId={ticketId} selectedExpert={selectedExpert}
+                    cancelSelectedExpert={() => setSelectedExpert(null)}
                     ticketPriority={ticketPriority} setTicketPriority={setTicketPriority}
                     description={description} setDescription={setDescription}
                     completingAction={completingAction} handleClose={handleClose} showError={showError}/>
@@ -105,11 +129,11 @@ function StatusChangeInProgressModal({ticketId,handleClose, resetStatusAlert, co
 }
 
 function ChangeStatusToInProgressForm({
-                                    ticketId,selectedExpert, cancelSelectedExpert,
-                                    ticketPriority, setTicketPriority,
-                                    description, setDescription,
-                                    completingAction,handleClose,showError
-                                }) {
+                                          ticketId, selectedExpert, cancelSelectedExpert,
+                                          ticketPriority, setTicketPriority,
+                                          description, setDescription,
+                                          completingAction, handleClose, showError
+                                      }) {
 
     const [validated, setValidated] = useState(false);
 
@@ -120,8 +144,8 @@ function ChangeStatusToInProgressForm({
         if (form.checkValidity() === false) {
             event.stopPropagation();
         } else {
-            const apiCall=getUpdateApiForDesiredStatus(TicketStatus.IN_PROGRESS,completingAction,showError)
-            apiCall(ticketId,selectedExpert.expertId,ticketPriority,description)
+            const apiCall = getUpdateApiForDesiredStatus(TicketStatus.IN_PROGRESS, completingAction, showError)
+            apiCall(ticketId, selectedExpert.expertId, ticketPriority, description)
         }
         setValidated(true);
 
@@ -245,7 +269,7 @@ function ChangeStatusToInProgressForm({
     )
 }
 
-function StatusChangeStandardModal({ticketId,desiredState, handleClose, completingAction, showError}) {
+function StatusChangeStandardModal({ticketId, desiredState, handleClose, completingAction, showError}) {
 
     const requiredDesc = desiredState === TicketStatus.REOPENED
 
@@ -258,8 +282,8 @@ function StatusChangeStandardModal({ticketId,desiredState, handleClose, completi
         if (form.checkValidity() === false) {
             event.stopPropagation();
         } else {
-            const apiCall=getUpdateApiForDesiredStatus(desiredState,completingAction,showError)
-            apiCall(ticketId,description)
+            const apiCall = getUpdateApiForDesiredStatus(desiredState, completingAction, showError)
+            apiCall(ticketId, description)
         }
         setValidated(true);
 
@@ -307,18 +331,9 @@ function TicketCreationModal({ticketId, handleClose}) {
     )
 }
 
-function getUpdateApiForDesiredStatus(desiredStatus,desiredPostUpdateAction,showError){
-    const startTicket = (ticketId,expertId,priorityLevel,description) => {
-        API.startTicket(ticketId,expertId,priorityLevel,description)
-            .then(() => {
-                desiredPostUpdateAction()
-                }
-            )
-            .catch(err => showError(err.error))
-    }
-
-    const stopTicket = (ticketId,description) => {
-        API.stopTicket(ticketId,description)
+function getUpdateApiForDesiredStatus(desiredStatus, desiredPostUpdateAction, showError) {
+    const startTicket = (ticketId, expertId, priorityLevel, description) => {
+        API.startTicket(ticketId, expertId, priorityLevel, description)
             .then(() => {
                     desiredPostUpdateAction()
                 }
@@ -326,8 +341,8 @@ function getUpdateApiForDesiredStatus(desiredStatus,desiredPostUpdateAction,show
             .catch(err => showError(err.error))
     }
 
-    const resolveTicket = (ticketId,description) => {
-        API.resolveTicket(ticketId,description)
+    const stopTicket = (ticketId, description) => {
+        API.stopTicket(ticketId, description)
             .then(() => {
                     desiredPostUpdateAction()
                 }
@@ -335,8 +350,8 @@ function getUpdateApiForDesiredStatus(desiredStatus,desiredPostUpdateAction,show
             .catch(err => showError(err.error))
     }
 
-    const reopenTicket = (ticketId,description) => {
-        API.reopenTicket(ticketId,description)
+    const resolveTicket = (ticketId, description) => {
+        API.resolveTicket(ticketId, description)
             .then(() => {
                     desiredPostUpdateAction()
                 }
@@ -344,8 +359,8 @@ function getUpdateApiForDesiredStatus(desiredStatus,desiredPostUpdateAction,show
             .catch(err => showError(err.error))
     }
 
-    const closeTicket = (ticketId,description) => {
-        API.closeTicket(ticketId,description)
+    const reopenTicket = (ticketId, description) => {
+        API.reopenTicket(ticketId, description)
             .then(() => {
                     desiredPostUpdateAction()
                 }
@@ -353,33 +368,91 @@ function getUpdateApiForDesiredStatus(desiredStatus,desiredPostUpdateAction,show
             .catch(err => showError(err.error))
     }
 
-    switch (desiredStatus){
-        case TicketStatus.OPEN: return (ticketId,description)=>stopTicket(ticketId,description)
-        case TicketStatus.CLOSED: return (ticketId,description)=>closeTicket(ticketId,description)
-        case TicketStatus.REOPENED: return (ticketId,description)=>reopenTicket(ticketId,description)
-        case TicketStatus.RESOLVED: return (ticketId,description)=>resolveTicket(ticketId,description)
-        case TicketStatus.IN_PROGRESS: return (ticketId,expertId,priorityLevel,description)=>startTicket(ticketId,expertId,priorityLevel,description)
+    const closeTicket = (ticketId, description) => {
+        API.closeTicket(ticketId, description)
+            .then(() => {
+                    desiredPostUpdateAction()
+                }
+            )
+            .catch(err => showError(err.error))
+    }
+
+    switch (desiredStatus) {
+        case TicketStatus.OPEN:
+            return (ticketId, description) => stopTicket(ticketId, description)
+        case TicketStatus.CLOSED:
+            return (ticketId, description) => closeTicket(ticketId, description)
+        case TicketStatus.REOPENED:
+            return (ticketId, description) => reopenTicket(ticketId, description)
+        case TicketStatus.RESOLVED:
+            return (ticketId, description) => resolveTicket(ticketId, description)
+        case TicketStatus.IN_PROGRESS:
+            return (ticketId, expertId, priorityLevel, description) => startTicket(ticketId, expertId, priorityLevel, description)
     }
 }
 
-function ConfirmModal(props){
-    return (
-        <Modal
-            {...props}
-            aria-labelledby="contained-modal-title-vcenter"
-            centered
-        >
-            <Modal.Header closeButton>
-                <Modal.Title>Status change completed</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>Status change transaction successfully concluded</Modal.Body>
+function OperationCompletedModal({handleClose,description}) {
+    return (<>
+            <Modal.Body>{description}</Modal.Body>
             <Modal.Footer>
-                <Button variant="primary" onClick={props.onHide}>
+                <Button variant="primary" onClick={handleClose}>
                     Close
                 </Button>
             </Modal.Footer>
-        </Modal>
+        </>
     )
 }
 
-export  {CustomModal,ConfirmModal};
+function RegisterProductModal({handleClose,completingAction,showError}){
+
+    const [validated, setValidated] = useState(false);
+    const [uuid, setUuid] = useState('');
+
+    const handleSubmit = (event) => {
+        const form = event.currentTarget;
+        event.preventDefault();
+        if (form.checkValidity() === false) {
+            event.stopPropagation();
+        } else {
+          //TODO IN CASO DI SUCCESSO
+            //  const apiCall = getUpdateApiForDesiredStatus(desiredState, completingAction, showError)
+           // apiCall(ticketId, description)
+        }
+        setValidated(true);
+
+    };
+
+    return (
+        <>
+            <Modal.Body>
+                <Form noValidate validated={validated} onSubmit={handleSubmit}>
+                    <Row className="mb-3">
+                        <Form.Group controlId="validationCustom">
+                            <Form.Label>Uuid</Form.Label>
+                            <Form.Control
+                                required={true}
+                                type="text"
+                                value={uuid}
+                                onChange={ev => setUuid(ev.target.value)}
+                                placeholder="Insert uuid"
+                            />
+                            <Form.Control.Feedback type="invalid">
+                                Please provide a uuid
+                            </Form.Control.Feedback> </Form.Group>
+                    </Row>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={() => handleClose()}>
+                            Cancel
+                        </Button>
+                        <Button variant="primary" type="submit">
+                            Confirm purchase
+                        </Button>
+                    </Modal.Footer>
+                </Form>
+            </Modal.Body>
+        </>
+    )
+
+}
+
+export {CustomModal};

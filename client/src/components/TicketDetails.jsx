@@ -7,7 +7,7 @@ import * as PropTypes from "prop-types";
 import {dateTimeMillisFormatted} from "../utils/utils";
 import {availableTicketStatusChanges, getTaskToAchieveStatus} from "../utils/ticketUtil";
 import {UserRole} from "../../enums/UserRole";
-import {ConfirmModal, CustomModal} from "./Modals";
+import {CustomModal} from "./Modals";
 import {ModalType} from "../../enums/ModalType";
 
 TicketDataTable.propTypes = {ticket: PropTypes.any};
@@ -97,11 +97,15 @@ function TicketDetails({userInfo}) {
                                 ticketData={ticketData}
                                 productData={productData}
                                 ticketStatusChangesData={ticketStatusChangesData}
-                                update={() => {setLoad(true); setConfirmModalShow(true)}}
+                                update={() => {
+                                    setLoad(true);
+                                    setConfirmModalShow(true)
+                                }}
                                 userRole={userInfo.role}/>
-                            <ConfirmModal
+                            <CustomModal
                                 show={confirmModalShow}
-                                onHide={() => setConfirmModalShow(false)}
+                                hide={() => setConfirmModalShow(false)}
+                                type={ModalType.CONFIRM_STATUS_CHANGE}
                             />
                         </>
                         :

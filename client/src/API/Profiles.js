@@ -1,7 +1,8 @@
 import {API_URL} from "./APIUrl";
 import {Profile} from "../models/Profile";
 import {SERVER_COMMUNICATION_ERROR} from "../utils/constants";
-import {handleErrorResponse} from "../utils/utils";
+import {getAccessToken, handleErrorResponse} from "../utils/utils";
+import {Ticket} from "../models/Ticket";
 
 // GET /API/profiles/{email}
 async function getProfileByEmail(email) {
@@ -20,6 +21,44 @@ async function getProfileByEmail(email) {
                         city: profile.city,
                         country: profile.country
                     });
+                } else {
+                    const error = await handleErrorResponse(response);
+                    reject(error);
+                }
+            })
+            .catch((_error) => reject(SERVER_COMMUNICATION_ERROR));
+    });
+}
+
+// GET /API/profiles/{email}/tickets
+async function getTicketsOfProfileByEmail(email) {
+    return new Promise((resolve, reject) => {
+        fetch(new URL(`profiles/${email}/tickets`, API_URL), {
+            headers: {
+                Authorization: `Bearer ${getAccessToken()}`
+            },
+            credentials: 'include'
+        })
+            .then(async (response) => {
+                if (response.ok) {
+                    const ticketsJson = await response.json();
+                    resolve(ticketsJson.map((ticketJson) => (
+                                new Ticket(
+                                    ticketJson.ticketId,
+                                    ticketJson.title,
+                                    ticketJson.description,
+                                    ticketJson.productId,
+                                    ticketJson.customerId,
+                                    ticketJson.expertId,
+                                    ticketJson.totalExchangedMessages,
+                                    ticketJson.status,
+                                    ticketJson.priorityLevel,
+                                    ticketJson.createdAt,
+                                    ticketJson.lastModifiedAt
+                                )
+                            )
+                        )
+                    )
                 } else {
                     const error = await handleErrorResponse(response);
                     reject(error);
@@ -75,4 +114,4 @@ function updateProfile(profile, email) {
     });
 }
 
-export {getProfileByEmail, addProfile, updateProfile}
+export {getProfileByEmail, getTicketsOfProfileByEmail,addProfile, updateProfile}

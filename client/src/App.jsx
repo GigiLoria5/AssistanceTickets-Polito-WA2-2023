@@ -33,7 +33,7 @@ function Root() {
                     rolesAllowed={[UserRole.MANAGER, UserRole.EXPERT, UserRole.CLIENT]}
                 />}>
                 <Route path="" element={<Navbar userInfo={userInfo}/>}>
-                    <Route index element={renderDashboard(userInfo ? userInfo.role : "")}/>
+                    <Route index element={renderDashboard(userInfo ? userInfo.role : "",userInfo)}/>
                     <Route path='/products' element={<Products/>}/>
                     <Route path='/profiles' element={<Profiles/>}/>
                     <Route path='/profile' element={<UserProfile userInfo={userInfo} setUserInfo={setUserInfo}/>}/>
@@ -47,14 +47,14 @@ function Root() {
     );
 }
 
-function renderDashboard(userRole) {
+function renderDashboard(userRole,userInfo) {
     switch (userRole) {
         case UserRole.MANAGER:
             return <ManagerDashboard/>;
         case UserRole.EXPERT:
             return <ExpertDashboard/>;
         case UserRole.CLIENT:
-            return <ClientDashboard/>;
+            return <ClientDashboard userInfo={userInfo}/>;
         default:
             return <NotFoundPage/>;
     }
