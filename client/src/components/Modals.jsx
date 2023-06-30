@@ -8,7 +8,7 @@ import {TicketPriority} from "../../enums/TicketPriority";
 import Experts from "./Experts";
 import API from "../API";
 
-function CustomModal({show, hide, backdrop=true, keyboard=true, type, desiredState, ticketId, completingAction}) {
+function CustomModal({show, hide, backdrop = true, keyboard = true, type, desiredState, ticketId, completingAction}) {
 
     const {StatusAlertComponent, showError, resetStatusAlert} = useStatusAlert();
 
@@ -16,9 +16,6 @@ function CustomModal({show, hide, backdrop=true, keyboard=true, type, desiredSta
         hide();
         resetStatusAlert()
     }
-
-
-
 
     return (
         <Modal
@@ -91,18 +88,21 @@ function GetCustomModalBody({
             case ModalType.CREATE:
                 return <TicketCreationModal ticketId={ticketId} handleClose={handleClose} showError={showError}/>
             case ModalType.CONFIRM_STATUS_CHANGE:
-                return <OperationCompletedModal handleClose={handleClose} description="Status change successfully concluded"/>
+                return <OperationCompletedModal handleClose={handleClose}
+                                                description="Status change successfully concluded"/>
             case ModalType.CONFIRM_CREATE:
-                return <OperationCompletedModal handleClose={handleClose} description="Ticket creation successfully concluded"/>
+                return <OperationCompletedModal handleClose={handleClose}
+                                                description="Ticket creation successfully concluded"/>
             case ModalType.REGISTER_PRODUCT:
-                return <RegisterProductModal handleClose={handleClose} completingAction={completingAction} showError={showError} />
+                return <RegisterProductModal handleClose={handleClose} completingAction={completingAction}
+                                             showError={showError}/>
         }
     }
 
     return getBody()
 }
 
-function StatusChangeInProgressModal({ticketId, handleClose,  completingAction, showError}) {
+function StatusChangeInProgressModal({ticketId, handleClose, completingAction, showError}) {
 
     const [selectedExpert, setSelectedExpert] = useState(null);
     const [ticketPriority, setTicketPriority] = useState(null);
@@ -391,7 +391,7 @@ function getUpdateApiForDesiredStatus(desiredStatus, desiredPostUpdateAction, sh
     }
 }
 
-function OperationCompletedModal({handleClose,description}) {
+function OperationCompletedModal({handleClose, description}) {
     return (<>
             <Modal.Body>{description}</Modal.Body>
             <Modal.Footer>
@@ -403,7 +403,7 @@ function OperationCompletedModal({handleClose,description}) {
     )
 }
 
-function RegisterProductModal({handleClose,completingAction,showError}){
+function RegisterProductModal({handleClose, completingAction, showError}) {
 
     const [validated, setValidated] = useState(false);
     const [uuid, setUuid] = useState('');
@@ -414,9 +414,9 @@ function RegisterProductModal({handleClose,completingAction,showError}){
         if (form.checkValidity() === false) {
             event.stopPropagation();
         } else {
-          //TODO IN CASO DI SUCCESSO
+            //TODO IN CASO DI SUCCESSO. GIà TI PASSO IL COMPLETING ACTION DA FARE
             //  const apiCall = getUpdateApiForDesiredStatus(desiredState, completingAction, showError)
-           // apiCall(ticketId, description)
+            // apiCall(ticketId, description)
         }
         setValidated(true);
 

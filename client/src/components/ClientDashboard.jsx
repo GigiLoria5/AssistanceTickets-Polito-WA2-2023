@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {useStatusAlert} from "../../hooks/useStatusAlert";
 import API from "../API";
-import {Button, Col, Row, Spinner} from "react-bootstrap";
+import {Button, Col, Row, Spinner, Tab, Tabs} from "react-bootstrap";
 import {CustomModal} from "./Modals";
 import {ModalType} from "../../enums/ModalType";
 
@@ -74,18 +74,26 @@ function ClientDashboard({userInfo}) {
                     :
                     !errorPresence ?
                         <>
-                            <Row>
+                            <Row className='mb-4'>
                                 <Col>
-                                    <RegisterProduct/>
+                                    <RegisterProduct update={() => {
+                                        setLoad(true);
+                                        setConfirmModalShow(true)
+                                    }}/>
                                 </Col>
                             </Row>
-                            <ClientDashboardTabs ticketsData={ticketsData}
-                                                 productsData={productsData}
-                                                 update={() => {
-                                                     setLoad(true);
-                                                     setConfirmModalShow(true)
-                                                 }}
-                            />
+                            <Row className='mb-4'>
+                                <Col>
+                                    <ClientDashboardTabs ticketsData={ticketsData}
+                                                         productsData={productsData}
+                                                         update={() => {
+                                                             setLoad(true);
+                                                             setConfirmModalShow(true)
+                                                         }}
+                                    />
+                                </Col>
+                            </Row>
+
                             <CustomModal
                                 show={confirmModalShow}
                                 onHide={() => setConfirmModalShow(false)}
@@ -100,7 +108,7 @@ function ClientDashboard({userInfo}) {
     )
 }
 
-function RegisterProduct() {
+function RegisterProduct({update}) {
     const [registerProductModalShow, setRegisterProductModalShow] = React.useState(false);
 
     return (
@@ -110,6 +118,7 @@ function RegisterProduct() {
             </Button>
             <CustomModal
                 show={registerProductModalShow}
+                completingAction={update}
                 hide={() => setRegisterProductModalShow(false)}
                 type={ModalType.REGISTER_PRODUCT}
             />
@@ -117,9 +126,34 @@ function RegisterProduct() {
     )
 }
 
-function ClientDashboardTabs({ticketsData,productsData,update}){
-    return (<></>)
+function ClientDashboardTabs({ticketsData, productsData, update}) {
+    return (
+        <Tabs
+            defaultActiveKey="products"
+            id="uncontrolled-tab-example"
+            className="mb-3"
+        >
+            <Tab eventKey="products" title="Purchased products">
+                <ProductsTable products={productsData}/>
+            </Tab>
+            <Tab eventKey="tickets" title="My tickets">
+                <TicketsTable tickets={ticketsData}/>
+            </Tab>
+
+        </Tabs>
+    )
 }
 
+function TicketsTable({tickets}) {
+    return (
+        <>Tickets table</>
+            )
+            }
 
-export default ClientDashboard;
+            function ProductsTable({products}){
+            return (
+            <>Products table</>
+            )
+        }
+
+            export default ClientDashboard;
