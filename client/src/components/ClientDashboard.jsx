@@ -4,6 +4,9 @@ import API from "../API";
 import {Button, Col, Row, Spinner, Tab, Tabs} from "react-bootstrap";
 import {CustomModal} from "./Modals";
 import {ModalType} from "../../enums/ModalType";
+import Tickets from "./Tickets";
+import {useNavigate} from "react-router-dom";
+import PurchasedProducts from "./PurchasedProducts";
 
 
 function ClientDashboard({userInfo}) {
@@ -14,6 +17,8 @@ function ClientDashboard({userInfo}) {
     const [errorPresence, setErrorPresence] = useState(false)
     const {StatusAlertComponent, showError, resetStatusAlert} = useStatusAlert();
     const [confirmModalShow, setConfirmModalShow] = React.useState(false);
+    const [confirmModalTitle, setConfirmModalTitle] = React.useState("");
+    const [confirmModalDescription, setConfirmModalDescription] = React.useState("");
 
     useEffect(() => {
             const getData = async () => {
@@ -53,6 +58,11 @@ function ClientDashboard({userInfo}) {
 
     const getProductsData = async () => {
         return new Promise((resolve, reject) => {
+            /* TODO
+                X ORA PRENDI TUTTI I PRODUCTS,
+                POI PERò PRENDERAI SOLO I PRODOTTI ACQUISTATI
+                CON LE DATE DI ACQUISTO E REGISTRAZIONE
+                */
             API.getAllProducts()
                 .then((p) => {
                         setProductsData(p)
@@ -76,10 +86,14 @@ function ClientDashboard({userInfo}) {
                         <>
                             <Row className='mb-4'>
                                 <Col>
-                                    <RegisterProduct update={() => {
-                                        setLoad(true);
-                                        setConfirmModalShow(true)
-                                    }}/>
+                                    <RegisterProduct
+                                        update={() => {
+                                            setLoad(true);
+                                            setConfirmModalTitle("Product registered")
+                                            setConfirmModalDescription("The purchased product was correctly registered in the system")
+                                            setConfirmModalShow(true)
+                                        }}
+                                    />
                                 </Col>
                             </Row>
                             <Row className='mb-4'>
@@ -88,6 +102,8 @@ function ClientDashboard({userInfo}) {
                                                          productsData={productsData}
                                                          update={() => {
                                                              setLoad(true);
+                                                             setConfirmModalTitle("Ticket created")
+                                                             setConfirmModalDescription("A support ticket for the selected product was successfully created")
                                                              setConfirmModalShow(true)
                                                          }}
                                     />
@@ -97,8 +113,8 @@ function ClientDashboard({userInfo}) {
                             <CustomModal
                                 show={confirmModalShow}
                                 onHide={() => setConfirmModalShow(false)}
-                                title="Titolo"
-                                description="Descrizione"
+                                title={confirmModalTitle}
+                                description={confirmModalDescription}
                             />
                         </>
                         :
@@ -127,6 +143,28 @@ function RegisterProduct({update}) {
 }
 
 function ClientDashboardTabs({ticketsData, productsData, update}) {
+
+    const formatTickets = () => {
+        return ticketsData.map(ticket => {
+            const product = productsData.find(p => p.productId === ticket.productId)
+            return {...ticket, "product": product.name}
+        })
+    }
+
+    const formatProducts = () => {
+        return productsData.filter(product => {
+            return ticketsData.find(ticket => ticket.productId === product.productId) || product.productId % 130 === 0
+        }).map(product => {
+            const ticket = ticketsData.find(ticket => ticket.productId === product.productId)
+            return {
+                ...product,
+                "ticketId": ticket && ticket.status!=="CLOSED" ? ticket.ticketId : undefined,
+                "purchaseDate": 1677065479943,
+                "registrationDate": 1677065479943
+            }
+
+        })
+    }
     return (
         <Tabs
             defaultActiveKey="products"
@@ -134,10 +172,10 @@ function ClientDashboardTabs({ticketsData, productsData, update}) {
             className="mb-3"
         >
             <Tab eventKey="products" title="Purchased products">
-                <ProductsTable products={productsData}/>
+                <ProductsTable products={formatProducts()}/>
             </Tab>
             <Tab eventKey="tickets" title="My tickets">
-                <TicketsTable tickets={ticketsData}/>
+                <TicketsTable tickets={formatTickets()}/>
             </Tab>
 
         </Tabs>
@@ -145,15 +183,36 @@ function ClientDashboardTabs({ticketsData, productsData, update}) {
 }
 
 function TicketsTable({tickets}) {
+    const navigate = useNavigate();
+
+    const actionGoToTicket = (ticket) => {
+        navigate(`/tickets/${ticket.ticketId}`)
+    }
     return (
-        <>Tickets table</>
-            )
-            }
+        <Tickets tickets={tickets} title={`You have ${tickets.length} tickets`} actionName={"Details"}
+                 action={actionGoToTicket}/>
+    )
+}
 
-            function ProductsTable({products}){
-            return (
-            <>Products table</>
-            )
-        }
+function ProductsTable({products}) {
+    const navigate = useNavigate();
 
-            export default ClientDashboard;
+    const actionForTicket = (product) => {
+        if (product.ticketId !== undefined)
+            navigate(`/tickets/${product.ticketId}`)
+    }
+
+    const actionNameFinder = (product) => {
+        return (product.ticketId !== undefined) ? "Ticket details" : "Create new ticket"
+
+    }
+
+
+    return (
+        <PurchasedProducts products={products} title={`You have ${products.length} registered purchases`}
+                           actionNameFinder={actionNameFinder}
+                           action={actionForTicket}/>
+    )
+}
+
+export default ClientDashboard;

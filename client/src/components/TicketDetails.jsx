@@ -319,7 +319,7 @@ function TicketStatusChangesTable({ticketStatusChanges}) {
                                 </Table>
                             </Col>
                         </Row>
-                    </> : <div>No available status changes</div>
+                    </> : <div>No status changes found</div>
             }
         </>
     );
