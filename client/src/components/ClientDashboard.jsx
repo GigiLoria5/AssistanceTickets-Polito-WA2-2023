@@ -8,7 +8,6 @@ import Tickets from "./Tickets";
 import {useNavigate} from "react-router-dom";
 import PurchasedProducts from "./PurchasedProducts";
 
-
 function ClientDashboard({userInfo}) {
     const [ticketsData, setTicketsData] = useState(null);
     const [productsData, setProductsData] = useState(null);
@@ -212,7 +211,6 @@ function ProductsTable({products, update}) {
         return (product.ticketId !== undefined) ? "Ticket details" : "Create new ticket"
 
     }
-
 
     return (
         <>

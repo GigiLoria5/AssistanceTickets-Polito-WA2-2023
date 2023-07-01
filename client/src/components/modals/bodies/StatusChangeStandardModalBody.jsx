@@ -2,7 +2,7 @@ import React, {useContext, useState} from "react";
 import {TicketStatus} from "../../../../enums/TicketStatus";
 import {Button, Form, Modal, Row} from "react-bootstrap";
 import {CustomModalContext} from "../CustomModal";
-import {getUpdateApiForDesiredStatus} from "../supportFunctions/supportFunctions";
+import { getUpdateStatusApiCall} from "../supportFunctions/supportFunctions";
 
 function StatusChangeStandardModalBody() {
 
@@ -12,17 +12,24 @@ function StatusChangeStandardModalBody() {
     const [validated, setValidated] = useState(false);
     const [description, setDescription] = useState('');
 
+    const changeStatus = () => {
+        const apiCall = getUpdateStatusApiCall(desiredState)
+        apiCall(objectId, description)
+            .then(() => {
+                    completingAction()
+                }
+            ).catch(err => showError(err.error))
+    }
+
     const handleSubmit = (event) => {
         const form = event.currentTarget;
         event.preventDefault();
         if (form.checkValidity() === false) {
             event.stopPropagation();
         } else {
-            const apiCall = getUpdateApiForDesiredStatus(desiredState, completingAction, showError)
-            apiCall(objectId, description)
+            changeStatus()
         }
         setValidated(true);
-
     };
 
     return (

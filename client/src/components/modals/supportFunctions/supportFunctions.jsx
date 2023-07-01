@@ -41,65 +41,19 @@ function getModalTitle(type, desiredState) {
     }
 }
 
-function getUpdateApiForDesiredStatus(desiredStatus, desiredPostUpdateAction, showError) {
-    const startTicket = (ticketId, expertId, priorityLevel, description) => {
-        API.startTicket(ticketId, expertId, priorityLevel, description)
-            .then(() => {
-                    desiredPostUpdateAction()
-                }
-            )
-            .catch(err => showError(err.error))
-    }
-
-    const stopTicket = (ticketId, description) => {
-        API.stopTicket(ticketId, description)
-            .then(() => {
-                    desiredPostUpdateAction()
-                }
-            )
-            .catch(err => showError(err.error))
-    }
-
-    const resolveTicket = (ticketId, description) => {
-        API.resolveTicket(ticketId, description)
-            .then(() => {
-                    desiredPostUpdateAction()
-                }
-            )
-            .catch(err => showError(err.error))
-    }
-
-    const reopenTicket = (ticketId, description) => {
-        API.reopenTicket(ticketId, description)
-            .then(() => {
-                    desiredPostUpdateAction()
-                }
-            )
-            .catch(err => showError(err.error))
-    }
-
-    const closeTicket = (ticketId, description) => {
-        API.closeTicket(ticketId, description)
-            .then(() => {
-                    desiredPostUpdateAction()
-                }
-            )
-            .catch(err => showError(err.error))
-    }
-
+function getUpdateStatusApiCall(desiredStatus) {
     switch (desiredStatus) {
         case TicketStatus.OPEN:
-            return (ticketId, description) => stopTicket(ticketId, description)
+            return (ticketId, description) => API.stopTicket(ticketId, description)
         case TicketStatus.CLOSED:
-            return (ticketId, description) => closeTicket(ticketId, description)
+            return (ticketId, description) => API.closeTicket(ticketId, description)
         case TicketStatus.REOPENED:
-            return (ticketId, description) => reopenTicket(ticketId, description)
+            return (ticketId, description) => API.reopenTicket(ticketId, description)
         case TicketStatus.RESOLVED:
-            return (ticketId, description) => resolveTicket(ticketId, description)
+            return (ticketId, description) => API.resolveTicket(ticketId, description)
         case TicketStatus.IN_PROGRESS:
-            return (ticketId, expertId, priorityLevel, description) => startTicket(ticketId, expertId, priorityLevel, description)
+            return (ticketId, expertId, priorityLevel, description) => API.startTicket(ticketId, expertId, priorityLevel, description)
     }
 }
 
-
-export {getModalSize, getModalTitle, getUpdateApiForDesiredStatus}
+export {getModalSize, getModalTitle, getUpdateStatusApiCall}

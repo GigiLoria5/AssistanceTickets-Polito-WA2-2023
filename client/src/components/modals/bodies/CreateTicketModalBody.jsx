@@ -12,7 +12,7 @@ function CreateTicketModalBody() {
     const [description, setDescription] = useState('');
 
     const createTicket = () => {
-        API.createTicket(objectId,title,description)
+        API.createTicket(objectId, title, description)
             .then(() => {
                     completingAction()
                 }
@@ -29,7 +29,6 @@ function CreateTicketModalBody() {
             createTicket()
         }
         setValidated(true);
-
     };
 
     return (
@@ -77,7 +76,6 @@ function CreateTicketModalBody() {
             </Modal.Body>
         </>
     )
-
 }
 
 export {CreateTicketModalBody};

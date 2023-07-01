@@ -4,7 +4,7 @@ import {Button, Col, Form, Modal, Row} from "react-bootstrap";
 import {CustomModalContext} from "../CustomModal";
 import {TicketPriority} from "../../../../enums/TicketPriority";
 import {TicketStatus} from "../../../../enums/TicketStatus";
-import {getUpdateApiForDesiredStatus} from "../supportFunctions/supportFunctions";
+import {getUpdateStatusApiCall} from "../supportFunctions/supportFunctions";
 
 
 function StatusChangeInProgressModalBody() {
@@ -12,7 +12,6 @@ function StatusChangeInProgressModalBody() {
     const [selectedExpert, setSelectedExpert] = useState(null);
     const [ticketPriority, setTicketPriority] = useState(null);
     const [description, setDescription] = useState('');
-
 
     return (
         <Modal.Body>
@@ -24,11 +23,8 @@ function StatusChangeInProgressModalBody() {
                     ticketPriority={ticketPriority} setTicketPriority={setTicketPriority}
                     description={description} setDescription={setDescription}
                 />
-
             }
         </Modal.Body>
-
-
     )
 }
 
@@ -42,6 +38,14 @@ function ChangeStatusToInProgressForm({
 
     const [validated, setValidated] = useState(false);
 
+    const changeStatus = () => {
+        const apiCall = getUpdateStatusApiCall(TicketStatus.IN_PROGRESS)
+        apiCall(objectId, selectedExpert.expertId, ticketPriority, description)
+            .then(() => {
+                    completingAction()
+                }
+            ).catch(err => showError(err.error))
+    }
 
     const handleSubmit = (event) => {
         const form = event.currentTarget;
@@ -49,11 +53,9 @@ function ChangeStatusToInProgressForm({
         if (form.checkValidity() === false) {
             event.stopPropagation();
         } else {
-            const apiCall = getUpdateApiForDesiredStatus(TicketStatus.IN_PROGRESS, completingAction, showError)
-            apiCall(objectId, selectedExpert.expertId, ticketPriority, description)
+            changeStatus()
         }
         setValidated(true);
-
     };
 
     return (

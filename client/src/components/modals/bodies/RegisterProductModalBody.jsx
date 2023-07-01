@@ -62,7 +62,6 @@ function RegisterProductModalBody() {
             </Modal.Body>
         </>
     )
-
 }
 
 export {RegisterProductModalBody};
