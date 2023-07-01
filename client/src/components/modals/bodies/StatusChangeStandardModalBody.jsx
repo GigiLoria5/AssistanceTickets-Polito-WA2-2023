@@ -2,7 +2,7 @@ import React, {useContext, useState} from "react";
 import {TicketStatus} from "../../../../enums/TicketStatus";
 import {Button, Form, Modal, Row} from "react-bootstrap";
 import {CustomModalContext} from "../CustomModal";
-import { getUpdateStatusApiCall} from "../supportFunctions/supportFunctions";
+import {getUpdateStatusApiCall} from "../../../utils/modalUtil";
 
 function StatusChangeStandardModalBody() {
 

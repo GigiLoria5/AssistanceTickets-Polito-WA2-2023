@@ -4,7 +4,7 @@ import {Button, Col, Form, Modal, Row} from "react-bootstrap";
 import {CustomModalContext} from "../CustomModal";
 import {TicketPriority} from "../../../../enums/TicketPriority";
 import {TicketStatus} from "../../../../enums/TicketStatus";
-import {getUpdateStatusApiCall} from "../supportFunctions/supportFunctions";
+import {getUpdateStatusApiCall} from "../../../utils/modalUtil";
 
 
 function StatusChangeInProgressModalBody() {

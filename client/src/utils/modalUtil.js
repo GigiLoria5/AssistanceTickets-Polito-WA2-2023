@@ -1,9 +1,9 @@
-import API from "../../../API";
-import {TicketStatus} from "../../../../enums/TicketStatus";
-import {ModalType} from "../../../../enums/ModalType";
-import {getTaskToAchieveStatus} from "../../../utils/ticketUtil";
+import {ModalType} from "../../enums/ModalType";
+import {getTaskToAchieveStatus} from "./ticketUtil";
+import {TicketStatus} from "../../enums/TicketStatus";
+import API from "../API";
 
-function getModalSize(type) {
+export function getModalSize(type) {
     switch (type) {
         case ModalType.CREATE_TICKET:
             return "xl"
@@ -22,7 +22,7 @@ function getModalSize(type) {
     }
 }
 
-function getModalTitle(type, desiredState) {
+export function getModalTitle(type, desiredState) {
     switch (type) {
         case ModalType.STATUS_CHANGE:
             return `${getTaskToAchieveStatus(desiredState)} tickets`
@@ -41,7 +41,7 @@ function getModalTitle(type, desiredState) {
     }
 }
 
-function getUpdateStatusApiCall(desiredStatus) {
+export function getUpdateStatusApiCall(desiredStatus) {
     switch (desiredStatus) {
         case TicketStatus.OPEN:
             return (ticketId, description) => API.stopTicket(ticketId, description)
@@ -55,5 +55,3 @@ function getUpdateStatusApiCall(desiredStatus) {
             return (ticketId, expertId, priorityLevel, description) => API.startTicket(ticketId, expertId, priorityLevel, description)
     }
 }
-
-export {getModalSize, getModalTitle, getUpdateStatusApiCall}

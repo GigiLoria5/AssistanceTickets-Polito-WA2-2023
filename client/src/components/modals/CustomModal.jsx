@@ -8,7 +8,7 @@ import {StatusChangeStandardModalBody} from "./bodies/StatusChangeStandardModalB
 import {CreateTicketModalBody} from "./bodies/CreateTicketModalBody";
 import {OperationCompletedModalBody} from "./bodies/OperationCompletedModalBody";
 import {RegisterProductModalBody} from "./bodies/RegisterProductModalBody";
-import {getModalSize, getModalTitle} from "./supportFunctions/supportFunctions";
+import {getModalSize, getModalTitle} from "../../utils/modalUtil";
 
 const ModalContext = createContext(null);
 
