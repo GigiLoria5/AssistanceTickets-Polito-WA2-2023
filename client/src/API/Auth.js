@@ -18,7 +18,6 @@ async function logIn(credentials) {
                 if (response.ok) {
                     const responseJson = await response.json();
                     const {accessToken} = responseJson;
-                    console.log(accessToken);
                     setAccessToken(accessToken)
                     resolve(true)
                 } else {

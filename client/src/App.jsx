@@ -34,7 +34,7 @@ function Root() {
                 <Route path="" element={<Navbar userInfo={userInfo}/>}>
                     <Route index element={renderDashboard(userInfo ? userInfo.role : "")}/>
                     <Route path='/products' element={<Products/>}/>
-                    <Route path='/profiles' element={<Profiles/>}/>
+                    <Route path='/profiles' element={<Profiles/>}/> {/* THIS SHOULD NOT BE NEEDED ANYMORE */}
                     <Route path='/profile' element={<UserProfile userInfo={userInfo} setUserInfo={setUserInfo}/>}/>
                 </Route>
             </Route>
