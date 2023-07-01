@@ -17,6 +17,7 @@ function ClientDashboard({userInfo}) {
     const [errorPresence, setErrorPresence] = useState(false)
     const {StatusAlertComponent, showError, resetStatusAlert} = useStatusAlert();
     const [confirmModalShow, setConfirmModalShow] = React.useState(false);
+    const [confirmModalType, setConfirmModalType] = React.useState(null);
 
     useEffect(() => {
             const getData = async () => {
@@ -88,6 +89,8 @@ function ClientDashboard({userInfo}) {
                                         update={() => {
                                             setLoad(true);
                                             setConfirmModalShow(true)
+                                            setConfirmModalType(ModalType.CONFIRM_REGISTER)
+
                                         }}
                                     />
                                 </Col>
@@ -99,6 +102,7 @@ function ClientDashboard({userInfo}) {
                                                          update={() => {
                                                              setLoad(true);
                                                              setConfirmModalShow(true)
+                                                             setConfirmModalType(ModalType.CONFIRM_CREATE)
                                                          }}
                                     />
                                 </Col>
@@ -107,7 +111,7 @@ function ClientDashboard({userInfo}) {
                             <CustomModal
                                 show={confirmModalShow}
                                 hide={() => setConfirmModalShow(false)}
-                                type={ModalType.CONFIRM_REGISTER}
+                                type={confirmModalType}
                             />
                         </>
                         :
@@ -151,7 +155,7 @@ function ClientDashboardTabs({ticketsData, productsData, update}) {
             const ticket = ticketsData.find(ticket => ticket.productId === product.productId)
             return {
                 ...product,
-                "ticketId": ticket && ticket.status!=="CLOSED" ? ticket.ticketId : undefined,
+                "ticketId": ticket && ticket.status !== "CLOSED" ? ticket.ticketId : undefined,
                 "purchaseDate": 1677065479943,
                 "registrationDate": 1677065479943
             }
@@ -165,7 +169,7 @@ function ClientDashboardTabs({ticketsData, productsData, update}) {
             className="mb-3"
         >
             <Tab eventKey="products" title="Purchased products">
-                <ProductsTable products={formatProducts()}/>
+                <ProductsTable products={formatProducts()} update={update}/>
             </Tab>
             <Tab eventKey="tickets" title="My tickets">
                 <TicketsTable tickets={formatTickets()}/>
@@ -187,12 +191,18 @@ function TicketsTable({tickets}) {
     )
 }
 
-function ProductsTable({products}) {
+function ProductsTable({products,update}) {
     const navigate = useNavigate();
+    const [targetProductId, setTargetProductId] = useState(null)
+    const [showCustomModal, setShowCustomModal] = useState(false);
 
     const actionForTicket = (product) => {
         if (product.ticketId !== undefined)
             navigate(`/tickets/${product.ticketId}`)
+        else{
+            setTargetProductId(product.productId)
+            setShowCustomModal(true)
+        }
     }
 
     const actionNameFinder = (product) => {
@@ -202,9 +212,19 @@ function ProductsTable({products}) {
 
 
     return (
-        <PurchasedProducts products={products} title={`You have ${products.length} registered purchases`}
-                           actionNameFinder={actionNameFinder}
-                           action={actionForTicket}/>
+        <>
+            <PurchasedProducts products={products} title={`You have ${products.length} registered purchases`}
+                               actionNameFinder={actionNameFinder}
+                               action={actionForTicket}/>
+            <CustomModal show={showCustomModal}
+                         hide={() => setShowCustomModal(false)}
+                         backdrop="static"
+                         keyboard={false}
+                         type={ModalType.CREATE_TICKET}
+                         objectId={targetProductId}
+                         completingAction={update}
+            />
+        </>
     )
 }
 

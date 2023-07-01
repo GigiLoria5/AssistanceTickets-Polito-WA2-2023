@@ -275,7 +275,7 @@ function TicketStatusAvailableChanges({ticketId, availableStatuses, update}) {
                                      keyboard={false}
                                      type={ModalType.STATUS_CHANGE}
                                      desiredState={desiredState}
-                                     ticketId={ticketId}
+                                     objectId={ticketId}
                                      completingAction={update}
                         />
                     </> : <div>No available changes</div>

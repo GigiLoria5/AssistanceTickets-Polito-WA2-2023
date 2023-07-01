@@ -17,7 +17,7 @@ function CustomModal({
                          keyboard = true,
                          type,
                          desiredState = null,
-                         ticketId = null,
+                         objectId = null,
                          completingAction = null
                      }) {
 
@@ -30,13 +30,13 @@ function CustomModal({
 
     const ModalProviderValue
         = useMemo(() =>
-            ({type, desiredState, StatusAlertComponent, ticketId, handleClose, completingAction, showError}),
-        [type, desiredState, StatusAlertComponent, ticketId, handleClose, completingAction, showError]);
+            ({type, desiredState, StatusAlertComponent, objectId, handleClose, completingAction, showError}),
+        [type, desiredState, StatusAlertComponent, objectId, handleClose, completingAction, showError]);
 
 
     const setSize = () => {
         switch (type) {
-            case ModalType.CREATE:
+            case ModalType.CREATE_TICKET:
                 return "xl"
             case ModalType.STATUS_CHANGE:
                 return "xl"
@@ -78,7 +78,7 @@ function CustomModalHeader() {
         switch (type) {
             case ModalType.STATUS_CHANGE:
                 return `${getTaskToAchieveStatus(desiredState)} tickets`
-            case ModalType.CREATE:
+            case ModalType.CREATE_TICKET:
                 return "Create ticket"
             case ModalType.CONFIRM_STATUS_CHANGE:
                 return "Status change completed"
@@ -116,16 +116,18 @@ function CustomModalBody() {
             else
                 return <StatusChangeStandardModalBody/>
 
-        case ModalType.CREATE:
-            return <TicketCreationModalBody/>
+        case ModalType.CREATE_TICKET:
+            return <CreateTicketModalBody/>
         case ModalType.CONFIRM_STATUS_CHANGE:
             return <OperationCompletedModalBody description="Status change successfully concluded"/>
         case ModalType.CONFIRM_CREATE:
-            return <OperationCompletedModalBody description="A support ticket for the selected product was successfully created"/>
+            return <OperationCompletedModalBody
+                description="A support ticket for the selected product was successfully created"/>
         case ModalType.REGISTER_PRODUCT:
             return <RegisterProductModalBody/>
         case ModalType.CONFIRM_REGISTER:
-            return <OperationCompletedModalBody description="The purchased product was correctly registered in the system"/>
+            return <OperationCompletedModalBody
+                description="The purchased product was correctly registered in the system"/>
     }
 
 }
@@ -161,7 +163,7 @@ function ChangeStatusToInProgressForm({
                                           description, setDescription,
                                       }) {
 
-    const {ticketId, handleClose, completingAction, showError} = useContext(ModalContext)
+    const {objectId, handleClose, completingAction, showError} = useContext(ModalContext)
 
     const [validated, setValidated] = useState(false);
 
@@ -173,7 +175,7 @@ function ChangeStatusToInProgressForm({
             event.stopPropagation();
         } else {
             const apiCall = getUpdateApiForDesiredStatus(TicketStatus.IN_PROGRESS, completingAction, showError)
-            apiCall(ticketId, selectedExpert.expertId, ticketPriority, description)
+            apiCall(objectId, selectedExpert.expertId, ticketPriority, description)
         }
         setValidated(true);
 
@@ -299,7 +301,7 @@ function ChangeStatusToInProgressForm({
 
 function StatusChangeStandardModalBody() {
 
-    const {ticketId, desiredState, handleClose, completingAction, showError} = useContext(ModalContext)
+    const {objectId, desiredState, handleClose, completingAction, showError} = useContext(ModalContext)
 
     const requiredDesc = desiredState === TicketStatus.REOPENED
     const [validated, setValidated] = useState(false);
@@ -312,7 +314,7 @@ function StatusChangeStandardModalBody() {
             event.stopPropagation();
         } else {
             const apiCall = getUpdateApiForDesiredStatus(desiredState, completingAction, showError)
-            apiCall(ticketId, description)
+            apiCall(objectId, description)
         }
         setValidated(true);
 
@@ -350,7 +352,6 @@ function StatusChangeStandardModalBody() {
         </>
     )
 }
-
 
 function getUpdateApiForDesiredStatus(desiredStatus, desiredPostUpdateAction, showError) {
     const startTicket = (ticketId, expertId, priorityLevel, description) => {
@@ -412,15 +413,6 @@ function getUpdateApiForDesiredStatus(desiredStatus, desiredPostUpdateAction, sh
     }
 }
 
-function TicketCreationModalBody() {
-//    const {ticketId, handleClose, showError} = useContext(ModalContext)
-    return (
-        <>
-        </>
-
-    )
-}
-
 function OperationCompletedModalBody({description}) {
     const {handleClose} = useContext(ModalContext)
     return (<>
@@ -436,7 +428,7 @@ function OperationCompletedModalBody({description}) {
 
 function RegisterProductModalBody() {
 
-    const {handleClose , completingAction, showError } = useContext(ModalContext)
+    const {handleClose, completingAction, showError} = useContext(ModalContext)
 
     const [validated, setValidated] = useState(false);
     const [uuid, setUuid] = useState('');
@@ -445,7 +437,7 @@ function RegisterProductModalBody() {
         /*TODO PER ORA C'è UNA API A CASO PER VEDERE SE FUNZIONA, POI METTICI LA API GIUSTA*/
         API.getAllProducts()
             .then(() => {
-                completingAction()
+                    completingAction()
                 }
             )
             .catch(err => showError(err.error))
@@ -487,6 +479,83 @@ function RegisterProductModalBody() {
                         </Button>
                         <Button variant="primary" type="submit">
                             Confirm purchase
+                        </Button>
+                    </Modal.Footer>
+                </Form>
+            </Modal.Body>
+        </>
+    )
+
+}
+
+function CreateTicketModalBody() {
+
+    const {objectId, handleClose, completingAction, showError} = useContext(ModalContext)
+
+    const [validated, setValidated] = useState(false);
+    const [title, setTitle] = useState('');
+    const [description, setDescription] = useState('');
+
+    const createTicket = () => {
+        API.createTicket(objectId,title,description)
+            .then(() => {
+                    completingAction()
+                }
+            )
+            .catch(err => showError(err.error))
+    }
+
+    const handleSubmit = (event) => {
+        const form = event.currentTarget;
+        event.preventDefault();
+        if (form.checkValidity() === false) {
+            event.stopPropagation();
+        } else {
+            createTicket()
+        }
+        setValidated(true);
+
+    };
+
+    return (
+        <>
+            <Modal.Body>
+                <Form noValidate validated={validated} onSubmit={handleSubmit}>
+                    <Row className="mb-3">
+                        <Form.Group controlId="validationCustom">
+                            <Form.Label>Title</Form.Label>
+                            <Form.Control
+                                required={true}
+                                type="text"
+                                value={title}
+                                onChange={ev => setTitle(ev.target.value)}
+                                placeholder="Insert title"
+                            />
+                            <Form.Control.Feedback type="invalid">
+                                Please provide a title
+                            </Form.Control.Feedback> </Form.Group>
+                    </Row>
+                    <Row className="mb-3">
+                        <Form.Group controlId="validationCustom">
+                            <Form.Label> "Description"</Form.Label>
+                            <Form.Control
+                                required={true}
+                                type="text"
+                                as="textarea" rows={3}
+                                value={description}
+                                onChange={ev => setDescription(ev.target.value)}
+                                placeholder="Insert description"
+                            />
+                            <Form.Control.Feedback type="invalid">
+                                Please provide a description
+                            </Form.Control.Feedback> </Form.Group>
+                    </Row>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={() => handleClose()}>
+                            Cancel
+                        </Button>
+                        <Button variant="primary" type="submit">
+                            Create
                         </Button>
                     </Modal.Footer>
                 </Form>
