@@ -242,8 +242,7 @@
     - Request body: _None_
     - Response: `200 OK` (success)
     - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (expertId not
-      found), `422 Unprocessable Entity` (validation of expertId
-      failed) or `500 Internal Server Error` (generic error)
+      found), `422 Unprocessable Entity` (validation of expertId failed) or `500 Internal Server Error` (generic error)
     - Response body: An object containing expertId, name, surname, email and skills (array of objects, for each
       containing expertise and level). An error message in case of error
 
@@ -263,6 +262,7 @@
                     }, 
                     ...
                   ]
+      }
       ```
 
 - GET `/API/experts/{expertId}/statusChanges`
