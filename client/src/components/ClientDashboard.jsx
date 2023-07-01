@@ -73,9 +73,11 @@ function ClientDashboard({userInfo}) {
 
     return (
         <>
-            <div className='mb-5'>
-                <h1>Client dashboard</h1>
-            </div>
+            <Row className='pb-5'>
+                <Col className="d-flex align-items-center">
+                    <h1>Client dashboard</h1>
+                </Col>
+            </Row>
             <StatusAlertComponent/>
             {
                 loading ?
@@ -186,12 +188,13 @@ function TicketsTable({tickets}) {
         navigate(`/tickets/${ticket.ticketId}`)
     }
     return (
-        <Tickets tickets={tickets} title={`You have ${tickets.length} tickets`} actionName={"Details"}
+        <Tickets tickets={tickets} title={`You have ${tickets.length} ticket${tickets.length !== 1 ? "s" : ""}`}
+                 actionName={"Details"}
                  action={actionGoToTicket}/>
     )
 }
 
-function ProductsTable({products,update}) {
+function ProductsTable({products, update}) {
     const navigate = useNavigate();
     const [targetProductId, setTargetProductId] = useState(null)
     const [showCustomModal, setShowCustomModal] = useState(false);
@@ -199,7 +202,7 @@ function ProductsTable({products,update}) {
     const actionForTicket = (product) => {
         if (product.ticketId !== undefined)
             navigate(`/tickets/${product.ticketId}`)
-        else{
+        else {
             setTargetProductId(product.productId)
             setShowCustomModal(true)
         }
@@ -213,7 +216,8 @@ function ProductsTable({products,update}) {
 
     return (
         <>
-            <PurchasedProducts products={products} title={`You have ${products.length} registered purchases`}
+            <PurchasedProducts products={products}
+                               title={`You have ${products.length} registered purchase${products.length !== 1 ? "s" : ""}`}
                                actionNameFinder={actionNameFinder}
                                action={actionForTicket}/>
             <CustomModal show={showCustomModal}

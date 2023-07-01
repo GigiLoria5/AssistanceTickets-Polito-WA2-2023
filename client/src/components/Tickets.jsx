@@ -36,9 +36,11 @@ function TicketsTable({tickets, actionName, action}) {
                         }
                         <th>Title</th>
                         <th>Description</th>
+                        {/*
                         <th>Customer id</th>
                         <th>Expert id</th>
                         <th>Total Exchanged Messages</th>
+                        */}
                         <th>Status</th>
                         <th>Priority Level</th>
                         <th>Created At</th>
@@ -56,9 +58,11 @@ function TicketsTable({tickets, actionName, action}) {
                             }
                             <td>{ticket.title}</td>
                             <td>{ticket.description}</td>
+                            {/*
                             <td>{ticket.customerId}</td>
                             <td>{ticket.expertId}</td>
                             <td>{ticket.totalExchangedMessages}</td>
+                            */}
                             <td>{ticket.status}</td>
                             <td>{ticket.priorityLevel}</td>
                             <td>{dateTimeMillisFormatted(ticket.createdAt)}</td>

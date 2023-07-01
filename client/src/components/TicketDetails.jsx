@@ -23,6 +23,8 @@ function TicketDetails({userInfo}) {
     const {StatusAlertComponent, showError, resetStatusAlert} = useStatusAlert();
     const [confirmModalShow, setConfirmModalShow] = React.useState(false);
 
+    const navigate = useNavigate()
+
     useEffect(() => {
             const getData = async () => {
                 await Promise.all([getTicketData(), getTicketStatusChangesData()])
@@ -83,9 +85,15 @@ function TicketDetails({userInfo}) {
 
     return (
         <>
-            <div className='mb-5'>
-                <h1>Ticket Details</h1>
-            </div>
+            <Row className='pb-5'>
+                <Col md="auto" className="d-flex align-items-center">
+                    <Button onClick={() => navigate(-1)}> {"Go back"}</Button>
+                </Col>
+                <Col md="auto" className="d-flex align-items-center">
+                    <h1>Ticket Details</h1>
+                </Col>
+            </Row>
+
             <StatusAlertComponent/>
             {
                 loading ?
@@ -130,13 +138,13 @@ function TicketDetailComponents({ticketData, productData, ticketStatusChangesDat
             {
                 userRole === UserRole.CLIENT || userRole === UserRole.EXPERT ?
                     <Row className='mb-5'>
-                        <Col md={4}>
+                        <Col>
                             <TicketChat ticketId={ticketData.ticketId}/>
                         </Col>
                     </Row> : null
             }
             <Row className='mb-5'>
-                <Col md={4}>
+                <Col>
                     <TicketStatusAvailableChanges
                         ticketId={ticketData.ticketId}
                         availableStatuses={availableTicketStatusChanges(userRole, ticketData.status)}
@@ -234,7 +242,7 @@ function ProductDataTable({product}) {
 }
 
 function TicketChat({ticketId}) {
-    const navigate = useNavigate()
+    //const navigate = useNavigate()
     return (
         <>
             <h2>Ticket chat</h2>
@@ -258,7 +266,7 @@ function TicketStatusAvailableChanges({ticketId, availableStatuses, update}) {
                     <>
                         <Row>
                             {availableStatuses.map((newDesiredState) => (
-                                <Col key={newDesiredState}>
+                                <Col md="auto" key={newDesiredState}>
                                     <Button onClick={() => {
                                         setShowCustomModal(true)
                                         setDesiredState(newDesiredState)

@@ -32,7 +32,6 @@ function PurchasedProductsTable({products, actionNameFinder, action}) {
                         <th>Brand</th>
                         <th>Purchase date</th>
                         <th>Registration date</th>
-                        <th>Required assistance</th>
                         <th></th>
                     </tr>
                     </thead>
@@ -45,9 +44,6 @@ function PurchasedProductsTable({products, actionNameFinder, action}) {
                             <td>{dateTimeMillisFormatted(product.purchaseDate)}</td>
                             <td>{dateTimeMillisFormatted(product.registrationDate)}</td>
                             <td>
-                                {product.ticketId ? "Yes" : "No"}
-                            </td>
-                            <td>
                                 <Row >
                                     <Col className="d-grid gap-2">
                                         <Button
@@ -58,9 +54,7 @@ function PurchasedProductsTable({products, actionNameFinder, action}) {
                                         </Button>
                                     </Col>
                                 </Row>
-
                             </td>
-
                         </tr>
                     ))}
                     </tbody>
