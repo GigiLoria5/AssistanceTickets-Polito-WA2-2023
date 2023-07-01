@@ -1,9 +1,10 @@
 import {Button, Container, Form} from 'react-bootstrap';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import API from "../API";
 import {useStatusAlert} from "../../hooks/useStatusAlert";
 import {HttpStatusCode} from "../../enums/HttpStatusCode";
+import {getAccessToken} from "../utils/utils";
 
 const validator = require("email-validator");
 
@@ -16,6 +17,12 @@ function LoginForm() {
     const [password, setPassword] = useState('');
     const [isUsernameValid, setIsUsernameValid] = useState(true);
     const [isPasswordValid, setIsPasswordValid] = useState(true);
+
+    useEffect(() => {
+        if (getAccessToken() !== "null") {
+            navigate("/")
+        }
+    }, [])
 
     const handleSubmit = async (event) => {
         event.preventDefault();
