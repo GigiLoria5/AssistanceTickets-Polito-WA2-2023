@@ -17,8 +17,6 @@ function ClientDashboard({userInfo}) {
     const [errorPresence, setErrorPresence] = useState(false)
     const {StatusAlertComponent, showError, resetStatusAlert} = useStatusAlert();
     const [confirmModalShow, setConfirmModalShow] = React.useState(false);
-    const [confirmModalTitle, setConfirmModalTitle] = React.useState("");
-    const [confirmModalDescription, setConfirmModalDescription] = React.useState("");
 
     useEffect(() => {
             const getData = async () => {
@@ -89,8 +87,6 @@ function ClientDashboard({userInfo}) {
                                     <RegisterProduct
                                         update={() => {
                                             setLoad(true);
-                                            setConfirmModalTitle("Product registered")
-                                            setConfirmModalDescription("The purchased product was correctly registered in the system")
                                             setConfirmModalShow(true)
                                         }}
                                     />
@@ -102,8 +98,6 @@ function ClientDashboard({userInfo}) {
                                                          productsData={productsData}
                                                          update={() => {
                                                              setLoad(true);
-                                                             setConfirmModalTitle("Ticket created")
-                                                             setConfirmModalDescription("A support ticket for the selected product was successfully created")
                                                              setConfirmModalShow(true)
                                                          }}
                                     />
@@ -112,9 +106,8 @@ function ClientDashboard({userInfo}) {
 
                             <CustomModal
                                 show={confirmModalShow}
-                                onHide={() => setConfirmModalShow(false)}
-                                title={confirmModalTitle}
-                                description={confirmModalDescription}
+                                hide={() => setConfirmModalShow(false)}
+                                type={ModalType.CONFIRM_REGISTER}
                             />
                         </>
                         :

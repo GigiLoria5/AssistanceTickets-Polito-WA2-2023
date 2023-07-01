@@ -3,5 +3,6 @@ export const ModalType = {
     CREATE: "create",
     CONFIRM_STATUS_CHANGE:"confirmStatusChange",
     CONFIRM_CREATE:"confirmCreate",
-    REGISTER_PRODUCT:"registerProduct"
+    REGISTER_PRODUCT:"registerProduct",
+    CONFIRM_REGISTER:"confirmRegister"
 };

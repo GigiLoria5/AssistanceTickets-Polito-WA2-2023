@@ -46,6 +46,8 @@ function CustomModal({
                 return "lg"
             case ModalType.REGISTER_PRODUCT:
                 return "sm"
+            case ModalType.CONFIRM_REGISTER:
+                return "lg"
             default:
                 return "xl"
         }
@@ -81,9 +83,11 @@ function CustomModalHeader() {
             case ModalType.CONFIRM_STATUS_CHANGE:
                 return "Status change completed"
             case ModalType.CONFIRM_CREATE:
-                return "Ticket creation completed"
+                return "Ticket created"
             case ModalType.REGISTER_PRODUCT:
                 return "Register purchase"
+            case ModalType.CONFIRM_REGISTER:
+                return "Product registered"
         }
     }
     return (
@@ -117,9 +121,11 @@ function CustomModalBody() {
         case ModalType.CONFIRM_STATUS_CHANGE:
             return <OperationCompletedModalBody description="Status change successfully concluded"/>
         case ModalType.CONFIRM_CREATE:
-            return <OperationCompletedModalBody description="Ticket creation successfully concluded"/>
+            return <OperationCompletedModalBody description="A support ticket for the selected product was successfully created"/>
         case ModalType.REGISTER_PRODUCT:
             return <RegisterProductModalBody/>
+        case ModalType.CONFIRM_REGISTER:
+            return <OperationCompletedModalBody description="The purchased product was correctly registered in the system"/>
     }
 
 }
@@ -430,10 +436,20 @@ function OperationCompletedModalBody({description}) {
 
 function RegisterProductModalBody() {
 
-    const {handleClose /*, completingAction, showError */} = useContext(ModalContext)
+    const {handleClose , completingAction, showError } = useContext(ModalContext)
 
     const [validated, setValidated] = useState(false);
     const [uuid, setUuid] = useState('');
+
+    const registerProduct = () => {
+        /*TODO PER ORA C'è UNA API A CASO PER VEDERE SE FUNZIONA, POI METTICI LA API GIUSTA*/
+        API.getAllProducts()
+            .then(() => {
+                completingAction()
+                }
+            )
+            .catch(err => showError(err.error))
+    }
 
     const handleSubmit = (event) => {
         const form = event.currentTarget;
@@ -441,9 +457,7 @@ function RegisterProductModalBody() {
         if (form.checkValidity() === false) {
             event.stopPropagation();
         } else {
-            //TODO IN CASO DI SUCCESSO. GIà TI PASSO IL COMPLETING ACTION DA FARE
-            //  const apiCall = getUpdateApiForDesiredStatus(desiredState, completingAction, showError)
-            // apiCall(ticketId, description)
+            registerProduct()
         }
         setValidated(true);
 
