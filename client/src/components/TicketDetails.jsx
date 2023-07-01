@@ -7,7 +7,7 @@ import * as PropTypes from "prop-types";
 import {dateTimeMillisFormatted} from "../utils/utils";
 import {availableTicketStatusChanges, getTaskToAchieveStatus} from "../utils/ticketUtil";
 import {UserRole} from "../../enums/UserRole";
-import {CustomModal} from "./Modals";
+import {CustomModal} from "./modals/CustomModal";
 import {ModalType} from "../../enums/ModalType";
 
 TicketDataTable.propTypes = {ticket: PropTypes.any};

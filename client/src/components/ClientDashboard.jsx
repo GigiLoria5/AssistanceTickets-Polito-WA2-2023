@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {useStatusAlert} from "../../hooks/useStatusAlert";
 import API from "../API";
 import {Button, Col, Row, Spinner, Tab, Tabs} from "react-bootstrap";
-import {CustomModal} from "./Modals";
+import {CustomModal} from "./modals/CustomModal";
 import {ModalType} from "../../enums/ModalType";
 import Tickets from "./Tickets";
 import {useNavigate} from "react-router-dom";
