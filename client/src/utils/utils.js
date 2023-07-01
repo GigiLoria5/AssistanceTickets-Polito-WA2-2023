@@ -25,6 +25,14 @@ export const handleErrorResponse = async (response) => {
     return {error: errorMessage, status: statusCode};
 };
 
+export const handleApiError = (err, showError) => {
+    if (err.status === HttpStatusCode.UNAUTHORIZED) {
+        window.location.href = "/login";
+    } else {
+        showError(err.error);
+    }
+}
+
 export const getAccessToken = () => {
     return localStorage.getItem('access_token');
 }
