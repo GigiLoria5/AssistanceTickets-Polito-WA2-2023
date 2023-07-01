@@ -38,6 +38,7 @@ async function getTicketById(ticketId) {
     });
 }
 
+// GET /API/tickets/{ticketId}/statusChanges
 async function getTicketStatusChangesByTicketId(ticketId) {
     return new Promise((resolve, reject) => {
         fetch(new URL(`tickets/${ticketId}/statusChanges`, API_URL), {
@@ -61,4 +62,31 @@ async function getTicketStatusChangesByTicketId(ticketId) {
     });
 }
 
-export {getTicketById, getTicketStatusChangesByTicketId};
+// POST /API/tickets
+
+async function createTicket(productId, title, description) {
+    return new Promise((resolve, reject) => {
+        fetch(new URL(`tickets`, API_URL), {
+            method: 'POST',
+            headers: {
+                Authorization: `Bearer ${getAccessToken()}`,
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+            body: JSON.stringify({
+                productId, title, description
+            })
+        })
+            .then(async (response) => {
+                if (response.ok) {
+                    resolve(null);
+                } else {
+                    const error = await handleErrorResponse(response);
+                    reject(error);
+                }
+            })
+            .catch((_error) => reject(SERVER_COMMUNICATION_ERROR));
+    });
+}
+
+export {getTicketById, getTicketStatusChangesByTicketId,createTicket};
