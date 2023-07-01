@@ -1,14 +1,25 @@
 import {useStatusAlert} from "../../hooks/useStatusAlert";
 import {Button, Col, Form, Modal, Row} from "react-bootstrap";
 import {getTaskToAchieveStatus} from "../utils/ticketUtil";
-import React, {useState} from "react";
+import React, {createContext, useContext, useMemo, useState} from "react";
 import {ModalType} from "../../enums/ModalType";
 import {TicketStatus} from "../../enums/TicketStatus";
 import {TicketPriority} from "../../enums/TicketPriority";
 import Experts from "./Experts";
 import API from "../API";
 
-function CustomModal({show, hide, backdrop = true, keyboard = true, type, desiredState, ticketId, completingAction}) {
+const ModalContext = createContext(null);
+
+function CustomModal({
+                         show,
+                         hide,
+                         backdrop = true,
+                         keyboard = true,
+                         type,
+                         desiredState = null,
+                         ticketId = null,
+                         completingAction = null
+                     }) {
 
     const {StatusAlertComponent, showError, resetStatusAlert} = useStatusAlert();
 
@@ -17,28 +28,54 @@ function CustomModal({show, hide, backdrop = true, keyboard = true, type, desire
         resetStatusAlert()
     }
 
+    const ModalProviderValue
+        = useMemo(() =>
+            ({type, desiredState, StatusAlertComponent, ticketId, handleClose, completingAction, showError}),
+        [type, desiredState, StatusAlertComponent, ticketId, handleClose, completingAction, showError]);
+
+
+    const setSize = () => {
+        switch (type) {
+            case ModalType.CREATE:
+                return "xl"
+            case ModalType.STATUS_CHANGE:
+                return "xl"
+            case ModalType.CONFIRM_STATUS_CHANGE:
+                return "lg"
+            case ModalType.CONFIRM_CREATE:
+                return "lg"
+            case ModalType.REGISTER_PRODUCT:
+                return "sm"
+            default:
+                return "xl"
+        }
+    }
+    const modalSize = setSize()
+
     return (
         <Modal
             show={show}
             onHide={handleClose}
             backdrop={backdrop}
-            size="xl"
+            size={modalSize}
             keyboard={keyboard}
             centered
         >
-            <CustomModalHeader type={type} desiredState={desiredState} StatusAlertComponent={StatusAlertComponent}/>
-            <GetCustomModalBody type={type} desiredState={desiredState} ticketId={ticketId} handleClose={handleClose}
-                                completingAction={completingAction} resetStatusAlert={resetStatusAlert}
-                                showError={showError}/>
+            <ModalContext.Provider value={ModalProviderValue}>
+                <CustomModalHeader/>
+                <CustomModalBody/>
+            </ModalContext.Provider>
         </Modal>
     )
 }
 
-function CustomModalHeader({type, desiredState, StatusAlertComponent}) {
+function CustomModalHeader() {
+    const {type, desiredState, StatusAlertComponent} = useContext(ModalContext)
+
     const getTitle = (type) => {
         switch (type) {
             case ModalType.STATUS_CHANGE:
-                return `${getTaskToAchieveStatus(desiredState)} ticket`
+                return `${getTaskToAchieveStatus(desiredState)} tickets`
             case ModalType.CREATE:
                 return "Create ticket"
             case ModalType.CONFIRM_STATUS_CHANGE:
@@ -65,44 +102,29 @@ function CustomModalHeader({type, desiredState, StatusAlertComponent}) {
     )
 }
 
-function GetCustomModalBody({
-                                type,
-                                desiredState,
-                                ticketId,
-                                handleClose,
-                                completingAction,
-                                resetStatusAlert,
-                                showError
-                            }) {
-    const getBody = () => {
-        switch (type) {
-            case ModalType.STATUS_CHANGE:
-                if (desiredState === TicketStatus.IN_PROGRESS)
-                    return <StatusChangeInProgressModal ticketId={ticketId} handleClose={handleClose}
-                                                        completingAction={completingAction} showError={showError}/>
-                else
-                    return <StatusChangeStandardModal ticketId={ticketId} desiredState={desiredState}
-                                                      handleClose={handleClose}
-                                                      completingAction={completingAction} showError={showError}/>
+function CustomModalBody() {
 
-            case ModalType.CREATE:
-                return <TicketCreationModal ticketId={ticketId} handleClose={handleClose} showError={showError}/>
-            case ModalType.CONFIRM_STATUS_CHANGE:
-                return <OperationCompletedModal handleClose={handleClose}
-                                                description="Status change successfully concluded"/>
-            case ModalType.CONFIRM_CREATE:
-                return <OperationCompletedModal handleClose={handleClose}
-                                                description="Ticket creation successfully concluded"/>
-            case ModalType.REGISTER_PRODUCT:
-                return <RegisterProductModal handleClose={handleClose} completingAction={completingAction}
-                                             showError={showError}/>
-        }
+    const {type, desiredState} = useContext(ModalContext)
+    switch (type) {
+        case ModalType.STATUS_CHANGE:
+            if (desiredState === TicketStatus.IN_PROGRESS)
+                return <StatusChangeInProgressModalBody/>
+            else
+                return <StatusChangeStandardModalBody/>
+
+        case ModalType.CREATE:
+            return <TicketCreationModalBody/>
+        case ModalType.CONFIRM_STATUS_CHANGE:
+            return <OperationCompletedModalBody description="Status change successfully concluded"/>
+        case ModalType.CONFIRM_CREATE:
+            return <OperationCompletedModalBody description="Ticket creation successfully concluded"/>
+        case ModalType.REGISTER_PRODUCT:
+            return <RegisterProductModalBody/>
     }
 
-    return getBody()
 }
 
-function StatusChangeInProgressModal({ticketId, handleClose, completingAction, showError}) {
+function StatusChangeInProgressModalBody() {
 
     const [selectedExpert, setSelectedExpert] = useState(null);
     const [ticketPriority, setTicketPriority] = useState(null);
@@ -115,11 +137,10 @@ function StatusChangeInProgressModal({ticketId, handleClose, completingAction, s
                 <Experts title={"Select expert"} actionName={"Select"} action={setSelectedExpert}/>
                 :
                 <ChangeStatusToInProgressForm
-                    ticketId={ticketId} selectedExpert={selectedExpert}
-                    cancelSelectedExpert={() => setSelectedExpert(null)}
+                    selectedExpert={selectedExpert} cancelSelectedExpert={() => setSelectedExpert(null)}
                     ticketPriority={ticketPriority} setTicketPriority={setTicketPriority}
                     description={description} setDescription={setDescription}
-                    completingAction={completingAction} handleClose={handleClose} showError={showError}/>
+                />
 
             }
         </Modal.Body>
@@ -129,11 +150,12 @@ function StatusChangeInProgressModal({ticketId, handleClose, completingAction, s
 }
 
 function ChangeStatusToInProgressForm({
-                                          ticketId, selectedExpert, cancelSelectedExpert,
+                                          selectedExpert, cancelSelectedExpert,
                                           ticketPriority, setTicketPriority,
                                           description, setDescription,
-                                          completingAction, handleClose, showError
                                       }) {
+
+    const {ticketId, handleClose, completingAction, showError} = useContext(ModalContext)
 
     const [validated, setValidated] = useState(false);
 
@@ -269,10 +291,11 @@ function ChangeStatusToInProgressForm({
     )
 }
 
-function StatusChangeStandardModal({ticketId, desiredState, handleClose, completingAction, showError}) {
+function StatusChangeStandardModalBody() {
+
+    const {ticketId, desiredState, handleClose, completingAction, showError} = useContext(ModalContext)
 
     const requiredDesc = desiredState === TicketStatus.REOPENED
-
     const [validated, setValidated] = useState(false);
     const [description, setDescription] = useState('');
 
@@ -322,14 +345,6 @@ function StatusChangeStandardModal({ticketId, desiredState, handleClose, complet
     )
 }
 
-function TicketCreationModal({ticketId, handleClose}) {
-
-    return (
-        <>
-        </>
-
-    )
-}
 
 function getUpdateApiForDesiredStatus(desiredStatus, desiredPostUpdateAction, showError) {
     const startTicket = (ticketId, expertId, priorityLevel, description) => {
@@ -391,7 +406,17 @@ function getUpdateApiForDesiredStatus(desiredStatus, desiredPostUpdateAction, sh
     }
 }
 
-function OperationCompletedModal({handleClose, description}) {
+function TicketCreationModalBody() {
+//    const {ticketId, handleClose, showError} = useContext(ModalContext)
+    return (
+        <>
+        </>
+
+    )
+}
+
+function OperationCompletedModalBody({description}) {
+    const {handleClose} = useContext(ModalContext)
     return (<>
             <Modal.Body>{description}</Modal.Body>
             <Modal.Footer>
@@ -403,7 +428,9 @@ function OperationCompletedModal({handleClose, description}) {
     )
 }
 
-function RegisterProductModal({handleClose, completingAction, showError}) {
+function RegisterProductModalBody() {
+
+    const {handleClose /*, completingAction, showError */} = useContext(ModalContext)
 
     const [validated, setValidated] = useState(false);
     const [uuid, setUuid] = useState('');
