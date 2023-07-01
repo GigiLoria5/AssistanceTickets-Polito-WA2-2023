@@ -41,7 +41,7 @@ async function getUserInfo() {
             .then(async (response) => {
                 if (response.ok) {
                     const user = await response.json();
-                    resolve(new User(user.email, user.name, user.role));
+                    resolve(new User(user.id, user.email, user.name, user.role));
                 } else {
                     const error = await handleErrorResponse(response);
                     reject(error);

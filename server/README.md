@@ -57,7 +57,7 @@
     - Response body: An object containing the access_token. An error message in case of error
       ```
       {
-        "access_token": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJTdEl1VDdvRGJ5cDc2SFg5QmlfdzZIUUk0SVZ5TXhfZ2g2WmpGT0ItT0RrIn0.eyJleHAiOjE2ODM4ODcyMzcsImlhdCI6MTY4Mzg4N"
+        "accessToken": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJTdEl1VDdvRGJ5cDc2SFg5QmlfdzZIUUk0SVZ5TXhfZ2g2WmpGT0ItT0RrIn0.eyJleHAiOjE2ODM4ODcyMzcsImlhdCI6MTY4Mzg4N"
       }
       ```
 
@@ -66,9 +66,11 @@
     - Request body: _None_
     - Response: `200 Ok` (success)
     - Error responses: `401 Unauthorized` (not logged in) or `500 Internal Server Error` (generic error)
-    - Response body: An object containing main user information. An error message in case of error
+    - Response body: An object containing main user information (the id is null for managers). An error message in case
+      of error
       ```
       {
+        "id": 5,
         "email": "bbowering4@vistaprint.com",
         "name": "Barr Bowering",
         "role": "Expert"
@@ -510,9 +512,9 @@
 
     - Response: `201 Created` (success)
     - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (productId not
-      found), `409 Conflict` (a not closed
-      ticket for the same customer and product already exists), `422 Unprocessable Entity` (validation of
-      request body failed) or `500 Internal Server Error` (generic error)
+      found), `409 Conflict` (a not closed ticket for the same customer and product already
+      exists), `422 Unprocessable Entity` (validation of request body failed) or `500 Internal Server Error` (generic
+      error)
     - Response body: An object containing the id of the ticket created. An error message in case of error
       ```
       {

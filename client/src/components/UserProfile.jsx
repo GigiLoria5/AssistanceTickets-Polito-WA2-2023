@@ -59,6 +59,8 @@ function ManagerProfile({userInfo}) {
 }
 
 function ExpertProfile({userInfo}) {
+    console.log(userInfo);
+
     return (
         <div>
             <h1>Expert Profile</h1>
@@ -67,6 +69,8 @@ function ExpertProfile({userInfo}) {
 }
 
 function ClientProfile({userInfo}) {
+    console.log(userInfo);
+    
     return (
         <div>
             <h1>Client Profile</h1>
@@ -74,4 +78,4 @@ function ClientProfile({userInfo}) {
     );
 }
 
-export {UserProfile};
+export {UserProfile, ExpertProfile, ClientProfile};
