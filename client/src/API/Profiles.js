@@ -1,25 +1,21 @@
 import {API_URL} from "./APIUrl";
 import {Profile} from "../models/Profile";
 import {SERVER_COMMUNICATION_ERROR} from "../utils/constants";
-import {handleErrorResponse} from "../utils/utils";
+import {getAccessToken, handleErrorResponse} from "../utils/utils";
 
 // GET /API/profiles/{email}
 async function getProfileByEmail(email) {
     return new Promise((resolve, reject) => {
-        fetch(new URL(`profiles/${email}`, API_URL), {credentials: 'include'})
+        fetch(new URL(`profiles/${email}`, API_URL), {
+            headers: {
+                Authorization: `Bearer ${getAccessToken()}`
+            },
+            credentials: 'include'
+        })
             .then(async (response) => {
                 if (response.ok) {
                     const profile = await response.json();
-                    resolve({
-                        id: profile.id,
-                        email: profile.email,
-                        name: profile.name,
-                        surname: profile.surname,
-                        phoneNumber: profile.phoneNumber,
-                        address: profile.address,
-                        city: profile.city,
-                        country: profile.country
-                    });
+                    resolve(new Profile(profile.email, profile.name, profile.surname, profile.phoneNumber, profile.address, profile.city, profile.country));
                 } else {
                     const error = await handleErrorResponse(response);
                     reject(error);

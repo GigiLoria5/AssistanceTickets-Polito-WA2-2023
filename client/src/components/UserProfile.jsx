@@ -14,9 +14,9 @@ function UserProfile({userInfo, setUserInfo}) {
             case UserRole.MANAGER:
                 return <ManagerProfile userInfo={userInfo}/>;
             case UserRole.EXPERT:
-                return <ExpertProfile userInfo={userInfo} showError={showError}/>;
+                return <ExpertProfile expertId={userInfo.id} showError={showError}/>;
             case UserRole.CLIENT:
-                return <ClientProfile userInfo={userInfo} showError={showError}/>;
+                return <ClientProfile clientEmail={userInfo.email} showError={showError}/>;
             default:
                 return null;
         }

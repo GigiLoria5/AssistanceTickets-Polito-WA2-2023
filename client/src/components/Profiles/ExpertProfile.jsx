@@ -3,11 +3,11 @@ import {useEffect, useState} from "react";
 import API from "../../API";
 import {handleApiError} from "../../utils/utils";
 
-function ExpertProfile({userInfo, showError}) {
+function ExpertProfile({expertId, showError}) {
     const [expert, setExpert] = useState(null);
 
     useEffect(() => {
-        API.getExpertById(userInfo.id)
+        API.getExpertById(expertId)
             .then(expert => {
                 setExpert(expert)
             })
@@ -25,16 +25,15 @@ function ExpertProfile({userInfo, showError}) {
                             : (
                                 <>
                                     <div className="p-3">
-                                        <p className="mb-2"><b>Name:</b> {userInfo.name}</p>
-                                        <p className="mb-2"><b>Email:</b> {userInfo.email}</p>
+                                        <p className="mb-2"><b>Name:</b> {expert.name} {expert.surname}</p>
+                                        <p className="mb-2"><b>Email:</b> {expert.email}</p>
                                         <p className="mb-2"><b>Country:</b> {expert.country}</p>
                                         <p className="mb-2"><b>City:</b> {expert.city}</p>
-                                        <p className="mb-2"><b>Skills</b></p>
                                         <Table responsive>
                                             <thead>
                                             <tr>
-                                                <th>Expertise</th>
-                                                <th>Level</th>
+                                                <th>Skill Expertise</th>
+                                                <th>Skill Level</th>
                                             </tr>
                                             </thead>
                                             <tbody>
