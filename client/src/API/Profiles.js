@@ -25,29 +25,6 @@ async function getProfileByEmail(email) {
     });
 }
 
-// TODO: not exist anymore
-function addProfile(profile) {
-    return new Promise((resolve, reject) => {
-        fetch(new URL('profiles', API_URL), {
-            method: 'POST',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(new Profile(profile.email, profile.name, profile.surname, profile.phoneNumber, profile.address, profile.city, profile.country))
-        })
-            .then(async (response) => {
-                if (response.ok) {
-                    resolve(null);
-                } else {
-                    const error = await handleErrorResponse(response);
-                    reject(error);
-                }
-            })
-            .catch((_error) => reject(SERVER_COMMUNICATION_ERROR));
-    });
-}
-
 // PUT /API/profiles
 function updateProfile(profile, email) {
     return new Promise((resolve, reject) => {
@@ -71,4 +48,4 @@ function updateProfile(profile, email) {
     });
 }
 
-export {getProfileByEmail, addProfile, updateProfile}
+export {getProfileByEmail, updateProfile}

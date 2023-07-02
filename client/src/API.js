@@ -1,13 +1,13 @@
-import {getUserInfo, logIn} from "./API/Auth";
+import {getUserInfo, logIn, signup} from "./API/Auth";
 import {getExpertById} from "./API/Experts";
 import {getAllProducts, searchProduct} from "./API/Products";
-import {addProfile, getProfileByEmail, updateProfile} from "./API/Profiles";
+import {getProfileByEmail, updateProfile} from "./API/Profiles";
 
 const API = {
-    logIn, getUserInfo,
+    signup, logIn, getUserInfo,
     getExpertById,
     getAllProducts, searchProduct,
-    getProfileByEmail, addProfile, updateProfile,
+    getProfileByEmail, updateProfile,
 };
 
 export default API;

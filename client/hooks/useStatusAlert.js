@@ -19,7 +19,7 @@ export const useStatusAlert = () => {
                     className="roundedError"
                 >
                     <Alert.Heading>{message.type}</Alert.Heading>
-                    <p>{message.text}</p>
+                    <p>{message.text.charAt(0).toUpperCase() + message.text.slice(1)}</p>
                 </Alert>
             )
         );

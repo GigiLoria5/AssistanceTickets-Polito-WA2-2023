@@ -3,6 +3,29 @@ import {getAccessToken, handleErrorResponse, setAccessToken} from "../utils/util
 import {SERVER_COMMUNICATION_ERROR} from "../utils/constants";
 import {User} from "../models/User";
 
+// POST /API/auth/signup
+async function signup(profile, password) {
+    return new Promise((resolve, reject) => {
+        fetch(new URL('auth/signup', API_URL), {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({...profile, password})
+        })
+            .then(async (response) => {
+                if (response.ok) {
+                    resolve(null);
+                } else {
+                    const error = await handleErrorResponse(response);
+                    reject(error);
+                }
+            })
+            .catch((_error) => reject(SERVER_COMMUNICATION_ERROR));
+    });
+}
+
 // POST /API/auth/login
 async function logIn(credentials) {
     return new Promise((resolve, reject) => {
@@ -51,4 +74,4 @@ async function getUserInfo() {
     });
 }
 
-export {logIn, getUserInfo};
+export {signup, logIn, getUserInfo};

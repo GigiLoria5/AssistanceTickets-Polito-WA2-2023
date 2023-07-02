@@ -54,14 +54,27 @@ class AuthController(
         val authentication = SecurityContextHolder.getContext().authentication
         val jwtToken = authentication.credentials as Jwt
 
+        var id: Int? = null
         val email: String = jwtToken.getClaim("email")
-        val name: String = jwtToken.getClaim("name")
+        lateinit var name: String
         val authority = authentication.authorities.toList()[0].authority
         val role = convertRoleString(authority)
-        val id = when (role.uppercase()) {
-            "EXPERT" -> expertService.getExpertByEmail(email).expertId
-            "CLIENT" -> profileService.getProfileByEmail(email).profileId
-            else -> null
+        when (role.uppercase()) {
+            "EXPERT" -> {
+                val expertDetails = expertService.getExpertByEmail(email)
+                id = expertDetails.expertId
+                name = "${expertDetails.name} ${expertDetails.surname}"
+            }
+
+            "CLIENT" -> {
+                val clientDetails = profileService.getProfileByEmail(email)
+                id = clientDetails.profileId
+                name = "${clientDetails.name} ${clientDetails.surname}"
+            }
+
+            else -> {
+                name = jwtToken.getClaim("name")
+            }
         }
 
         return UserDTO(id = id, email = email, name = name, role = role)
