@@ -5,7 +5,7 @@ function ManagerProfile({userInfo}) {
         <Container className="my-5">
             <Row className="justify-content-center">
                 <Col md={8} className="text-center">
-                    <h1 className="mb-4">Manager Profile</h1>
+                    <h2 className='text-center'>Manager Profile</h2>
                     <div className="p-3">
                         <p className="mb-2"><b>Name:</b> {userInfo.name}</p>
                         <p className="mb-2"><b>Email:</b> {userInfo.email}</p>

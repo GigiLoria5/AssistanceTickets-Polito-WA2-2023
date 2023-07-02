@@ -18,7 +18,7 @@ function ExpertProfile({expertId, showError}) {
         <Container className="my-5">
             <Row className="justify-content-center">
                 <Col md={8} className="text-center">
-                    <h1 className="mb-4">Expert Profile</h1>
+                    <h2 className='text-center'>Expert Profile</h2>
                     {
                         !expert
                             ? <Spinner animation="border" variant="primary"/>

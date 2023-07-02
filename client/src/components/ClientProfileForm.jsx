@@ -14,7 +14,7 @@ import {
 import {getAccessToken} from "../utils/utils";
 import API from "../API";
 
-function ClientProfileForm({profile}) {
+function ClientProfileForm({profile, onSuccess, onCancel}) {
     const navigate = useNavigate();
     const statusAlertRef = useRef(null);
     const {StatusAlertComponent, showError} = useStatusAlert();
@@ -30,7 +30,7 @@ function ClientProfileForm({profile}) {
     const editMode = !!profile;
 
     useEffect(() => {
-        if (getAccessToken() !== "null") {
+        if (getAccessToken() !== "null" && !profile) {
             navigate("/")
         }
     }, [])
@@ -40,8 +40,6 @@ function ClientProfileForm({profile}) {
     }
 
     const handleRegister = (profile) => {
-        console.log(profile)
-        console.log(password)
         API.signup(profile, password)
             .then(_ => {
                 navigate('/login', {state: {success: true}});
@@ -54,11 +52,15 @@ function ClientProfileForm({profile}) {
     }
 
     const handleUpdateProfile = (profile) => {
-
-    }
-
-    const handleCancel = () => {
-
+        API.updateProfile(profile)
+            .then(_ => {
+                onSuccess()
+            })
+            .catch(err => {
+                setIsLoading(false);
+                showError(err.error);
+                scrollIntoStatusAlert()
+            })
     }
 
     const handleSubmit = (event) => {
@@ -101,17 +103,20 @@ function ClientProfileForm({profile}) {
             <Form className='rounded p-4 p-sm-4 bg-grey' onSubmit={handleSubmit}>
                 <h2 className='text-center'>{editMode ? "Edit Profile" : "Client Registration"}</h2>
 
-                <Form.Group className="mb-3" controlId="formBasicEmail">
+                {!editMode && <Form.Group className="mb-3" controlId="formBasicEmail">
                     <Form.Label>Username</Form.Label>
                     <Form.Control value={email} disabled={isLoading} placeholder="johngreen@group.com" type="email"
                                   onChange={ev => setEmail(ev.target.value)} required/>
                 </Form.Group>
+                }
 
-                <Form.Group className="mb-3">
-                    <Form.Label>Password</Form.Label>
-                    <Form.Control value={password} disabled={isLoading} placeholder={"password"} type="password"
-                                  onChange={ev => setPassword(ev.target.value)} required/>
-                </Form.Group>
+                {!editMode &&
+                    <Form.Group className="mb-3">
+                        <Form.Label>Password</Form.Label>
+                        <Form.Control value={password} disabled={isLoading} placeholder={"password"} type="password"
+                                      onChange={ev => setPassword(ev.target.value)} required/>
+                    </Form.Group>
+                }
 
                 <Form.Group className="mb-3">
                     <Form.Label>Name</Form.Label>
@@ -166,7 +171,7 @@ function ClientProfileForm({profile}) {
                     </div>
                     <div className="d-flex flex-column align-items-center mt-3">
                         {editMode
-                            ? <Button variant="secondary" onClick={handleCancel}>Cancel</Button>
+                            ? <Button variant="secondary" className="w-100" onClick={onCancel}>Cancel</Button>
                             :
                             <p>
                                 Already have an account?

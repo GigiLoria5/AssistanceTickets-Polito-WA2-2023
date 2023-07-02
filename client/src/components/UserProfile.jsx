@@ -5,9 +5,15 @@ import {useStatusAlert} from "../../hooks/useStatusAlert";
 import ManagerProfile from "./Profiles/ManagerProfile";
 import ExpertProfile from "./Profiles/ExpertProfile";
 import ClientProfile from "./Profiles/ClientProfile";
+import {useState} from "react";
 
 function UserProfile({userInfo, setUserInfo}) {
-    const {StatusAlertComponent, showError} = useStatusAlert();
+    const {StatusAlertComponent, showSuccess, showError, resetStatusAlert} = useStatusAlert();
+    const [hideLogout, setHideLogout] = useState(false);
+
+    const switchLogoutVisibility = () => {
+        setHideLogout(hideLogout => !hideLogout)
+    }
 
     const renderProfile = (userRole) => {
         switch (userRole) {
@@ -16,7 +22,9 @@ function UserProfile({userInfo, setUserInfo}) {
             case UserRole.EXPERT:
                 return <ExpertProfile expertId={userInfo.id} showError={showError}/>;
             case UserRole.CLIENT:
-                return <ClientProfile clientEmail={userInfo.email} showError={showError}/>;
+                return <ClientProfile clientEmail={userInfo.email} showSuccess={showSuccess} showError={showError}
+                                      resetStatusAlert={resetStatusAlert}
+                                      switchLogoutVisibility={switchLogoutVisibility}/>;
             default:
                 return null;
         }
@@ -37,7 +45,7 @@ function UserProfile({userInfo, setUserInfo}) {
                                 <>
                                     <StatusAlertComponent/>
                                     {renderProfile(userInfo.role)}
-                                    <Button variant="danger" onClick={handleLogout}>Logout</Button>{' '}
+                                    {!hideLogout && <Button variant="danger" onClick={handleLogout}>Logout</Button>}
                                 </>
                             )
                             : <Spinner animation="border" variant="primary"/>

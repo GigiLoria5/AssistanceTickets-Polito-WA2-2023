@@ -26,15 +26,23 @@ async function getProfileByEmail(email) {
 }
 
 // PUT /API/profiles
-function updateProfile(profile, email) {
+function updateProfile(profile) {
     return new Promise((resolve, reject) => {
-        fetch(new URL(`profiles/${email}`, API_URL), {
+        fetch(new URL(`profiles`, API_URL), {
             method: 'PUT',
             credentials: 'include',
             headers: {
+                Authorization: `Bearer ${getAccessToken()}`,
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(new Profile(profile.email, profile.name, profile.surname, profile.phoneNumber, profile.address, profile.city, profile.country))
+            body: JSON.stringify({
+                name: profile.name,
+                surname: profile.surname,
+                phoneNumber: profile.phoneNumber,
+                address: profile.address,
+                city: profile.city,
+                country: profile.country
+            })
         })
             .then(async (response) => {
                 if (response.ok) {
