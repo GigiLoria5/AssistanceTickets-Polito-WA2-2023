@@ -3,7 +3,7 @@
 --
 
 -- Dumped from database version 15.2 (Debian 15.2-1.pgdg110+1)
--- Dumped by pg_dump version 15.2 (Debian 15.2-1.pgdg110+1)
+-- Dumped by pg_dump version 15.3
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -34,8 +34,7 @@ CREATE TABLE public.attachments
 );
 
 
-ALTER TABLE public.attachments
-    OWNER TO postgres;
+ALTER TABLE public.attachments OWNER TO postgres;
 
 --
 -- Name: attachments_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
@@ -46,12 +45,10 @@ CREATE SEQUENCE public.attachments_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+    NO MAXVALUE CACHE 1;
 
 
-ALTER TABLE public.attachments_id_seq
-    OWNER TO postgres;
+ALTER TABLE public.attachments_id_seq OWNER TO postgres;
 
 --
 -- Name: attachments_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
@@ -75,8 +72,7 @@ CREATE TABLE public.experts
 );
 
 
-ALTER TABLE public.experts
-    OWNER TO postgres;
+ALTER TABLE public.experts OWNER TO postgres;
 
 --
 -- Name: experts_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
@@ -87,12 +83,10 @@ CREATE SEQUENCE public.experts_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+    NO MAXVALUE CACHE 1;
 
 
-ALTER TABLE public.experts_id_seq
-    OWNER TO postgres;
+ALTER TABLE public.experts_id_seq OWNER TO postgres;
 
 --
 -- Name: experts_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
@@ -116,8 +110,7 @@ CREATE TABLE public.messages
 );
 
 
-ALTER TABLE public.messages
-    OWNER TO postgres;
+ALTER TABLE public.messages OWNER TO postgres;
 
 --
 -- Name: messages_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
@@ -128,18 +121,54 @@ CREATE SEQUENCE public.messages_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+    NO MAXVALUE CACHE 1;
 
 
-ALTER TABLE public.messages_id_seq
-    OWNER TO postgres;
+ALTER TABLE public.messages_id_seq OWNER TO postgres;
 
 --
 -- Name: messages_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
 ALTER SEQUENCE public.messages_id_seq OWNED BY public.messages.id;
+
+
+--
+-- Name: product_tokens; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.product_tokens
+(
+    id            integer                NOT NULL,
+    created_at    bigint                 NOT NULL,
+    registered_at bigint                 NOT NULL,
+    token         character varying(255) NOT NULL,
+    product_id    integer,
+    user_id       integer
+);
+
+
+ALTER TABLE public.product_tokens OWNER TO postgres;
+
+--
+-- Name: product_tokens_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.product_tokens_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE CACHE 1;
+
+
+ALTER TABLE public.product_tokens_id_seq OWNER TO postgres;
+
+--
+-- Name: product_tokens_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.product_tokens_id_seq OWNED BY public.product_tokens.id;
 
 
 --
@@ -159,8 +188,7 @@ CREATE TABLE public.products
 );
 
 
-ALTER TABLE public.products
-    OWNER TO postgres;
+ALTER TABLE public.products OWNER TO postgres;
 
 --
 -- Name: products_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
@@ -171,12 +199,10 @@ CREATE SEQUENCE public.products_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+    NO MAXVALUE CACHE 1;
 
 
-ALTER TABLE public.products_id_seq
-    OWNER TO postgres;
+ALTER TABLE public.products_id_seq OWNER TO postgres;
 
 --
 -- Name: products_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
@@ -202,8 +228,7 @@ CREATE TABLE public.profiles
 );
 
 
-ALTER TABLE public.profiles
-    OWNER TO postgres;
+ALTER TABLE public.profiles OWNER TO postgres;
 
 --
 -- Name: profiles_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
@@ -214,12 +239,10 @@ CREATE SEQUENCE public.profiles_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+    NO MAXVALUE CACHE 1;
 
 
-ALTER TABLE public.profiles_id_seq
-    OWNER TO postgres;
+ALTER TABLE public.profiles_id_seq OWNER TO postgres;
 
 --
 -- Name: profiles_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
@@ -241,8 +264,7 @@ CREATE TABLE public.skills
 );
 
 
-ALTER TABLE public.skills
-    OWNER TO postgres;
+ALTER TABLE public.skills OWNER TO postgres;
 
 --
 -- Name: skills_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
@@ -253,12 +275,10 @@ CREATE SEQUENCE public.skills_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+    NO MAXVALUE CACHE 1;
 
 
-ALTER TABLE public.skills_id_seq
-    OWNER TO postgres;
+ALTER TABLE public.skills_id_seq OWNER TO postgres;
 
 --
 -- Name: skills_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
@@ -286,8 +306,7 @@ CREATE TABLE public.tickets
 );
 
 
-ALTER TABLE public.tickets
-    OWNER TO postgres;
+ALTER TABLE public.tickets OWNER TO postgres;
 
 --
 -- Name: tickets_changes; Type: TABLE; Schema: public; Owner: postgres
@@ -306,8 +325,7 @@ CREATE TABLE public.tickets_changes
 );
 
 
-ALTER TABLE public.tickets_changes
-    OWNER TO postgres;
+ALTER TABLE public.tickets_changes OWNER TO postgres;
 
 --
 -- Name: tickets_changes_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
@@ -318,12 +336,10 @@ CREATE SEQUENCE public.tickets_changes_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+    NO MAXVALUE CACHE 1;
 
 
-ALTER TABLE public.tickets_changes_id_seq
-    OWNER TO postgres;
+ALTER TABLE public.tickets_changes_id_seq OWNER TO postgres;
 
 --
 -- Name: tickets_changes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
@@ -341,12 +357,10 @@ CREATE SEQUENCE public.tickets_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+    NO MAXVALUE CACHE 1;
 
 
-ALTER TABLE public.tickets_id_seq
-    OWNER TO postgres;
+ALTER TABLE public.tickets_id_seq OWNER TO postgres;
 
 --
 -- Name: tickets_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
@@ -359,64 +373,63 @@ ALTER SEQUENCE public.tickets_id_seq OWNED BY public.tickets.id;
 -- Name: attachments id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.attachments
-    ALTER COLUMN id SET DEFAULT nextval('public.attachments_id_seq'::regclass);
+ALTER TABLE ONLY public.attachments ALTER COLUMN id SET DEFAULT nextval('public.attachments_id_seq'::regclass);
 
 
 --
 -- Name: experts id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.experts
-    ALTER COLUMN id SET DEFAULT nextval('public.experts_id_seq'::regclass);
+ALTER TABLE ONLY public.experts ALTER COLUMN id SET DEFAULT nextval('public.experts_id_seq'::regclass);
 
 
 --
 -- Name: messages id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.messages
-    ALTER COLUMN id SET DEFAULT nextval('public.messages_id_seq'::regclass);
+ALTER TABLE ONLY public.messages ALTER COLUMN id SET DEFAULT nextval('public.messages_id_seq'::regclass);
+
+
+--
+-- Name: product_tokens id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.product_tokens ALTER COLUMN id SET DEFAULT nextval('public.product_tokens_id_seq'::regclass);
 
 
 --
 -- Name: products id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.products
-    ALTER COLUMN id SET DEFAULT nextval('public.products_id_seq'::regclass);
+ALTER TABLE ONLY public.products ALTER COLUMN id SET DEFAULT nextval('public.products_id_seq'::regclass);
 
 
 --
 -- Name: profiles id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.profiles
-    ALTER COLUMN id SET DEFAULT nextval('public.profiles_id_seq'::regclass);
+ALTER TABLE ONLY public.profiles ALTER COLUMN id SET DEFAULT nextval('public.profiles_id_seq'::regclass);
 
 
 --
 -- Name: skills id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.skills
-    ALTER COLUMN id SET DEFAULT nextval('public.skills_id_seq'::regclass);
+ALTER TABLE ONLY public.skills ALTER COLUMN id SET DEFAULT nextval('public.skills_id_seq'::regclass);
 
 
 --
 -- Name: tickets id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.tickets
-    ALTER COLUMN id SET DEFAULT nextval('public.tickets_id_seq'::regclass);
+ALTER TABLE ONLY public.tickets ALTER COLUMN id SET DEFAULT nextval('public.tickets_id_seq'::regclass);
 
 
 --
 -- Name: tickets_changes id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.tickets_changes
-    ALTER COLUMN id SET DEFAULT nextval('public.tickets_changes_id_seq'::regclass);
+ALTER TABLE ONLY public.tickets_changes ALTER COLUMN id SET DEFAULT nextval('public.tickets_changes_id_seq'::regclass);
 
 
 --
@@ -424,7 +437,8 @@ ALTER TABLE ONLY public.tickets_changes
 --
 
 COPY public.attachments (id, file, name, type, message_id) FROM stdin;
-\.
+\
+.
 
 
 --
@@ -450,21 +464,38 @@ COPY public.experts (id, city, country, email, name, surname) FROM stdin;
 --
 
 COPY public.messages (id, content, sender, "time", expert_id, ticket_id) FROM stdin;
-1	Ciao, ho bisogno di assistenza per il mio ordine.	CUSTOMER	1640856000	\N	4
-2	Buongiorno, in cosa posso aiutarti?	EXPERT	1640856120	3	4
-3	Ho ricevuto un prodotto danneggiato, cosa posso fare?	CUSTOMER	1640856200	\N	4
-4	Mi dispiace per linconveniente, puoi mandarmi una foto del prodotto?	EXPERT	1640856260	3	4
-5	Eccola qui.	CUSTOMER	1640856340	\N	4
-6	Grazie, possiamo organizzare un reso o una sostituzione.	EXPERT	1640856400	3	4
-7	Preferirei una sostituzione, grazie.	CUSTOMER	1640856460	\N	4
-8	Va bene, ti faremo sapere quando il nuovo prodotto sarÃ  in viaggio.	EXPERT	1640856520	3	4
-9	Buongiorno, vorrei sapere come funziona il vostro servizio di assistenza.	CUSTOMER	1640870400	\N	5
-10	Ciao, il nostro servizio di assistenza Ã¨ a disposizione per qualsiasi problema tu abbia con il tuo ordine.	EXPERT	1640870520	5	5
-11	Grazie, avevo dei dubbi riguardo al mio ordine. Ho visto che non Ã¨ stato ancora spedito.	CUSTOMER	1640870580	\N	5
-12	Hai ragione, ci sono stati dei ritardi nella produzione. Ti confermo che il tuo ordine verrÃ  spedito entro la fine della settimana.	EXPERT	1640870640	5	5
-13	Ok, grazie per informazione.	CUSTOMER	1640870700	\N	5
-14	Di nulla, siamo qui per aiutarti.	EXPERT	1640870760	5	5
+1	Hi, I need assistance with my product.	CUSTOMER	1640856000
+\N	4
+2	Good morning, what can I help you with?	EXPERT	1640856120	3	4
+3	I received a damaged product, what can I do?	CUSTOMER	1640856200
+\N	4
+4	Sorry for the inconvenience, can you send me a picture of the product?	EXPERT	1640856260	3	4
+5	Here it is.	CUSTOMER	1640856340
+\N	4
+6	Thank you, we can arrange a return or replacement.	EXPERT	1640856400	3	4
+7	I would prefer a replacement, thank you.	CUSTOMER	1640856460
+\N	4
+8	All right, we will let you know when the new product is on its way.	EXPERT	1640856520	3	4
+9	Good morning, I would like to know how your support service works.	CUSTOMER	1640870400
+\N	5
+10	Hello, our support service is available for any problems you have with your order.	EXPERT	1640870520	5	5
+11	Thank you, I had doubts about my order. I saw that it has not been shipped yet.	CUSTOMER	1640870580
+\N	5
+12	You are right, there have been some delays in production. I confirm that your order will be shipped by the
+end of the week.	EXPERT	1640870640	5	5
+13	Okay, thank you for information.	CUSTOMER	1640870700
+\N	5
+14	You are welcome, we are here to help you.	EXPERT	1640870760	5	5
 \.
+
+
+--
+-- Data for Name: product_tokens; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.product_tokens (id, created_at, registered_at, token, product_id, user_id) FROM stdin;
+\
+.
 
 
 --
@@ -487,7 +518,7 @@ COPY public.products (id, asin, brand, category, manufacturer_number, name, pric
 13	B008JJLZ7G	WD	Computers	WD20EFRX	2TB Red 5400 rpm SATA III 3.5 Internal NAS HDD	89.99	1.32
 14	B00N13XLKE	Panamax	Audio Power Conditioners	MR4000	Details About Panamax Mr4000 8outlets Surge Protector Home Theater Power Line Management	199	6.5
 15	B0038NMC8O	Alpine	Parts & Accessories	SPE-6000	Details About Alpine 480w 6.5 2way Typee Coaxial Car Speakers W/ Silk Tweeters | Spe6000"	51.99	5.2
-16	B00JQXT82I	Transcend	Computers	TS480GJDM420	Transcend - JetDrive 420 480GB Internal Serial ATA III Solid State Drive for Select Appleï¿½ Computers	249.99	3
+16	B00JQXT82I	Transcend	Computers	TS480GJDM420	Transcend - JetDrive 420 480GB Internal Serial ATA III Solid State Drive for Select Apple Computers	249.99	3
 17	B00KGGK1J8	Samsung	Accessories	EB-P310SIWESTA	Samsung Universal 3100mAh Portable External Battery Charger - White	22.99	5.6
 18	B0070UKBO8	MEE audio	Headphones	HP-AF32-RB-MEE	Air-Fi Runaway AF32 Stereo Bluetooth Wireless Headphones with Hidden Microphone (Black and Red)	49	3.88
 19	B00CBF0VIS	SpeakerCraft	In-Wall & In-Ceiling Speakers	ASM86601-5	SpeakerCraft - 6-1/2 In-Ceiling Speakers (5-Pack) - White"	449.99	5
@@ -729,12 +760,11 @@ COPY public.products (id, asin, brand, category, manufacturer_number, name, pric
 255	B00337TK2Q	MTX Audio	Stereos	AW82B	MTX Audio - MTX 8 225W 2-way Speaker (Each) - Black"	172.99	16.3
 256	B003BLOSJ4	SKB	Computers	1SKBAV8	Audio Video Shelf	45.75	6
 257	B0771TDBW4	SunBriteTV	Audio & Video Accessories	SB-WM-T-L-BL	SunBriteTV - Outdoor Tilting TV Wall Mount for Most 37 - 80" TVs - Powder coated black"	149.98	165
-258	B013WQIDR0	Boseï¿½	In-Wall & In-Ceiling Speakers	BOSE 591 IN-CEILING SPEAKERS	Boseï¿½ - Virtually Invisibleï¿½ 591 In-Ceiling Speakers (Pair) - White	449.99	3.1
+258	B013WQIDR0	Bose�	In-Wall & In-Ceiling Speakers	BOSE 591 IN-CEILING SPEAKERS	Bose� - Virtually Invisible� 591 In-Ceiling Speakers (Pair) - White	449.99	3.1
 259	B013UCJFSW	Grace Digital	Stereos	GDI-BTAR512N	Grace Digital - 100W 2.0-Ch. Amplifier - Black	169.99	8.6
 260	B009F1HUMQ	ViewSonic	Computers	VX2270SMH-LED	22 Widescreen Full HD 1080p LED Monitor	129	7.9
 261	B00VAJBG8A	Motorola Home	Electronics	FOCUS85-B	Motorola FOCUS85-B Wi-Fi HD Home Monitoring Camera with Remote Pan	110.66	1.25
 262	B00TB8XNEC	WD	Computers	WDBWZE0240KBK-NESN	My Cloud Expert Series EX4100 24TB 4-Bay NAS Server (4 x 6TB)	1199	3.94
-370	B00NIZ3DB2	JBL	Electronics	CINEMA SB350	JBL Cinema SB350 Soundbar System	279.94	7.3
 263	B004GBFVA8	Polaroid	Photography	PLTRIC	65 Ultra-Light Carbon Fiber Tripod with Ball Head (Black)	139.99	81.6
 264	B007Z92RIW	Case Logic	Computers	ZLCS214	14 Checkpoint Friendly Laptop Case	44.54	1.8
 265	B074NG842Z	Samsung	Samsung Smart TVs	UN49MU6290FXZA	Samsung - 49 Class - LED - MU6290 Series - 2160p - Smart - 4K Ultra HD TV with HDR"	597.99	30
@@ -776,7 +806,8 @@ COPY public.products (id, asin, brand, category, manufacturer_number, name, pric
 301	B075SL6N8H	TiVo	Electronics	TCD849300V	TiVo - BOLT VOX 3TB DVR and Streaming Player - Black	499.98	1.9
 302	B073JP6WK4	Samsung	Samsung Tax Time Savings	UN32M4500AFXZA	Samsung - 32 Class (31.5" Diag.) - LED - 720p - Smart - HDTV"	249	9
 303	B0118LR9Z8	Samsung	Micro SD (SD	MB-MC256DA/AM	Samsung EVO+ 256GB UHS-I microSDXC U3 Memory Card with Adapter (MB-MC256DA/AM)	56.99	0.16
-304	B071RCNXXZ	HP	Electronics	15-ay103dx	HP 15-AY103DX 15.6 Touchscreen Touch Screen HD Laptop Notebook PC Computer 7th Gen i5-7200U Kaby Lake 8GB Memory 1TB HDD Hard Drive Windows 10"	539.96	6.2
+304	B071RCNXXZ	HP	Electronics	15-ay103dx	HP 15-AY103DX 15.6 Touchscreen Touch Screen HD Laptop Notebook PC Computer 7th Gen i5-7200U Kaby Lake 8GB Memory 1TB HDD Hard Drive Windows 10
+"	539.96	6.2
 305	B015ZRJ8NW	Apple	USB-to-VGA Adapters	MD825AM/A	Apple MD825AM/A Lightning to VGA Adapter for iPhones	24.99	1.6
 306	B00F6PRSMW	Bowers & Wilkins	Headphones	P7	Bowers and Wilkins - P7 Over-the-Ear Headphones - Black	356.5	0.6
 307	B01EMQI2CU	Yamaha	Recievers	RS202BL	R-S202 Stereo Receiver with Bluetooth (Black)	141.99	14.8
@@ -784,7 +815,8 @@ COPY public.products (id, asin, brand, category, manufacturer_number, name, pric
 309	B00VNH98IY	Sony	Consumer Electronics	STRDN860	Sony STR DN860 7.2 Channel 165 Watt Receiver	394.99	18.8
 310	B014R2BHBM	GEKO	Dashcams yexzywbdwfcwvezrcxur	E1008G	E100 1080p Dash Camera	69.99	1.6
 311	B00025742A	Pyle Pro	Audio & Video Accessories	PP999	PP999 Phono Preamplifier	33.99	0.88
-312	B06Y1SQFV3	Virgin Mobile	No-Contract Phones & Plans	LGLS777AVB	Virgin Mobile - LG Styloï¿½ 3 4G LTE with 16GB Memory Prepaid Cell Phone - Gray	124.99	5.3
+312	B06Y1SQFV3	Virgin Mobile	No-Contract Phones & Plans	LGLS777AVB	Virgin Mobile - LG Stylo
+� 3 4G LTE with 16GB Memory Prepaid Cell Phone - Gray	124.99	5.3
 313	B06XD4QHQB	Sony	TVs & Electronics	XBR55A1E	Sony - 55 Class - OLED - A1E Series - 2160p - Smart - 4K UHD TV with HDR"	3050	63.5
 314	B074G917W1	Samsung	Cases	EF-ZN950CVEGUS	S-View Flip Cover for Galaxy Note 8 (Orchid Gray)	29.99	3.2
 315	B00D2LGRLK	CORSAIR	Desktop Memory	CMY16GX3M2A1600C9B	CORSAIR - Vengeance Pro Series 16GB (2PK x 8GB) 1.6 GHz DDR3 DIMM Desktop Memory Kit - Multi	129.99	3.04
@@ -801,17 +833,21 @@ COPY public.products (id, asin, brand, category, manufacturer_number, name, pric
 326	B075KMZ4MX	Razer	Accessories	RZ03-02260200-R3U1	Details About Razer Cynosa Chroma Rgb Gaming Keyboard Spillresistant Durable Design	48.95	2.09
 327	B06WLGFWGX	Sony	Mirrorless System Lenses	SEL85F18	Sony SEL85F18 85mm F/1.8-22 Medium-Telephoto Fixed Prime Camera Lens	599.99	1.19
 328	B078RV3RKS	Logitech	Audio & Video Accessories	915-000293	Logitech - Harmony 665 10-Device Universal Remote - Black	69.99	2
-329	B01BXDYYIQ	kate spade new york	Laptop Bags & Cases	KSMB-013-RGG	kate spade new york - Glitter Sleeve for 13 Appleï¿½ MacBookï¿½ - Rose Gold"	69.99	1.18
+329	B01BXDYYIQ	kate spade new york	Laptop Bags & Cases	KSMB-013-RGG	kate spade new york - Glitter Sleeve for 13 Apple
+� MacBook
+� - Rose Gold"	69.99	1.18
 330	B01N9SSQ9E	Razer	Computers	RZ09-01953E72-R3U1	Details About Razer Blade Laptop 14 Full Hd (i77700hq"	1679.99	4.16
 331	B00A39PPCG	V-MODA	Headphones	M-100-U-SHADOW	V-MODA - CROSSFADE M-100 Over-the-Ear Headphones - Shadow	249.98	10
 332	B0085IWXB8	CORSAIR	Computers	CMZ16GX3M2A1600C9	CORSAIR - Vengeance 16 GB (2PK x 8GB) 1.6 GHz DDR3 DIMM Desktop Memory Kit - Multi	45	0.16
 333	B00CKWOTF8	Alpine	Satellite Radios	CDE-SXM145BT	Alpine CDESXM145BT Advanced Bluetooth CD / SiriusXM Receiver	166.95	3.31
 334	B072QGJNVC	Apple	Computers	MNYL2LL/A	12 MacBook (Mid 2017. Gold)	1409.99	2.03
-335	B073JYHTV6	LG	TV	28LJ400B-PU	LG - 28 Class (27.5" Diag.) - LED - 720p - HDTV"	149.72	11
+335	B073JYHTV6	LG	TV	28LJ400B-PU	LG - 28 Class (27.5
+" Diag.) - LED - 720p - HDTV"	149.72	11
 336	B0195XZJ9E	Seagate	Computers	STEH2000100	Seagate Backup Plus Ultra Slim 2TB Portable External Hard Drive	148.5	4.75
 337	B06ZYB7TZ1	XFX	Virtual Reality for PC	RX-580P8DFWR	XFX - AMD Radeon RX 580 GTR XXX Edition 8GB GDDR5 PCI Express 3.0 Graphics Card - Black/White	329.99	2.7
 338	B06ZZ2VXJ2	Yamaha	TV	RX-A670BL	Yamaha - AVENTAGE 7.2-Ch. 4K Ultra HD A/V Home Theater Receiver - Black	549.98	18.3
-339	B01N5K2PUU	Insignia	Audio & Video Accessories	NS-HTVMM1703-C	Insignia 47 - 80" Full Motion TV Wall Mount"	99.99	30
+339	B01N5K2PUU	Insignia	Audio & Video Accessories	NS-HTVMM1703-C	Insignia 47 - 80
+" Full Motion TV Wall Mount"	99.99	30
 340	B000P9VHOO	StarTech	Computers & Accessories	PCIIDE2	StarTech - 2 Port PCI IDE Controller Adapter Card - Green	51.99	0.163
 341	B017AED6TA	Epson	Office	V11H723020	Epson EX5250 Pro Wireless Business Projector	599.95	5.29
 342	B01A71WJ5K	ECOXGEAR	Electrical	GDI-EXSJ401	ECOXGEAR - SolJam Portable Bluetooth Speaker - Black	128.78	2.4
@@ -822,7 +858,8 @@ COPY public.products (id, asin, brand, category, manufacturer_number, name, pric
 347	B06WGPNGC2	Dell	Computers/Tablets & Networking	XPS9365-7086SLV-PUS	Dell - XPS 2-in-1 13.3 Touch-Screen Laptop - Intel Core i7 - 16GB Memory - 256GB Solid State Drive - Silver"	909.99	2.7
 348	B00ZYCNH5O	Klipsch	Headphones	1062330	Klipsch AW-4i In-Ear Headphones	59	0.48
 349	B01N6SKK1G	Arris	Wi-Fi & Networking	SB8200	Next-Generation ARRIS SURFboard SB8200 DOCSIS 3.1 Cable Modem - Retail Packaging- White	174	2.51
-350	B075NY1N3V	Sony	Android Auto Receivers	XAVAX200SXM	Sony - 6.4 - Android Auto/Apple CarPlayï¿½ with SiriusXM Tuner - Built-in Bluetooth - In-Dash DVD/DM Receiver - Black"	499.99	3.75
+350	B075NY1N3V	Sony	Android Auto Receivers	XAVAX200SXM	Sony - 6.4 - Android Auto/Apple CarPlay
+� with SiriusXM Tuner - Built-in Bluetooth - In-Dash DVD/DM Receiver - Black"	499.99	3.75
 351	B00BPATVEA	Dual	Electronics	SBX101	Dual - 10 Single-Voice-Coil 4-Ohm Subwoofer with Enclosure - Black/Silver"	64.59	21
 352	B007I57L3Y	Russound	Stereos	5B65 WHITE	Russound - Acclaim 5 Series 6-1/2 2-Way Indoor/Outdoor Speakers (Pair) - White"	168.94	7.1
 353	B00MXUCRG0	Yamaha	Integrated Amplifiers	AS501BL	A-S501 Integrated Amplifier (Black)	549.98	22.7
@@ -842,6 +879,7 @@ COPY public.products (id, asin, brand, category, manufacturer_number, name, pric
 367	B01IS5WOH0	Insignia	Consumer Electronics	ns-hdrad2	Insignia NS-HDRAD2 Tabletop HD Radio	36.99	2.05
 368	B0719462ZV	Sharp	Portable Bluetooth Speakers	XL-BH250	Sharp - 5-Disc Micro System - Black	179.99	15.7
 369	B018TEVTJO	Apple	Tablets	MK6J2LL/A	Apple - Pre-Owned iPad mini 4 - 16GB - Space gray	309.99	16.48
+370	B00NIZ3DB2	JBL	Electronics	CINEMA SB350	JBL Cinema SB350 Soundbar System	279.94	7.3
 371	B00A39PPDK	V-MODA	Computers	M-100-U-MBLACKM	V-MODA - CROSSFADE M-100 Over-the-Ear Headphones - Black	270	2
 372	B00X409PQS	Panasonic	Digital Cameras	DMC-G7KK	Lumix DMC-G7 Mirrorless Micro Four Thirds Digital Camera with 14-42mm Lens and Accessory Kit (Black)	649.95	14.64
 373	B004FEEY9A	Sennheiser	Consumer Electronics	504631	SENNHEISER HD 558 Over Ear Headphones HD558 - AUTHORIZED DEALER	149.99	1.6
@@ -929,7 +967,8 @@ COPY public.products (id, asin, brand, category, manufacturer_number, name, pric
 454	B074KCPQQV	Sony	Headphones	WF1000X/BM1	Sony - WF 1000X True Wireless In-Ear Noise Canceling Headphones - Black	198	0.15
 455	B072JYK37N	Samsung	TVs & Electronics	UN65MU9000FXZA	MU9000-Series 65-Class HDR UHD Smart LED TV	1599.99	8
 456	B000FIJA6W	MartinLogan	Subwoofers	DYNAMO 500	MartinLogan - Dynamo 500 10 360-Watt Powered Subwoofer - Black"	495	28.5
-457	B01N6JQS8C	Kingston	Computers	SA400S37/120G	Details About Kingston A400 Ssd 120gb Sata Iii 2.5ï¿½ Internal Solid State Drive Sa400s37/120g	49	1.45
+457	B01N6JQS8C	Kingston	Computers	SA400S37/120G	Details About Kingston A400 Ssd 120gb Sata Iii 2.5
+� Internal Solid State Drive Sa400s37/120g	49	1.45
 458	B01NCOOFGO	Intel	Computers	34-b010	HP ENVY 34-b010 34-inch Curved All-in-One Computer (Intel Core i7-7700T	1829.99	25.79
 459	B0781Z7Y3S	Samsung	Computers/Tablets & Networking	MZ-76E500B/AM	Samsung 860 EVO 500GB 2.5 Inch SATA III Internal SSD (MZ-76E500B/AM)	134.99	3.04
 460	B01CT6VI0S	Epson	Projector Mounts efrzfauzcdteryffuqcbtwtzstbwytexb	V12H808001	Universal Projector Mount with 3 Extension Column	104.99	25
@@ -965,7 +1004,7 @@ COPY public.products (id, asin, brand, category, manufacturer_number, name, pric
 491	B00KHRYRLY	SanDisk	Computers	SDSSDXPS-480G-G25	480GB Extreme Pro Solid State Drive	219	4.8
 492	B00I4D2YBI	Kicker	Electronics	41DSC44	Kicker DSC44 4 D-Series 2-Way Car Speakers with 1/2" Tweeters"	29.95	2.8
 493	B00O8MULHI	JBL	Car Speakers	GX602	JBL - 6-1/2 2-Way Coaxial Car Speakers with Polypropylene Cones (Pair) - Black"	49.95	4.76
-494	B01N05SJHF	Insigniaï¿½	Computer Accessories & Peripherals	NS-PWLC641	Insigniaï¿½ - Battery Charger for Acer. HP and Samsung Chromebooks - Black	50.99	0
+494	B01N05SJHF	Insignia�	Computer Accessories & Peripherals	NS-PWLC641	Insignia� - Battery Charger for Acer. HP and Samsung Chromebooks - Black	50.99	0
 495	B071P6KQZH	Optoma	TV	UHD60	Optoma - UHD60 4K DLP Projector with High Dynamic Range - White	1999	16
 496	B074WC9YKL	Joby	Tripod & Monopod Accessories	JB01507	JOBY GorillaPod 3K Kit. Compact Tripod 3K Stand and Ballhead 3K for Compact Mirrorless Cameras or devices up to 3K (6.6lbs). Black/Charcoal.	49.95	13.8
 497	B006EB6L0M	Speck	Computers	SPK-A2733	SeeThru Hard Shell Case for 13 MacBook Pro (Clear)	36.32	10.6
@@ -1009,7 +1048,7 @@ COPY public.products (id, asin, brand, category, manufacturer_number, name, pric
 535	B01ATFIHSM	Papago	Surveillance	GSS308G	GoSafe S30 1080p Dash Cam	99.99	1.6
 536	B01HTAPPJE	Netgear	Computers	DM200-100NAS	Details About Netgear Modem Vdsl/adsl Broadband High Speed Dsl Dm200 Verizon At&t Used!	59.93	5.76
 537	B01G6BIN8C	Mevo	Audio & Video Accessories	MV1-01A-BL	Mevo Live Event Camera Kit with Mevo Boost. Stand Case (Black)	299	4.6
-538	B01LXAYO14	Sideclick	Audio & Video Accessories	SC2-RK15K/SC2-RK16K	Sideclick - Universal Remote Attachment for Rokuï¿½ Streaming Players - Black	42.23	5.13
+538	B01LXAYO14	Sideclick	Audio & Video Accessories	SC2-RK15K/SC2-RK16K	Sideclick - Universal Remote Attachment for Roku� Streaming Players - Black	42.23	5.13
 539	B00XWIVTXY	Sharp	Portable Bluetooth Speakers	XL-HF102B	Sharp - 50W Executive Hi-Fi Component System - Black	149.99	21.4
 540	B005PKPTB0	Wacom	See more Wacom Wireless Accessory Kit for Bamboo and In...	ACK40401	Wacom Wireless Accessory Kit for Bamboo and Intuos Tablets (ACK40401)	36.09	0.48
 541	B003S68Q0Y	Cooler Master	Computers	Rc-942-Kkn1	Cooler Master - HAF X Ultimate Full-Tower Chassis - Black	187.52	31.6
@@ -1032,7 +1071,10 @@ COPY public.products (id, asin, brand, category, manufacturer_number, name, pric
 558	B0711C1R4X	Olympus	Digital Cameras	V104190BU000	Olympus TG-5 Waterproof Camera with 3-Inch LCD	449	0.55
 559	B07228XKNQ	Yamaha	Receivers Amplifiers	RX-A870BL	Yamaha - AVENTAGE 7.2-Ch. 4K Ultra HD A/V Home Theater Receiver - Black	1064.52	23.2
 560	B00PRB5MW8	Onkyo	TV	M-5010	Onkyo M-5010 2-Channel Amplifier (Black)	229.99	17.6
-561	B0053T4PHC	Boseï¿½	Audio & Video Accessories	COMPANION 20	Boseï¿½ - Companionï¿½ 20 Multimedia Speaker System (2-Piece) - White	249.99	2.5
+561	B0053T4PHC	Bose
+�	Audio & Video Accessories	COMPANION 20	Bose
+� - Companion
+� 20 Multimedia Speaker System (2-Piece) - White	249.99	2.5
 562	B072KPG9PN	Samsung	Unlocked Cell Phones	SM-J327UZKAXAA	Samsung - Galaxy J3 4G LTE with 16GB Memory Cell Phone (Unlocked) - Black	149.99	5.2
 563	B002UI8E4O	Panamax	TV Accessories	PM8-AV	Panamax - 8-Outlet Power Conditioner/Surge Protector - Gray	66.98	2.2
 564	B00CRVZRVM	Yamaha	Audio & Video Accessories	NS-PA40BL	NS-PA40 5.1-Channel Speaker System (Black)	349.95	6.2
@@ -1108,6 +1150,7 @@ COPY public.products (id, asin, brand, category, manufacturer_number, name, pric
 634	B01M6X2LW6	SunBriteTV	LED & LCD TVs	SB-4374UHD-BL	SunBriteTV - Veranda Series - 43 Class - LED - Outdoor - Full Shade - 2160p - 4K UHD TV with HDR"	1499.98	30
 635	B01CMYGAGY	Acer	Computers	CB5-571-C4G4	Acer 15.6 Chromebook CB5-571-C4G4	223.99	15.6
 636	B00DQ4D7AW	Western Digital	Computers	WD10EZEX	WD Blue 1TB SATA 6 Gb/s 7200 RPM 64MB Cache 3.5 Inch Desktop Hard Drive (WD10EZEX)	49	0.96
+797	B01GL65NMQ	Cobra	Electrical	CDR895D	Cobra - CDR895D Front and Rear Camera Dash Cam - Black	168.99	1
 637	B01B5CTRGE	Netgear	Computers	PLW1000-100NAS	Details About Netgear Powerline 1000 Mbps Wifi 802.11ac 1 Gigabit Port Plw1000100nas	119.99	0.59
 638	B071VK5KXN	Logitech	Computers	910005132	MX Anywhere 2S Wireless Mouse	79.95	3.74
 639	B01MZF81ZV	Samsung	LCD TVs	QN55Q7CAMFXZA	Samsung - 55 Class - LED - Curved - Q7C Series - 2160p - Smart - 4K UHD TV with HDR"	2997.99	58.4
@@ -1143,7 +1186,7 @@ COPY public.products (id, asin, brand, category, manufacturer_number, name, pric
 669	B006I2H04I	NZXT	Computers	CAPH410W1	Phantom 410 Mid-Tower Case (White)	82.88	19.8
 670	B00N625HZ2	Yamaha	Integrated Amplifiers	AS801BL	A-S801 Integrated Amplifier (Black)	899.98	26.7
 671	B00TTWZFFA	Sony	Electronics	SRSX11/BLK	Sony Ultra-Portable Bluetooth Speaker	69.99	1
-672	B013WQIDAW	Boseï¿½	In-Wall & In-Ceiling Speakers	BOSE 791 IN-CEILING SPKERS II	Boseï¿½ - Virtually Invisibleï¿½ 791 In-Ceiling Speakers II (Pair) - White	599.99	4.6
+672	B013WQIDAW	Bose�	In-Wall & In-Ceiling Speakers	BOSE 791 IN-CEILING SPKERS II	Bose� - Virtually Invisible� 791 In-Ceiling Speakers II (Pair) - White	599.99	4.6
 673	B01DT48WZS	Linksys	Computers	RE7000	Linksys AC1900 Gigabit Range Extender/WiFi Booster/Repeater MU-MIMO (Max Stream RE7000)	199.97	6.2
 674	B004UC2N7M	Alpine	Auto & Tires	SPS-517	Alpine - 5 x 7" 2-Way Coaxial Car Speakers with Poly-Mica Cones (Pair) - Black"	59.99	2.7
 675	B00C8JG0YQ	TP-Link	Computers	TLWDN4800	450 Mbps 2.4/5GHz Wireless N Dual Band PCI Express Adapter	39.99	0.16
@@ -1153,7 +1196,10 @@ COPY public.products (id, asin, brand, category, manufacturer_number, name, pric
 679	B012DSZKV0	Pny	Computers/Tablets & Networking	MD16384KD3-1866-K-X10	PNY - 16 GB (2PK x 8GB) 1.8 GHz DDR3 DIMM Desktop Memory Kit - Black	104.95	4
 680	B00M0FDN9I	SiriusXM	Electronics	SXSD2	SiriusXM SXSD2 Portable Speaker Dock Audio System for Dock and Play Radios (Black)	103.99	11.35
 681	B00M8ABHVQ	SanDisk	Computers	SDSSDHII-960G-G25	SanDisk - Ultra II 960GB Internal SATA Solid State Drive for Laptops	279.99	1.92
-682	B0117RFPCC	Boseï¿½	Bose	SoundSport IE HP SMSG BLK	Boseï¿½ - SoundSportï¿½ In-Ear Headphones (Android) - Charcoal	46.3	0.04
+682	B0117RFPCC	Bose
+�	Bose	SoundSport IE HP SMSG BLK	Bose
+� - SoundSport
+� In-Ear Headphones (Android) - Charcoal	46.3	0.04
 683	B071WT7ZZJ	Sony	Portable Bluetooth Speakers	SRSXB20/BLUE	Sony - XB20 Portable Bluetooth Speaker - Blue	78	1.3
 684	B009NEKAEA	Energizer	Electrical	UNH15BP-8	Energizer - Recharge Rechargeable AA Batteries (8-Pack)	26.99	0.4
 685	B000FLNU4M	Yamaha	In-Wall & In-Ceiling Speakers	NS-IW470WH	Yamaha - Natural Sound 6-1/2 3-Way In-Wall Speakers (Pair) - White"	125.99	4.2
@@ -1171,14 +1217,14 @@ COPY public.products (id, asin, brand, category, manufacturer_number, name, pric
 697	B06XVFY3M8	Onkyo	Used:TV Entertainment	TX-NR575	Onkyo - TX 7.2-Ch. Network-Ready A/V Home Theater Receiver - Black	339.99	20.7
 698	B00H36U69Y	Panasonic	Mirrorless System Lenses	H-HS043K	Lumix G 42.5mm f/1.7 ASPH. POWER O.I.S. Lens	282.99	4.6
 699	B079YV5XQH	Samsung	Samsung Smart TVs	UN65MU6290FXZA	Samsung - 65 Class - LED - MU6290 Series - 2160p - Smart - 4K Ultra HD TV with HDR"	1099.99	56.7
-700	B004HJ3J8K	Pyle	Car Video	PLTS78DUB	Single DIN Head Unit Receiver - In-Dash Car Stereo with 7ï¿½ Multi-Color Touchscreen Display - Audio Video System with Bluetooth for Wireless Music Streaming & Hands-free Calling - Pyle PLTS78DUB	223.89	6.2
+700	B004HJ3J8K	Pyle	Car Video	PLTS78DUB	Single DIN Head Unit Receiver - In-Dash Car Stereo with 7� Multi-Color Touchscreen Display - Audio Video System with Bluetooth for Wireless Music Streaming & Hands-free Calling - Pyle PLTS78DUB	223.89	6.2
 701	B01LTHXAOK	Apple	Walmart for Business	MNQF2LL/A	Apple MacBook Pro with Touch Bar - 13.3 - Core i5 - 8 GB RAM - 512 GB SSD - English"	1749	3
 702	B00RVGXYJK	Garmin	GPS Units	101224210	BC 30 Wireless Backup Camera with Car Adapter Power Cable	149.99	13.6
 703	B00FSB749Q	Sony	Camera Chargers & Adapters	BCTRW	BC-TRW W Series Battery Charger (Black)	39.99	2.4
 704	B00181YDXU	Yamaha	Outdoor Speakers	NS-AW390WH	Yamaha - Natural Sound 6-1/2 2-Way All-Weather Outdoor Speakers (Pair) - White"	99.95	4.9
 705	B01N634P7O	Google	Video Games	MAIN-62303	Google Daydream View - VR Headset (Slate)	89.99	1.1
 706	B00VU2NHVG	Apple	Computers	MJ1L2AM/A	Apple USB-C VGA Multiport Adapter	24.99	2.4
-707	B00OLZCD5K	Pioneer	Computers	BDR-XD05S	Pioneer - 8x External USB 3.0 Quad-Layer Blu-ray Disc DL DVDï¿½RW/CD-RW Drive - Silver	74.99	0.51
+707	B00OLZCD5K	Pioneer	Computers	BDR-XD05S	Pioneer - 8x External USB 3.0 Quad-Layer Blu-ray Disc DL DVD�RW/CD-RW Drive - Silver	74.99	0.51
 708	B019Q88VCA	Sony	Mobile	SRSHG1/RED	h.ear go Wireless Speaker (Cinnabar Red)	198	1.74
 709	B00FRDV06I	Sony	Digital Cameras	ILCE7K/B	Alpha a7 Mirrorless Digital Camera with 28-70mm Lens and Battery Kit	949.95	14.67
 710	B01MCRBY4X	Sony	Cameras	DSCRX100M5/B	Cyber-shot DSC-RX100 V Digital Camera	998	10.55
@@ -1223,7 +1269,7 @@ COPY public.products (id, asin, brand, category, manufacturer_number, name, pric
 749	B01MZFJWOS	Sony	4K Ultra HD TVs	XBR43X800E	Sony 43 Class 4K UHD (2160P) Smart LED TV (XBR43X800E)"	648	23.8
 750	B01MT67O7K	Sharp	Portable Bluetooth Speakers	CD-BH950	Sharp CD-BH950 240W 5-Disc Mini Shelf Speaker System with Cassette and Bluetooth	129.99	29
 751	B00EHBPF6W	Pioneer	Stereos	SP-SB23W	Pioneer - Andrew Jones Soundbar System with 6-1/2 Wireless Subwoofer - Black"	319.99	10.15
-752	B0148NPJ78	Logitech	Computers	981-000585	Logitech G933 Artemis Spectrum ï¿½ Wireless RGB 7.1 Dolby and DST Headphone Surround Sound Gaming Headset ï¿½ PC	77.99	1.8
+752	B0148NPJ78	Logitech	Computers	981-000585	Logitech G933 Artemis Spectrum � Wireless RGB 7.1 Dolby and DST Headphone Surround Sound Gaming Headset � PC	77.99	1.8
 753	B072LZZZXB	Netgear	Computers	R8000P100NAS	R8000P Nighthawk X6S AC4000 Wireless Tri-Band Gigabit Router	279.99	2.43
 754	B002NKM4C2	Yamaha	TV	CDC600BL	CD-C600 5-Disc CD Changer	329.95	13.7
 755	B012ASAWNE	PNY	Desktop Memory	MD8GSD31600NHS	PNY - 8GB 1.6 GHz DDR3 DIMM Desktop Memory - Green	89.99	0.3
@@ -1255,7 +1301,8 @@ COPY public.products (id, asin, brand, category, manufacturer_number, name, pric
 781	B00UBGU4PY	Microsoft	Computers	GU500001	Universal Foldable Bluetooth Keyboard for Mobile Devices	68.99	0.75
 782	B007ME3FKO	Alpine	Parts & Accessories	SPE-5000	Details About Alpine 400w 5.25 Typee Coaxial 2way Car Speakers | Spe5000"	69.99	3.8
 783	B00BL7N0US	Kanto Living	Office	P101W	P101 Ceiling Projector Mount (White)	39.99	4
-784	B071WLXMNL	Apple	Computers	MPXY2LL/A	Apple - MacBook Proï¿½ - 13 Display - Intel Core i5 - 8 GB Memory - 512GB Flash Storage (Latest Model) - Silver"	1999	3.02
+784	B071WLXMNL	Apple	Computers	MPXY2LL/A	Apple - MacBook Pro
+� - 13 Display - Intel Core i5 - 8 GB Memory - 512GB Flash Storage (Latest Model) - Silver"	1999	3.02
 785	B016NIOOH2	MEE audio	Headphones	AF-T1-BK-MEE	Connect Dual-Headphone Bluetooth Audio Transmitter	59.99	1.1
 786	B00B2MMU1M	Sylvania	TV	SDVD9957	Details About Sylvania Dual Portable Dvd Player W/ 9inch Widescreen Led Display Refurbished	115.99	4.32
 787	B06XKRWWSG	Sony	TVs & Electronics	STRDN1080	Sony - 1155W 7.2-Ch. Hi-Res Network-Ready 4K Ultra HD and 3D Pass-Through HDR Compatible A/V Home Theater Receiver - Black	450	21.4
@@ -1268,7 +1315,6 @@ COPY public.products (id, asin, brand, category, manufacturer_number, name, pric
 794	B00W8T2DPQ	Lowepro	Photography	LP36875	Pro Runner BP 450 AW II Backpack (Black)	249.95	6.4
 795	B010QD6W9I	Samsung	Internal Solid State Drives	MZ-75E2T0B/AM	Samsung 850 EVO 2TB 2.5-Inch SATA III Internal SSD (MZ-75E2T0B/AM)	749.99	0.14
 796	B072DWQTK3	Logitech	Computers	920-008617	Logitech iPad Slim Folio: Case with Wireless Keyboard with Bluetooth (Black) - iPad 5th generation	69.95	1
-797	B01GL65NMQ	Cobra	Electrical	CDR895D	Cobra - CDR895D Front and Rear Camera Dash Cam - Black	168.99	1
 798	B01M981YYL	Netgear	Computers	CM700100NAS	Details About Netgear Cm700 Docsis 3.0 32x8 High Speed Cable Modem	97.99	0.55
 799	B014X4U076	ASUS	Computers	MG278Q	MG278Q 27 Widescreen LED Backlit TN Gaming Monitor	495.99	16.9
 800	B019Q8974G	Sony	Stereos	SRSXB2/RED	SRS-XB2 Portable Bluetooth Wireless Speaker (Red)	49.95	1.1
@@ -1444,8 +1490,7 @@ COPY public.skills (id, expertise, level, expert_id) FROM stdin;
 -- Data for Name: tickets; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.tickets (id, created_at, description, last_modified_at, priority_level, status, title, customer_id,
-                     expert_id, product_id) FROM stdin;
+COPY public.tickets (id, created_at, description, last_modified_at, priority_level, status, title, customer_id, expert_id, product_id) FROM stdin;
 1	1682616982680	I'm trying to install the Sanus VLF410B1 mount for my TV, but I can't seem to get it to work	1682616982680	\N	OPEN	Can't install Sanus VLF410B1 mount	1	\N	1
 2	1582616982680	I'm having trouble with the sound on my Boytone BT-210F stereo system, it's not playing any audio	1582616982680	\N	OPEN	Boytone BT-210F sound issues	51	\N	2
 3	1612616982680	My DENAQ DQ-PA3032U-5525 adapter is not charging my Toshiba laptop, it's plugged in but not working	1612616982680	\N	OPEN	DENAQ DQ-PA3032U-5525 adapter not charging	12	\N	3
@@ -1467,8 +1512,7 @@ COPY public.tickets (id, created_at, description, last_modified_at, priority_lev
 -- Data for Name: tickets_changes; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.tickets_changes (id, changed_by, description, new_status, old_status, "time", current_expert_id,
-                             ticket_id) FROM stdin;
+COPY public.tickets_changes (id, changed_by, description, new_status, old_status, "time", current_expert_id, ticket_id) FROM stdin;
 1	MANAGER		IN_PROGRESS	OPEN	1681526902680	3	4
 2	MANAGER		IN_PROGRESS	OPEN	1680526902680	5	5
 3	MANAGER		IN_PROGRESS	OPEN	1681116982680	5	6
@@ -1519,6 +1563,13 @@ SELECT pg_catalog.setval('public.experts_id_seq', 10, true);
 --
 
 SELECT pg_catalog.setval('public.messages_id_seq', 14, true);
+
+
+--
+-- Name: product_tokens_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.product_tokens_id_seq', 1, false);
 
 
 --
@@ -1578,6 +1629,14 @@ ALTER TABLE ONLY public.experts
 
 ALTER TABLE ONLY public.messages
     ADD CONSTRAINT messages_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: product_tokens product_tokens_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.product_tokens
+    ADD CONSTRAINT product_tokens_pkey PRIMARY KEY (id);
 
 
 --
@@ -1645,6 +1704,14 @@ ALTER TABLE ONLY public.experts
 
 
 --
+-- Name: product_tokens uk_jjjm10dor0p48jjds81gftw31; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.product_tokens
+    ADD CONSTRAINT uk_jjjm10dor0p48jjds81gftw31 UNIQUE (token);
+
+
+--
 -- Name: profiles uk_lnk8iosvsrn5614xw3lgnybgk; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1681,7 +1748,7 @@ ALTER TABLE ONLY public.skills
 --
 
 ALTER TABLE ONLY public.messages
-    ADD CONSTRAINT fk6iv985o3ybdk63srj731en4ba FOREIGN KEY (ticket_id) REFERENCES public.tickets (id);
+    ADD CONSTRAINT fk6iv985o3ybdk63srj731en4ba FOREIGN KEY (ticket_id) REFERENCES public.tickets(id);
 
 
 --
@@ -1689,7 +1756,15 @@ ALTER TABLE ONLY public.messages
 --
 
 ALTER TABLE ONLY public.tickets
-    ADD CONSTRAINT fkavo2av2fyyehcvlec0vowwu1j FOREIGN KEY (product_id) REFERENCES public.products (id);
+    ADD CONSTRAINT fkavo2av2fyyehcvlec0vowwu1j FOREIGN KEY (product_id) REFERENCES public.products(id);
+
+
+--
+-- Name: product_tokens fkbrftw9pst0ha5e5q379qwwviv; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.product_tokens
+    ADD CONSTRAINT fkbrftw9pst0ha5e5q379qwwviv FOREIGN KEY (user_id) REFERENCES public.profiles(id);
 
 
 --
@@ -1697,7 +1772,7 @@ ALTER TABLE ONLY public.tickets
 --
 
 ALTER TABLE ONLY public.attachments
-    ADD CONSTRAINT fkcf4ta8qdkixetfy7wnqfv3vkv FOREIGN KEY (message_id) REFERENCES public.messages (id);
+    ADD CONSTRAINT fkcf4ta8qdkixetfy7wnqfv3vkv FOREIGN KEY (message_id) REFERENCES public.messages(id);
 
 
 --
@@ -1705,7 +1780,7 @@ ALTER TABLE ONLY public.attachments
 --
 
 ALTER TABLE ONLY public.tickets
-    ADD CONSTRAINT fkdqocj5l89sf10g9jguw7l5df9 FOREIGN KEY (expert_id) REFERENCES public.experts (id);
+    ADD CONSTRAINT fkdqocj5l89sf10g9jguw7l5df9 FOREIGN KEY (expert_id) REFERENCES public.experts(id);
 
 
 --
@@ -1713,7 +1788,15 @@ ALTER TABLE ONLY public.tickets
 --
 
 ALTER TABLE ONLY public.skills
-    ADD CONSTRAINT fkii03ooyp5ixkarmlivo5120vh FOREIGN KEY (expert_id) REFERENCES public.experts (id);
+    ADD CONSTRAINT fkii03ooyp5ixkarmlivo5120vh FOREIGN KEY (expert_id) REFERENCES public.experts(id);
+
+
+--
+-- Name: product_tokens fkiirye98tmy35ihsuq497a3tyw; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.product_tokens
+    ADD CONSTRAINT fkiirye98tmy35ihsuq497a3tyw FOREIGN KEY (product_id) REFERENCES public.products(id);
 
 
 --
@@ -1721,7 +1804,7 @@ ALTER TABLE ONLY public.skills
 --
 
 ALTER TABLE ONLY public.tickets_changes
-    ADD CONSTRAINT fkl09kxq2qp0arw11ch07re382c FOREIGN KEY (current_expert_id) REFERENCES public.experts (id);
+    ADD CONSTRAINT fkl09kxq2qp0arw11ch07re382c FOREIGN KEY (current_expert_id) REFERENCES public.experts(id);
 
 
 --
@@ -1729,7 +1812,7 @@ ALTER TABLE ONLY public.tickets_changes
 --
 
 ALTER TABLE ONLY public.tickets_changes
-    ADD CONSTRAINT fkm3mabj5ju8pdx6vg53qeukdcn FOREIGN KEY (ticket_id) REFERENCES public.tickets (id);
+    ADD CONSTRAINT fkm3mabj5ju8pdx6vg53qeukdcn FOREIGN KEY (ticket_id) REFERENCES public.tickets(id);
 
 
 --
@@ -1737,7 +1820,7 @@ ALTER TABLE ONLY public.tickets_changes
 --
 
 ALTER TABLE ONLY public.messages
-    ADD CONSTRAINT fkrcrtpt8k87r75i3gg0qd1jvf2 FOREIGN KEY (expert_id) REFERENCES public.experts (id);
+    ADD CONSTRAINT fkrcrtpt8k87r75i3gg0qd1jvf2 FOREIGN KEY (expert_id) REFERENCES public.experts(id);
 
 
 --
@@ -1745,7 +1828,7 @@ ALTER TABLE ONLY public.messages
 --
 
 ALTER TABLE ONLY public.tickets
-    ADD CONSTRAINT fkwsg96xnnr1cobwin0fj5xtqe FOREIGN KEY (customer_id) REFERENCES public.profiles (id);
+    ADD CONSTRAINT fkwsg96xnnr1cobwin0fj5xtqe FOREIGN KEY (customer_id) REFERENCES public.profiles(id);
 
 
 --

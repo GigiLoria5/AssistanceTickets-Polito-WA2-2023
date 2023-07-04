@@ -2793,40 +2793,40 @@ VALUES (1691498758279, 'Netgear CM700 modem not connecting to internet',
 
 -- Ticket 1
 INSERT INTO messages(sender, content, ticket_id, expert_id, time)
-VALUES ('CUSTOMER', 'Ciao, ho bisogno di assistenza per il mio ordine.', 4, NULL, 1640856000);
+VALUES ('CUSTOMER', 'Hi, I need assistance with my product.', 4, NULL, 1640856000);
 INSERT INTO messages(sender, content, ticket_id, expert_id, time)
-VALUES ('EXPERT', 'Buongiorno, in cosa posso aiutarti?', 4, 3, 1640856120);
+VALUES ('EXPERT', 'Good morning, what can I help you with?', 4, 3, 1640856120);
 INSERT INTO messages(sender, content, ticket_id, expert_id, time)
-VALUES ('CUSTOMER', 'Ho ricevuto un prodotto danneggiato, cosa posso fare?', 4, NULL, 1640856200);
+VALUES ('CUSTOMER', 'I received a damaged product, what can I do?', 4, NULL, 1640856200);
 INSERT INTO messages(sender, content, ticket_id, expert_id, time)
-VALUES ('EXPERT', 'Mi dispiace per linconveniente, puoi mandarmi una foto del prodotto?', 4, 3, 1640856260);
+VALUES ('EXPERT', 'Sorry for the inconvenience, can you send me a picture of the product?', 4, 3, 1640856260);
 INSERT INTO messages(sender, content, ticket_id, expert_id, time)
-VALUES ('CUSTOMER', 'Eccola qui.', 4, NULL, 1640856340);
+VALUES ('CUSTOMER', 'Here it is.', 4, NULL, 1640856340);
 INSERT INTO messages(sender, content, ticket_id, expert_id, time)
-VALUES ('EXPERT', 'Grazie, possiamo organizzare un reso o una sostituzione.', 4, 3, 1640856400);
+VALUES ('EXPERT', 'Thank you, we can arrange a return or replacement.', 4, 3, 1640856400);
 INSERT INTO messages(sender, content, ticket_id, expert_id, time)
-VALUES ('CUSTOMER', 'Preferirei una sostituzione, grazie.', 4, NULL, 1640856460);
+VALUES ('CUSTOMER', 'I would prefer a replacement, thank you.', 4, NULL, 1640856460);
 INSERT INTO messages(sender, content, ticket_id, expert_id, time)
-VALUES ('EXPERT', 'Va bene, ti faremo sapere quando il nuovo prodotto sarà in viaggio.', 4, 3, 1640856520);
+VALUES ('EXPERT', 'All right, we will let you know when the new product is on its way.', 4, 3, 1640856520);
 
 -- Ticket 2
 INSERT INTO messages(sender, content, ticket_id, expert_id, time)
-VALUES ('CUSTOMER', 'Buongiorno, vorrei sapere come funziona il vostro servizio di assistenza.', 5, NULL, 1640870400);
+VALUES ('CUSTOMER', 'Good morning, I would like to know how your support service works.', 5, NULL, 1640870400);
 INSERT INTO messages(sender, content, ticket_id, expert_id, time)
 VALUES ('EXPERT',
-        'Ciao, il nostro servizio di assistenza è a disposizione per qualsiasi problema tu abbia con il tuo ordine.', 5,
+        'Hello, our support service is available for any problems you have with your order.', 5,
         5, 1640870520);
 INSERT INTO messages(sender, content, ticket_id, expert_id, time)
-VALUES ('CUSTOMER', 'Grazie, avevo dei dubbi riguardo al mio ordine. Ho visto che non è stato ancora spedito.', 5, NULL,
+VALUES ('CUSTOMER', 'Thank you, I had doubts about my order. I saw that it has not been shipped yet.', 5, NULL,
         1640870580);
 INSERT INTO messages(sender, content, ticket_id, expert_id, time)
 VALUES ('EXPERT',
-        'Hai ragione, ci sono stati dei ritardi nella produzione. Ti confermo che il tuo ordine verrà spedito entro la fine della settimana.',
+        'You are right, there have been some delays in production. I confirm that your order will be shipped by the end of the week.',
         5, 5, 1640870640);
 INSERT INTO messages(sender, content, ticket_id, expert_id, time)
-VALUES ('CUSTOMER', 'Ok, grazie per informazione.', 5, NULL, 1640870700);
+VALUES ('CUSTOMER', 'Okay, thank you for information.', 5, NULL, 1640870700);
 INSERT INTO messages(sender, content, ticket_id, expert_id, time)
-VALUES ('EXPERT', 'Di nulla, siamo qui per aiutarti.', 5, 5, 1640870760);
+VALUES ('EXPERT', 'You are welcome, we are here to help you.', 5, 5, 1640870760);
 --tickets_changes
 
 --ticket 4
