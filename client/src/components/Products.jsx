@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Button, Col, Form, Modal, Row, Table} from "react-bootstrap";
 import API from "../API";
 import {useStatusAlert} from "../../hooks/useStatusAlert";
@@ -102,13 +102,6 @@ const ProdTable = ({data, allowGeneration}) => {
     const [show, setShow] = useState(false);
     const [token, setToken] = useState("");
     const {StatusAlertComponent, showError, resetStatusAlert} = useStatusAlert();
-    const statusAlertRef = useRef(null);
-
-    const scrollIntoStatusAlert = () => {
-        setTimeout(() => {
-            statusAlertRef.current.scrollIntoView({behavior: 'smooth'});
-        }, 100);
-    }
 
     const handleShow = () => setShow(true);
 
@@ -124,12 +117,12 @@ const ProdTable = ({data, allowGeneration}) => {
                 resetStatusAlert();
                 setTimeout(() => {
                     setToken(token);
-                    navigator.clipboard.writeText(`${token}`)
+                    navigator.clipboard.writeText(`${token}`).then(_ => {
+                    })
                 }, 500);
             })
             .catch(err => {
                 handleApiError(err, showError);
-                scrollIntoStatusAlert();
                 handleClose();
             })
     };
@@ -154,7 +147,7 @@ const ProdTable = ({data, allowGeneration}) => {
                     <Button variant="primary" onClick={handleClose}>Close</Button>
                 </Modal.Footer>}
             </Modal>
-            <Row className="mt-3" ref={statusAlertRef}>
+            <Row className="mt-3">
                 <StatusAlertComponent/>
             </Row>
             <Row className="mt-3">

@@ -1,5 +1,5 @@
 import {Button, Container, Form} from "react-bootstrap";
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useState} from "react";
 import {Profile} from "../models/Profile";
 import {useStatusAlert} from "../../hooks/useStatusAlert";
 import {useNavigate} from "react-router-dom";
@@ -16,7 +16,6 @@ import API from "../API";
 
 function ClientProfileForm({profile, onSuccess, onCancel}) {
     const navigate = useNavigate();
-    const statusAlertRef = useRef(null);
     const {StatusAlertComponent, showError} = useStatusAlert();
     const [isLoading, setIsLoading] = useState(false);
     const [email, setEmail] = useState(profile ? profile.email : '');
@@ -36,12 +35,6 @@ function ClientProfileForm({profile, onSuccess, onCancel}) {
         }
     }, [])
 
-    const scrollIntoStatusAlert = () => {
-        setTimeout(() => {
-            statusAlertRef.current.scrollIntoView({behavior: 'smooth'});
-        }, 100);
-    }
-
     const handleRegister = (profile) => {
         API.signup(profile, password)
             .then(_ => {
@@ -50,7 +43,6 @@ function ClientProfileForm({profile, onSuccess, onCancel}) {
             .catch(err => {
                 setIsLoading(false);
                 showError(err.error);
-                scrollIntoStatusAlert()
             })
     }
 
@@ -62,13 +54,11 @@ function ClientProfileForm({profile, onSuccess, onCancel}) {
             .catch(err => {
                 setIsLoading(false);
                 showError(err.error);
-                scrollIntoStatusAlert()
             })
     }
 
     const handleError = (msg) => {
         showError(msg)
-        scrollIntoStatusAlert()
     }
 
     const handleSubmit = (event) => {
@@ -194,9 +184,7 @@ function ClientProfileForm({profile, onSuccess, onCancel}) {
                     </div>
                 </Container>
             </Form>
-            <div ref={statusAlertRef}>
-                <StatusAlertComponent/>
-            </div>
+            <StatusAlertComponent/>
         </div>
     );
 }
