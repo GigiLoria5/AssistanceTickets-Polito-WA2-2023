@@ -5,6 +5,7 @@ import {Button, Col, Container, Row, Spinner} from "react-bootstrap";
 import EditIcon from "../../assets/icons/EditIcon";
 import ClientProfileForm from "../ClientProfileForm";
 
+// Only clientId and showError are needed for use this component outside UserProfile
 function ClientProfile({clientId, showSuccess, showError, resetStatusAlert, switchLogoutVisibility}) {
     const [client, setClient] = useState(null);
     const [editMode, setEditMode] = useState(false);
@@ -39,8 +40,9 @@ function ClientProfile({clientId, showSuccess, showError, resetStatusAlert, swit
             : <Container className="my-5">
                 <Row className="justify-content-center">
                     <Col md={8} className="text-center">
-                        <h2 className='text-center'>Client Profile <Button variant="primary"
-                                                                           onClick={switchEditMode}><EditIcon/></Button>
+                        <h2 className='text-center'>Client Profile &nbsp;
+                            {switchLogoutVisibility &&
+                                <Button variant="primary" onClick={switchEditMode}><EditIcon/></Button>}
                         </h2>
                         {
                             !client || refresh
