@@ -116,8 +116,7 @@
     - Request parameter: productId of the requested product
     - Response: `200 OK` (success)
     - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (productId not
-      found), `422 Unprocessable Entity` (validation of productId
-      failed) or `500 Internal Server Error` (generic error)
+      found), `422 Unprocessable Entity` (validation of productId failed) or `500 Internal Server Error` (generic error)
     - Response body: An object containing productId, asin, brand, category, manufacturerNumber, name, price and
       weight (expressed in kg) of the requested product. An error message in case of error
 
@@ -131,6 +130,23 @@
           "name": "SiriusXM SXEZR1V1 XM Onyx EZR Satellite Radio Receiver with Vehicle Kit",
           "price": 79.99,
           "weight": 1.25
+      }
+      ```
+
+- POST `API/products/{productId}/token`
+
+    - Description: Allows to generate a token that represents the proof of a product purchase
+    - Permissions allowed:
+        - Managers
+    - Request body: _None_
+    - Response: `201 Created` (success)
+    - Error responses: `401 Unauthorized` (not logged in), `404 Not Found` (productId not
+      found), `422 Unprocessable Entity` (validation of productId failed) or `500 Internal Server Error` (generic error)
+    - Response body: The token generated. An error message in case of error
+
+      ```
+      {
+          "token": "7305dba7-6635-4931-8463-4c1872fb9f3d"
       }
       ```
 
