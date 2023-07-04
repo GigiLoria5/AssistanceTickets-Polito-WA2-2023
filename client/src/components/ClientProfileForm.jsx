@@ -28,7 +28,7 @@ function ClientProfileForm({profile, onSuccess, onCancel}) {
     const [city, setCity] = useState(profile ? profile.city : '');
     const [country, setCountry] = useState(profile ? profile.country : '');
     const editMode = !!profile;
-    const profileId = profile.profileId;
+    const profileId = profile ? profile.profileId : null;
 
     useEffect(() => {
         if (getAccessToken() !== "null" && !profile) {
