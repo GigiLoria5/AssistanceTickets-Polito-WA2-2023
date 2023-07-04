@@ -136,17 +136,17 @@
 
 ### Profiles
 
-- GET `/API/profiles/{email}`
+- GET `/API/profiles/{profileId}`
 
     - Description: Allows to obtain all the information of a single profile and the IDs of his tickets
     - Permissions allowed:
-        - The Client associated with the specified email address
+        - The Client associated with the specified identifier
         - Experts who have a not closed ticket with the client
         - Managers
-    - Request parameter: email of the requested user profile
+    - Request parameter: profile identifier of the requested user profile
     - Response: `200 OK` (success)
-    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (email not
-      found), `422 Unprocessable Entity` (validation of email failed) or `500 Internal Server Error` (generic error)
+    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (profileId not
+      found), `422 Unprocessable Entity` (validation of profileId failed) or `500 Internal Server Error` (generic error)
     - Response body: An object containing profileId, email, name, surname, phoneNumber, address, city, country and
       ticketsIds (an array of int, each representing the id of a ticket opened by the user) of the
       requested user. An error message in case of error
