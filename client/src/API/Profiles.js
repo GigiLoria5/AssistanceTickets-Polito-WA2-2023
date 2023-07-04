@@ -14,8 +14,8 @@ async function getProfileById(id) {
         })
             .then(async (response) => {
                 if (response.ok) {
-                    const profile = await response.json();
-                    resolve(new Profile(profile.profileId, profile.email, profile.name, profile.surname, profile.phoneNumber, profile.address, profile.city, profile.country));
+                    const body = await response.json();
+                    resolve(new Profile(body.profileId, body.email, body.name, body.surname, body.phoneNumber, body.address, body.city, body.country));
                 } else {
                     const error = await handleErrorResponse(response);
                     reject(error);
@@ -28,7 +28,7 @@ async function getProfileById(id) {
 // PUT /API/profiles
 function updateProfile(profile) {
     console.log(profile)
-    
+
     return new Promise((resolve, reject) => {
         fetch(new URL(`profiles`, API_URL), {
             method: 'PUT',

@@ -14,8 +14,8 @@ async function getExpertById(id) {
         })
             .then(async (response) => {
                 if (response.ok) {
-                    const expert = await response.json();
-                    resolve(new Expert(expert.expertId, expert.name, expert.surname, expert.email, expert.country, expert.city, expert.skills));
+                    const body = await response.json();
+                    resolve(new Expert(body.expertId, body.name, body.surname, body.email, body.country, body.city, body.skills));
                 } else {
                     const error = await handleErrorResponse(response);
                     reject(error);
