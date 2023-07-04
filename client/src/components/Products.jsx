@@ -122,9 +122,9 @@ const ProdTable = ({data, allowGeneration}) => {
                 }, 500);
             })
             .catch(err => {
-                handleApiError(err, showError);
                 handleClose();
-            })
+                setTimeout(() => handleApiError(err, showError), 250);
+            });
     };
 
     return (
@@ -148,10 +148,8 @@ const ProdTable = ({data, allowGeneration}) => {
                 </Modal.Footer>}
             </Modal>
             <Row className="mt-3">
-                <StatusAlertComponent/>
-            </Row>
-            <Row className="mt-3">
                 <Col>
+                    <StatusAlertComponent/>
                     <Table striped bordered hover>
                         <thead>
                         <tr>
