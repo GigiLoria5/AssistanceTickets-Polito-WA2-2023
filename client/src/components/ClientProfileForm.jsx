@@ -11,7 +11,7 @@ import {
     validateName,
     validatePhone
 } from "../utils/validators";
-import {getAccessToken} from "../utils/utils";
+import {getAccessToken, handleApiError} from "../utils/utils";
 import API from "../API";
 
 function ClientProfileForm({profile, onSuccess, onCancel}) {
@@ -49,46 +49,42 @@ function ClientProfileForm({profile, onSuccess, onCancel}) {
     const handleUpdateProfile = (profile) => {
         API.updateProfile(profile)
             .then(_ => {
-                onSuccess()
+                onSuccess();
             })
             .catch(err => {
                 setIsLoading(false);
-                showError(err.error);
+                handleApiError(err, showError);
             })
-    }
-
-    const handleError = (msg) => {
-        showError(msg)
     }
 
     const handleSubmit = (event) => {
         event.preventDefault();
         if (!validateEmail(email)) {
-            handleError("Email format not valid")
+            showError("Email format not valid")
             return
         }
         if (!validateName(name)) {
-            handleError("Name format not valid")
+            showError("Name format not valid")
             return
         }
         if (!validateName(surname)) {
-            handleError("Surname format not valid")
+            showError("Surname format not valid")
             return
         }
         if (!validatePhone(phoneNumber)) {
-            handleError("Phone number format not valid")
+            showError("Phone number format not valid")
             return
         }
         if (!validateAddress(address)) {
-            handleError("Address format not valid")
+            showError("Address format not valid")
             return
         }
         if (!validateCity(city)) {
-            handleError("City format not valid")
+            showError("City format not valid")
             return
         }
         if (!validateCountry(country)) {
-            handleError("Country format not valid")
+            showError("Country format not valid")
             return
         }
         setIsLoading(true);
