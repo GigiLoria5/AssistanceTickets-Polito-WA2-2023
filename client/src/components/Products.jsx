@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Button, Col, Form, Modal, Row, Table} from "react-bootstrap";
+import {Button, Col, Form, Modal, Row, Spinner, Table} from "react-bootstrap";
 import API from "../API";
 import {useStatusAlert} from "../../hooks/useStatusAlert";
 import {UserRole} from "../../enums/UserRole";
@@ -43,7 +43,7 @@ const Products = ({userRole}) => {
                         <ProdSearchBar getAllProducts={getAllProducts} searchProduct={searchProduct}/>
                         <ProdTable data={data} allowGeneration={userRole && userRole === UserRole.MANAGER}/>
                     </>
-                    : null
+                    : <Spinner animation="border" variant="primary"/>
             }
         </>
     );
