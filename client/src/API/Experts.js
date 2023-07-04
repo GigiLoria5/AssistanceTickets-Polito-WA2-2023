@@ -47,4 +47,28 @@ async function getExpertById(id) {
     });
 }
 
-export {getAllExperts, getExpertById};
+// POST /API/experts/createExpert
+async function createExpert(expert) {
+    return new Promise((resolve, reject) => {
+        fetch(new URL('experts/createExpert', API_URL), {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${getAccessToken()}`
+            },
+            body: JSON.stringify(expert)
+        })
+            .then(async (response) => {
+                if (response.ok) {
+                    resolve(null);
+                } else {
+                    const error = await handleErrorResponse(response);
+                    reject(error);
+                }
+            })
+            .catch((_error) => reject(SERVER_COMMUNICATION_ERROR));
+    });
+}
+
+export {getAllExperts, getExpertById, createExpert};
