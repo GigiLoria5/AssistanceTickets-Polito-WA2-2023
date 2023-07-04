@@ -3,10 +3,10 @@ import {Profile} from "../models/Profile";
 import {SERVER_COMMUNICATION_ERROR} from "../utils/constants";
 import {getAccessToken, handleErrorResponse} from "../utils/utils";
 
-// GET /API/profiles/{email}
-async function getProfileByEmail(email) {
+// GET /API/profiles/{profileId}
+async function getProfileById(id) {
     return new Promise((resolve, reject) => {
-        fetch(new URL(`profiles/${email}`, API_URL), {
+        fetch(new URL(`profiles/${id}`, API_URL), {
             headers: {
                 Authorization: `Bearer ${getAccessToken()}`
             },
@@ -15,7 +15,7 @@ async function getProfileByEmail(email) {
             .then(async (response) => {
                 if (response.ok) {
                     const profile = await response.json();
-                    resolve(new Profile(profile.email, profile.name, profile.surname, profile.phoneNumber, profile.address, profile.city, profile.country));
+                    resolve(new Profile(profile.profileId, profile.email, profile.name, profile.surname, profile.phoneNumber, profile.address, profile.city, profile.country));
                 } else {
                     const error = await handleErrorResponse(response);
                     reject(error);
@@ -27,6 +27,8 @@ async function getProfileByEmail(email) {
 
 // PUT /API/profiles
 function updateProfile(profile) {
+    console.log(profile)
+    
     return new Promise((resolve, reject) => {
         fetch(new URL(`profiles`, API_URL), {
             method: 'PUT',
@@ -56,4 +58,4 @@ function updateProfile(profile) {
     });
 }
 
-export {getProfileByEmail, updateProfile}
+export {getProfileById, updateProfile}

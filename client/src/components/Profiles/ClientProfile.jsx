@@ -5,14 +5,15 @@ import {Button, Col, Container, Row, Spinner} from "react-bootstrap";
 import EditIcon from "../../assets/icons/EditIcon";
 import ClientProfileForm from "../ClientProfileForm";
 
-function ClientProfile({clientEmail, showSuccess, showError, resetStatusAlert, switchLogoutVisibility}) {
+function ClientProfile({clientId, showSuccess, showError, resetStatusAlert, switchLogoutVisibility}) {
     const [client, setClient] = useState(null);
     const [editMode, setEditMode] = useState(false);
     const [refresh, setRefresh] = useState(false);
 
     useEffect(() => {
-        API.getProfileByEmail(clientEmail)
+        API.getProfileById(clientId)
             .then(client => {
+                console.log(client)
                 setClient(client)
             })
             .catch(err => handleApiError(err, showError))

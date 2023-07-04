@@ -22,7 +22,7 @@ function UserProfile({userInfo, setUserInfo}) {
             case UserRole.EXPERT:
                 return <ExpertProfile expertId={userInfo.id} showError={showError}/>;
             case UserRole.CLIENT:
-                return <ClientProfile clientEmail={userInfo.email} showSuccess={showSuccess} showError={showError}
+                return <ClientProfile clientId={userInfo.id} showSuccess={showSuccess} showError={showError}
                                       resetStatusAlert={resetStatusAlert}
                                       switchLogoutVisibility={switchLogoutVisibility}/>;
             default:

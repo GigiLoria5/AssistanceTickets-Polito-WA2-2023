@@ -28,6 +28,7 @@ function ClientProfileForm({profile, onSuccess, onCancel}) {
     const [city, setCity] = useState(profile ? profile.city : '');
     const [country, setCountry] = useState(profile ? profile.country : '');
     const editMode = !!profile;
+    const profileId = profile.profileId;
 
     useEffect(() => {
         if (getAccessToken() !== "null" && !profile) {
@@ -36,7 +37,9 @@ function ClientProfileForm({profile, onSuccess, onCancel}) {
     }, [])
 
     const scrollIntoStatusAlert = () => {
-        statusAlertRef.current.scrollIntoView({behavior: 'smooth'});
+        setTimeout(() => {
+            statusAlertRef.current.scrollIntoView({behavior: 'smooth'});
+        }, 100);
     }
 
     const handleRegister = (profile) => {
@@ -63,38 +66,43 @@ function ClientProfileForm({profile, onSuccess, onCancel}) {
             })
     }
 
+    const handleError = (msg) => {
+        showError(msg)
+        scrollIntoStatusAlert()
+    }
+
     const handleSubmit = (event) => {
         event.preventDefault();
         if (!validateEmail(email)) {
-            showError("Email format not valid")
+            handleError("Email format not valid")
             return
         }
         if (!validateName(name)) {
-            showError("Name format not valid")
+            handleError("Name format not valid")
             return
         }
         if (!validateName(surname)) {
-            showError("Surname format not valid")
+            handleError("Surname format not valid")
             return
         }
         if (!validatePhone(phoneNumber)) {
-            showError("Phone number format not valid")
+            handleError("Phone number format not valid")
             return
         }
         if (!validateAddress(address)) {
-            showError("Address format not valid")
+            handleError("Address format not valid")
             return
         }
         if (!validateCity(city)) {
-            showError("City format not valid")
+            handleError("City format not valid")
             return
         }
         if (!validateCountry(country)) {
-            showError("Country format not valid")
+            handleError("Country format not valid")
             return
         }
         setIsLoading(true);
-        const profile = new Profile(email, name, surname, phoneNumber, address, city, country);
+        const profile = new Profile(profileId, email, name, surname, phoneNumber, address, city, country);
         editMode ? handleUpdateProfile(profile) : handleRegister(profile);
     }
 
