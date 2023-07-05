@@ -7,6 +7,7 @@ import {ModalType} from "../../enums/ModalType";
 import Tickets from "./Tickets";
 import {useNavigate} from "react-router-dom";
 import PurchasedProducts from "./PurchasedProducts";
+import {handleApiError} from "../utils/utils";
 
 function ClientDashboard({userInfo}) {
     const [ticketsData, setTicketsData] = useState(null);
@@ -39,7 +40,7 @@ function ClientDashboard({userInfo}) {
     const stopAnimationAndShowError = (err) => {
         setLoading(false)
         setErrorPresence(true)
-        showError(err.error)
+        handleApiError(err,showError)
     }
 
     const getTicketsData = async () => {

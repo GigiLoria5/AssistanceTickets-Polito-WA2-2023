@@ -4,7 +4,7 @@ import {useStatusAlert} from "../../hooks/useStatusAlert";
 import API from "../API";
 import {Button, Col, Row, Spinner, Table} from "react-bootstrap";
 import * as PropTypes from "prop-types";
-import {dateTimeMillisFormatted} from "../utils/utils";
+import {dateTimeMillisFormatted, handleApiError} from "../utils/utils";
 import {availableTicketStatusChanges, getTaskToAchieveStatus} from "../utils/ticketUtil";
 import {UserRole} from "../../enums/UserRole";
 import {CustomModal} from "./modals/CustomModal";
@@ -46,7 +46,7 @@ function TicketDetails({userInfo}) {
     const stopAnimationAndShowError = (err) => {
         setLoading(false)
         setErrorPresence(true)
-        showError(err.error)
+        handleApiError(err,showError)
     }
 
     const getTicketData = async () => {

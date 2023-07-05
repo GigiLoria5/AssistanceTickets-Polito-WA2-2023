@@ -2,6 +2,7 @@ import {Button, Col, Row, Spinner, Table} from "react-bootstrap";
 import React, {useEffect, useState} from "react";
 import API from "../API";
 import {useStatusAlert} from "../../hooks/useStatusAlert";
+import {handleApiError} from "../utils/utils";
 
 function Experts({title, actionName, action}) {
     const [expertsData, setExpertsData] = useState(null);
@@ -27,7 +28,7 @@ function Experts({title, actionName, action}) {
     const stopAnimationAndShowError = (err) => {
         setLoading(false)
         setErrorPresence(true)
-        showError(err.error)
+        handleApiError(err,showError)
     }
 
     /* TODO EVENTUALLY CREATE A SEARCH BAR BY SOMETHING*/
