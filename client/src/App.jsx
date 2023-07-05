@@ -52,7 +52,7 @@ function renderDashboard(userRole,userInfo) {
         case UserRole.MANAGER:
             return <ManagerDashboard/>;
         case UserRole.EXPERT:
-            return <ExpertDashboard/>;
+            return <ExpertDashboard userInfo={userInfo}/>;
         case UserRole.CLIENT:
             return <ClientDashboard userInfo={userInfo}/>;
         default:

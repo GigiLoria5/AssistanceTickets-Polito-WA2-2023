@@ -3,6 +3,7 @@ import {getAccessToken, handleErrorResponse} from "../utils/utils";
 import {SERVER_COMMUNICATION_ERROR} from "../utils/constants";
 import {Expert} from "../models/Expert";
 import {Skill} from "../models/Skill";
+import { Ticket } from "../models/Ticket";
 
 // GET /API/experts
 async function getAllExperts() {
@@ -72,4 +73,40 @@ async function createExpert(expert) {
     });
 }
 
-export {getAllExperts, getExpertById, createExpert};
+// GET /API/expert/{expertId}/tickets
+async function getTicketsOfExpertsByExpertId(id) {
+    return new Promise((resolve, reject) => {
+        fetch(new URL(`experts/${id}/tickets`, API_URL), {
+            headers: {
+                Authorization: `Bearer ${getAccessToken()}`
+            },
+            credentials: 'include'
+        })
+            .then(async (response) => {
+                if (response.ok) {
+                    const ticketsJson = await response.json();
+                    resolve(ticketsJson.map((ticketJson)=> (
+                        new Ticket(
+                            ticketJson.ticketId,
+                            ticketJson.title,
+                            ticketJson.description,
+                            ticketJson.productId,
+                            ticketJson.customerId,
+                            ticketJson.expertId,
+                            ticketJson.totalExchangedMessages,
+                            ticketJson.status,
+                            ticketJson.priorityLevel,
+                            ticketJson.createdAt,
+                            ticketJson.lastModifiedAt
+                        )
+                    )))
+                } else {
+                    const error = await handleErrorResponse(response);
+                    reject(error);
+                }
+            })
+            .catch((_error) => reject(SERVER_COMMUNICATION_ERROR));
+    });
+}
+
+export {getAllExperts, getExpertById, createExpert, getTicketsOfExpertsByExpertId};

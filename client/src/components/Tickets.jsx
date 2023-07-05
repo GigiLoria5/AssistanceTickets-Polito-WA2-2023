@@ -2,7 +2,7 @@ import {Button, Col, Row, Table} from "react-bootstrap";
 import React from "react";
 import {dateTimeMillisFormatted} from "../utils/utils";
 
-function Tickets({tickets, title, actionName, action}) {
+function Tickets({tickets, title, actionName, action, showClientInfo}) {
 
     /* Here it is not possible to load the tickets list here, because this component can be used,
     * for example, both from client (which sees only his ticket) and manager (which sees all tickets)*/
@@ -15,7 +15,7 @@ function Tickets({tickets, title, actionName, action}) {
             <Row>
                 <Col>
                     <TicketsTable tickets={tickets} actionName={actionName}
-                                  action={action}/>
+                                  action={action} showClientInfo={showClientInfo}/>
                 </Col>
             </Row>
         </>
@@ -23,7 +23,7 @@ function Tickets({tickets, title, actionName, action}) {
     )
 }
 
-function TicketsTable({tickets, actionName, action}) {
+function TicketsTable({tickets, actionName, action, showClientInfo}) {
     return (
         (tickets.length) > 0 ?
             <div className="table-responsive">
@@ -36,8 +36,8 @@ function TicketsTable({tickets, actionName, action}) {
                         }
                         <th>Title</th>
                         <th>Description</th>
+                        {showClientInfo ? <th>Customer info</th> : null}
                         {/*
-                        <th>Customer id</th>
                         <th>Expert id</th>
                         <th>Total Exchanged Messages</th>
                         */}
@@ -58,8 +58,8 @@ function TicketsTable({tickets, actionName, action}) {
                             }
                             <td>{ticket.title}</td>
                             <td>{ticket.description}</td>
+                            {showClientInfo ? <td> <Button onClick={()=>showClientInfo(ticket.customerId)}>Show</Button> </td> : null}
                             {/*
-                            <td>{ticket.customerId}</td>
                             <td>{ticket.expertId}</td>
                             <td>{ticket.totalExchangedMessages}</td>
                             */}
