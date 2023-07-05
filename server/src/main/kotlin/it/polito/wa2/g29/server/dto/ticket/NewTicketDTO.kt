@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotNull
 
 data class NewTicketDTO(
     @field:NotNull @field:Min(1)
-    val productId: Int,
+    val productTokenId: Int,
     @field:NotBlank
     val title: String,
     @field:NotBlank

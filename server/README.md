@@ -559,21 +559,21 @@
     - Description: Allows to create a ticket
     - Permissions allowed:
         - Clients
-    - Request body: productId of the related product with issues and a
+    - Request body: productTokenId of the related purchase with issues and a
       title and description of the issue
 
       ```
       {
-        "productId": 1,
+        "productTokenId": 1,
         "title": "No sound from TV speakers",
         "description": "I've checked all the connections and tried adjusting the settings, but I still can't hear any sound from the TV speakers."
       }
       ```
 
     - Response: `201 Created` (success)
-    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (productId not
-      found), `409 Conflict` (a not closed ticket for the same customer and product already
-      exists), `422 Unprocessable Entity` (validation of request body failed) or `500 Internal Server Error` (generic
+    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (productTokenId not
+      found), `409 Conflict` (a not closed ticket for the same customer and productToken already
+      exists), `422 Unprocessable Entity` (validation of request body failed or customer does not own that productTokenId) or `500 Internal Server Error` (generic
       error)
     - Response body: An object containing the id of the ticket created. An error message in case of error
       ```
@@ -684,7 +684,8 @@
     - Response: `204 No Content` (success)
     - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (ticketId not
       found), `422 Unprocessable Entity` (validation of request body or
-      ticketId failed
+      ticketId failed, `409 Conflict` (a not closed ticket for the same customer and productToken already
+      exists),
       or ticket is not closed/resolved) or `500 Internal Server Error` (generic error)
     - Response body: An error message in case of error
 

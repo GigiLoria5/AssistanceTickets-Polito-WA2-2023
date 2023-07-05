@@ -1,7 +1,7 @@
 package it.polito.wa2.g29.server.repository
 
 import it.polito.wa2.g29.server.enums.TicketStatus
-import it.polito.wa2.g29.server.model.Product
+import it.polito.wa2.g29.server.model.ProductToken
 import it.polito.wa2.g29.server.model.Profile
 import it.polito.wa2.g29.server.model.Ticket
 import org.springframework.data.jpa.repository.JpaRepository
@@ -15,12 +15,16 @@ interface TicketRepository : JpaRepository<Ticket, Int> {
     fun findTicketsByStatus(status: TicketStatus): List<Ticket>
 
     @Transactional(readOnly = true)
-    fun findTicketByCustomerAndProductAndStatusNot(customer: Profile, product: Product, status: TicketStatus): Ticket?
+    fun findTicketByCustomerAndProductTokenAndStatusNot(
+        customer: Profile,
+        productToken: ProductToken,
+        status: TicketStatus
+    ): Ticket?
 
     @Transactional(readOnly = true)
-    fun findTicketByCustomerAndProductAndStatusNotAndStatusNot(
+    fun findTicketByCustomerAndProductTokenAndStatusNotAndStatusNot(
         customer: Profile,
-        product: Product,
+        productToken: ProductToken,
         status1: TicketStatus,
         status2: TicketStatus
     ): Ticket?

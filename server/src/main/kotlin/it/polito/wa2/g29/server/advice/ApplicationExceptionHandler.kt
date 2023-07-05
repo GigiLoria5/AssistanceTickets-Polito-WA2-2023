@@ -27,7 +27,7 @@ class ApplicationExceptionHandler {
     }
 
     // 404 - Not Found
-    @ExceptionHandler(value = [ProductNotFoundException::class, ProfileNotFoundException::class, ExpertNotFoundException::class, TicketNotFoundException::class, MessageNotFoundException::class, AttachmentNotFoundException::class])
+    @ExceptionHandler(value = [ProductNotFoundException::class, ProductTokenNotFoundException::class, ProfileNotFoundException::class, ExpertNotFoundException::class, TicketNotFoundException::class, MessageNotFoundException::class, AttachmentNotFoundException::class])
     fun handleNotFoundException(exception: Exception): ResponseEntity<Unit> {
         return ResponseEntity(HttpStatus.NOT_FOUND)
     }
@@ -58,7 +58,7 @@ class ApplicationExceptionHandler {
     }
 
     // 422 - Error message
-    @ExceptionHandler(value = [NotValidStatusChangeException::class, ChatIsInactiveException::class])
+    @ExceptionHandler(value = [NotValidStatusChangeException::class, ChatIsInactiveException::class,ProductTokenNotOwnedException::class])
     fun handleValidationFailedExceptionWithErrorMessage(exception: Exception): ResponseEntity<ErrorMessage> {
         val errorMessage = ErrorMessage(exception.message.orEmpty())
         return ResponseEntity(errorMessage, HttpStatus.UNPROCESSABLE_ENTITY)
