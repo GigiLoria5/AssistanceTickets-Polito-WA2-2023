@@ -179,16 +179,16 @@
       }
       ```
 
-- GET `/API/profiles/{email}/tickets`
+- GET `/API/profiles/{profileId}/tickets`
 
     - Description: Allows to obtain all the tickets of a single profile
     - Permissions allowed:
-        - The Client associated with the specified email address
+        - The Client associated with the specified profileId
         - Managers
-    - Request parameter: email of the requested user profile
+    - Request parameter: profileId of the requested user profile
     - Response: `200 OK` (success)
-    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (email not
-      found), `422 Unprocessable Entity` (validation of email failed) or
+    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (profileId not
+      found), `422 Unprocessable Entity` (validation of profileId failed) or
       `500 Internal Server Error` (generic error)
     - Response body: An object containing all the tickets of the
       requested user. An error message in case of error

@@ -43,9 +43,8 @@ function ClientDashboard({userInfo}) {
     }
 
     const getTicketsData = async () => {
-        console.log(userInfo.email)
         return new Promise((resolve, reject) => {
-            API.getTicketsOfProfileByEmail(userInfo.email)
+            API.getTicketsOfProfileByProfileId(userInfo.id)
                 .then((t) => {
                         setTicketsData(t)
                         resolve()

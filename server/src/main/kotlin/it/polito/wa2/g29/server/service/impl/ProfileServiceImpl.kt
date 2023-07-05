@@ -46,13 +46,13 @@ class ProfileServiceImpl(
         return profile.toDTO()
     }
 
-    override fun getTicketsOfProfileByEmail(email: String): List<TicketDTO> {
-        checkUserAuthorisation(email)
-        val profile = profileRepository.findProfileByEmail(email)
+    override fun getTicketsOfProfileByProfileId(profileId: Int): List<TicketDTO> {
+        val profile = profileRepository.findById(profileId).getOrNull()
             ?: run {
-                log.info("Profile not found")
+                log.info("getProfileById: Profile not found")
                 throw ProfileNotFoundException()
             }
+        checkUserAuthorisation(profile.email)
         return profile.tickets.map { it.toDTO() }
     }
 

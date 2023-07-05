@@ -29,11 +29,11 @@ class ProfileController(private val profileService: ProfileService) {
     }
 
     @PreAuthorize("hasAuthority(@AuthUtil.ROLE_MANAGER) or hasAuthority(@AuthUtil.ROLE_CLIENT)")
-    @GetMapping("/profiles/{email}/tickets")
+    @GetMapping("/profiles/{profileId}/tickets")
     @ResponseStatus(HttpStatus.OK)
-    fun getTicketsOfProfileByEmail(@PathVariable @NotBlank @Email @Pattern(regexp = ProfileDTO.EMAIL_PATTERN) email: String): List<TicketDTO> {
-        log.info("Retrieve tickets of profile:{}", email)
-        return profileService.getTicketsOfProfileByEmail(email)
+    fun getTicketsOfProfileByProfileId(@PathVariable @Valid @Min(1) profileId: Int): List<TicketDTO> {
+        log.info("Retrieve tickets of profile:{}", profileId)
+        return profileService.getTicketsOfProfileByProfileId(profileId)
     }
 
     @PreAuthorize("hasAuthority(@AuthUtil.ROLE_CLIENT)")

@@ -59,10 +59,10 @@ function updateProfile(profile) {
     });
 }
 
-// GET /API/profiles/{email}/tickets
-async function getTicketsOfProfileByEmail(email) {
+// GET /API/profiles/{profileId}/tickets
+async function getTicketsOfProfileByProfileId(profileId) {
     return new Promise((resolve, reject) => {
-        fetch(new URL(`profiles/${email}/tickets`, API_URL), {
+        fetch(new URL(`profiles/${profileId}/tickets`, API_URL), {
             headers: {
                 Authorization: `Bearer ${getAccessToken()}`
             },
@@ -97,4 +97,4 @@ async function getTicketsOfProfileByEmail(email) {
     });
 }
 
-export {getProfileById, updateProfile, getTicketsOfProfileByEmail}
+export {getProfileById, updateProfile, getTicketsOfProfileByProfileId}
