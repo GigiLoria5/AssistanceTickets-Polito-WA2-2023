@@ -184,11 +184,15 @@ const CreateExpertModal = ({show, handleClose, handleCreate}) => {
                                 <Form.Control className='mb-3' as="select" name="expertise" value={skill.expertise}
                                               onChange={(event) => handleInputChange(event, index)} required>
                                     <option value="">Select expertise</option>
-                                    {Object.keys(Expertise).map((key) => (
-                                        <option key={key} value={key}>
-                                            {Expertise[key]}
-                                        </option>
-                                    ))}
+                                    {Object.keys(Expertise)
+                                        .map((key) => (
+                                            <option
+                                                key={key}
+                                                value={key}
+                                                disabled={expert.skills.map(s => s.expertise).includes(key)}>
+                                                {Expertise[key]}
+                                            </option>
+                                        ))}
                                 </Form.Control>
                                 <Form.Control as="select" name="level" value={skill.level}
                                               onChange={(event) => handleInputChange(event, index)} required>
