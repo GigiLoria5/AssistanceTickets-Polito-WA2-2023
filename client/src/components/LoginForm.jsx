@@ -44,7 +44,6 @@ function LoginForm() {
         setIsUsernameValid(!!validUsername);
         setIsPasswordValid(!!password);
         setValidated(true);
-        setIsLoading(false);
     };
 
     const handleLogin = async (credentials) => {
@@ -53,7 +52,8 @@ function LoginForm() {
                 navigate('/');
             })
             .catch(err => {
-                showError(err.status === HttpStatusCode.UNAUTHORIZED ? "Wrong Credentials. Please try again" : err.error)
+                showError(err.status === HttpStatusCode.UNAUTHORIZED ? "Wrong Credentials. Please try again" : err.error);
+                setIsLoading(false);
             })
     };
 

@@ -2,6 +2,8 @@ import {Col, Container, Row, Spinner, Table} from "react-bootstrap";
 import {useEffect, useState} from "react";
 import API from "../../API";
 import {handleApiError} from "../../utils/utils";
+import {Expertise} from "../../../enums/Expertise";
+import {Level} from "../../../enums/Level";
 
 function ExpertProfile({expertId, showError}) {
     const [expert, setExpert] = useState(null);
@@ -39,8 +41,8 @@ function ExpertProfile({expertId, showError}) {
                                             <tbody>
                                             {expert.skills.map((skill, index) => (
                                                 <tr key={index}>
-                                                    <td>{skill.expertise}</td>
-                                                    <td>{skill.level}</td>
+                                                    <td>{Expertise[skill.expertise]}</td>
+                                                    <td>{Level[skill.level]}</td>
                                                 </tr>
                                             ))}
                                             </tbody>
