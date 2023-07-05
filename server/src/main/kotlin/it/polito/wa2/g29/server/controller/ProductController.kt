@@ -7,6 +7,7 @@ import it.polito.wa2.g29.server.service.ProductService
 import jakarta.validation.Valid
 import jakarta.validation.constraints.Min
 import org.slf4j.LoggerFactory
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 
@@ -30,6 +31,7 @@ class ProductController(private val productService: ProductService) {
         return productService.getProductById(productId)
     }
 
+    @PreAuthorize("hasAuthority(@AuthUtil.ROLE_MANAGER)")
     @PostMapping("/products/{productId}/token")
     fun generateProductToken(@PathVariable @Valid @Min(1) productId: Int): ProductTokenDTO {
         return productService.generateProductToken(productId)
