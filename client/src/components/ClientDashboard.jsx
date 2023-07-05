@@ -56,12 +56,8 @@ function ClientDashboard({userInfo}) {
 
     const getProductsData = async () => {
         return new Promise((resolve, reject) => {
-            /* TODO
-                X ORA PRENDI TUTTI I PRODUCTS,
-                POI PERò PRENDERAI SOLO I PRODOTTI ACQUISTATI
-                CON LE DATE DI ACQUISTO E REGISTRAZIONE
-                */
-            API.getAllProducts()
+
+            API.getProductsOfProfileByProfileId(userInfo.id)
                 .then((p) => {
                         setProductsData(p)
                         resolve()
@@ -144,21 +140,20 @@ function ClientDashboardTabs({ticketsData, productsData, update}) {
 
     const formatTickets = () => {
         return ticketsData.map(ticket => {
-            const product = productsData.find(p => p.productId === ticket.productId)
+            const product = productsData.find(p => p.product.productId === ticket.productId)
             return {...ticket, "product": product.name}
         })
     }
 
     const formatProducts = () => {
-        return productsData.filter(product => {
-            return ticketsData.find(ticket => ticket.productId === product.productId) || product.productId % 130 === 0
-        }).map(product => {
-            const ticket = ticketsData.find(ticket => ticket.productId === product.productId)
+        return productsData.map(purchase => {
+            const ticket = ticketsData.find(ticket => ticket.productId === purchase.product.productId)
             return {
-                ...product,
+                ...purchase.product,
+                "productTokenId":purchase.productTokenId,
                 "ticketId": ticket && ticket.status !== "CLOSED" ? ticket.ticketId : undefined,
-                "purchaseDate": 1677065479943,
-                "registrationDate": 1677065479943
+                "purchaseDate": purchase.createdAt,
+                "registrationDate": purchase.registeredAt
             }
 
         })
@@ -195,14 +190,14 @@ function TicketsTable({tickets}) {
 
 function ProductsTable({products, update}) {
     const navigate = useNavigate();
-    const [targetProductId, setTargetProductId] = useState(null)
+    const [targetProductTokenId, setTargetProductTokenId] = useState(null)
     const [showCustomModal, setShowCustomModal] = useState(false);
 
     const actionForTicket = (product) => {
         if (product.ticketId !== undefined)
             navigate(`/tickets/${product.ticketId}`)
         else {
-            setTargetProductId(product.productId)
+            setTargetProductTokenId(product.productTokenId)
             setShowCustomModal(true)
         }
     }
@@ -223,7 +218,7 @@ function ProductsTable({products, update}) {
                          backdrop="static"
                          keyboard={false}
                          type={ModalType.CREATE_TICKET}
-                         objectId={targetProductId}
+                         objectId={targetProductTokenId}
                          completingAction={update}
             />
         </>

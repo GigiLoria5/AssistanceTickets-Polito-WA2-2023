@@ -3,6 +3,8 @@ import {Profile} from "../models/Profile";
 import {SERVER_COMMUNICATION_ERROR} from "../utils/constants";
 import {getAccessToken, handleErrorResponse} from "../utils/utils";
 import {Ticket} from "../models/Ticket";
+import {ProductToken} from "../models/ProductToken";
+import {Product} from "../models/Product";
 
 // GET /API/profiles/{profileId}
 async function getProfileById(id) {
@@ -97,4 +99,37 @@ async function getTicketsOfProfileByProfileId(profileId) {
     });
 }
 
-export {getProfileById, updateProfile, getTicketsOfProfileByProfileId}
+// GET /API/profiles/{profileId}/products
+async function getProductsOfProfileByProfileId(profileId) {
+    return new Promise((resolve, reject) => {
+        fetch(new URL(`profiles/${profileId}/products`, API_URL), {
+            headers: {
+                Authorization: `Bearer ${getAccessToken()}`
+            },
+            credentials: 'include'
+        })
+            .then(async (response) => {
+                if (response.ok) {
+                    const purchasesJson = await response.json();
+                    resolve(purchasesJson.map((purchase) => (
+                                new ProductToken(
+                                    purchase.productTokenId,
+                                    purchase.createdAt,
+                                    purchase.registeredAt,
+                                    purchase.token,
+                                    purchase.userId,
+                                    new Product(purchase.product.productId, purchase.product.asin, purchase.product.brand, purchase.product.category, purchase.product.manufacturerNumber, purchase.product.name, purchase.product.price, purchase.product.weight)
+                                )
+                            )
+                        )
+                    )
+                } else {
+                    const error = await handleErrorResponse(response);
+                    reject(error);
+                }
+            })
+            .catch((_error) => reject(SERVER_COMMUNICATION_ERROR));
+    });
+}
+
+export {getProfileById, updateProfile, getTicketsOfProfileByProfileId, getProductsOfProfileByProfileId}

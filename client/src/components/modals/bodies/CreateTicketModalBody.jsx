@@ -2,6 +2,7 @@ import React, {useContext, useState} from "react";
 import API from "../../../API";
 import {Button, Form, Modal, Row} from "react-bootstrap";
 import {CustomModalContext} from "../CustomModal";
+import {handleApiError} from "../../../utils/utils";
 
 function CreateTicketModalBody() {
 
@@ -17,7 +18,7 @@ function CreateTicketModalBody() {
                     completingAction()
                 }
             )
-            .catch(err => showError(err.error))
+            .catch(err => handleApiError(err,showError))
     }
 
     const handleSubmit = (event) => {
