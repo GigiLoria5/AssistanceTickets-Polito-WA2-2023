@@ -9,4 +9,6 @@ interface ProductService {
     fun getProductById(productId: Int): ProductDTO
 
     fun generateProductToken(productId: Int): ProductTokenDTO
+
+    fun registerProduct(token: String)
 }

@@ -150,6 +150,28 @@
       }
       ```
 
+- POST `API/products/register`
+
+    - Description: Allows to register a purchased product for the logged in customer
+    - Permissions allowed:
+        - Customer
+    - Request body: token of the purchase
+    ```
+    {
+        "token": "7305dba7-6635-4931-8463-4c1872fb9f3d"
+    }
+    ```
+    - Response: `200 Ok` (success)
+    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (token not
+      found),`409 Conflict` (token already used), `422 Unprocessable Entity` (validation of
+      request body failed) or `500 Internal Server Error` (generic error)
+    - Response body: An error message in case of error
+      ```
+      {
+          "error": "Token already used"
+      }
+      ```
+
 ### Profiles
 
 - GET `/API/profiles/{profileId}`
@@ -556,7 +578,7 @@
 
 - POST `/API/tickets`
 
-    - Description: Allows to create a ticket
+    - Description: Allows to create a ticket for a purchased product
     - Permissions allowed:
         - Clients
     - Request body: productTokenId of the related purchase with issues and a
