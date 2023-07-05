@@ -1,6 +1,7 @@
 package it.polito.wa2.g29.server.controller
 
 import io.micrometer.observation.annotation.Observed
+import it.polito.wa2.g29.server.dto.ProductTokenDTO
 import it.polito.wa2.g29.server.dto.ProfileDTO
 import it.polito.wa2.g29.server.dto.TicketDTO
 import it.polito.wa2.g29.server.dto.profile.EditProfileDTO
@@ -35,6 +36,15 @@ class ProfileController(private val profileService: ProfileService) {
         log.info("Retrieve tickets of profile:{}", profileId)
         return profileService.getTicketsOfProfileByProfileId(profileId)
     }
+
+    @PreAuthorize("hasAuthority(@AuthUtil.ROLE_MANAGER) or hasAuthority(@AuthUtil.ROLE_CLIENT)")
+    @GetMapping("/profiles/{profileId}/products")
+    @ResponseStatus(HttpStatus.OK)
+    fun getProductsOfProfileByProfileId(@PathVariable @Valid @Min(1) profileId: Int): List<ProductTokenDTO> {
+        log.info("Retrieve purchases of profile:{}", profileId)
+        return profileService.getPurchasesOfProfileByProfileId(profileId)
+    }
+
 
     @PreAuthorize("hasAuthority(@AuthUtil.ROLE_CLIENT)")
     @PutMapping("/profiles")

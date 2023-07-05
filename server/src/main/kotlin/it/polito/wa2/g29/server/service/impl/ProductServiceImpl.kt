@@ -1,7 +1,7 @@
 package it.polito.wa2.g29.server.service.impl
 
 import it.polito.wa2.g29.server.dto.ProductDTO
-import it.polito.wa2.g29.server.dto.ProductTokenDTO
+import it.polito.wa2.g29.server.dto.TokenDTO
 import it.polito.wa2.g29.server.dto.toDTO
 import it.polito.wa2.g29.server.exception.*
 import it.polito.wa2.g29.server.model.ProductToken
@@ -38,7 +38,7 @@ class ProductServiceImpl(
         return product.toDTO()
     }
 
-    override fun generateProductToken(productId: Int): ProductTokenDTO {
+    override fun generateProductToken(productId: Int): TokenDTO {
         val product = productRepository.findByIdOrNull(productId)
             ?: run {
                 log.info("Product not found")
@@ -46,7 +46,7 @@ class ProductServiceImpl(
             }
         val productToken = ProductToken(product)
         productTokenRepository.save(productToken)
-        return ProductTokenDTO(productToken.token)
+        return TokenDTO(productToken.token)
     }
 
     @Transactional

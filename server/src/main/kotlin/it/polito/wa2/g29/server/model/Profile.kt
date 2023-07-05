@@ -26,6 +26,9 @@ class Profile(
     @OneToMany(mappedBy = "customer", cascade = [CascadeType.ALL])
     var tickets: MutableSet<Ticket> = mutableSetOf()
 
+    @OneToMany(mappedBy = "user", cascade = [CascadeType.ALL])
+    var purchases: MutableSet<ProductToken> = mutableSetOf()
+
     fun update(newProfile: EditProfileDTO) {
         name = newProfile.name
         surname = newProfile.surname

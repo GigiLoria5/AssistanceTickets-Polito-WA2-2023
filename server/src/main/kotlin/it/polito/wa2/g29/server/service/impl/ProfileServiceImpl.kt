@@ -1,10 +1,8 @@
 package it.polito.wa2.g29.server.service.impl
 
-import it.polito.wa2.g29.server.dto.ProfileDTO
-import it.polito.wa2.g29.server.dto.TicketDTO
+import it.polito.wa2.g29.server.dto.*
 import it.polito.wa2.g29.server.dto.auth.CreateClientDTO
 import it.polito.wa2.g29.server.dto.profile.EditProfileDTO
-import it.polito.wa2.g29.server.dto.toDTO
 import it.polito.wa2.g29.server.enums.TicketStatus
 import it.polito.wa2.g29.server.enums.UserType
 import it.polito.wa2.g29.server.exception.DuplicateProfileException
@@ -55,6 +53,15 @@ class ProfileServiceImpl(
         checkUserAuthorisation(profile.email)
         return profile.tickets.map { it.toDTO() }
     }
+
+    override fun getPurchasesOfProfileByProfileId(profileId: Int): List<ProductTokenDTO> {
+        val profile = profileRepository.findById(profileId).getOrNull()
+            ?: run {
+                log.info("getProfileById: Profile not found")
+                throw ProfileNotFoundException()
+            }
+        checkUserAuthorisation(profile.email)
+        return profile.purchases.map { it.toDTO() }    }
 
     override fun alreadyExistenceCheck(createClientDTO: CreateClientDTO) {
         if (profileRepository.findProfileByEmail(createClientDTO.email) != null) {

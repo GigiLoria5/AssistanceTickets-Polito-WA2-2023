@@ -223,6 +223,7 @@
             "title": "Smoke coming out of TV",
             "description": "I was watching TV when I noticed smoke coming out of the back. I immediately unplugged it, but now I'm afraid to turn it back on.",
             "productId": 1,
+            "productTokenId": 1,
             "customerId": 1,
             "expertId": 1,
             "totalExchangedMessages": 32,
@@ -236,6 +237,7 @@
             "title": "Broken screen",
             "description": "My computer fell and the screen is shattered",
             "productId": 2,
+            "productTokenId": 11,
             "customerId": 1,
             "expertId": null,
             "totalExchangedMessages": 0,
@@ -245,6 +247,46 @@
             "lastModifiedAt": 1682087637
           },
           ...
+      ]
+      
+
+- GET `/API/profiles/{profileId}/products`
+
+    - Description: Allows to obtain all the purchased products data of a single profile
+    - Permissions allowed:
+        - The Client associated with the specified profileId
+        - Managers
+    - Request parameter: profileId of the requested user profile
+    - Response: `200 OK` (success)
+    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (profileId not
+      found), `422 Unprocessable Entity` (validation of profileId failed) or
+      `500 Internal Server Error` (generic error)
+    - Response body: An object containing all the purchased products data of the
+      requested user. An error message in case of error
+
+    ```
+      [
+          ...,
+          {
+            "productTokenId": 5,
+            "createdAt": 1682087627,
+            "registeredAt": 1682087727,
+            "token": "7305dba7-6635-4931-8463-4c1872fb9f3d",
+            "userId": 1,
+            "product": { 
+                          "productId": 61,
+                          "asin": "B06XSGYCHC",
+                          "brand": "Siriusxm",
+                          "category": "Satellite Radio",
+                          "manufacturerNumber": "SXEZR1V1",
+                          "name": "SiriusXM SXEZR1V1 XM Onyx EZR Satellite Radio Receiver with Vehicle Kit",
+                          "price": 79.99,
+                          "weight": 1.25
+                          "expertise":"COMPUTER",
+                          "level":"SKILLED"
+                        },
+          },
+           ...
       ]
       
 
@@ -467,7 +509,7 @@
     - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `422 Unprocessable Entity` (
       validation of status failed) or `500 Internal Server Error` (generic
       error)
-    - Response body: An array of objects, for each containing ticketId, title, description, productId, customerId,
+    - Response body: An array of objects, for each containing ticketId, title, description, productId, productTokenId, customerId,
       expertId, totalExchangedMessages, status, priorityLevel, createdAt and lastModifiedAt.
       An error message in case of error
       ```
@@ -478,6 +520,7 @@
             "title": "Smoke coming out of TV",
             "description": "I was watching TV when I noticed smoke coming out of the back. I immediately unplugged it, but now I'm afraid to turn it back on.",
             "productId": 1,
+            "productTokenId": 1,
             "customerId": 1,
             "expertId": 1,
             "totalExchangedMessages": 32,
@@ -515,7 +558,7 @@
     - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (ticketId not
       found), `422 Unprocessable Entity` (validation of
       ticketId failed) or `500 Internal Server Error` (generic error)
-    - Response body: An object containing ticketId, description, productId, customerId,
+    - Response body: An object containing ticketId, description, productId, productTokenId, customerId,
       expertId, totalExchangedMessages, status, priorityLevel, createdAt and lastModifiedAt.
       An error message in case of error
       ```
@@ -525,6 +568,7 @@
          "description": "I recently purchased a pair of Bluetooth earphones, but I'm having trouble connecting them to my phone.
                          I've tried resetting the earphones and my phone's Bluetooth settings, but nothing seems to work.",
          "productId": 4,
+         "productTokenId": 4,
          "customerId": 4,
          "expertId": null,
          "totalExchangedMessages": 32,

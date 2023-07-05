@@ -2,8 +2,8 @@ package it.polito.wa2.g29.server.controller
 
 import io.micrometer.observation.annotation.Observed
 import it.polito.wa2.g29.server.dto.ProductDTO
-import it.polito.wa2.g29.server.dto.ProductTokenDTO
-import it.polito.wa2.g29.server.dto.RegisterProductTokenDTO
+import it.polito.wa2.g29.server.dto.TokenDTO
+import it.polito.wa2.g29.server.dto.RegisterTokenDTO
 import it.polito.wa2.g29.server.service.ProductService
 import jakarta.validation.Valid
 import jakarta.validation.constraints.Min
@@ -35,13 +35,13 @@ class ProductController(private val productService: ProductService) {
 
     @PreAuthorize("hasAuthority(@AuthUtil.ROLE_MANAGER)")
     @PostMapping("/products/{productId}/token")
-    fun generateProductToken(@PathVariable @Valid @Min(1) productId: Int): ProductTokenDTO {
+    fun generateProductToken(@PathVariable @Valid @Min(1) productId: Int): TokenDTO {
         return productService.generateProductToken(productId)
     }
 
     @PreAuthorize("hasAuthority(@AuthUtil.ROLE_CLIENT)")
     @PostMapping("/products/register")
-    fun registerProduct(@RequestBody @Valid @NotNull productToken: RegisterProductTokenDTO) {
+    fun registerProduct(@RequestBody @Valid @NotNull productToken: RegisterTokenDTO) {
         return productService.registerProduct(productToken.token)
     }
 
