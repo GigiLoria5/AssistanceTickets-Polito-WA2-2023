@@ -3,6 +3,29 @@ import {getAccessToken, handleErrorResponse, setAccessToken} from "../utils/util
 import {SERVER_COMMUNICATION_ERROR} from "../utils/constants";
 import {User} from "../models/User";
 
+// POST /API/auth/signup
+async function signup(profile, password) {
+    return new Promise((resolve, reject) => {
+        fetch(new URL('auth/signup', API_URL), {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({...profile, password})
+        })
+            .then(async (response) => {
+                if (response.ok) {
+                    resolve(null);
+                } else {
+                    const error = await handleErrorResponse(response);
+                    reject(error);
+                }
+            })
+            .catch((_error) => reject(SERVER_COMMUNICATION_ERROR));
+    });
+}
+
 // POST /API/auth/login
 async function logIn(credentials) {
     return new Promise((resolve, reject) => {
@@ -16,9 +39,8 @@ async function logIn(credentials) {
         })
             .then(async (response) => {
                 if (response.ok) {
-                    const responseJson = await response.json();
-                    const {accessToken} = responseJson;
-                    console.log(accessToken);
+                    const body = await response.json();
+                    const {accessToken} = body;
                     setAccessToken(accessToken)
                     resolve(true)
                 } else {
@@ -42,7 +64,7 @@ async function getUserInfo() {
             .then(async (response) => {
                 if (response.ok) {
                     const user = await response.json();
-                    resolve(new User(user.email, user.name, user.role));
+                    resolve(new User(user.id, user.email, user.name, user.role));
                 } else {
                     const error = await handleErrorResponse(response);
                     reject(error);
@@ -52,4 +74,4 @@ async function getUserInfo() {
     });
 }
 
-export {logIn, getUserInfo};
+export {signup, logIn, getUserInfo};

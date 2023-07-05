@@ -6,10 +6,7 @@ import it.polito.wa2.g29.server.dto.TicketDTO
 import it.polito.wa2.g29.server.dto.profile.EditProfileDTO
 import it.polito.wa2.g29.server.service.ProfileService
 import jakarta.validation.Valid
-import jakarta.validation.constraints.Email
-import jakarta.validation.constraints.NotBlank
-import jakarta.validation.constraints.NotNull
-import jakarta.validation.constraints.Pattern
+import jakarta.validation.constraints.*
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.security.access.prepost.PreAuthorize
@@ -24,12 +21,13 @@ class ProfileController(private val profileService: ProfileService) {
 
     private val log = LoggerFactory.getLogger(ProfileController::class.java)
 
-    @GetMapping("/profiles/{email}")
+    @GetMapping("/profiles/{profileId}")
     @ResponseStatus(HttpStatus.OK)
-    fun getProfileByEmail(@PathVariable @NotBlank @Email @Pattern(regexp = ProfileDTO.EMAIL_PATTERN) email: String): ProfileDTO {
-        log.info("Retrieve details of profile:{}", email)
-        return profileService.getProfileByEmail(email)
+    fun getProfileById(@PathVariable @Valid @Min(1) profileId: Int): ProfileDTO {
+        log.info("Retrieve details of profile with id: {}", profileId)
+        return profileService.getProfileById(profileId)
     }
+
     @PreAuthorize("hasAuthority(@AuthUtil.ROLE_MANAGER) or hasAuthority(@AuthUtil.ROLE_CLIENT)")
     @GetMapping("/profiles/{email}/tickets")
     @ResponseStatus(HttpStatus.OK)
@@ -37,7 +35,6 @@ class ProfileController(private val profileService: ProfileService) {
         log.info("Retrieve tickets of profile:{}", email)
         return profileService.getTicketsOfProfileByEmail(email)
     }
-
 
     @PreAuthorize("hasAuthority(@AuthUtil.ROLE_CLIENT)")
     @PutMapping("/profiles")

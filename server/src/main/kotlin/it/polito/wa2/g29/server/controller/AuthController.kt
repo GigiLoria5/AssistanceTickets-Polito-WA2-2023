@@ -6,6 +6,8 @@ import it.polito.wa2.g29.server.dto.auth.AccessTokenRequestDTO
 import it.polito.wa2.g29.server.dto.auth.CreateClientDTO
 import it.polito.wa2.g29.server.dto.auth.ErrorResponseDTO
 import it.polito.wa2.g29.server.service.AuthService
+import it.polito.wa2.g29.server.service.ExpertService
+import it.polito.wa2.g29.server.service.ProfileService
 import it.polito.wa2.g29.server.utils.KeycloakUtil.convertRoleString
 import jakarta.validation.Valid
 import jakarta.validation.constraints.NotNull
@@ -21,7 +23,11 @@ import org.springframework.web.client.HttpClientErrorException
 @Validated
 @RestController
 @Observed()
-class AuthController(private val authService: AuthService) {
+class AuthController(
+    private val authService: AuthService,
+    private val expertService: ExpertService,
+    private val profileService: ProfileService
+) {
 
     private val log = LoggerFactory.getLogger(AuthController::class.java)
 
@@ -47,12 +53,31 @@ class AuthController(private val authService: AuthService) {
     fun user(@RequestHeader(name = "Authorization") token: String): UserDTO {
         val authentication = SecurityContextHolder.getContext().authentication
         val jwtToken = authentication.credentials as Jwt
+
+        var id: Int? = null
+        val email: String = jwtToken.getClaim("email")
+        lateinit var name: String
         val authority = authentication.authorities.toList()[0].authority
-        return UserDTO(
-            email = jwtToken.getClaim("email"),
-            name = jwtToken.getClaim("name"),
-            role = convertRoleString(authority)
-        )
+        val role = convertRoleString(authority)
+        when (role.uppercase()) {
+            "EXPERT" -> {
+                val expertDetails = expertService.getExpertByEmail(email)
+                id = expertDetails.expertId
+                name = "${expertDetails.name} ${expertDetails.surname}"
+            }
+
+            "CLIENT" -> {
+                val clientDetails = profileService.getProfileByEmail(email)
+                id = clientDetails.profileId
+                name = "${clientDetails.name} ${clientDetails.surname}"
+            }
+
+            else -> {
+                name = jwtToken.getClaim("name")
+            }
+        }
+
+        return UserDTO(id = id, email = email, name = name, role = role)
     }
 
 }

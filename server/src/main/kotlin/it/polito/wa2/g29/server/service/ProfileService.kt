@@ -10,6 +10,8 @@ interface ProfileService {
 
     fun getTicketsOfProfileByEmail(email: String):List<TicketDTO>
 
+    fun getProfileById(profileId: Int): ProfileDTO
+
     fun createProfile(createClientDTO: CreateClientDTO)
 
     fun alreadyExistenceCheck(createClientDTO: CreateClientDTO)

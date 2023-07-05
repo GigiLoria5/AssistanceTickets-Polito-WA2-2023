@@ -43,6 +43,8 @@ const ProtectedRoute = ({userInfo, setUserInfo, rolesAllowed}) => {
         );
     else {
         if (!userInfo) {
+            setUserInfo(null);
+            setAccessToken(null);
             return <Navigate to="/login"/>;
         }
         if (userInfo && !rolesAllowed.includes(userInfo.role)) {

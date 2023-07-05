@@ -17,6 +17,7 @@ import it.polito.wa2.g29.server.utils.AuthenticationUtil
 import org.slf4j.LoggerFactory
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.stereotype.Service
+import kotlin.jvm.optionals.getOrNull
 
 @Service
 class ProfileServiceImpl(
@@ -26,12 +27,22 @@ class ProfileServiceImpl(
     private val log = LoggerFactory.getLogger(ProfileServiceImpl::class.java)
 
     override fun getProfileByEmail(email: String): ProfileDTO {
-        checkUserAuthorisation(email)
         val profile = profileRepository.findProfileByEmail(email)
             ?: run {
-                log.info("Profile not found")
+                log.info("getProfileByEmail: Profile not found")
                 throw ProfileNotFoundException()
             }
+        checkUserAuthorisation(email)
+        return profile.toDTO()
+    }
+
+    override fun getProfileById(profileId: Int): ProfileDTO {
+        val profile = profileRepository.findById(profileId).getOrNull()
+            ?: run {
+                log.info("getProfileById: Profile not found")
+                throw ProfileNotFoundException()
+            }
+        checkUserAuthorisation(profile.email)
         return profile.toDTO()
     }
 

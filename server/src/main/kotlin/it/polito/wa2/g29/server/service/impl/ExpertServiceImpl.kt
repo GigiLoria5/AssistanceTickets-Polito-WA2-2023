@@ -34,6 +34,20 @@ class ExpertServiceImpl(
         return expert.toDTO()
     }
 
+    override fun getExpertByEmail(email: String): ExpertDTO {
+        val principalRole = AuthenticationUtil.getUserTypeEnum()
+        val principalUsername = AuthenticationUtil.getUsername()
+        val expert = expertRepository.findExpertByEmail(email) ?: run {
+            log.info("Expert not found")
+            throw ExpertNotFoundException()
+        }
+        if (principalRole == UserType.EXPERT && principalUsername != expert.email) {
+            log.info("Access denied while retrieving expert with email: {}", email)
+            throw AccessDeniedException("")
+        }
+        return expert.toDTO()
+    }
+
     override fun getAllTicketsByExpertId(expertId: Int): List<TicketDTO> {
         val expert = getExpertObject(expertId)
         return expert.tickets.sortedWith(compareByDescending { it.priorityLevel }).map { it.toDTO() }

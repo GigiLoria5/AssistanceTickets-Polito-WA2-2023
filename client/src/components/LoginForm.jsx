@@ -1,15 +1,17 @@
 import {Button, Container, Form} from 'react-bootstrap';
-import {useState} from 'react';
-import {useNavigate} from 'react-router-dom';
+import {useEffect, useState} from 'react';
+import {useLocation, useNavigate} from 'react-router-dom';
 import API from "../API";
 import {useStatusAlert} from "../../hooks/useStatusAlert";
 import {HttpStatusCode} from "../../enums/HttpStatusCode";
-
-const validator = require("email-validator");
+import {getAccessToken} from "../utils/utils";
+import {validateEmail} from "../utils/validators";
 
 function LoginForm() {
     const navigate = useNavigate();
-    const {StatusAlertComponent, showError, resetStatusAlert} = useStatusAlert();
+    const location = useLocation();
+    const success = location.state?.success;
+    const {StatusAlertComponent, showSuccess, showError, resetStatusAlert} = useStatusAlert();
     const [validated, setValidated] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [username, setUsername] = useState('');
@@ -17,12 +19,22 @@ function LoginForm() {
     const [isUsernameValid, setIsUsernameValid] = useState(true);
     const [isPasswordValid, setIsPasswordValid] = useState(true);
 
+    useEffect(() => {
+        if (getAccessToken() !== "null") {
+            navigate("/")
+        }
+
+        if (success) {
+            showSuccess("Registration completed successfully")
+        }
+    }, [])
+
     const handleSubmit = async (event) => {
         event.preventDefault();
         setIsLoading(true);
         resetStatusAlert();
         const form = event.currentTarget;
-        const validUsername = username && validator.validate(username);
+        const validUsername = username && validateEmail(username);
         if (form.checkValidity() && validUsername && password) {
             const credentials = {username, password};
             await handleLogin(credentials);
@@ -32,7 +44,6 @@ function LoginForm() {
         setIsUsernameValid(!!validUsername);
         setIsPasswordValid(!!password);
         setValidated(true);
-        setIsLoading(false);
     };
 
     const handleLogin = async (credentials) => {
@@ -41,14 +52,15 @@ function LoginForm() {
                 navigate('/');
             })
             .catch(err => {
-                showError(err.status === HttpStatusCode.UNAUTHORIZED ? "Wrong Credentials. Please try again" : err.error)
+                showError(err.status === HttpStatusCode.UNAUTHORIZED ? "Wrong Credentials. Please try again" : err.error);
+                setIsLoading(false);
             })
     };
 
     return (
         <div className='color-overlay d-flex justify-content-center align-items-center min-vh-100 flex-column'>
             <Form id='login-form' className='rounded p-4 p-sm-4 bg-grey' noValidate onSubmit={handleSubmit}>
-                <h2 className='text-center'>Login Form</h2>
+                <h2 className='text-center'>Login</h2>
                 <Form.Group className='mb-3'>
                     <Form.Label>Username</Form.Label>
                     <Form.Control
@@ -83,10 +95,23 @@ function LoginForm() {
                     </Form.Control.Feedback>
                 </Form.Group>
 
-                <Container className="d-flex justify-content-between p-0">
-                    <Button variant="primary" disabled={isLoading} className="mb-1 ml-5" type="submit">
-                        {isLoading ? "In progress..." : "Login"}
-                    </Button>
+                <Container className="p-0">
+                    <div className="d-flex flex-column align-items-center mt-3">
+                        <Button variant="primary" disabled={isLoading} className="w-100" type="submit">
+                            {isLoading ? "In Progress..." : "Login"}
+                        </Button>
+                    </div>
+                    <div className="d-flex flex-column align-items-center mt-3">
+                        <p>
+                            Don't have an account?
+                            <Button
+                                variant="link"
+                                onClick={() => navigate("/register")}
+                                className="py-0 pb-2 text-decoration-none">
+                                Register
+                            </Button>
+                        </p>
+                    </div>
                 </Container>
             </Form>
             <StatusAlertComponent/>
