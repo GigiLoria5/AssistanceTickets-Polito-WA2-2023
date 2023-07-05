@@ -1,9 +1,53 @@
 import React, {useEffect, useState} from "react";
-import {Alert, Row, Col, Form, Button, Table} from "react-bootstrap";
+import {Button, Col, Form, Row, Table} from "react-bootstrap";
 import API from "../API";
+import {useStatusAlert} from "../../hooks/useStatusAlert";
+
+const Products = () => {
+    const [data, setData] = useState(null);
+    const {StatusAlertComponent, showError, resetStatusAlert} = useStatusAlert();
+
+    useEffect(() => {
+            getAllProducts()
+        }, []
+    );
+
+    const getAllProducts = () => {
+        API.getAllProducts()
+            .then((x) => {
+                    setData(x)
+                    resetStatusAlert()
+                }
+            )
+            .catch(err => showError(err.error))
+    }
+
+    const searchProduct = (productId) => {
+        API.searchProduct(productId)
+            .then((x) => {
+                    setData([x])
+                    resetStatusAlert()
+                }
+            )
+            .catch(err => showError(err.error))
+    }
+
+    return (
+        <>
+            <StatusAlertComponent/>
+            {
+                data ?
+                    <>
+                        <ProdSearchBar getAllProducts={getAllProducts} searchProduct={searchProduct}/>
+                        <ProdTable data={data}/>
+                    </>
+                    : null
+            }
+        </>
+    );
+};
 
 const ProdSearchBar = ({getAllProducts, searchProduct}) => {
-
     const [searchValue, setSearchValue] = useState("");
 
     const handleSearch = () => {
@@ -70,82 +114,22 @@ const ProdTable = ({data}) => {
                     </tr>
                     </thead>
                     <tbody>
-                    {data.map((item, index) => (
-                        <tr key={index}>
-                            <td>{item.id}</td>
-                            <td>{item.asin}</td>
-                            <td>{item.brand}</td>
-                            <td>{item.category}</td>
-                            <td>{item.manufacturerNumber}</td>
-                            <td>{item.name}</td>
-                            <td>{item.price}</td>
-                            <td>{item.weight}</td>
+                    {data.map((product) => (
+                        <tr key={product.productId}>
+                            <td>{product.productId}</td>
+                            <td>{product.asin}</td>
+                            <td>{product.brand}</td>
+                            <td>{product.category}</td>
+                            <td>{product.manufacturerNumber}</td>
+                            <td>{product.name}</td>
+                            <td>{product.price}</td>
+                            <td>{product.weight}</td>
                         </tr>
                     ))}
                     </tbody>
                 </Table>
             </Col>
         </Row>
-    );
-};
-
-const ErrorPopup = ({error}) => {
-    return (
-        <Row className="mt-3">
-            <Col>
-                <Alert variant="danger" className="roundedError">
-                    <Alert.Heading>{error}</Alert.Heading>
-                </Alert>
-            </Col>
-        </Row>
-    )
-}
-
-const Products = () => {
-    const [data, setData] = useState(null);
-    const [error, setError] = useState("")
-
-    const getAllProducts = () => {
-        API.getAllProducts().then((x) => {
-                setData(x)
-                setError("")
-            }
-        ).catch(err => {
-            setError(err.error);
-        })
-    }
-
-    const searchProduct = (productId) => {
-        API.searchProduct(productId).then((x) => {
-                setData([x])
-                setError("")
-            }
-        ).catch(err => {
-            setError(err.error);
-        })
-    }
-
-    useEffect(() => {
-            getAllProducts()
-        }, []
-    );
-
-    return (
-        <>
-            {
-                error ?
-                    <ErrorPopup error={error}/>
-                    : null
-            }
-            {
-                data ?
-                    <>
-                        <ProdSearchBar getAllProducts={getAllProducts} searchProduct={searchProduct}/>
-                        <ProdTable data={data}/>
-                    </>
-                    : null
-            }
-        </>
     );
 };
 

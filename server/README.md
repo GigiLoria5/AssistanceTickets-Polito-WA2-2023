@@ -57,7 +57,23 @@
     - Response body: An object containing the access_token. An error message in case of error
       ```
       {
-        "access_token": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJTdEl1VDdvRGJ5cDc2SFg5QmlfdzZIUUk0SVZ5TXhfZ2g2WmpGT0ItT0RrIn0.eyJleHAiOjE2ODM4ODcyMzcsImlhdCI6MTY4Mzg4N"
+        "accessToken": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJTdEl1VDdvRGJ5cDc2SFg5QmlfdzZIUUk0SVZ5TXhfZ2g2WmpGT0ItT0RrIn0.eyJleHAiOjE2ODM4ODcyMzcsImlhdCI6MTY4Mzg4N"
+      }
+      ```
+
+- GET `/API/auth/user`
+    - Description: Allows to retrieve information about the authenticated user
+    - Request body: _None_
+    - Response: `200 Ok` (success)
+    - Error responses: `401 Unauthorized` (not logged in) or `500 Internal Server Error` (generic error)
+    - Response body: An object containing main user information (the id is null for managers). An error message in case
+      of error
+      ```
+      {
+        "id": 5,
+        "email": "bbowering4@vistaprint.com",
+        "name": "Barr Bowering",
+        "role": "Expert"
       }
       ```
 
@@ -120,18 +136,17 @@
 
 ### Profiles
 
-- GET `/API/profiles/{email}`
+- GET `/API/profiles/{profileId}`
 
     - Description: Allows to obtain all the information of a single profile and the IDs of his tickets
     - Permissions allowed:
-        - The Client associated with the specified email address
+        - The Client associated with the specified identifier
         - Experts who have a not closed ticket with the client
         - Managers
-    - Request parameter: email of the requested user profile
+    - Request parameter: profile identifier of the requested user profile
     - Response: `200 OK` (success)
-    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (email not
-      found), `422 Unprocessable Entity` (validation of email failed) or
-      `500 Internal Server Error` (generic error)
+    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (profileId not
+      found), `422 Unprocessable Entity` (validation of profileId failed) or `500 Internal Server Error` (generic error)
     - Response body: An object containing profileId, email, name, surname, phoneNumber, address, city, country and
       ticketsIds (an array of int, each representing the id of a ticket opened by the user) of the
       requested user. An error message in case of error
@@ -226,8 +241,7 @@
     - Request body: _None_
     - Response: `200 OK` (success)
     - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (expertId not
-      found), `422 Unprocessable Entity` (validation of expertId
-      failed) or `500 Internal Server Error` (generic error)
+      found), `422 Unprocessable Entity` (validation of expertId failed) or `500 Internal Server Error` (generic error)
     - Response body: An object containing expertId, name, surname, email and skills (array of objects, for each
       containing expertise and level). An error message in case of error
 
@@ -247,6 +261,7 @@
                     }, 
                     ...
                   ]
+      }
       ```
 
 - GET `/API/experts/{expertId}/statusChanges`
@@ -496,9 +511,9 @@
 
     - Response: `201 Created` (success)
     - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (productId not
-      found), `409 Conflict` (a not closed
-      ticket for the same customer and product already exists), `422 Unprocessable Entity` (validation of
-      request body failed) or `500 Internal Server Error` (generic error)
+      found), `409 Conflict` (a not closed ticket for the same customer and product already
+      exists), `422 Unprocessable Entity` (validation of request body failed) or `500 Internal Server Error` (generic
+      error)
     - Response body: An object containing the id of the ticket created. An error message in case of error
       ```
       {

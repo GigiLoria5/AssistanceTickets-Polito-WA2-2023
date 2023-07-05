@@ -15,13 +15,11 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.util.unit.DataSize
-import org.springframework.web.servlet.config.annotation.EnableWebMvc
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
 @Configuration
 @EnableWebSecurity
-@EnableWebMvc
 @EnableMethodSecurity
 class ServerConfig(private val jwtAuthConverter: JwtAuthConverter) : WebMvcConfigurer {
 
@@ -31,9 +29,11 @@ class ServerConfig(private val jwtAuthConverter: JwtAuthConverter) : WebMvcConfi
             .csrf()
             .disable()
             .authorizeHttpRequests()
+            .requestMatchers("/API/auth/user").authenticated()
             .requestMatchers("/API/auth/*").permitAll()
+            .requestMatchers("/API/**").authenticated()
             .requestMatchers("/actuator/**").permitAll()
-            .anyRequest().authenticated()
+            .anyRequest().permitAll()
         http
             .oauth2ResourceServer()
             .jwt()

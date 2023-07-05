@@ -1,10 +1,10 @@
 version: '3.8'
 services:
 
-  #Observability
+  # Observability
   tempo:
     image: grafana/tempo
-    extra_hosts: ['host.docker.internal:host-gateway']
+    extra_hosts: [ 'host.docker.internal:host-gateway' ]
     command: [ "-config.file=/etc/tempo.yaml" ]
     volumes:
       - ./docker/observability-config/tempo/tempo-local.yaml:/etc/tempo.yaml:ro
@@ -15,7 +15,7 @@ services:
 
   loki:
     image: grafana/loki
-    extra_hosts: ['host.docker.internal:host-gateway']
+    extra_hosts: [ 'host.docker.internal:host-gateway' ]
     command: [ "-config.file=/etc/loki/local-config.yaml" ]
     ports:
       - "3100:3100"                                   # loki needs to be exposed so it receives logs
@@ -27,7 +27,7 @@ services:
 
   prometheus:
     image: prom/prometheus
-    extra_hosts: ['host.docker.internal:host-gateway']
+    extra_hosts: [ 'host.docker.internal:host-gateway' ]
     command:
       - --enable-feature=exemplar-storage
       - --config.file=/etc/prometheus/prometheus.yml
@@ -38,7 +38,7 @@ services:
 
   grafana:
     image: grafana/grafana
-    extra_hosts: ['host.docker.internal:host-gateway']
+    extra_hosts: [ 'host.docker.internal:host-gateway' ]
     volumes:
       - ./docker/observability-config/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro
       - ./docker/observability-config/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards:ro
@@ -49,7 +49,7 @@ services:
     ports:
       - "3001:3000"
 
-  #Database
+  # Database
   db:
     image: postgres
     container_name: pg_container
@@ -67,7 +67,7 @@ services:
     volumes:
       - ./docker/dump.sql:/docker-entrypoint-initdb.d/dump.sql
 
-  #Authentication
+  # Authentication
   keycloak-curl-test:
     container_name: keycloak-curl-test
     image: alpine:latest
@@ -90,7 +90,7 @@ services:
       - ./docker/SpringBootKeycloak-realm.json:/opt/keycloak/data/import/myrealm.json
       - ./docker/keycloak-healthcheck.sh:/test/healthcheck.sh
 
-  #Springboot app
+  # Spring Boot app
   app:
     image: pepaunz/assistance-tickets:v0.4
     container_name: g29-assistance-tickets-container
@@ -100,6 +100,16 @@ services:
         condition: service_healthy
       keycloak-curl-test:
         condition: service_completed_successfully
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/assistance_tickets
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=p4ssw0rd
+      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI=http://keycloak:3000/realms/SpringBootKeycloak
+      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI=http://keycloak:8080/realms/SpringBootKeycloak/protocol/openid-connect/certs
+      - KEYCLOAK_BASE_URL=http://keycloak:8080
+      - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://tempo:9411/api/v2/spans
+
     ports:
       - "8080:8080"
 

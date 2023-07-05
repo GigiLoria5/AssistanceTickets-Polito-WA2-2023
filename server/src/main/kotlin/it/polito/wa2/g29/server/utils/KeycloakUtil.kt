@@ -27,6 +27,10 @@ object KeycloakUtil {
         setUserRole(realmResource, email, userRole)
     }
 
+    fun convertRoleString(roleString: String): String {
+        return roleString.substringAfter("ROLE_").lowercase().replaceFirstChar { it.uppercase() }
+    }
+
     private fun getRealmResource(keycloakProperties: KeycloakProperties): RealmResource {
         // Get realm
         val realm = keycloakProperties.realm

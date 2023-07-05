@@ -13,7 +13,7 @@ module.exports = {
             directory: path.join(__dirname, "build"),
         },
         historyApiFallback: true,
-        port: 3000,
+        port: 5000,
     },
     plugins: [
         new HtmlWebpackPlugin({

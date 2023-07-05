@@ -7,6 +7,8 @@ import it.polito.wa2.g29.server.dto.profile.EditProfileDTO
 interface ProfileService {
     fun getProfileByEmail(email: String): ProfileDTO
 
+    fun getProfileById(profileId: Int): ProfileDTO
+
     fun createProfile(createClientDTO: CreateClientDTO)
 
     fun alreadyExistenceCheck(createClientDTO: CreateClientDTO)

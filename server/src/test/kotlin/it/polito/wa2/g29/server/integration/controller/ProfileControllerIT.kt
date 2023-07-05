@@ -61,7 +61,7 @@ class ProfileControllerIT : AbstractTestcontainersTest() {
     }
 
     /////////////////////////////////////////////////////////////////////
-    ////// GET /API/profiles/{email}
+    ////// GET /API/profiles/{profileId}
     /////////////////////////////////////////////////////////////////////
 
     @Test
@@ -69,7 +69,7 @@ class ProfileControllerIT : AbstractTestcontainersTest() {
         SecurityTestUtils.setClient(testProfiles[0].email)
         val expectedProfile = testProfiles[0]
         mockMvc
-            .perform(get("/API/profiles/${expectedProfile.email}").contentType("application/json"))
+            .perform(get("/API/profiles/${expectedProfile.id}").contentType("application/json"))
             .andExpectAll(
                 status().isOk,
                 content().contentType(MediaType.APPLICATION_JSON),
@@ -98,7 +98,7 @@ class ProfileControllerIT : AbstractTestcontainersTest() {
         profileRepository.save(testProfiles[0])
         val expectedProfile = testProfiles[0]
         mockMvc
-            .perform(get("/API/profiles/${expectedProfile.email}").contentType("application/json"))
+            .perform(get("/API/profiles/${expectedProfile.id}").contentType("application/json"))
             .andExpectAll(
                 status().isOk,
                 content().contentType(MediaType.APPLICATION_JSON),
@@ -129,7 +129,7 @@ class ProfileControllerIT : AbstractTestcontainersTest() {
         expertRepository.save(testExperts[0])
         val expectedProfile = testProfiles[0]
         mockMvc
-            .perform(get("/API/profiles/${expectedProfile.email}").contentType("application/json"))
+            .perform(get("/API/profiles/${expectedProfile.id}").contentType("application/json"))
             .andExpectAll(
                 status().isOk,
                 content().contentType(MediaType.APPLICATION_JSON),
@@ -158,7 +158,7 @@ class ProfileControllerIT : AbstractTestcontainersTest() {
         profileRepository.save(testProfiles[0])
         val expectedProfile = testProfiles[0]
         mockMvc
-            .perform(get("/API/profiles/${expectedProfile.email}").contentType("application/json"))
+            .perform(get("/API/profiles/${expectedProfile.id}").contentType("application/json"))
             .andExpectAll(
                 status().isUnauthorized,
                 jsonPath("$.error").doesNotExist()
@@ -177,7 +177,7 @@ class ProfileControllerIT : AbstractTestcontainersTest() {
         val expectedProfile = testProfiles[0]
         SecurityTestUtils.setManager()
         mockMvc
-            .perform(get("/API/profiles/${expectedProfile.email}").contentType("application/json"))
+            .perform(get("/API/profiles/${expectedProfile.id}").contentType("application/json"))
             .andExpectAll(
                 status().isOk,
                 content().contentType(MediaType.APPLICATION_JSON),
@@ -197,9 +197,8 @@ class ProfileControllerIT : AbstractTestcontainersTest() {
     @Test
     fun getProfileNotFound() {
         SecurityTestUtils.setManager()
-        val email = "non_existing_email@fake.com"
         mockMvc
-            .perform(get("/API/profiles/$email").contentType("application/json"))
+            .perform(get("/API/profiles/${Int.MAX_VALUE}").contentType("application/json"))
             .andExpectAll(
                 status().isNotFound,
                 jsonPath("$.error").doesNotExist()
