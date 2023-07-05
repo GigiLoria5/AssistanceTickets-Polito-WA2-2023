@@ -289,6 +289,46 @@
            ...
       ]
       
+  
+- GET `/API/profiles/{profileId}/products/{productTokenId}`
+
+    - Description: Allows to obtain a purchased products of a single profile
+    - Permissions allowed:
+        - The Client associated with the specified profileId
+        - Managers
+    - Request parameter: profileId of the requested user profile, productTokenId
+    - Response: `200 OK` (success)
+    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (profileId or productTokenId not
+      found), `422 Unprocessable Entity` (validation of profileId failed) or
+      `500 Internal Server Error` (generic error)
+    - Response body: An object containing all the purchased products data of the
+      requested user. An error message in case of error
+
+    ```
+      [
+          ...,
+          {
+            "productTokenId": 5,
+            "createdAt": 1682087627,
+            "registeredAt": 1682087727,
+            "token": "7305dba7-6635-4931-8463-4c1872fb9f3d",
+            "userId": 1,
+            "product": { 
+                          "productId": 61,
+                          "asin": "B06XSGYCHC",
+                          "brand": "Siriusxm",
+                          "category": "Satellite Radio",
+                          "manufacturerNumber": "SXEZR1V1",
+                          "name": "SiriusXM SXEZR1V1 XM Onyx EZR Satellite Radio Receiver with Vehicle Kit",
+                          "price": 79.99,
+                          "weight": 1.25
+                          "expertise":"COMPUTER",
+                          "level":"SKILLED"
+                        },
+          },
+           ...
+      ]
+
 
 - PUT `/API/profiles`
 

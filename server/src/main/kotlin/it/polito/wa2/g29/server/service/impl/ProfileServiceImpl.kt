@@ -6,6 +6,7 @@ import it.polito.wa2.g29.server.dto.profile.EditProfileDTO
 import it.polito.wa2.g29.server.enums.TicketStatus
 import it.polito.wa2.g29.server.enums.UserType
 import it.polito.wa2.g29.server.exception.DuplicateProfileException
+import it.polito.wa2.g29.server.exception.ProductNotFoundException
 import it.polito.wa2.g29.server.exception.ProfileNotFoundException
 import it.polito.wa2.g29.server.model.toEntity
 import it.polito.wa2.g29.server.repository.ExpertRepository
@@ -62,6 +63,26 @@ class ProfileServiceImpl(
             }
         checkUserAuthorisation(profile.email)
         return profile.purchases.map { it.toDTO() }    }
+
+    override fun getPurchaseOfProfileByProfileIdAndProductTokenId(
+        profileId: Int,
+        productTokenId: Int
+    ): ProductTokenDTO {
+
+        val profile = profileRepository.findById(profileId).getOrNull()
+            ?: run {
+                log.info("getProfileById: Profile not found")
+                throw ProfileNotFoundException()
+            }
+        checkUserAuthorisation(profile.email)
+
+        val purchase = profile.purchases.find { it.id==productTokenId }
+            ?: run {
+                log.info("Purchase not found")
+                throw ProductNotFoundException()
+            }
+        return purchase.toDTO()
+    }
 
     override fun alreadyExistenceCheck(createClientDTO: CreateClientDTO) {
         if (profileRepository.findProfileByEmail(createClientDTO.email) != null) {

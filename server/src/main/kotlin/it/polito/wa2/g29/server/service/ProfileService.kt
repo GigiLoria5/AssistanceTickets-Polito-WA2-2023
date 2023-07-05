@@ -9,9 +9,11 @@ import it.polito.wa2.g29.server.dto.profile.EditProfileDTO
 interface ProfileService {
     fun getProfileByEmail(email: String): ProfileDTO
 
-    fun getTicketsOfProfileByProfileId(profileId: Int):List<TicketDTO>
+    fun getTicketsOfProfileByProfileId(profileId: Int): List<TicketDTO>
 
-    fun getPurchasesOfProfileByProfileId(profileId: Int):List<ProductTokenDTO>
+    fun getPurchasesOfProfileByProfileId(profileId: Int): List<ProductTokenDTO>
+
+    fun getPurchaseOfProfileByProfileIdAndProductTokenId(profileId: Int, productTokenId: Int): ProductTokenDTO
 
     fun getProfileById(profileId: Int): ProfileDTO
 
