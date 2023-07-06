@@ -79,6 +79,7 @@ async function getTicketsOfProfileByProfileId(profileId) {
                                     ticketJson.title,
                                     ticketJson.description,
                                     ticketJson.productId,
+                                    ticketJson.productTokenId,
                                     ticketJson.customerId,
                                     ticketJson.expertId,
                                     ticketJson.totalExchangedMessages,
@@ -100,7 +101,7 @@ async function getTicketsOfProfileByProfileId(profileId) {
 }
 
 // GET /API/profiles/{profileId}/products
-async function getProductsOfProfileByProfileId(profileId) {
+async function getPurchasesOfProfileByProfileId(profileId) {
     return new Promise((resolve, reject) => {
         fetch(new URL(`profiles/${profileId}/products`, API_URL), {
             headers: {
@@ -132,4 +133,4 @@ async function getProductsOfProfileByProfileId(profileId) {
     });
 }
 
-export {getProfileById, updateProfile, getTicketsOfProfileByProfileId, getProductsOfProfileByProfileId}
+export {getProfileById, updateProfile, getTicketsOfProfileByProfileId, getPurchasesOfProfileByProfileId}

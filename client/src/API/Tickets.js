@@ -21,6 +21,7 @@ async function getTicketById(ticketId) {
                         ticketJson.title,
                         ticketJson.description,
                         ticketJson.productId,
+                        ticketJson.productTokenId,
                         ticketJson.customerId,
                         ticketJson.expertId,
                         ticketJson.totalExchangedMessages,

@@ -2,7 +2,7 @@ import {Button, Col, Row, Table} from "react-bootstrap";
 import React from "react";
 import {dateTimeMillisFormatted} from "../utils/utils";
 
-function PurchasedProducts({products, title, actionNameFinder, action}) {
+function PurchasedProducts({purchases, title, actionNameFinder, action}) {
 
     return (
         <>
@@ -11,7 +11,7 @@ function PurchasedProducts({products, title, actionNameFinder, action}) {
             </h4>
             <Row>
                 <Col>
-                    <PurchasedProductsTable products={products} actionNameFinder={actionNameFinder}
+                    <PurchasedProductsTable purchases={purchases} actionNameFinder={actionNameFinder}
                                             action={action}/>
                 </Col>
             </Row>
@@ -20,9 +20,9 @@ function PurchasedProducts({products, title, actionNameFinder, action}) {
     )
 }
 
-function PurchasedProductsTable({products, actionNameFinder, action}) {
+function PurchasedProductsTable({purchases, actionNameFinder, action}) {
     return (
-        (products.length) > 0 ?
+        (purchases.length) > 0 ?
             <div className="table-responsive">
                 <Table>
                     <thead>
@@ -35,22 +35,23 @@ function PurchasedProductsTable({products, actionNameFinder, action}) {
                         <th></th>
                     </tr>
                     </thead>
+
                     <tbody>
-                    {products.map((product) => (
-                        <tr key={product.productId}>
-                            <td>{product.name}</td>
-                            <td>{product.asin}</td>
-                            <td>{product.brand}</td>
-                            <td>{dateTimeMillisFormatted(product.purchaseDate)}</td>
-                            <td>{dateTimeMillisFormatted(product.registrationDate)}</td>
+                    {purchases.map((purchase) => (
+                        <tr key={purchase.product.productId}>
+                            <td>{purchase.product.name}</td>
+                            <td>{purchase.product.asin}</td>
+                            <td>{purchase.product.brand}</td>
+                            <td>{dateTimeMillisFormatted(purchase.createdAt)}</td>
+                            <td>{dateTimeMillisFormatted(purchase.registeredAt)}</td>
                             <td>
-                                <Row >
+                                <Row>
                                     <Col className="d-grid gap-2">
                                         <Button
-                                            variant={product.ticketId ? "outline-primary" : "primary"}
-                                            onClick={() => action(product)}
+                                            variant={purchase.ticketId ? "outline-primary" : "primary"}
+                                            onClick={() => action(purchase)}
                                         >
-                                            {actionNameFinder(product)}
+                                            {actionNameFinder(purchase)}
                                         </Button>
                                     </Col>
                                 </Row>
@@ -59,10 +60,8 @@ function PurchasedProductsTable({products, actionNameFinder, action}) {
                     ))}
                     </tbody>
                 </Table>
-            </div> : <div>No tickets found</div>
-
+            </div> : <div>No purchases found</div>
     );
-
 }
 
 
