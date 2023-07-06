@@ -466,7 +466,7 @@
       found), `422 Unprocessable Entity` (validation of expertId
       failed) or `500 Internal Server Error` (generic error)
     - Response body: An array of objects (sorted by priorityLevel descending) for each containing
-      ticketId, description, productId, customerId, expertId, totalExchangedMessages, status, priorityLevel, createdAt
+      ticketId, description, productId, productTokenId, customerId, expertId, totalExchangedMessages, status, priorityLevel, createdAt
       and lastModifiedAt.
       An error message in case of error
       ```
@@ -476,7 +476,8 @@
             "ticketId": 21,
             "title": "Microwave not heating food",
             "description": "I've tried using my microwave multiple times, but it's not heating up my food. The light turns on and the plate rotates, but the food stays cold.",
-            "productId": 2,
+            "productId": 2, 
+            "productTokenId": 1,
             "customerId": 3,
             "expertId": 2,
             "totalExchangedMessages": 32,
@@ -570,6 +571,7 @@
             "title": "Broken screen",
             "description": "My computer fell and the screen is shattered",
             "productId": 2,
+            "productTokenId": 12,
             "customerId": 2,
             "expertId": null,
             "totalExchangedMessages": 0,
