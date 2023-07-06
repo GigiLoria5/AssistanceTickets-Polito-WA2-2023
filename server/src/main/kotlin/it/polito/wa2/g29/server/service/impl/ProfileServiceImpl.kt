@@ -55,7 +55,7 @@ class ProfileServiceImpl(
         return profile.tickets.map { it.toDTO() }
     }
 
-    override fun getPurchasesOfProfileByProfileId(profileId: Int): List<ProductTokenDTO> {
+    override fun getPurchasesByProfileId(profileId: Int): List<ProductTokenDTO> {
         val profile = profileRepository.findById(profileId).getOrNull()
             ?: run {
                 log.info("getProfileById: Profile not found")
@@ -64,7 +64,7 @@ class ProfileServiceImpl(
         checkUserAuthorisation(profile.email)
         return profile.purchases.map { it.toDTO() }    }
 
-    override fun getPurchaseOfProfileByProfileIdAndProductTokenId(
+    override fun getPurchaseByProfileIdAndProductTokenId(
         profileId: Int,
         productTokenId: Int
     ): ProductTokenDTO {

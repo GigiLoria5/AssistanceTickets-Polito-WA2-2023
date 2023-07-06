@@ -57,7 +57,7 @@ function ClientDashboard({userInfo}) {
     const getPurchasesData = async () => {
         return new Promise((resolve, reject) => {
 
-            API.getPurchasesOfProfileByProfileId(userInfo.id)
+            API.getPurchasesByProfileId(userInfo.id)
                 .then((p) => {
                         setPurchasesData(p)
                         resolve()

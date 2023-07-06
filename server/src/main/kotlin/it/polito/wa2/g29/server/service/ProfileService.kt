@@ -11,9 +11,9 @@ interface ProfileService {
 
     fun getTicketsOfProfileByProfileId(profileId: Int): List<TicketDTO>
 
-    fun getPurchasesOfProfileByProfileId(profileId: Int): List<ProductTokenDTO>
+    fun getPurchasesByProfileId(profileId: Int): List<ProductTokenDTO>
 
-    fun getPurchaseOfProfileByProfileIdAndProductTokenId(profileId: Int, productTokenId: Int): ProductTokenDTO
+    fun getPurchaseByProfileIdAndProductTokenId(profileId: Int, productTokenId: Int): ProductTokenDTO
 
     fun getProfileById(profileId: Int): ProfileDTO
 

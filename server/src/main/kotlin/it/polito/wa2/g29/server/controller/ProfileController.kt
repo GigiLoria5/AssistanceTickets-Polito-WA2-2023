@@ -40,19 +40,19 @@ class ProfileController(private val profileService: ProfileService) {
     @PreAuthorize("hasAuthority(@AuthUtil.ROLE_MANAGER) or hasAuthority(@AuthUtil.ROLE_CLIENT)")
     @GetMapping("/profiles/{profileId}/products")
     @ResponseStatus(HttpStatus.OK)
-    fun getPurchasesOfProfileByProfileId(@PathVariable @Valid @Min(1) profileId: Int): List<ProductTokenDTO> {
+    fun getPurchasesByProfileId(@PathVariable @Valid @Min(1) profileId: Int): List<ProductTokenDTO> {
         log.info("Retrieve purchases of profile:{}", profileId)
-        return profileService.getPurchasesOfProfileByProfileId(profileId)
+        return profileService.getPurchasesByProfileId(profileId)
     }
 
     @GetMapping("/profiles/{profileId}/products/{productTokenId}")
     @ResponseStatus(HttpStatus.OK)
-    fun getPurchaseOfProfileByProfileIdAndProductTokenId(
+    fun getPurchaseByProfileIdAndProductTokenId(
         @PathVariable @Valid @Min(1) profileId: Int,
         @PathVariable @Valid @Min(1) productTokenId: Int,
         ): ProductTokenDTO {
         log.info("Retrieve purchase {} of profile:{}", productTokenId,profileId)
-        return profileService.getPurchaseOfProfileByProfileIdAndProductTokenId(profileId,productTokenId)
+        return profileService.getPurchaseByProfileIdAndProductTokenId(profileId,productTokenId)
     }
 
     @PreAuthorize("hasAuthority(@AuthUtil.ROLE_CLIENT)")
