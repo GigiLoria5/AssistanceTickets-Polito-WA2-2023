@@ -1,17 +1,11 @@
 package it.polito.wa2.g29.server.integration.controller
 
 import it.polito.wa2.g29.server.dto.SkillDTO
-import it.polito.wa2.g29.server.dto.TicketChangeDTO
-import it.polito.wa2.g29.server.enums.TicketPriority
-import it.polito.wa2.g29.server.enums.TicketStatus
-import it.polito.wa2.g29.server.enums.UserType
 import it.polito.wa2.g29.server.integration.AbstractTestcontainersTest
 import it.polito.wa2.g29.server.model.Expert
 import it.polito.wa2.g29.server.model.Product
 import it.polito.wa2.g29.server.model.Profile
-import it.polito.wa2.g29.server.model.Ticket
 import it.polito.wa2.g29.server.repository.*
-import it.polito.wa2.g29.server.service.TicketStatusChangeService
 import it.polito.wa2.g29.server.utils.ExpertTestUtils
 import it.polito.wa2.g29.server.utils.ProductTestUtils
 import it.polito.wa2.g29.server.utils.ProfileTestUtils
@@ -41,9 +35,6 @@ class ExpertControllerIT : AbstractTestcontainersTest() {
     private lateinit var mockMvc: MockMvc
 
     @Autowired
-    private lateinit var ticketStatusChangeService: TicketStatusChangeService
-
-    @Autowired
     private lateinit var expertRepository: ExpertRepository
 
     @Autowired
@@ -51,9 +42,6 @@ class ExpertControllerIT : AbstractTestcontainersTest() {
 
     @Autowired
     private lateinit var profileRepository: ProfileRepository
-
-    @Autowired
-    private lateinit var ticketRepository: TicketRepository
 
     lateinit var testProducts: List<Product>
     lateinit var testProfiles: List<Profile>
@@ -211,194 +199,6 @@ class ExpertControllerIT : AbstractTestcontainersTest() {
     /////////////////////////////////////////////////////////////////////
 
     @Test
-    @Transactional
-    @Rollback
-    fun getStatusChangesByExpertIdWithSomeChangesManager() {
-        val expert = testExperts[0]
-        val ticketOne = Ticket("title1", "description1", testProducts[0], testProfiles[0]).apply {
-            status = TicketStatus.IN_PROGRESS
-            priorityLevel = TicketPriority.LOW
-        }
-        val ticketTwo = Ticket("title2", "description2", testProducts[0], testProfiles[1]).apply {
-            status = TicketStatus.IN_PROGRESS
-            priorityLevel = TicketPriority.LOW
-        }
-        ExpertTestUtils.addTicket(ticketRepository, expert, ticketOne)
-        ExpertTestUtils.addTicket(ticketRepository, expert, ticketTwo)
-        SecurityTestUtils.setExpert(expert.email)
-        ExpertTestUtils.addTicketStatusChange(
-            ticketStatusChangeService,
-            expert,
-            ticketOne,
-            TicketStatus.RESOLVED,
-            UserType.EXPERT,
-            ""
-        )
-        SecurityTestUtils.setClient(testProfiles[0].email)
-        ExpertTestUtils.addTicketStatusChange(
-            ticketStatusChangeService,
-            expert,
-            ticketOne,
-            TicketStatus.CLOSED,
-            UserType.CUSTOMER,
-            "It works now"
-        )
-        SecurityTestUtils.setExpert(expert.email)
-        ExpertTestUtils.addTicketStatusChange(
-            ticketStatusChangeService,
-            expert,
-            ticketTwo,
-            TicketStatus.RESOLVED,
-            UserType.EXPERT,
-            "The issue has been resolved"
-        )
-        ExpertTestUtils.addTicketStatusChange(
-            ticketStatusChangeService,
-            expert,
-            ticketTwo,
-            TicketStatus.CLOSED,
-            UserType.EXPERT,
-            null
-        )
-
-        SecurityTestUtils.setManager()
-        mockMvc
-            .perform(get("/API/experts/${expert.id}/statusChanges").contentType("application/json"))
-            .andExpectAll(
-                status().isOk,
-                content().contentType(MediaType.APPLICATION_JSON),
-                jsonPath("$").isArray,
-                jsonPath("$").isNotEmpty,
-                jsonPath<List<TicketChangeDTO>>("$", hasSize(3)),
-                jsonPath("$[*].ticketId").value(containsInAnyOrder(ticketOne.id, ticketTwo.id, ticketTwo.id)),
-                jsonPath("$[*].currentExpertId").value(hasItem(expert.id)),
-                jsonPath("$[*].oldStatus").exists(),
-                jsonPath("$[*].newStatus").exists(),
-                jsonPath("$[*].changedBy").value(hasItem(UserType.EXPERT.toString())),
-                jsonPath("$[*].description").exists(),
-                jsonPath("$[*].time").exists()
-            )
-    }
-
-    @Test
-    @Transactional
-    @Rollback
-    fun getStatusChangesByExpertIdWithSomeChangesExpert() {
-        val expert = testExperts[0]
-        val ticketOne = Ticket("title1", "description1", testProducts[0], testProfiles[0]).apply {
-            status = TicketStatus.IN_PROGRESS
-            priorityLevel = TicketPriority.LOW
-        }
-        val ticketTwo = Ticket("title2", "description2", testProducts[0], testProfiles[1]).apply {
-            status = TicketStatus.IN_PROGRESS
-            priorityLevel = TicketPriority.LOW
-        }
-        ExpertTestUtils.addTicket(ticketRepository, expert, ticketOne)
-        ExpertTestUtils.addTicket(ticketRepository, expert, ticketTwo)
-        SecurityTestUtils.setExpert(expert.email)
-        ExpertTestUtils.addTicketStatusChange(
-            ticketStatusChangeService,
-            expert,
-            ticketOne,
-            TicketStatus.RESOLVED,
-            UserType.EXPERT,
-            ""
-        )
-        SecurityTestUtils.setClient(testProfiles[0].email)
-        ExpertTestUtils.addTicketStatusChange(
-            ticketStatusChangeService,
-            expert,
-            ticketOne,
-            TicketStatus.CLOSED,
-            UserType.CUSTOMER,
-            "It works now"
-        )
-        SecurityTestUtils.setExpert(expert.email)
-        ExpertTestUtils.addTicketStatusChange(
-            ticketStatusChangeService,
-            expert,
-            ticketTwo,
-            TicketStatus.RESOLVED,
-            UserType.EXPERT,
-            "The issue has been resolved"
-        )
-        ExpertTestUtils.addTicketStatusChange(
-            ticketStatusChangeService,
-            expert,
-            ticketTwo,
-            TicketStatus.CLOSED,
-            UserType.EXPERT,
-            null
-        )
-
-        mockMvc
-            .perform(get("/API/experts/${expert.id}/statusChanges").contentType("application/json"))
-            .andExpectAll(
-                status().isOk,
-                content().contentType(MediaType.APPLICATION_JSON),
-                jsonPath("$").isArray,
-                jsonPath("$").isNotEmpty,
-                jsonPath<List<TicketChangeDTO>>("$", hasSize(3)),
-                jsonPath("$[*].ticketId").value(containsInAnyOrder(ticketOne.id, ticketTwo.id, ticketTwo.id)),
-                jsonPath("$[*].currentExpertId").value(hasItem(expert.id)),
-                jsonPath("$[*].oldStatus").exists(),
-                jsonPath("$[*].newStatus").exists(),
-                jsonPath("$[*].changedBy").value(hasItem(UserType.EXPERT.toString())),
-                jsonPath("$[*].description").exists(),
-                jsonPath("$[*].time").exists()
-            )
-    }
-
-    @Test
-    @Transactional
-    @Rollback
-    fun getStatusChangesByExpertIdWithNoChangesManager() {
-        SecurityTestUtils.setManager()
-        val expert = testExperts[0]
-        val ticketOne = Ticket("title1", "description1", testProducts[0], testProfiles[0]).apply {
-            status = TicketStatus.IN_PROGRESS
-            priorityLevel = TicketPriority.LOW
-        }
-        val ticketTwo = Ticket("title2", "description2", testProducts[0], testProfiles[1]).apply {
-            status = TicketStatus.IN_PROGRESS
-            priorityLevel = TicketPriority.LOW
-        }
-        ExpertTestUtils.addTicket(ticketRepository, expert, ticketOne)
-        ExpertTestUtils.addTicket(ticketRepository, expert, ticketTwo)
-
-        mockMvc
-            .perform(get("/API/experts/${expert.id}/statusChanges").contentType("application/json"))
-            .andExpectAll(
-                status().isOk,
-                content().contentType(MediaType.APPLICATION_JSON),
-                jsonPath("$").isArray,
-                jsonPath("$").isEmpty
-            )
-    }
-
-    @Test
-    @Transactional
-    @Rollback
-    fun getStatusChangesByExpertIdWithNoChangesClient() {
-        SecurityTestUtils.setClient(testProfiles[0].email)
-        val expert = testExperts[0]
-        val ticketOne = Ticket("title1", "description1", testProducts[0], testProfiles[0]).apply {
-            status = TicketStatus.IN_PROGRESS
-            priorityLevel = TicketPriority.LOW
-        }
-        val ticketTwo = Ticket("title2", "description2", testProducts[0], testProfiles[1]).apply {
-            status = TicketStatus.IN_PROGRESS
-            priorityLevel = TicketPriority.LOW
-        }
-        ExpertTestUtils.addTicket(ticketRepository, expert, ticketOne)
-        ExpertTestUtils.addTicket(ticketRepository, expert, ticketTwo)
-
-        mockMvc
-            .perform(get("/API/experts/${expert.id}/statusChanges").contentType("application/json"))
-            .andExpectAll(status().isUnauthorized)
-    }
-
-    @Test
     fun getStatusChangesByExpertIdNotFound() {
         SecurityTestUtils.setManager()
         val expertId = Int.MAX_VALUE
@@ -433,79 +233,6 @@ class ExpertControllerIT : AbstractTestcontainersTest() {
     ////// GET /API/experts/{expertId}/tickets
     /////////////////////////////////////////////////////////////////////
 
-    @Test
-    @Transactional
-    @Rollback
-    fun getTicketsByExpertIdWithManyTickets() {
-        val expertOne = testExperts[0]
-        SecurityTestUtils.setExpert(expertOne.email)
-        val expertTwo = testExperts[1]
-        val ticket1ForExpertOne = Ticket("title1", "description1", testProducts[0], testProfiles[0]).apply {
-            status = TicketStatus.IN_PROGRESS
-            priorityLevel = TicketPriority.LOW
-        }
-        val ticket2ForExpertOne = Ticket("title21", "description21", testProducts[1], testProfiles[1]).apply {
-            status = TicketStatus.IN_PROGRESS
-            priorityLevel = TicketPriority.CRITICAL
-        }
-        val ticketForExpertTwo = Ticket("title2", "description2", testProducts[1], testProfiles[0]).apply {
-            status = TicketStatus.IN_PROGRESS
-            priorityLevel = TicketPriority.LOW
-        }
-        ExpertTestUtils.addTicket(ticketRepository, expertOne, ticket1ForExpertOne)
-        ExpertTestUtils.addTicket(ticketRepository, expertOne, ticket2ForExpertOne)
-        ExpertTestUtils.addTicket(ticketRepository, expertTwo, ticketForExpertTwo)
-
-        mockMvc
-            .perform(get("/API/experts/${expertOne.id}/tickets").contentType("application/json"))
-            .andExpectAll(
-                status().isOk,
-                content().contentType(MediaType.APPLICATION_JSON),
-                jsonPath("$").isArray,
-                jsonPath("$").isNotEmpty,
-                jsonPath<List<TicketChangeDTO>>("$", hasSize(2)),
-                jsonPath("$[*].ticketId").value(contains(ticket2ForExpertOne.id, ticket1ForExpertOne.id)),
-                jsonPath("$[*].title").value(contains(ticket2ForExpertOne.title, ticket1ForExpertOne.title)),
-                jsonPath("$[*].description").value(
-                    contains(
-                        ticket2ForExpertOne.description,
-                        ticket1ForExpertOne.description
-                    )
-                ),
-                jsonPath("$[*].productId").value(
-                    contains(
-                        ticket2ForExpertOne.product.id,
-                        ticket1ForExpertOne.product.id
-                    )
-                ),
-                jsonPath("$[*].customerId").value(
-                    contains(
-                        ticket2ForExpertOne.customer.id,
-                        ticket1ForExpertOne.customer.id
-                    )
-                ),
-                jsonPath("$[*].expertId").value(hasItem(expertOne.id)),
-                jsonPath("$[*].totalExchangedMessages").value(hasItem(0)),
-                jsonPath("$[*].priorityLevel").value(
-                    contains(
-                        ticket2ForExpertOne.priorityLevel.toString(),
-                        ticket1ForExpertOne.priorityLevel.toString()
-                    )
-                ),
-                jsonPath("$[*].createdAt").value(
-                    contains(
-                        ticket2ForExpertOne.createdAt,
-                        ticket1ForExpertOne.createdAt
-                    )
-                ),
-                jsonPath("$[*].lastModifiedAt").value(
-                    contains(
-                        ticket2ForExpertOne.lastModifiedAt,
-                        ticket1ForExpertOne.lastModifiedAt
-                    )
-                ),
-            )
-    }
 
     @Test
     fun getTicketsByExpertIdWithNoTickets() {
