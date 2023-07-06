@@ -284,7 +284,7 @@
                           "weight": 1.25
                           "expertise":"COMPUTER",
                           "level":"SKILLED"
-                        },
+                        }
           },
            ...
       ]
@@ -292,7 +292,7 @@
   
 - GET `/API/profiles/{profileId}/products/{productTokenId}`
 
-    - Description: Allows to obtain a purchased products of a single profile
+    - Description: Allows to obtain a purchased product of a single profile
     - Permissions allowed:
         - The Client associated with the specified profileId
         - Managers
@@ -301,12 +301,10 @@
     - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (profileId or productTokenId not
       found), `422 Unprocessable Entity` (validation of profileId failed) or
       `500 Internal Server Error` (generic error)
-    - Response body: An object containing all the purchased products data of the
+    - Response body: An object containing the purchased product of the
       requested user. An error message in case of error
 
     ```
-      [
-          ...,
           {
             "productTokenId": 5,
             "createdAt": 1682087627,
@@ -324,10 +322,8 @@
                           "weight": 1.25
                           "expertise":"COMPUTER",
                           "level":"SKILLED"
-                        },
-          },
-           ...
-      ]
+                        }
+          }
 
 
 - PUT `/API/profiles`
