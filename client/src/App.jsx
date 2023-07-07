@@ -10,6 +10,7 @@ import {UserRole} from "../enums/UserRole";
 import LoginForm from "./components/LoginForm";
 import ProtectedRoute from "./utils/ProtectedRoute";
 import {UserProfile} from "./components/UserProfile";
+import TicketDetails from "./components/TicketDetails";
 import ClientProfileForm from "./components/ClientProfileForm";
 
 function App() {
@@ -32,9 +33,10 @@ function Root() {
                     rolesAllowed={[UserRole.MANAGER, UserRole.EXPERT, UserRole.CLIENT]}
                 />}>
                 <Route path="" element={<Navbar userInfo={userInfo}/>}>
-                    <Route index element={renderDashboard(userInfo ? userInfo.role : "")}/>
+                    <Route index element={renderDashboard(userInfo ? userInfo.role : "",userInfo)}/>
                     <Route path='/products' element={<Products userRole={userInfo ? userInfo.role : ""}/>}/>
                     <Route path='/profile' element={<UserProfile userInfo={userInfo} setUserInfo={setUserInfo}/>}/>
+                    <Route path='/tickets/:ticketId' element={<TicketDetails userInfo={userInfo}/>}/>
                 </Route>
             </Route>
 
@@ -45,14 +47,14 @@ function Root() {
     );
 }
 
-function renderDashboard(userRole) {
+function renderDashboard(userRole,userInfo) {
     switch (userRole) {
         case UserRole.MANAGER:
             return <ManagerDashboard/>;
         case UserRole.EXPERT:
             return <ExpertDashboard/>;
         case UserRole.CLIENT:
-            return <ClientDashboard/>;
+            return <ClientDashboard userInfo={userInfo}/>;
         default:
             return <NotFoundPage/>;
     }

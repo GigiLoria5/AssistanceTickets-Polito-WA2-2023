@@ -2,6 +2,7 @@ import {API_URL} from "./APIUrl";
 import {getAccessToken, handleErrorResponse} from "../utils/utils";
 import {SERVER_COMMUNICATION_ERROR} from "../utils/constants";
 import {Expert} from "../models/Expert";
+import {Skill} from "../models/Skill";
 
 // GET /API/experts
 async function getAllExperts() {
@@ -15,7 +16,7 @@ async function getAllExperts() {
             .then(async (response) => {
                 if (response.ok) {
                     const body = await response.json();
-                    resolve(body.map((exp) => (new Expert(exp.expertId, exp.name, exp.surname, exp.email, exp.country, exp.city, exp.skills))));
+                    resolve(body.map((exp) => (new Expert(exp.expertId, exp.name, exp.surname, exp.email, exp.country, exp.city, exp.skills.map(skill => new Skill(skill.expertise, skill.level))))));
                 } else {
                     const error = await handleErrorResponse(response);
                     reject(error);
@@ -37,7 +38,7 @@ async function getExpertById(id) {
             .then(async (response) => {
                 if (response.ok) {
                     const body = await response.json();
-                    resolve(new Expert(body.expertId, body.name, body.surname, body.email, body.country, body.city, body.skills));
+                    resolve(new Expert(body.expertId, body.name, body.surname, body.email, body.country, body.city, body.skills.map(skill => new Skill(skill.expertise, skill.level))));
                 } else {
                     const error = await handleErrorResponse(response);
                     reject(error);

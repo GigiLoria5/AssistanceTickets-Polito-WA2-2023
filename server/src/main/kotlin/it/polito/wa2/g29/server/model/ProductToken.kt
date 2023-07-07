@@ -13,7 +13,8 @@ class ProductToken(
     @OneToOne
     var product: Product
 ) : EntityBase<Int>() {
-    @OneToOne
+    @ManyToOne
+    @JoinColumn(updatable = true, nullable = true)
     var user: Profile? = null
 
     @Column(nullable = false, unique = true)

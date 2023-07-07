@@ -150,11 +150,33 @@
       }
       ```
 
+- POST `API/products/register`
+
+    - Description: Allows to register a purchased product for the logged in customer
+    - Permissions allowed:
+        - Customer
+    - Request body: token of the purchase
+    ```
+    {
+        "token": "7305dba7-6635-4931-8463-4c1872fb9f3d"
+    }
+    ```
+    - Response: `200 Ok` (success)
+    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (token not
+      found),`409 Conflict` (token already used), `422 Unprocessable Entity` (validation of
+      request body failed) or `500 Internal Server Error` (generic error)
+    - Response body: An error message in case of error
+      ```
+      {
+          "error": "Token already used"
+      }
+      ```
+
 ### Profiles
 
 - GET `/API/profiles/{profileId}`
 
-    - Description: Allows to obtain all the information of a single profile and the IDs of his tickets
+    - Description: Allows to obtain all the information of a single profile
     - Permissions allowed:
         - The Client associated with the specified identifier
         - Experts who have a not closed ticket with the client
@@ -163,8 +185,7 @@
     - Response: `200 OK` (success)
     - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (profileId not
       found), `422 Unprocessable Entity` (validation of profileId failed) or `500 Internal Server Error` (generic error)
-    - Response body: An object containing profileId, email, name, surname, phoneNumber, address, city, country and
-      ticketsIds (an array of int, each representing the id of a ticket opened by the user) of the
+    - Response body: An object containing profileId, email, name, surname, phoneNumber, address, city, country of the
       requested user. An error message in case of error
 
       ```
@@ -177,9 +198,133 @@
           "address": "Corso Duca degli Abruzzi, 24",
           "city": "Turin",
           "country": "Italy",
-          "ticketsIds": [1, 2, 3]
       }
       ```
+
+- GET `/API/profiles/{profileId}/tickets`
+
+    - Description: Allows to obtain all the tickets of a single profile
+    - Permissions allowed:
+        - The Client associated with the specified profileId
+        - Managers
+    - Request parameter: profileId of the requested user profile
+    - Response: `200 OK` (success)
+    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (profileId not
+      found), `422 Unprocessable Entity` (validation of profileId failed) or
+      `500 Internal Server Error` (generic error)
+    - Response body: An object containing all the tickets of the
+      requested user. An error message in case of error
+
+    ```
+      [
+          ...,
+          {
+            "ticketId": 5,
+            "title": "Smoke coming out of TV",
+            "description": "I was watching TV when I noticed smoke coming out of the back. I immediately unplugged it, but now I'm afraid to turn it back on.",
+            "productId": 1,
+            "productTokenId": 1,
+            "customerId": 1,
+            "expertId": 1,
+            "totalExchangedMessages": 32,
+            "status": "IN PROGRESS",
+            "priorityLevel": "CRITICAL",
+            "createdAt": 1682087627,
+            "lastModifiedAt": 1682091233
+          },
+          {
+            "ticketId": 6,
+            "title": "Broken screen",
+            "description": "My computer fell and the screen is shattered",
+            "productId": 2,
+            "productTokenId": 11,
+            "customerId": 1,
+            "expertId": null,
+            "totalExchangedMessages": 0,
+            "status": "OPEN",
+            "priorityLevel": null,
+            "createdAt": 1682087637,
+            "lastModifiedAt": 1682087637
+          },
+          ...
+      ]
+      
+
+- GET `/API/profiles/{profileId}/products`
+
+    - Description: Allows to obtain all the purchased products data of a single profile
+    - Permissions allowed:
+        - The Client associated with the specified profileId
+        - Managers
+    - Request parameter: profileId of the requested user profile
+    - Response: `200 OK` (success)
+    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (profileId not
+      found), `422 Unprocessable Entity` (validation of profileId failed) or
+      `500 Internal Server Error` (generic error)
+    - Response body: An object containing all the purchased products data of the
+      requested user. An error message in case of error
+
+    ```
+      [
+          ...,
+          {
+            "productTokenId": 5,
+            "createdAt": 1682087627,
+            "registeredAt": 1682087727,
+            "token": "7305dba7-6635-4931-8463-4c1872fb9f3d",
+            "userId": 1,
+            "product": { 
+                          "productId": 61,
+                          "asin": "B06XSGYCHC",
+                          "brand": "Siriusxm",
+                          "category": "Satellite Radio",
+                          "manufacturerNumber": "SXEZR1V1",
+                          "name": "SiriusXM SXEZR1V1 XM Onyx EZR Satellite Radio Receiver with Vehicle Kit",
+                          "price": 79.99,
+                          "weight": 1.25
+                          "expertise":"COMPUTER",
+                          "level":"SKILLED"
+                        }
+          },
+           ...
+      ]
+      
+  
+- GET `/API/profiles/{profileId}/products/{productTokenId}`
+
+    - Description: Allows to obtain a purchased product of a single profile
+    - Permissions allowed:
+        - The Client associated with the specified profileId
+        - Managers
+    - Request parameter: profileId of the requested user profile, productTokenId
+    - Response: `200 OK` (success)
+    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (profileId or productTokenId not
+      found), `422 Unprocessable Entity` (validation of profileId failed) or
+      `500 Internal Server Error` (generic error)
+    - Response body: An object containing the purchased product of the
+      requested user. An error message in case of error
+
+    ```
+          {
+            "productTokenId": 5,
+            "createdAt": 1682087627,
+            "registeredAt": 1682087727,
+            "token": "7305dba7-6635-4931-8463-4c1872fb9f3d",
+            "userId": 1,
+            "product": { 
+                          "productId": 61,
+                          "asin": "B06XSGYCHC",
+                          "brand": "Siriusxm",
+                          "category": "Satellite Radio",
+                          "manufacturerNumber": "SXEZR1V1",
+                          "name": "SiriusXM SXEZR1V1 XM Onyx EZR Satellite Radio Receiver with Vehicle Kit",
+                          "price": 79.99,
+                          "weight": 1.25
+                          "expertise":"COMPUTER",
+                          "level":"SKILLED"
+                        }
+          }
+
 
 - PUT `/API/profiles`
 
@@ -321,7 +466,7 @@
       found), `422 Unprocessable Entity` (validation of expertId
       failed) or `500 Internal Server Error` (generic error)
     - Response body: An array of objects (sorted by priorityLevel descending) for each containing
-      ticketId, description, productId, customerId, expertId, totalExchangedMessages, status, priorityLevel, createdAt
+      ticketId, description, productId, productTokenId, customerId, expertId, totalExchangedMessages, status, priorityLevel, createdAt
       and lastModifiedAt.
       An error message in case of error
       ```
@@ -331,7 +476,8 @@
             "ticketId": 21,
             "title": "Microwave not heating food",
             "description": "I've tried using my microwave multiple times, but it's not heating up my food. The light turns on and the plate rotates, but the food stays cold.",
-            "productId": 2,
+            "productId": 2, 
+            "productTokenId": 1,
             "customerId": 3,
             "expertId": 2,
             "totalExchangedMessages": 32,
@@ -400,7 +546,7 @@
     - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `422 Unprocessable Entity` (
       validation of status failed) or `500 Internal Server Error` (generic
       error)
-    - Response body: An array of objects, for each containing ticketId, title, description, productId, customerId,
+    - Response body: An array of objects, for each containing ticketId, title, description, productId, productTokenId, customerId,
       expertId, totalExchangedMessages, status, priorityLevel, createdAt and lastModifiedAt.
       An error message in case of error
       ```
@@ -411,6 +557,7 @@
             "title": "Smoke coming out of TV",
             "description": "I was watching TV when I noticed smoke coming out of the back. I immediately unplugged it, but now I'm afraid to turn it back on.",
             "productId": 1,
+            "productTokenId": 1,
             "customerId": 1,
             "expertId": 1,
             "totalExchangedMessages": 32,
@@ -424,6 +571,7 @@
             "title": "Broken screen",
             "description": "My computer fell and the screen is shattered",
             "productId": 2,
+            "productTokenId": 12,
             "customerId": 2,
             "expertId": null,
             "totalExchangedMessages": 0,
@@ -448,7 +596,7 @@
     - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (ticketId not
       found), `422 Unprocessable Entity` (validation of
       ticketId failed) or `500 Internal Server Error` (generic error)
-    - Response body: An object containing ticketId, description, productId, customerId,
+    - Response body: An object containing ticketId, description, productId, productTokenId, customerId,
       expertId, totalExchangedMessages, status, priorityLevel, createdAt and lastModifiedAt.
       An error message in case of error
       ```
@@ -458,6 +606,7 @@
          "description": "I recently purchased a pair of Bluetooth earphones, but I'm having trouble connecting them to my phone.
                          I've tried resetting the earphones and my phone's Bluetooth settings, but nothing seems to work.",
          "productId": 4,
+         "productTokenId": 4,
          "customerId": 4,
          "expertId": null,
          "totalExchangedMessages": 32,
@@ -511,24 +660,24 @@
 
 - POST `/API/tickets`
 
-    - Description: Allows to create a ticket
+    - Description: Allows to create a ticket for a purchased product
     - Permissions allowed:
         - Clients
-    - Request body: productId of the related product with issues and a
+    - Request body: productTokenId of the related purchase with issues and a
       title and description of the issue
 
       ```
       {
-        "productId": 1,
+        "productTokenId": 1,
         "title": "No sound from TV speakers",
         "description": "I've checked all the connections and tried adjusting the settings, but I still can't hear any sound from the TV speakers."
       }
       ```
 
     - Response: `201 Created` (success)
-    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (productId not
-      found), `409 Conflict` (a not closed ticket for the same customer and product already
-      exists), `422 Unprocessable Entity` (validation of request body failed) or `500 Internal Server Error` (generic
+    - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (productTokenId not
+      found), `409 Conflict` (a not closed ticket for the same customer and productToken already
+      exists), `422 Unprocessable Entity` (validation of request body failed or customer does not own that productTokenId) or `500 Internal Server Error` (generic
       error)
     - Response body: An object containing the id of the ticket created. An error message in case of error
       ```
@@ -639,7 +788,8 @@
     - Response: `204 No Content` (success)
     - Error responses: `401 Unauthorized` (not logged in or missing permission(s)), `404 Not Found` (ticketId not
       found), `422 Unprocessable Entity` (validation of request body or
-      ticketId failed
+      ticketId failed, `409 Conflict` (a not closed ticket for the same customer and productToken already
+      exists),
       or ticket is not closed/resolved) or `500 Internal Server Error` (generic error)
     - Response body: An error message in case of error
 

@@ -11,7 +11,6 @@ data class ProfileDTO(
     val address: String,
     val city: String,
     val country: String,
-    val ticketsIds: List<Int?>?
 ) {
     companion object {
         const val EMAIL_PATTERN = ".+@([^.]+\\.)+[a-z]*\$"
@@ -32,6 +31,6 @@ fun Profile.toDTO(): ProfileDTO {
         phoneNumber,
         address,
         city,
-        country,
-        tickets.map { it.id }.sortedBy { it })
+        country
+    )
 }

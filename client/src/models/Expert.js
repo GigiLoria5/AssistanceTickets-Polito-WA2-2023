@@ -5,5 +5,5 @@ export function Expert(expertId, name, surname, email, country, city, skills) {
     this.email = email;
     this.country = country;
     this.city = city;
-    this.skills = skills
+    this.skills = skills;
 }
