@@ -70,4 +70,30 @@ async function generateToken(productId) {
     });
 }
 
-export {getAllProducts, searchProduct, generateToken};
+
+// POST /API/products/register
+async function registerProduct(token) {
+    return new Promise((resolve, reject) => {
+        fetch(new URL(`products/register`, API_URL), {
+            method: 'POST',
+            headers: {
+                Authorization: `Bearer ${getAccessToken()}`,
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+            body: JSON.stringify({token})
+        })
+            .then(async (response) => {
+                if (response.ok) {
+                    resolve(null);
+                } else {
+                    const error = await handleErrorResponse(response);
+                    reject(error);
+                }
+            })
+            .catch((_error) => reject(SERVER_COMMUNICATION_ERROR));
+    });
+}
+
+
+export {getAllProducts, searchProduct, generateToken, registerProduct};

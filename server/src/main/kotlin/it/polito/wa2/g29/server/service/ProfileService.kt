@@ -2,13 +2,18 @@ package it.polito.wa2.g29.server.service
 
 import it.polito.wa2.g29.server.dto.ProfileDTO
 import it.polito.wa2.g29.server.dto.TicketDTO
+import it.polito.wa2.g29.server.dto.ProductTokenDTO
 import it.polito.wa2.g29.server.dto.auth.CreateClientDTO
 import it.polito.wa2.g29.server.dto.profile.EditProfileDTO
 
 interface ProfileService {
     fun getProfileByEmail(email: String): ProfileDTO
 
-    fun getTicketsOfProfileByProfileId(profileId: Int):List<TicketDTO>
+    fun getTicketsOfProfileByProfileId(profileId: Int): List<TicketDTO>
+
+    fun getPurchasesByProfileId(profileId: Int): List<ProductTokenDTO>
+
+    fun getPurchaseByProfileIdAndProductTokenId(profileId: Int, productTokenId: Int): ProductTokenDTO
 
     fun getProfileById(profileId: Int): ProfileDTO
 

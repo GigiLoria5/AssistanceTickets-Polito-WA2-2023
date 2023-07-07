@@ -15,7 +15,7 @@ TicketDataTable.propTypes = {ticket: PropTypes.any};
 function TicketDetails({userInfo}) {
     const {ticketId} = useParams();
     const [ticketData, setTicketData] = useState(null);
-    const [productData, setProductData] = useState(null);
+    const [purchaseData, setPurchaseData] = useState(null);
     const [ticketStatusChangesData, setTicketStatusChangesData] = useState(null)
     const [loading, setLoading] = useState(true)
     const [load, setLoad] = useState(true)
@@ -46,7 +46,7 @@ function TicketDetails({userInfo}) {
     const stopAnimationAndShowError = (err) => {
         setLoading(false)
         setErrorPresence(true)
-        handleApiError(err,showError)
+        handleApiError(err, showError)
     }
 
     const getTicketData = async () => {
@@ -54,17 +54,17 @@ function TicketDetails({userInfo}) {
             API.getTicketById(ticketId)
                 .then((t) => {
                         setTicketData(t)
-                        resolve(getProductData(t.productId))
+                        resolve(getPurchaseData(t.customerId, t.productTokenId))
                     }
                 ).catch(e => reject(e))
         })
     }
 
-    const getProductData = async (productId) => {
+    const getPurchaseData = async (customerId, productTokenId) => {
         return new Promise((resolve, reject) => {
-            API.searchProduct(productId)
+            API.getPurchaseByProfileIdAndProductTokenId(customerId, productTokenId)
                 .then((p) => {
-                        setProductData(p)
+                        setPurchaseData(p)
                         resolve()
                     }
                 ).catch(e => reject(e))
@@ -103,7 +103,7 @@ function TicketDetails({userInfo}) {
                         <>
                             <TicketDetailComponents
                                 ticketData={ticketData}
-                                productData={productData}
+                                purchaseData={purchaseData}
                                 ticketStatusChangesData={ticketStatusChangesData}
                                 update={() => {
                                     setLoad(true);
@@ -124,7 +124,7 @@ function TicketDetails({userInfo}) {
 }
 
 
-function TicketDetailComponents({ticketData, productData, ticketStatusChangesData, update, userRole}) {
+function TicketDetailComponents({ticketData, purchaseData, ticketStatusChangesData, update, userRole}) {
     return (
         <>
             <Row className='mb-4'>
@@ -132,7 +132,7 @@ function TicketDetailComponents({ticketData, productData, ticketStatusChangesDat
                     <TicketDataTable ticket={ticketData}/>
                 </Col>
                 <Col>
-                    <ProductDataTable product={productData}/>
+                    <PurchaseDataTable purchase={purchaseData}/>
                 </Col>
             </Row>
             {
@@ -201,10 +201,11 @@ function TicketDataTable({ticket}) {
     )
 }
 
-function ProductDataTable({product}) {
+function PurchaseDataTable({purchase}) {
+    const product=purchase.product
     return (
         <>
-            <h2>Product</h2>
+            <h2>Purchase</h2>
             <Table>
                 <tbody>
                 <tr>
@@ -234,6 +235,14 @@ function ProductDataTable({product}) {
                 <tr>
                     <th> Weight</th>
                     <td> {product.weight}</td>
+                </tr>
+                <tr>
+                    <th> Purchase date</th>
+                    <td> {dateTimeMillisFormatted(purchase.createdAt)}</td>
+                </tr>
+                <tr>
+                    <th> Registration date</th>
+                    <td> {dateTimeMillisFormatted(purchase.registeredAt)}</td>
                 </tr>
                 </tbody>
             </Table>

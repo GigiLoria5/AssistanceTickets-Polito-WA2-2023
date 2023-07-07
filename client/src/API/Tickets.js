@@ -21,6 +21,7 @@ async function getTicketById(ticketId) {
                         ticketJson.title,
                         ticketJson.description,
                         ticketJson.productId,
+                        ticketJson.productTokenId,
                         ticketJson.customerId,
                         ticketJson.expertId,
                         ticketJson.totalExchangedMessages,
@@ -64,7 +65,7 @@ async function getTicketStatusChangesByTicketId(ticketId) {
 
 // POST /API/tickets
 
-async function createTicket(productId, title, description) {
+async function createTicket(productTokenId, title, description) {
     return new Promise((resolve, reject) => {
         fetch(new URL(`tickets`, API_URL), {
             method: 'POST',
@@ -74,7 +75,7 @@ async function createTicket(productId, title, description) {
             },
             credentials: 'include',
             body: JSON.stringify({
-                productId, title, description
+                productTokenId, title, description
             })
         })
             .then(async (response) => {

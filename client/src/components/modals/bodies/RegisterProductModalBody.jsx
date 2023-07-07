@@ -2,6 +2,7 @@ import React, {useContext, useState} from "react";
 import API from "../../../API";
 import {Button, Form, Modal, Row} from "react-bootstrap";
 import {CustomModalContext} from "../CustomModal";
+import {handleApiError} from "../../../utils/utils";
 
 function RegisterProductModalBody() {
 
@@ -11,13 +12,12 @@ function RegisterProductModalBody() {
     const [uuid, setUuid] = useState('');
 
     const registerProduct = () => {
-        /*TODO PER ORA C'è UNA API A CASO PER VEDERE SE FUNZIONA, POI METTICI LA API GIUSTA*/
-        API.getAllProducts()
+        API.registerProduct(uuid)
             .then(() => {
                     completingAction()
                 }
             )
-            .catch(err => showError(err.error))
+            .catch(err => handleApiError(err,showError))
     }
 
     const handleSubmit = (event) => {

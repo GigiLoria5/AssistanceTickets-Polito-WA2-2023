@@ -3,6 +3,7 @@ import {TicketStatus} from "../../../../enums/TicketStatus";
 import {Button, Form, Modal, Row} from "react-bootstrap";
 import {CustomModalContext} from "../CustomModal";
 import {getUpdateStatusApiCall} from "../../../utils/modalUtil";
+import {handleApiError} from "../../../utils/utils";
 
 function StatusChangeStandardModalBody() {
 
@@ -17,8 +18,8 @@ function StatusChangeStandardModalBody() {
         apiCall(objectId, description)
             .then(() => {
                     completingAction()
-                }
-            ).catch(err => showError(err.error))
+                })
+            .catch(err => handleApiError(err,showError))
     }
 
     const handleSubmit = (event) => {

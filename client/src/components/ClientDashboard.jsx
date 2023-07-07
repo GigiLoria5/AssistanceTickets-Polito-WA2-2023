@@ -11,7 +11,7 @@ import {handleApiError} from "../utils/utils";
 
 function ClientDashboard({userInfo}) {
     const [ticketsData, setTicketsData] = useState(null);
-    const [productsData, setProductsData] = useState(null);
+    const [purchasesData, setPurchasesData] = useState(null);
     const [loading, setLoading] = useState(true)
     const [load, setLoad] = useState(true)
     const [errorPresence, setErrorPresence] = useState(false)
@@ -21,7 +21,7 @@ function ClientDashboard({userInfo}) {
 
     useEffect(() => {
             const getData = async () => {
-                await Promise.all([getTicketsData(), getProductsData()])
+                await Promise.all([getTicketsData(), getPurchasesData()])
             }
             if (load === true) {
                 setLoading(true)
@@ -40,7 +40,7 @@ function ClientDashboard({userInfo}) {
     const stopAnimationAndShowError = (err) => {
         setLoading(false)
         setErrorPresence(true)
-        handleApiError(err,showError)
+        handleApiError(err, showError)
     }
 
     const getTicketsData = async () => {
@@ -54,16 +54,12 @@ function ClientDashboard({userInfo}) {
         })
     }
 
-    const getProductsData = async () => {
+    const getPurchasesData = async () => {
         return new Promise((resolve, reject) => {
-            /* TODO
-                X ORA PRENDI TUTTI I PRODUCTS,
-                POI PERò PRENDERAI SOLO I PRODOTTI ACQUISTATI
-                CON LE DATE DI ACQUISTO E REGISTRAZIONE
-                */
-            API.getAllProducts()
+
+            API.getPurchasesByProfileId(userInfo.id)
                 .then((p) => {
-                        setProductsData(p)
+                        setPurchasesData(p)
                         resolve()
                     }
                 ).catch(e => reject(e))
@@ -99,7 +95,7 @@ function ClientDashboard({userInfo}) {
                             <Row className='mb-4'>
                                 <Col>
                                     <ClientDashboardTabs ticketsData={ticketsData}
-                                                         productsData={productsData}
+                                                         purchasesData={purchasesData}
                                                          update={() => {
                                                              setLoad(true);
                                                              setConfirmModalShow(true)
@@ -140,47 +136,43 @@ function RegisterProduct({update}) {
     )
 }
 
-function ClientDashboardTabs({ticketsData, productsData, update}) {
+function ClientDashboardTabs({ticketsData, purchasesData, update}) {
 
     const formatTickets = () => {
         return ticketsData.map(ticket => {
-            const product = productsData.find(p => p.productId === ticket.productId)
+            const product = purchasesData.find(p => p.product.productId === ticket.productId).product
             return {...ticket, "product": product.name}
         })
     }
 
-    const formatProducts = () => {
-        return productsData.filter(product => {
-            return ticketsData.find(ticket => ticket.productId === product.productId) || product.productId % 130 === 0
-        }).map(product => {
-            const ticket = ticketsData.find(ticket => ticket.productId === product.productId)
+    const formatPurchases = () => {
+        return purchasesData.map(purchase => {
+            const ticket = ticketsData.find(ticket => ticket.productTokenId === purchase.productTokenId)
             return {
-                ...product,
-                "ticketId": ticket && ticket.status !== "CLOSED" ? ticket.ticketId : undefined,
-                "purchaseDate": 1677065479943,
-                "registrationDate": 1677065479943
+                ...purchase,
+                "ticketId": ticket && ticket.status !== "CLOSED" ? ticket.ticketId : undefined
             }
 
         })
     }
     return (
         <Tabs
-            defaultActiveKey="products"
+            defaultActiveKey="purchases"
             id="uncontrolled-tab-example"
             className="mb-3"
         >
-            <Tab eventKey="products" title="Purchased products">
-                <ProductsTable products={formatProducts()} update={update}/>
+            <Tab eventKey="purchases" title="My purchases">
+                <PurchasesTab purchases={formatPurchases()} update={update}/>
             </Tab>
             <Tab eventKey="tickets" title="My tickets">
-                <TicketsTable tickets={formatTickets()}/>
+                <TicketsTab tickets={formatTickets()}/>
             </Tab>
 
         </Tabs>
     )
 }
 
-function TicketsTable({tickets}) {
+function TicketsTab({tickets}) {
     const navigate = useNavigate();
 
     const actionGoToTicket = (ticket) => {
@@ -193,29 +185,28 @@ function TicketsTable({tickets}) {
     )
 }
 
-function ProductsTable({products, update}) {
+function PurchasesTab({purchases, update}) {
     const navigate = useNavigate();
-    const [targetProductId, setTargetProductId] = useState(null)
+    const [targetProductTokenId, setTargetProductTokenId] = useState(null)
     const [showCustomModal, setShowCustomModal] = useState(false);
 
-    const actionForTicket = (product) => {
-        if (product.ticketId !== undefined)
-            navigate(`/tickets/${product.ticketId}`)
+    const actionForTicket = (purchase) => {
+        if (purchase.ticketId !== undefined)
+            navigate(`/tickets/${purchase.ticketId}`)
         else {
-            setTargetProductId(product.productId)
+            setTargetProductTokenId(purchase.productTokenId)
             setShowCustomModal(true)
         }
     }
 
-    const actionNameFinder = (product) => {
-        return (product.ticketId !== undefined) ? "Ticket details" : "Create new ticket"
-
+    const actionNameFinder = (purchase) => {
+        return (purchase.ticketId !== undefined) ? "Ticket details" : "Create new ticket"
     }
 
     return (
         <>
-            <PurchasedProducts products={products}
-                               title={`You have ${products.length} registered purchase${products.length !== 1 ? "s" : ""}`}
+            <PurchasedProducts purchases={purchases}
+                               title={`You have ${purchases.length} registered purchase${purchases.length !== 1 ? "s" : ""}`}
                                actionNameFinder={actionNameFinder}
                                action={actionForTicket}/>
             <CustomModal show={showCustomModal}
@@ -223,7 +214,7 @@ function ProductsTable({products, update}) {
                          backdrop="static"
                          keyboard={false}
                          type={ModalType.CREATE_TICKET}
-                         objectId={targetProductId}
+                         objectId={targetProductTokenId}
                          completingAction={update}
             />
         </>

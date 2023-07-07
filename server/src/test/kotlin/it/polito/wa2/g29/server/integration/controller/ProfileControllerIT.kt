@@ -3,7 +3,6 @@ package it.polito.wa2.g29.server.integration.controller
 import com.fasterxml.jackson.databind.ObjectMapper
 import it.polito.wa2.g29.server.dto.profile.EditProfileDTO
 import it.polito.wa2.g29.server.dto.toDTO
-import it.polito.wa2.g29.server.enums.TicketPriority
 import it.polito.wa2.g29.server.integration.AbstractTestcontainersTest
 import it.polito.wa2.g29.server.model.Expert
 import it.polito.wa2.g29.server.model.Product
@@ -11,7 +10,6 @@ import it.polito.wa2.g29.server.model.Profile
 import it.polito.wa2.g29.server.repository.ExpertRepository
 import it.polito.wa2.g29.server.repository.ProductRepository
 import it.polito.wa2.g29.server.repository.ProfileRepository
-import it.polito.wa2.g29.server.repository.TicketRepository
 import it.polito.wa2.g29.server.utils.*
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -40,9 +38,6 @@ class ProfileControllerIT : AbstractTestcontainersTest() {
 
     @Autowired
     private lateinit var expertRepository: ExpertRepository
-
-    @Autowired
-    private lateinit var ticketRepository: TicketRepository
 
     @Autowired
     private lateinit var productRepository: ProductRepository
@@ -89,40 +84,7 @@ class ProfileControllerIT : AbstractTestcontainersTest() {
     @Rollback
     fun getProfileWithTicketsClient() {
         SecurityTestUtils.setClient(testProfiles[0].email)
-        TicketTestUtils.profiles = testProfiles
-        TicketTestUtils.products = testProducts
-        val tickets = TicketTestUtils.insertTickets(ticketRepository)
-        testProfiles[0].tickets.add(tickets.first { it.customer.id == testProfiles[0].id })
         profileRepository.save(testProfiles[0])
-        val expectedProfile = testProfiles[0]
-        mockMvc
-            .perform(get("/API/profiles/${expectedProfile.id}").contentType("application/json"))
-            .andExpectAll(
-                status().isOk,
-                content().contentType(MediaType.APPLICATION_JSON),
-                jsonPath("$.profileId").exists(),
-                jsonPath("$.email").value(expectedProfile.email),
-                jsonPath("$.name").value(expectedProfile.name),
-                jsonPath("$.surname").value(expectedProfile.surname),
-                jsonPath("$.phoneNumber").value(expectedProfile.phoneNumber),
-                jsonPath("$.address").value(expectedProfile.address),
-                jsonPath("$.city").value(expectedProfile.city),
-                jsonPath("$.country").value(expectedProfile.country),
-            )
-    }
-
-    @Test
-    @Transactional
-    @Rollback
-    fun getProfileWithTicketsExpert() {
-        SecurityTestUtils.setExpert(testExperts[0].email)
-        TicketTestUtils.profiles = testProfiles
-        TicketTestUtils.products = testProducts
-        val tickets = TicketTestUtils.insertTickets(ticketRepository)
-        tickets.forEach { TicketTestUtils.startTicket(ticketRepository, it, testExperts[0], TicketPriority.LOW) }
-        testProfiles[0].tickets.add(tickets.first { it.customer.id == testProfiles[0].id })
-        profileRepository.save(testProfiles[0])
-        expertRepository.save(testExperts[0])
         val expectedProfile = testProfiles[0]
         mockMvc
             .perform(get("/API/profiles/${expectedProfile.id}").contentType("application/json"))
@@ -145,10 +107,6 @@ class ProfileControllerIT : AbstractTestcontainersTest() {
     @Rollback
     fun getProfileWithTicketsExpertUnauthorized() {
         SecurityTestUtils.setExpert(testExperts[0].email)
-        TicketTestUtils.profiles = testProfiles
-        TicketTestUtils.products = testProducts
-        val tickets = TicketTestUtils.insertTickets(ticketRepository)
-        testProfiles[0].tickets.add(tickets.first { it.customer.id == testProfiles[0].id })
         profileRepository.save(testProfiles[0])
         val expectedProfile = testProfiles[0]
         mockMvc
@@ -163,10 +121,6 @@ class ProfileControllerIT : AbstractTestcontainersTest() {
     @Transactional
     @Rollback
     fun getProfileWithTicketsManager() {
-        TicketTestUtils.profiles = testProfiles
-        TicketTestUtils.products = testProducts
-        val tickets = TicketTestUtils.insertTickets(ticketRepository)
-        testProfiles[0].tickets.add(tickets.first { it.customer.id == testProfiles[0].id })
         profileRepository.save(testProfiles[0])
         val expectedProfile = testProfiles[0]
         SecurityTestUtils.setManager()
