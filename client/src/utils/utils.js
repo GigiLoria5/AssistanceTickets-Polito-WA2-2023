@@ -42,6 +42,6 @@ export const setAccessToken = (token) => {
     localStorage.setItem('access_token', token);
 }
 
-export const dateTimeMillisFormatted=(dateTime)=>{
-    return dayjs(dateTime).format("YYYY-MM-DD , HH:mm:ss")
+export const dateTimeMillisFormatted = (dateTime) => {
+    return dayjs(dateTime).format("YYYY-MM-DD, HH:mm:ss")
 }

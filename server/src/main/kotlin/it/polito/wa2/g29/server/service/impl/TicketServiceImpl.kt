@@ -7,10 +7,16 @@ import it.polito.wa2.g29.server.dto.ticket.NewTicketIdDTO
 import it.polito.wa2.g29.server.dto.toDTO
 import it.polito.wa2.g29.server.enums.TicketStatus
 import it.polito.wa2.g29.server.enums.UserType
-import it.polito.wa2.g29.server.exception.*
+import it.polito.wa2.g29.server.exception.DuplicateTicketException
+import it.polito.wa2.g29.server.exception.ProductTokenNotFoundException
+import it.polito.wa2.g29.server.exception.ProductTokenNotOwnedException
+import it.polito.wa2.g29.server.exception.TicketNotFoundException
 import it.polito.wa2.g29.server.model.Ticket
 import it.polito.wa2.g29.server.model.toEntity
-import it.polito.wa2.g29.server.repository.*
+import it.polito.wa2.g29.server.repository.ExpertRepository
+import it.polito.wa2.g29.server.repository.ProductTokenRepository
+import it.polito.wa2.g29.server.repository.ProfileRepository
+import it.polito.wa2.g29.server.repository.TicketRepository
 import it.polito.wa2.g29.server.service.TicketService
 import it.polito.wa2.g29.server.utils.AuthenticationUtil
 import org.slf4j.LoggerFactory
@@ -62,7 +68,7 @@ class TicketServiceImpl(
         val productToken = productTokenRepository.findByIdOrNull(newTicketDTO.productTokenId)
             ?: throw ProductTokenNotFoundException()
         if (productToken.user!!.id != customer.id)
-            throw ProductTokenNotOwnedException("You does not own this productTokenId")
+            throw ProductTokenNotOwnedException("Product token not owned")
         val ticket = newTicketDTO.toEntity(productToken, customer)
 
         //throw an exception if a not closed ticket for the same customer and productToken already exists
