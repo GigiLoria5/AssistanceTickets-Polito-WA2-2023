@@ -91,6 +91,7 @@ async function getTicketsOfExpertsByExpertId(id) {
                             ticketJson.title,
                             ticketJson.description,
                             ticketJson.productId,
+                            ticketJson.productTokenId,
                             ticketJson.customerId,
                             ticketJson.expertId,
                             ticketJson.totalExchangedMessages,
