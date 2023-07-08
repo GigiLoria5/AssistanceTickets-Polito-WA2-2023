@@ -6,20 +6,21 @@ import ExpertProfile from "./Profiles/ExpertProfile";
 import Tickets from "./Tickets";
 import API from "../API";
 import { handleApiError } from "../utils/utils";
-import { getTicketStatusChangesByTicketId } from "../API/Tickets";
 
-function ExpertDetails({ userInfo }) {
+function ExpertDetails() {
+    const [tickets, setTickets] = useState([]);
+    const [statusChanges, setStatusChanges] = useState(null)
+    const [products, setProducts] = useState(null);
     const { expertId } = useParams();
     const { StatusAlertComponent, showSuccess, showError, resetStatusAlert } = useStatusAlert();
     const navigate = useNavigate()
     const [loading, setLoading] = useState(true)
+    const [errorPresence, setErrorPresence] = useState(false)
     const [load, setLoad] = useState(true)
-    const [tickets, setTickets] = useState(null);
-    const [statusChanges, setStatusChanges] = useState(null)
 
     useEffect(() => {
         const getData = async () => {
-            await Promise.all([getTickets(), getStatusChanges()])
+            await Promise.all([getTickets(), getStatusChanges(), getProductsData()])
         }
         if (load === true) {
             setLoading(true)
@@ -35,31 +36,44 @@ function ExpertDetails({ userInfo }) {
         [load]
     )
 
+    const stopAnimationAndShowError = (err) => {
+        setLoading(false)
+        setErrorPresence(true)
+        handleApiError(err, showError)
+    }
+
     const getTickets = () => {
-        API.getTicketsOfExpertsByExpertId(expertId)
-            .then((t) => {
-                setTickets(t)
-                resetStatusAlert()
-            })
-            .catch(err => handleApiError(err, showError))
+        return new Promise((resolve, reject) => {
+            API.getTicketsOfExpertsByExpertId(expertId)
+                .then((t) => {
+                    setTickets(t)
+                    resolve()
+                }).catch(e => reject(e))
+        })
     }
 
     const getStatusChanges = () => {
-        API.getStatusChangesOfExpertById(expertId)
-            .then((statusChanges) => {
-                setStatusChanges(statusChanges)
-                resetStatusAlert()
-            })
-            .catch(err => handleApiError(err, showError))
+        return new Promise((resolve, reject) => {
+            API.getStatusChangesOfExpertById(expertId)
+                .then((statusChanges) => {
+                    setStatusChanges(statusChanges)
+                    resolve()
+                }).catch(e => reject(e))
+        })
+    }
+
+    const getProductsData = async () => {
+        return new Promise((resolve, reject) => {
+            API.getAllProducts()
+                .then((p) => {
+                    setProducts(p)
+                    resolve()
+                }
+                ).catch(e => reject(e))
+        })
     }
 
 
-    const formatTickets = () => {
-        if (tickets && tickets.length > 0)
-            return tickets;
-        else
-            return [];
-    }
 
     const formatStatusChanges = () => {
         if (statusChanges && statusChanges.length > 0)
@@ -73,23 +87,40 @@ function ExpertDetails({ userInfo }) {
             <Col md="auto" className="d-flex align-items-center">
                 <Button onClick={() => navigate(-1)}> {"Go back"}</Button>
             </Col>
+            <Col md="auto" className="d-flex align-items-center">
+                <h1>Expert Details</h1>
+            </Col>
         </Row>
-        <Row className='mb-5'>
-            <ExpertProfile expertId={expertId} showError={showError}></ExpertProfile>
-        </Row>
-        <Row className='mb-5'>
-            <ExpertTickets tickets={formatTickets()} ></ExpertTickets>
-        </Row>
-        <Row className='mb-5'>
-            <ExpertStatusChanges statusChanges={formatStatusChanges()}></ExpertStatusChanges>
-        </Row>
+        <StatusAlertComponent />
+        {loading ?
+            <Spinner animation="border" variant="primary" />
+            :
+            !errorPresence ?
+                <>
+                    <Row className='mb-5'>
+                        <ExpertProfile expertId={expertId} showError={showError}></ExpertProfile>
+                    </Row>
+                    <Row className='mb-5'>
+                        <ExpertTickets tickets={tickets} products={products} ></ExpertTickets>
+                    </Row>
+                    <Row className='mb-5'>
+                        <ExpertStatusChanges statusChanges={formatStatusChanges()}></ExpertStatusChanges>
+                    </Row>
+                </> : null
+        }
     </>
 }
 
-function ExpertTickets({ tickets }) {
+function ExpertTickets({ tickets, products }) {
+    const formatTickets = () => {
+        return tickets.map(ticket => {
+            const product = products ? products.find(p => p.productId === ticket.productId) : ""
+            return { ...ticket, "product": product.name }
+        })
+    }
     return <>
-    <h2>Expert Tickets</h2>
-    <Tickets tickets={tickets} title={tickets.length > 0 ? `This expert has ${tickets.length} ticket${tickets.length !== 1 ? "s" : ""}` : ``}></Tickets>
+        <h2>Expert Tickets</h2>
+        <Tickets tickets={formatTickets()} title={tickets.length > 0 ? `This expert has ${tickets.length} ticket${tickets.length !== 1 ? "s" : ""}` : ``}></Tickets>
     </>
 }
 
