@@ -63,7 +63,7 @@ const ExpertsTable = ({experts}) => {
     const navigate = useNavigate();
 
     return (
-        <Table striped bordered hover>
+        <Table>
             <thead>
             <tr>
                 <th>ID</th>

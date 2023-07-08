@@ -136,8 +136,8 @@ function TicketsTable({tickets,getClientInfo, clientInfo}) {
             <Offcanvas.Body>
                 {<h4>Name:  {clientInfo.name}</h4> }
                 {<h4>Surname:  {clientInfo.surname}</h4> }
-                {<h4>Phone:  {clientInfo.email}</h4> }
-                {<h4>E-mail:  {clientInfo.phoneNumber}</h4> }
+                {<h4>Phone:  {clientInfo.phoneNumber}</h4> }
+                {<h4>E-mail:  {clientInfo.email}</h4> }
             </Offcanvas.Body>
         </Offcanvas>
         :
