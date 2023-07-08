@@ -251,11 +251,11 @@ function PurchaseDataTable({purchase}) {
 }
 
 function TicketChat({ticketId}) {
-    //const navigate = useNavigate()
+    const navigate = useNavigate()
     return (
         <>
             <h2>Ticket chat</h2>
-            <Button onClick={null/*navigate('??')*/}>
+            <Button onClick={()=>navigate(`/chats/${ticketId}`)}>
                 Open chat
             </Button>
         </>

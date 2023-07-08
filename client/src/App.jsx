@@ -11,6 +11,7 @@ import LoginForm from "./components/LoginForm";
 import ProtectedRoute from "./utils/ProtectedRoute";
 import {UserProfile} from "./components/UserProfile";
 import TicketDetails from "./components/TicketDetails";
+import Chat from "./components/Chat";
 import ClientProfileForm from "./components/ClientProfileForm";
 
 function App() {
@@ -37,6 +38,7 @@ function Root() {
                     <Route path='/products' element={<Products userRole={userInfo ? userInfo.role : ""}/>}/>
                     <Route path='/profile' element={<UserProfile userInfo={userInfo} setUserInfo={setUserInfo}/>}/>
                     <Route path='/tickets/:ticketId' element={<TicketDetails userInfo={userInfo}/>}/>
+                    <Route path='/chats/:ticketId' element={<Chat userInfo={userInfo}/>}/>
                 </Route>
             </Route>
 
