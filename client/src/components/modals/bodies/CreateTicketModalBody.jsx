@@ -18,7 +18,7 @@ function CreateTicketModalBody() {
                     completingAction()
                 }
             )
-            .catch(err => handleApiError(err,showError))
+            .catch(err => handleApiError(err, showError))
     }
 
     const handleSubmit = (event) => {
@@ -52,7 +52,7 @@ function CreateTicketModalBody() {
                     </Row>
                     <Row className="mb-3">
                         <Form.Group controlId="validationCustom">
-                            <Form.Label> "Description"</Form.Label>
+                            <Form.Label>Description</Form.Label>
                             <Form.Control
                                 required={true}
                                 type="text"

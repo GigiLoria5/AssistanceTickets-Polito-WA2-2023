@@ -125,7 +125,7 @@ class ProfileServiceImpl(
             UserType.EXPERT -> {
                 val expert = expertRepository.findExpertByEmail(username)!!
                 val foundCustomer = expert.tickets.any {
-                    it.customer.email == email && it.status != TicketStatus.CLOSED
+                    it.customer.email == email
                 }
                 if (!foundCustomer) {
                     log.info("Access denied.")

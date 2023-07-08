@@ -17,7 +17,7 @@ function RegisterProductModalBody() {
                     completingAction()
                 }
             )
-            .catch(err => handleApiError(err,showError))
+            .catch(err => handleApiError(err, showError))
     }
 
     const handleSubmit = (event) => {
@@ -38,16 +38,16 @@ function RegisterProductModalBody() {
                 <Form noValidate validated={validated} onSubmit={handleSubmit}>
                     <Row className="mb-3">
                         <Form.Group controlId="validationCustom">
-                            <Form.Label>Uuid</Form.Label>
+                            <Form.Label>Insert Token</Form.Label>
                             <Form.Control
                                 required={true}
                                 type="text"
                                 value={uuid}
                                 onChange={ev => setUuid(ev.target.value)}
-                                placeholder="Insert uuid"
+                                placeholder="3ffc7451-5650-4260-9d8f-de20da31d0b5"
                             />
                             <Form.Control.Feedback type="invalid">
-                                Please provide a uuid
+                                Please provide a valid token
                             </Form.Control.Feedback> </Form.Group>
                     </Row>
                     <Modal.Footer>

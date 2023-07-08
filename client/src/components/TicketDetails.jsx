@@ -202,7 +202,7 @@ function TicketDataTable({ticket}) {
 }
 
 function PurchaseDataTable({purchase}) {
-    const product=purchase.product
+    const product = purchase.product
     return (
         <>
             <h2>Purchase</h2>
@@ -313,12 +313,12 @@ function TicketStatusChangesTable({ticketStatusChanges}) {
                                 <Table>
                                     <thead>
                                     <tr>
-                                        <th>oldStatus</th>
-                                        <th>newStatus</th>
-                                        <th>changedBy</th>
-                                        <th>currentExpertId</th>
-                                        <th>time</th>
-                                        <th>description</th>
+                                        <th>Old Status</th>
+                                        <th>New Status</th>
+                                        <th>Changed By</th>
+                                        <th>Current Expert Id</th>
+                                        <th>Time</th>
+                                        <th>Description</th>
                                     </tr>
                                     </thead>
                                     <tbody>
