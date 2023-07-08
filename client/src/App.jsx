@@ -12,6 +12,7 @@ import ProtectedRoute from "./utils/ProtectedRoute";
 import {UserProfile} from "./components/UserProfile";
 import TicketDetails from "./components/TicketDetails";
 import ClientProfileForm from "./components/ClientProfileForm";
+import ExpertDetails from "./components/ExpertDetails";
 
 function App() {
     return (
@@ -37,6 +38,7 @@ function Root() {
                     <Route path='/products' element={<Products userRole={userInfo ? userInfo.role : ""}/>}/>
                     <Route path='/profile' element={<UserProfile userInfo={userInfo} setUserInfo={setUserInfo}/>}/>
                     <Route path='/tickets/:ticketId' element={<TicketDetails userInfo={userInfo}/>}/>
+                    <Route path='/experts/:expertId' element={<ExpertDetails userInfo={userInfo}/>}/>
                 </Route>
             </Route>
 
