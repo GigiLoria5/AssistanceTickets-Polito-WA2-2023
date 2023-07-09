@@ -62,7 +62,7 @@ async function getStatusChangesOfExpertById(id) {
             .then(async (response) => {
                 if (response.ok) {
                     const body = await response.json();
-                    resolve(body.map((statusChange) => {
+                    resolve(body.map((statusChange) =>
                         new TicketStatusChange(
                             statusChange.ticketId,
                             statusChange.currentExpertId,
@@ -72,7 +72,7 @@ async function getStatusChangesOfExpertById(id) {
                             statusChange.description,
                             statusChange.time
                         )
-                    }))
+                    ));
                 } else {
                     const error = await handleErrorResponse(response);
                     reject(error);

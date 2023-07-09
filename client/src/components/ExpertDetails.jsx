@@ -5,11 +5,10 @@ import { Button, Col, Row, Spinner, Table } from "react-bootstrap";
 import ExpertProfile from "./Profiles/ExpertProfile";
 import Tickets from "./Tickets";
 import API from "../API";
-import { handleApiError } from "../utils/utils";
+import { dateTimeMillisFormatted, handleApiError } from "../utils/utils";
 
 function ExpertDetails() {
     const [tickets, setTickets] = useState([]);
-    const [statusChanges, setStatusChanges] = useState(null)
     const [products, setProducts] = useState(null);
     const { expertId } = useParams();
     const { StatusAlertComponent, showSuccess, showError, resetStatusAlert } = useStatusAlert();
@@ -20,7 +19,7 @@ function ExpertDetails() {
 
     useEffect(() => {
         const getData = async () => {
-            await Promise.all([getTickets(), getStatusChanges(), getProductsData()])
+            await Promise.all([getTickets(), getProductsData()])
         }
         if (load === true) {
             setLoading(true)
@@ -52,15 +51,7 @@ function ExpertDetails() {
         })
     }
 
-    const getStatusChanges = () => {
-        return new Promise((resolve, reject) => {
-            API.getStatusChangesOfExpertById(expertId)
-                .then((statusChanges) => {
-                    setStatusChanges(statusChanges)
-                    resolve()
-                }).catch(e => reject(e))
-        })
-    }
+    
 
     const getProductsData = async () => {
         return new Promise((resolve, reject) => {
@@ -71,15 +62,6 @@ function ExpertDetails() {
                 }
                 ).catch(e => reject(e))
         })
-    }
-
-
-
-    const formatStatusChanges = () => {
-        if (statusChanges && statusChanges.length > 0)
-            return statusChanges;
-        else
-            return [];
     }
 
     return <>
@@ -104,7 +86,7 @@ function ExpertDetails() {
                         <ExpertTickets tickets={tickets} products={products} ></ExpertTickets>
                     </Row>
                     <Row className='mb-5'>
-                        <ExpertStatusChanges statusChanges={formatStatusChanges()}></ExpertStatusChanges>
+                        <ExpertStatusChanges expertId={expertId} showError={showError}></ExpertStatusChanges>
                     </Row>
                 </> : null
         }
@@ -124,7 +106,16 @@ function ExpertTickets({ tickets, products }) {
     </>
 }
 
-function ExpertStatusChanges({ statusChanges }) {
+function ExpertStatusChanges({ expertId, showError }) {
+    const [statusChanges, setStatusChanges] = useState([])
+    useEffect(() => {
+        API.getStatusChangesOfExpertById(expertId)
+            .then((s) => {
+                setStatusChanges(s)
+            })
+            .catch(err => handleApiError(err, showError))
+    }, [])
+    
     return (
         <>
             <h2>Expert Status Changes</h2>
@@ -139,7 +130,6 @@ function ExpertStatusChanges({ statusChanges }) {
                                             <th>Ticket Id</th>
                                             <th>Old Status</th>
                                             <th>New Status</th>
-                                            <th>Current Expert Id</th>
                                             <th>Time</th>
                                             <th>Description</th>
                                         </tr>
@@ -150,7 +140,6 @@ function ExpertStatusChanges({ statusChanges }) {
                                                 <td>{tsc.ticketId}</td>
                                                 <td>{tsc.oldStatus}</td>
                                                 <td>{tsc.newStatus}</td>
-                                                <td>{tsc.currentExpertId}</td>
                                                 <td>{dateTimeMillisFormatted(tsc.time)}</td>
                                                 <td>{tsc.description}</td>
                                             </tr>
