@@ -26,4 +26,34 @@ async function getAllMessagesByTicketId(ticketId){
     })
 }
 
-export {getAllMessagesByTicketId}
+async function getAttachment(ticketId, messageId, attachmentId) {
+    return new Promise((resolve, reject) => {
+        fetch(new URL(`chats/${ticketId}/messages/${messageId}/attachments/${attachmentId}`, API_URL), {
+            headers: {
+                Authorization: `Bearer ${getAccessToken()}`
+            },
+            credentials: 'include'
+        })
+            .then(async (response) => {
+                if (response.ok) {
+                    const contentType = response.headers.get('Content-Type');
+                    const contentDisposition = response.headers.get('Content-Disposition');
+                    let filename = 'attachment';
+                    if (contentDisposition) {
+                        const match = contentDisposition.match(/filename\*?=['"]?(?:UTF-\d['"]*)?([^;\r\n"']*)['"]?;?/i);
+                        if (match && match[1]) {
+                            filename = decodeURIComponent(match[1]);
+                        }
+                    }
+                    const body = await response.blob();
+                    resolve({ data: body, contentType, filename });
+                } else {
+                    const error = await handleErrorResponse(response);
+                    reject(error);
+                }
+            })
+            .catch((_error) => reject(SERVER_COMMUNICATION_ERROR));
+    });
+}
+
+export {getAllMessagesByTicketId, getAttachment}
