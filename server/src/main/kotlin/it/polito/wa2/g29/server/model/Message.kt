@@ -21,7 +21,7 @@ class Message(
     var expert: Expert?
 ) : EntityBase<Int>() {
     @OneToMany(mappedBy = "message", cascade = [CascadeType.ALL])
-    var attachments: Set<Attachment> = mutableSetOf()
+    var attachments: List<Attachment> = mutableListOf()
 
     @CreatedDate
     @Column(updatable = false, nullable = false)
