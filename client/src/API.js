@@ -4,6 +4,7 @@ import {getAllProducts, searchProduct,generateToken,registerProduct} from "./API
 import {getProfileById, getTicketsOfProfileByProfileId,getPurchasesByProfileId,getPurchaseByProfileIdAndProductTokenId, updateProfile} from "./API/Profiles";
 import {createTicket, getTicketById, getTicketStatusChangesByTicketId} from "./API/Tickets";
 import {startTicket, stopTicket, reopenTicket, closeTicket, resolveTicket} from "./API/TicketStatusChange";
+import {getAllMessagesByTicketId} from "./API/Chats";
 
 const API = {
     signup, logIn, getUserInfo,
@@ -11,7 +12,8 @@ const API = {
     getAllProducts, searchProduct, generateToken,registerProduct,
     getProfileById, getTicketsOfProfileByProfileId,getPurchasesByProfileId,getPurchaseByProfileIdAndProductTokenId,updateProfile,
     getTicketById,getTicketStatusChangesByTicketId,createTicket,
-    startTicket,stopTicket,resolveTicket,reopenTicket,closeTicket
+    startTicket,stopTicket,resolveTicket,reopenTicket,closeTicket,
+    getAllMessagesByTicketId
 
 };
 

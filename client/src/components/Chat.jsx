@@ -27,60 +27,56 @@ function Chat({userInfo}){
     const [load, setLoad] = useState(true)
     const [error,setError] = useState(false)
     const {StatusAlertComponent, showError, resetStatusAlert} = useStatusAlert();
-    const messages = [
-      {
-          "messageId": 1,
-          "sender": "CUSTOMER",
-          "expertId": 3,
-          "content": "Ciao avrei bisogno dell'aiuto per la cocaina",
-          "attachments": [],
-          "time": 1688849877664
-      },
-      {
-          "messageId": 2,
-          "sender": "EXPERT",
-          "expertId": 3,
-          "content": "Prego dimmi pure pezzo di merda",
-          "attachments": [],
-          "time": 1688850055490
-      },
-      {
-          "messageId": 3,
-          "sender": "CUSTOMER",
-          "expertId": 3,
-          "content": "Era tutta una burla sono drogato di Allegrismo",
-          "attachments": [
-              {
-                  "attachmentId": 1,
-                  "name": "150345301-5f6a6750-769a-4fe1-9286-23169c121789.jpg",
-                  "type": "JPEG"
-              }
-          ],
-          "time": 1688850159452
-      }
-  ];
+    const [messages,setMessages] = useState(null);
+
 
     useEffect(() => {
-        if(load){
-            setLoading(true)
-            API.getTicketById(ticketId)
-            .then((t)=>{
-                setTicketData(t)
-                setLoading(false)
-                resetStatusAlert()
-                setLoad(false)
+        const getData = async () => {
+          const apiCalls = [
+            getTicketById(),
+            getAllMessagesByTicketId()
+          ];
+          await Promise.all(apiCalls);
+        };
+      
+        if (load === true) {
+          setLoading(true);
+          getData()
+            .then(() => {
+              setLoading(false);
+              resetStatusAlert();
             })
-            .catch(err=> stopAnimationAndShowError(err))
-        }   
-    },
-    [load]
-    );
+            .catch(err => stopAnimationAndShowError(err))
+            .finally(() => {
+              setLoad(false);
+            });
+        }
+      }, [load]);
 
-    const stopAnimationAndShowError = (err) => {
+      const stopAnimationAndShowError = (err) => {
         setLoading(false)
         setError(true)
         handleApiError(err,showError)
     }
+
+      const getTicketById = () =>{
+        API.getTicketById(ticketId)
+            .then((t) => {
+                setTicketData(t)
+                resetStatusAlert()
+            })
+            .catch(err => handleApiError(err,showError))
+      }
+
+      const getAllMessagesByTicketId = () => {
+        API.getAllMessagesByTicketId(ticketId)
+            .then((m) => {
+                setMessages(m)
+                // fare richiesta profileID
+                resetStatusAlert()
+            })
+            .catch(err => handleApiError(err,showError))
+      }
 
     
 
@@ -144,7 +140,7 @@ function Message({message}){
                 className="rounded-circle d-flex align-self-start me-3 shadow-1-strong"
                 width="60"
               />
-              <MDBCard>
+              <MDBCard className="w-100">
                 <MDBCardHeader className="d-flex justify-content-between p-3">
                   <p className="fw-bold mb-0">{message.sender}</p>
                   <p className="text-muted small mb-0">
