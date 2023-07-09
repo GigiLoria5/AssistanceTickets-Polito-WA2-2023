@@ -11,7 +11,7 @@ function ExpertDetails() {
     const [tickets, setTickets] = useState([]);
     const [products, setProducts] = useState(null);
     const { expertId } = useParams();
-    const { StatusAlertComponent, showSuccess, showError, resetStatusAlert } = useStatusAlert();
+    const { StatusAlertComponent, showError, resetStatusAlert } = useStatusAlert();
     const navigate = useNavigate()
     const [loading, setLoading] = useState(true)
     const [errorPresence, setErrorPresence] = useState(false)
@@ -50,8 +50,6 @@ function ExpertDetails() {
                 }).catch(e => reject(e))
         })
     }
-
-    
 
     const getProductsData = async () => {
         return new Promise((resolve, reject) => {

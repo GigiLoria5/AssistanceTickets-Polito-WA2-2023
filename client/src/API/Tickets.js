@@ -74,6 +74,76 @@ async function getTicketById(ticketId) {
     });
 }
 
+// GET /API/tickets?status=REOPENED
+async function getAllTicketsReopened() {
+    return new Promise((resolve, reject) => {
+        fetch(new URL(`tickets?status=REOPENED`, API_URL), {
+            headers: {
+                Authorization: `Bearer ${getAccessToken()}`
+            },
+            credentials: 'include'
+        })
+            .then(async (response) => {
+                if (response.ok) {
+                    const body = await response.json();
+                    resolve(body.map((ticketJson) => new Ticket(
+                        ticketJson.ticketId,
+                        ticketJson.title,
+                        ticketJson.description,
+                        ticketJson.productId,
+                        ticketJson.productTokenId,
+                        ticketJson.customerId,
+                        ticketJson.expertId,
+                        ticketJson.totalExchangedMessages,
+                        ticketJson.status,
+                        ticketJson.priorityLevel,
+                        ticketJson.createdAt,
+                        ticketJson.lastModifiedAt
+                    )));
+                } else {
+                    const error = await handleErrorResponse(response);
+                    reject(error);
+                }
+            })
+            .catch((_error) => reject(SERVER_COMMUNICATION_ERROR));
+    });
+}
+
+// GET /API/tickets?status=OPEN
+async function getAllTicketsOpen() {
+    return new Promise((resolve, reject) => {
+        fetch(new URL(`tickets?status=OPEN`, API_URL), {
+            headers: {
+                Authorization: `Bearer ${getAccessToken()}`
+            },
+            credentials: 'include'
+        })
+            .then(async (response) => {
+                if (response.ok) {
+                    const body = await response.json();
+                    resolve(body.map((ticketJson) => new Ticket(
+                        ticketJson.ticketId,
+                        ticketJson.title,
+                        ticketJson.description,
+                        ticketJson.productId,
+                        ticketJson.productTokenId,
+                        ticketJson.customerId,
+                        ticketJson.expertId,
+                        ticketJson.totalExchangedMessages,
+                        ticketJson.status,
+                        ticketJson.priorityLevel,
+                        ticketJson.createdAt,
+                        ticketJson.lastModifiedAt
+                    )));
+                } else {
+                    const error = await handleErrorResponse(response);
+                    reject(error);
+                }
+            })
+            .catch((_error) => reject(SERVER_COMMUNICATION_ERROR));
+    });
+}
+
 // GET /API/tickets/{ticketId}/statusChanges
 async function getTicketStatusChangesByTicketId(ticketId) {
     return new Promise((resolve, reject) => {
@@ -125,4 +195,4 @@ async function createTicket(productTokenId, title, description) {
     });
 }
 
-export {getAllTickets, getTicketById, getTicketStatusChangesByTicketId,createTicket};
+export {getAllTickets, getAllTicketsOpen, getAllTicketsReopened, getTicketById, getTicketStatusChangesByTicketId,createTicket};
