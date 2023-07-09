@@ -1,15 +1,19 @@
 import {Tab, Tabs} from "react-bootstrap";
 import ManagerDashboardTickets from "./ManagerDashboardTickets";
 import ManagerDashboardExperts from "./ManagerDashboardExperts";
+import ManagerDashboardAssignableTickets from "./ManagerDashboardAssignableTickets";
 
 function ManagerDashboard() {
     return (
         <Tabs
-            defaultActiveKey="tickets"
+            defaultActiveKey="assignable-tickets"
             id="uncontrolled-tab-example"
             className="mb-3"
         >
-            <Tab eventKey="tickets" title="Tickets">
+            <Tab eventKey="assignable-tickets" title="Assignable Tickets">
+                <ManagerDashboardAssignableTickets/>
+            </Tab>
+            <Tab eventKey="tickets" title="All Tickets">
                 <ManagerDashboardTickets/>
             </Tab>
             <Tab eventKey="experts" title="Experts">
