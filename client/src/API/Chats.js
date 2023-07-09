@@ -7,7 +7,7 @@ import {Message} from "../models/Message";
 
 async function getAllMessagesByTicketId(ticketId){
     return new Promise((resolve,reject) => {
-        fetch(new URL(`chats/${ticketId}/messages`),{
+        fetch(new URL(`chats/${ticketId}/messages`, API_URL),{
             headers: {
                 Authorization: `Bearer ${getAccessToken()}`
             },
