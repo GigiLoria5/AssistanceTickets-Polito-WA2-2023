@@ -56,8 +56,8 @@ function TicketsTable({ tickets, actionName, action, showClientInfo, showExpertI
                                 }
                                 <td>{ticket.title}</td>
                                 <td>{ticket.description}</td>
-                                <td>{showClientInfo ? <Button onClick={() => showClientInfo(ticket.customerId)}>Show</Button>  : null}</td>
-                                <td>{showExpertInfo && ticket.expertId ? <Button onClick={() => showExpertInfo(ticket.expertId)}>Show</Button> : null}</td>
+                                {showClientInfo ? <td><Button onClick={() => showClientInfo(ticket.customerId)}>Show</Button></td>  : null}
+                                {showExpertInfo && ticket.expertId ? <td><Button onClick={() => showExpertInfo(ticket.expertId)}>Show</Button> </td>: <td>{null}</td>}
                                 {showInfoToManager ? <td>{ticket.totalExchangedMessages}</td> : null}
                                 <td>{ticket.status}</td>
                                 <td>{ticket.priorityLevel}</td>
