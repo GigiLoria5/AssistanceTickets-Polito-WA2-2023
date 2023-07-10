@@ -1,14 +1,23 @@
 import {Button, Col, Row, Table} from "react-bootstrap";
 import React from "react";
 import {dateTimeMillisFormatted} from "../utils/utils";
+import {TicketPriority} from "../enums/TicketPriority";
 
-function Tickets({tickets, title, actionName, action, showClientInfo, showExpertInfo, hidePriority}) {
+function Tickets({tickets, title, actionName, action, showClientInfo, showExpertInfo, hidePriority, sorting}) {
 
     /* Here it is not possible to load the tickets list here, because this component can be used,
     * for example, both from client (which sees only his ticket) and manager (which sees all tickets)*/
 
-    const sortedTickets = () => {
-        return tickets.sort((t1, t2) => t2.lastModifiedAt - t1.lastModifiedAt)
+    const sortedTickets = (sorting) => {
+        const priorityOrder = Object.values(TicketPriority)
+        switch (sorting) {
+            case "Created At":
+                return tickets.sort((t1, t2) => t2.createdAt - t1.createdAt)
+            case "Priority Level":
+                return tickets.sort((t1, t2) => priorityOrder.indexOf(t2.priorityLevel) - priorityOrder.indexOf(t1.priorityLevel))
+            default:
+                return tickets.sort((t1, t2) => t2.lastModifiedAt - t1.lastModifiedAt)
+        }
     }
 
     return (
@@ -18,7 +27,7 @@ function Tickets({tickets, title, actionName, action, showClientInfo, showExpert
             </h4>
             <Row>
                 <Col>
-                    <TicketsTable tickets={sortedTickets()} actionName={actionName} action={action}
+                    <TicketsTable tickets={sortedTickets(sorting)} actionName={actionName} action={action}
                                   showClientInfo={showClientInfo} showExpertInfo={showExpertInfo}
                                   hidePriority={hidePriority}/>
                 </Col>
@@ -35,7 +44,7 @@ function TicketsTable({tickets, actionName, action, showClientInfo, showExpertIn
     }
 
     return (
-        (tickets.length) > 0 ?
+        (tickets  && tickets.length) > 0 ?
             <div className="table-responsive">
                 <Table>
                     <thead>

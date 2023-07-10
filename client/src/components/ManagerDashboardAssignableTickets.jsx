@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {useStatusAlert} from "../hooks/useStatusAlert";
 import API from "../API";
-import {Col, Container, Row, Spinner} from "react-bootstrap";
+import {Col, Container, Dropdown, DropdownButton, Row, Spinner} from "react-bootstrap";
 import {handleApiError} from "../utils/utils";
 import Tickets from "./Tickets";
 import ClientInfoCanvas from "./ClientInfoCanvas";
@@ -80,6 +80,8 @@ function ManagerDashboardAssignableTickets() {
         setShowClient(true)
     }
 
+    const [sorting, setSorting] = useState("Last Modified At")
+
     return (
         <Container className="h-100">
             <Row className="h-100">
@@ -88,11 +90,13 @@ function ManagerDashboardAssignableTickets() {
                     {
                         tickets && !loading ?
                             <>
+                                <FilterDropdown sorting={sorting} setSorting={setSorting}/>
                                 <Tickets tickets={formatTickets()}
                                          actionName={"Details"}
                                          action={actionGoToTicket}
                                          showClientInfo={handleShowClientInfo}
                                          hidePriority={true}
+                                         sorting={sorting}
                                 />
                                 {clientInfo
                                     ? <ClientInfoCanvas show={showClient} onHide={handleCloseClient}
@@ -105,6 +109,18 @@ function ManagerDashboardAssignableTickets() {
                 </Col>
             </Row>
         </Container>
+    );
+}
+
+function FilterDropdown({sorting, setSorting}) {
+    return (
+        <>
+            <h6>Sort By:</h6>
+            <DropdownButton id="dropdown-basic-button" title={sorting}>
+                <Dropdown.Item onClick={() => setSorting("Last Modified At")}>Last Modified At</Dropdown.Item>
+                <Dropdown.Item onClick={() => setSorting("Created At")}>Created At</Dropdown.Item>
+            </DropdownButton>
+        </>
     );
 }
 
