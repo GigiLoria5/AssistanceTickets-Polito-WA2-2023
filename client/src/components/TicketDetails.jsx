@@ -87,7 +87,7 @@ function TicketDetails({userInfo}) {
         <>
             <Row className='pb-5'>
                 <Col md="auto" className="d-flex align-items-center">
-                    <Button onClick={() => navigate(-1)}> {"Go back"}</Button>
+                    <Button onClick={() => navigate('/')}> {"Go back"}</Button>
                 </Col>
                 <Col md="auto" className="d-flex align-items-center">
                     <h1>Ticket Details</h1>
@@ -255,7 +255,7 @@ function TicketChat({ticketId}) {
     return (
         <>
             <h2>Ticket chat</h2>
-            <Button onClick={()=>navigate(`/chats/${ticketId}`)}>
+            <Button onClick={() => navigate(`/chats/${ticketId}`)}>
                 Open chat
             </Button>
         </>
