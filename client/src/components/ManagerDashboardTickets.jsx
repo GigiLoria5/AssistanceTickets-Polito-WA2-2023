@@ -1,35 +1,36 @@
-import { useEffect, useState } from "react";
-import { useStatusAlert } from "../../hooks/useStatusAlert";
+import {useEffect, useState} from "react";
+import {useStatusAlert} from "../../hooks/useStatusAlert";
 import API from "../API";
-import { Button, Col, Container, Form, Modal, Row, Spinner, Table, Offcanvas } from "react-bootstrap";
-import { handleApiError } from "../utils/utils";
+import {Col, Container, Row, Spinner} from "react-bootstrap";
+import {handleApiError} from "../utils/utils";
 import Tickets from "./Tickets";
-import { useNavigate } from "react-router-dom";
+import {useNavigate} from "react-router-dom";
+import ClientInfoCanvas from "./ClientInfoCanvas";
+import ExpertInfoCanvas from "./ExpertInfoCanvas";
 
 function ManagerDashboardTickets() {
     const [tickets, setTickets] = useState(null);
     const [products, setProducts] = useState(null);
     const [clientInfo, setClientInfo] = useState(null)
     const [expertInfo, setExpertInfo] = useState(null)
-    const [showInfoToManager, setShowInfoToManager] = useState(true);
     const [loading, setLoading] = useState(true)
     const [load, setLoad] = useState(true)
-    const { StatusAlertComponent, showError, resetStatusAlert } = useStatusAlert();
+    const {StatusAlertComponent, showError, resetStatusAlert} = useStatusAlert();
 
     useEffect(() => {
-        const getData = async () => {
-            await Promise.all([getTicketsData(), getProductsData()])
+            const getData = async () => {
+                await Promise.all([getTicketsData(), getProductsData()])
+            }
+            if (load === true) {
+                setLoading(true)
+                getData().then(() => {
+                    setLoading(false)
+                    resetStatusAlert()
+                }).catch(err => stopAnimationAndShowError(err)).finally(() => {
+                    setLoad(false)
+                })
+            }
         }
-        if (load === true) {
-            setLoading(true)
-            getData().then(() => {
-                setLoading(false)
-                resetStatusAlert()
-            }).catch(err => stopAnimationAndShowError(err)).finally(() => {
-                setLoad(false)
-            })
-        }
-    }
         ,
         [load]
     )
@@ -38,9 +39,9 @@ function ManagerDashboardTickets() {
         return new Promise((resolve, reject) => {
             API.getAllTickets()
                 .then((t) => {
-                    setTickets(t)
-                    resolve()
-                }
+                        setTickets(t)
+                        resolve()
+                    }
                 ).catch(err => reject(err))
         })
     }
@@ -49,9 +50,9 @@ function ManagerDashboardTickets() {
         return new Promise((resolve, reject) => {
             API.getAllProducts()
                 .then((p) => {
-                    setProducts(p)
-                    resolve()
-                }
+                        setProducts(p)
+                        resolve()
+                    }
                 ).catch(err => reject(err))
         })
     }
@@ -83,7 +84,7 @@ function ManagerDashboardTickets() {
     const formatTickets = () => {
         return tickets.map(ticket => {
             const product = products ? products.find(p => p.productId === ticket.productId) : ""
-            return { ...ticket, "product": product.name }
+            return {...ticket, "product": product.name}
         })
     }
 
@@ -107,55 +108,29 @@ function ManagerDashboardTickets() {
         <Container className="h-100">
             <Row className="h-100">
                 <Col className="d-flex flex-column align-items-center justify-content-center">
-                    <h2>Tickets Management</h2><StatusAlertComponent />
+                    <h2>Tickets Management</h2><StatusAlertComponent/>
                     {
                         tickets && !loading ?
                             <>
                                 <Tickets tickets={formatTickets()}
-                                    actionName={"Details"}
-                                    action={actionGoToTicket}
-                                    showInfoToManager={showInfoToManager}
-                                    showClientInfo={handleShowClientInfo}
-                                    showExpertInfo={handleShowExpertInfo}
+                                         actionName={"Details"}
+                                         action={actionGoToTicket}
+                                         showClientInfo={handleShowClientInfo}
+                                         showExpertInfo={handleShowExpertInfo}
                                 />
                                 {clientInfo ?
-                                    <ClientInfo show={showClient} handleClose={handleCloseClient} info={clientInfo} title={"Customer Info"} /> : null}
+                                    <ClientInfoCanvas show={showClient} onHide={handleCloseClient}
+                                                      clientInfo={clientInfo}/> : null}
                                 {expertInfo ?
-                                    <ExpertInfo show={showExpert} handleClose={handleCloseExpert} info={expertInfo} title={"Expert Info"} /> : null}
+                                    <ExpertInfoCanvas show={showExpert} onHide={handleCloseExpert}
+                                                      expertInfo={expertInfo}/> : null}
                             </>
-                            : <Spinner animation="border" variant="primary" />
+                            : <Spinner animation="border" variant="primary"/>
                     }
                 </Col>
             </Row>
         </Container>
     );
-}
-
-function ClientInfo({ show, handleClose, info, title }) {
-    return <Offcanvas show={show} onHide={handleClose}>
-        <Offcanvas.Header closeButton>
-            <Offcanvas.Title >{title}</Offcanvas.Title>
-        </Offcanvas.Header>
-        <Offcanvas.Body>
-            {<h4>Name:  {info.name}</h4>}
-            {<h4>Surname:  {info.surname}</h4>}
-            {<h4>Phone:  {info.phoneNumber}</h4>}
-            {<h4>E-mail:  {info.email}</h4>}
-        </Offcanvas.Body>
-    </Offcanvas>
-}
-
-function ExpertInfo({ show, handleClose, info, title }) {
-    return <Offcanvas show={show} onHide={handleClose}>
-        <Offcanvas.Header closeButton>
-            <Offcanvas.Title >{title}</Offcanvas.Title>
-        </Offcanvas.Header>
-        <Offcanvas.Body>
-            {<h4>Name:  {info.name}</h4>}
-            {<h4>Surname:  {info.surname}</h4>}
-            {<h4>E-mail:  {info.email}</h4>}
-        </Offcanvas.Body>
-    </Offcanvas>
 }
 
 export default ManagerDashboardTickets;

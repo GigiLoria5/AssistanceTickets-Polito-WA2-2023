@@ -230,11 +230,11 @@ function PurchaseDataTable({purchase}) {
                 </tr>
                 <tr>
                     <th> Price</th>
-                    <td> {product.price}</td>
+                    <td> {product.price} €</td>
                 </tr>
                 <tr>
                     <th> Weight</th>
-                    <td> {product.weight}</td>
+                    <td> {product.weight} kg</td>
                 </tr>
                 <tr>
                     <th> Purchase date</th>

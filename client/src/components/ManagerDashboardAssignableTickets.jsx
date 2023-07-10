@@ -1,34 +1,34 @@
-import { useEffect, useState } from "react";
-import { useStatusAlert } from "../../hooks/useStatusAlert";
+import React, {useEffect, useState} from "react";
+import {useStatusAlert} from "../../hooks/useStatusAlert";
 import API from "../API";
-import { Button, Col, Container, Form, Modal, Row, Spinner, Table, Offcanvas } from "react-bootstrap";
-import { handleApiError } from "../utils/utils";
+import {Col, Container, Row, Spinner} from "react-bootstrap";
+import {handleApiError} from "../utils/utils";
 import Tickets from "./Tickets";
-import { useNavigate } from "react-router-dom";
+import {useNavigate} from "react-router-dom";
+import ClientInfoCanvas from "./ClientInfoCanvas";
 
 function ManagerDashboardAssignableTickets() {
     const [tickets, setTickets] = useState(null);
     const [products, setProducts] = useState(null);
     const [clientInfo, setClientInfo] = useState(null)
-    const [showInfoToManager, setShowInfoToManager] = useState(true);
     const [loading, setLoading] = useState(true)
     const [load, setLoad] = useState(true)
-    const { StatusAlertComponent, showError, resetStatusAlert } = useStatusAlert();
+    const {StatusAlertComponent, showError, resetStatusAlert} = useStatusAlert();
 
     useEffect(() => {
-        const getData = async () => {
-            await Promise.all([getAssignableTicketsData(), getProductsData()])
+            const getData = async () => {
+                await Promise.all([getAssignableTicketsData(), getProductsData()])
+            }
+            if (load === true) {
+                setLoading(true)
+                getData().then(() => {
+                    setLoading(false)
+                    resetStatusAlert()
+                }).catch(err => stopAnimationAndShowError(err)).finally(() => {
+                    setLoad(false)
+                })
+            }
         }
-        if (load === true) {
-            setLoading(true)
-            getData().then(() => {
-                setLoading(false)
-                resetStatusAlert()
-            }).catch(err => stopAnimationAndShowError(err)).finally(() => {
-                setLoad(false)
-            })
-        }
-    }
         ,
         [load]
     )
@@ -37,9 +37,9 @@ function ManagerDashboardAssignableTickets() {
         return new Promise((resolve, reject) => {
             API.getAllTickets()
                 .then((t) => {
-                    setTickets(t.filter(ticket => !ticket.expertId))
-                    resolve()
-                }
+                        setTickets(t.filter(ticket => !ticket.expertId))
+                        resolve()
+                    }
                 ).catch(err => reject(err))
         })
     }
@@ -48,9 +48,9 @@ function ManagerDashboardAssignableTickets() {
         return new Promise((resolve, reject) => {
             API.getAllProducts()
                 .then((p) => {
-                    setProducts(p)
-                    resolve()
-                }
+                        setProducts(p)
+                        resolve()
+                    }
                 ).catch(err => reject(err))
         })
     }
@@ -59,7 +59,7 @@ function ManagerDashboardAssignableTickets() {
         API.getProfileById(clientId)
             .then((client) => {
                 setClientInfo(client)
-                resetStatusAlert
+                resetStatusAlert()
             })
             .catch(err => handleApiError(err, showError))
     }
@@ -73,7 +73,7 @@ function ManagerDashboardAssignableTickets() {
     const formatTickets = () => {
         return tickets.map(ticket => {
             const product = products ? products.find(p => p.productId === ticket.productId) : ""
-            return { ...ticket, "product": product.name }
+            return {...ticket, "product": product.name}
         })
     }
 
@@ -90,39 +90,27 @@ function ManagerDashboardAssignableTickets() {
         <Container className="h-100">
             <Row className="h-100">
                 <Col className="d-flex flex-column align-items-center justify-content-center">
-                    <h2>Tickets to assign</h2><StatusAlertComponent />
+                    <h2>Tickets to assign</h2><StatusAlertComponent/>
                     {
                         tickets && !loading ?
                             <>
                                 <Tickets tickets={formatTickets()}
-                                    actionName={"Details"}
-                                    action={actionGoToTicket}
-                                    showInfoToManager={showInfoToManager}
-                                    showClientInfo={handleShowClientInfo}
+                                         actionName={"Details"}
+                                         action={actionGoToTicket}
+                                         showClientInfo={handleShowClientInfo}
                                 />
-                                {clientInfo ?
-                                    <ClientInfo show={showClient} handleClose={handleCloseClient} info={clientInfo} title={"Customer Info"} /> : null}
+                                {clientInfo
+                                    ? <ClientInfoCanvas show={showClient} onHide={handleCloseClient}
+                                                        clientInfo={clientInfo}/>
+                                    : null
+                                }
                             </>
-                            : <Spinner animation="border" variant="primary" />
+                            : <Spinner animation="border" variant="primary"/>
                     }
                 </Col>
             </Row>
         </Container>
     );
-}
-
-function ClientInfo({ show, handleClose, info, title }) {
-    return <Offcanvas show={show} onHide={handleClose}>
-        <Offcanvas.Header closeButton>
-            <Offcanvas.Title >{title}</Offcanvas.Title>
-        </Offcanvas.Header>
-        <Offcanvas.Body>
-            {<h4>Name:  {info.name}</h4>}
-            {<h4>Surname:  {info.surname}</h4>}
-            {<h4>Phone:  {info.phoneNumber}</h4>}
-            {<h4>E-mail:  {info.email}</h4>}
-        </Offcanvas.Body>
-    </Offcanvas>
 }
 
 export default ManagerDashboardAssignableTickets;

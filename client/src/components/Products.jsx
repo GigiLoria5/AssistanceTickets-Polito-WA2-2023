@@ -159,8 +159,8 @@ const ProdTable = ({data, allowGeneration}) => {
                             <th>Category</th>
                             <th>Manufacturer Number</th>
                             <th>Name</th>
-                            <th>Price</th>
-                            <th>Weight</th>
+                            <th>Price(€)</th>
+                            <th>Weight(kg)</th>
                             {allowGeneration && <th>Token</th>}
                         </tr>
                         </thead>
