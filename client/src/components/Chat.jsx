@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { Row, Container, Col, Button, Spinner, Stack, Badge } from "react-bootstrap";
+import { Row, Container, Col, Button, Spinner, Stack, Badge, Form, FloatingLabel } from "react-bootstrap";
 import React, { useEffect, useState } from "react";
 import API from "../API";
 import { useStatusAlert } from "../../hooks/useStatusAlert";
@@ -98,7 +98,6 @@ function Chat({ userInfo }) {
       API.getAllMessagesByTicketId(ticketId)
         .then((m) => {
           setMessages(m)
-          // fare richiesta profileID
           resolve()
         })
         .catch(e => reject(e))
@@ -116,6 +115,18 @@ function Chat({ userInfo }) {
       handleApiError(error, showError)
     }
   }
+
+
+  const addMessage = (content, attachments) => {
+    API.addMessageWithAttachments(ticketId, content, attachments)
+      .then(x => {
+        onSuccess();
+      })
+      .catch(err => {
+        handleApiError(err, showError)
+      })
+  }
+
 
 
 
@@ -145,7 +156,8 @@ function Chat({ userInfo }) {
                   </Col>
                 </Row>
                 <hr className="my-4 border-gray" />
-                <MessageList messages={messages} userInfo={userInfo} customer={customer} ticketId={ticketId} getAttachment={getAttachment} />
+                <MessageList messages={messages} userInfo={userInfo} customer={customer} ticketId={ticketId} getAttachment={getAttachment} /><hr className="my-4 border-gray" />
+                <MessageForm ticketId={ticketId} onSubmit={addMessage} />
               </>
               : null
         }
@@ -170,28 +182,29 @@ function MessageList({ messages, userInfo, customer, ticketId, getAttachment }) 
   )
 }
 
-// useEffect(() => {
-//   const fetchData = async () => {
-//     const data = await Promise.all(
-//       message.attachments.map(attach =>
-//         API.getAttachment(ticketId, message.messageId, attach.attachmentId))
-//     );
-//     setAttachmentData(data);
-//   }
-//   fetchData();
-// }, [message.attachments, message.messageId, ticketId])
 
 function Message({ message, customerInfo, userInfo, getAttachment }) {
   return (
     <>
 
       <li className="d-flex justify-content-between mb-4">
-        <img
-          src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-6.webp"
-          alt="avatar"
-          className="rounded-circle d-flex align-self-start me-3 shadow-1-strong"
-          width="60"
-        />
+        {
+          message.sender === "EXPERT" ?
+            <img
+              src="https://cdn-icons-png.flaticon.com/512/4233/4233839.png"
+              alt="avatar"
+              className="rounded-circle d-flex align-self-start me-3 shadow-1-strong"
+              width="60"
+            />
+            :
+            <img
+              src="https://cdn-icons-png.flaticon.com/512/4407/4407404.png"
+              alt="avatar"
+              className="rounded-circle d-flex align-self-start me-3 shadow-1-strong"
+              width="60"
+            />
+        }
+
         <MDBCard className="w-100">
           <MDBCardHeader className="d-flex justify-content-between p-3">
             <div className="d-flex justify-content-start">
@@ -232,11 +245,50 @@ function AttachmentList({ attachments, getAttachment, messageId }) {
 }
 
 
-function MessageForm() {
-  return (
-    <>
+function MessageForm({ onSubmit }) {
+  const [content, setContent] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const [files, setFiles] = useState([])
 
-    </>
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    onSubmit(content, files);
+    setContent('');
+    setFiles([]);
+  }
+
+
+  return (
+    <MDBRow className="justify-content-center">
+      <MDBCol md="6" lg="7" xl="8">
+        <Form onSubmit={handleSubmit}>
+          <Form.Group className="mb-3">
+            <FloatingLabel controlId="floatingTextarea" label="Leave a comment">
+              <Form.Control
+                as="textarea"
+                placeholder="Leave a comment"
+                value={content}
+                onChange={ev => setContent(ev.target.value)}
+                style={{ height: '100px' }}
+              />
+            </FloatingLabel>
+          </Form.Group>
+          <Form.Group controlId="formFileMultiple" className="mb-3">
+            <Form.Label>Insertf files</Form.Label>
+            <Form.Control
+              type="file"
+              multiple
+              accept='application/pdf, image/png, image/jpeg, image/jpg'
+              onChange={ev => setFiles(ev.target.files)}
+            />
+          </Form.Group>
+          <Button type="submit" disabled={isLoading}>
+            {isLoading ? "Sending..." : "Send"}
+          </Button>
+        </Form>
+      </MDBCol>
+    </MDBRow>
   );
 }
 

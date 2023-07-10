@@ -26,6 +26,8 @@ async function getAllMessagesByTicketId(ticketId){
     })
 }
 
+// GET /API/chats/{ticketId}/messages/{messageId}/attachment/{attachmentsId}
+
 async function getAttachment(ticketId, messageId, attachmentId) {
     return new Promise((resolve, reject) => {
         fetch(new URL(`chats/${ticketId}/messages/${messageId}/attachments/${attachmentId}`, API_URL), {
@@ -47,4 +49,37 @@ async function getAttachment(ticketId, messageId, attachmentId) {
     });
 }
 
-export {getAllMessagesByTicketId, getAttachment}
+// POST /API/chats/{ticketId}/messages
+
+async function addMessageWithAttachments(ticketId,content,attachments=[]) {
+
+    const formData = new FormData();
+    formData.append('content', content);
+    if(attachments&&attachments.length>0){
+        attachments.forEach((attachment)=>{
+            formData.append('attachment', attachment);
+        });
+    }
+    return new Promise((resolve,reject) =>{
+        fetch(new URL(`chats/${ticketId}/messages`, API_URL),{
+            method:'POST',
+            headers: {
+                Authorization: `Bearer ${getAccessToken()}`
+            },
+            credentials:'include',
+            body:formData,
+        }
+        )
+        .then(async(response) => {
+            if(response.ok){
+                resolve(null)
+            } else{
+                const error = await handleErrorResponse(response);
+                reject(error)
+            }
+        })
+        .catch((_error) => reject(SERVER_COMMUNICATION_ERROR));
+    })
+}
+
+export {getAllMessagesByTicketId, getAttachment, addMessageWithAttachments}
