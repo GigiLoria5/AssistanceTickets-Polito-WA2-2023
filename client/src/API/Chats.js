@@ -36,17 +36,8 @@ async function getAttachment(ticketId, messageId, attachmentId) {
         })
             .then(async (response) => {
                 if (response.ok) {
-                    const contentType = response.headers.get('Content-Type');
-                    const contentDisposition = response.headers.get('Content-Disposition');
-                    let filename = 'attachment';
-                    if (contentDisposition) {
-                        const match = contentDisposition.match(/filename\*?=['"]?(?:UTF-\d['"]*)?([^;\r\n"']*)['"]?;?/i);
-                        if (match && match[1]) {
-                            filename = decodeURIComponent(match[1]);
-                        }
-                    }
                     const body = await response.blob();
-                    resolve({ data: body, contentType, filename });
+                    resolve(body);
                 } else {
                     const error = await handleErrorResponse(response);
                     reject(error);

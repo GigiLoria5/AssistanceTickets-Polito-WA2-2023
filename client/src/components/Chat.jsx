@@ -17,8 +17,9 @@ import {
   MDBCardHeader,
 } from "mdb-react-ui-kit";
 import dayjs from "dayjs";
-import relativeTime from 'dayjs/plugin/relativeTime'
+import relativeTime from 'dayjs/plugin/relativeTime';
 dayjs.extend(relativeTime);
+import { saveAs } from 'file-saver';
 
 
 function Chat({ userInfo }) {
@@ -104,6 +105,18 @@ function Chat({ userInfo }) {
     })
   }
 
+  async function getAttachment(attachmentId, messageId, filename) {
+    console.log(attachmentId, messageId)
+    try {
+      const blob = await API.getAttachment(ticketId, messageId, attachmentId)
+      const url = URL.createObjectURL(blob);
+      console.log(url)
+      saveAs(url, filename)
+    } catch (error) {
+      handleApiError(error, showError)
+    }
+  }
+
 
 
   return (
@@ -132,7 +145,7 @@ function Chat({ userInfo }) {
                   </Col>
                 </Row>
                 <hr className="my-4 border-gray" />
-                <MessageList messages={messages} userInfo={userInfo} customer={customer} ticketId={ticketId} />
+                <MessageList messages={messages} userInfo={userInfo} customer={customer} ticketId={ticketId} getAttachment={getAttachment} />
               </>
               : null
         }
@@ -141,14 +154,14 @@ function Chat({ userInfo }) {
   )
 }
 
-function MessageList({ messages, userInfo, customer, ticketId }) {
+function MessageList({ messages, userInfo, customer, ticketId, getAttachment }) {
   return (
     <>
       <MDBRow className="justify-content-center">
         <MDBCol md="6" lg="7" xl="8">
           <MDBTypography listUnStyled>
             {
-              messages.map((m) => <Message message={m} key={m.messageId} customerInfo={customer} userInfo={userInfo} ticketId={ticketId} />)
+              messages.map((m) => <Message message={m} key={m.messageId} customerInfo={customer} userInfo={userInfo} ticketId={ticketId} getAttachment={getAttachment} />)
             }
           </MDBTypography>
         </MDBCol>
@@ -157,20 +170,18 @@ function MessageList({ messages, userInfo, customer, ticketId }) {
   )
 }
 
-function Message({ message, customerInfo, userInfo, ticketId }) {
-  const [attachmentData, setAttachmentData] = useState([]);
+// useEffect(() => {
+//   const fetchData = async () => {
+//     const data = await Promise.all(
+//       message.attachments.map(attach =>
+//         API.getAttachment(ticketId, message.messageId, attach.attachmentId))
+//     );
+//     setAttachmentData(data);
+//   }
+//   fetchData();
+// }, [message.attachments, message.messageId, ticketId])
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const data = await Promise.all(
-        message.attachments.map(attach =>
-          API.getAttachment(ticketId, message.messageId, attach.attachmentId))
-      );
-      setAttachmentData(data);
-    }
-    fetchData();
-  }, [message.attachments, message.messageId, ticketId])
-
+function Message({ message, customerInfo, userInfo, getAttachment }) {
   return (
     <>
 
@@ -192,9 +203,10 @@ function Message({ message, customerInfo, userInfo, ticketId }) {
             </p>
           </MDBCardHeader>
           <MDBCardBody>
-            <p className="mb-0">
+            <p className="mb-3">
               {message.content}
             </p>
+            {message.attachments && message.attachments.length > 0 ? <AttachmentList attachments={message.attachments} getAttachment={getAttachment} messageId={message.messageId} /> : null}
 
           </MDBCardBody>
         </MDBCard>
@@ -203,12 +215,22 @@ function Message({ message, customerInfo, userInfo, ticketId }) {
   )
 }
 
-function AttachmentList() {
+function AttachmentList({ attachments, getAttachment, messageId }) {
   return (
-    <>
-    </>
+    <ul>
+      {attachments.map((a) => (
+        <li key={a.attachmentId}>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-paperclip" viewBox="0 0 16 16">
+            <path d="M4.5 3a2.5 2.5 0 0 1 5 0v9a1.5 1.5 0 0 1-3 0V5a.5.5 0 0 1 1 0v7a.5.5 0 0 0 1 0V3a1.5 1.5 0 1 0-3 0v9a2.5 2.5 0 0 0 5 0V5a.5.5 0 0 1 1 0v7a3.5 3.5 0 1 1-7 0V3z" />
+          </svg>
+          <a href="#" onClick={() => getAttachment(a.attachmentId, messageId, a.name)}>
+            {a.name}
+          </a>
+        </li>))}
+    </ul>
   );
 }
+
 
 function MessageForm() {
   return (
