@@ -5,14 +5,14 @@ import API from "../API";
 import {useStatusAlert} from "../hooks/useStatusAlert";
 import {handleApiError} from "../utils/utils";
 import {
-  MDBCard,
-  MDBCardBody,
-  MDBCardHeader,
-  MDBCol,
-  MDBContainer,
-  MDBIcon,
-  MDBRow,
-  MDBTypography,
+    MDBCard,
+    MDBCardBody,
+    MDBCardHeader,
+    MDBCol,
+    MDBContainer,
+    MDBIcon,
+    MDBRow,
+    MDBTypography,
 } from "mdb-react-ui-kit";
 import dayjs from "dayjs";
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -88,9 +88,7 @@ function Chat({userInfo}) {
     }
 
     const getAllMessagesByTicketId = async () => {
-
         return new Promise((resolve, reject) => {
-
             API.getAllMessagesByTicketId(ticketId)
                 .then((m) => {
                     setMessages(m)
@@ -258,6 +256,7 @@ function MessageForm({onSubmit}) {
     }
 
     const handleFileChange = (event) => {
+        setShow(false);
         const selectedFiles = event.target.files;
         if (selectedFiles.length > 5) {
             setShow(true)
