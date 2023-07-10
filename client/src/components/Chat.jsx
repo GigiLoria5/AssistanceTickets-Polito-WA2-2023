@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { Row, Container, Col, Button, Spinner, Stack, Badge, Form, FloatingLabel } from "react-bootstrap";
+import { Row, Alert, Container, Col, Button, Spinner, Stack, Badge, Form, FloatingLabel } from "react-bootstrap";
 import React, { useEffect, useState } from "react";
 import API from "../API";
 import { useStatusAlert } from "../../hooks/useStatusAlert";
@@ -248,6 +248,8 @@ function MessageForm({ onSubmit }) {
   const [content, setContent] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [files, setFiles] = useState([])
+  const [fileLimit, setFileLimit] = useState(false)
+  const [show, setShow] = useState(false);
 
 
   const handleSubmit = async (event) => {
@@ -256,6 +258,17 @@ function MessageForm({ onSubmit }) {
     setContent('');
     setFiles([]);
   }
+
+  const handleFileChange = (event) => {
+    const selectedFiles = event.target.files;
+    if (selectedFiles.length > 5) {
+      setShow(true)
+      setFileLimit(true);
+    } else {
+      setFileLimit(false);
+      setFiles(selectedFiles);
+    }
+  };
 
 
   return (
@@ -275,17 +288,27 @@ function MessageForm({ onSubmit }) {
             </FloatingLabel>
           </Form.Group>
           <Form.Group controlId="formFileMultiple" className="mb-3">
-            <Form.Label>Insertf files</Form.Label>
+            <Form.Label>Insert files</Form.Label>
             <Form.Control
               type="file"
               multiple
               accept='application/pdf, image/png, image/jpeg, image/jpg'
-              onChange={ev => setFiles(ev.target.files)}
+              onChange={handleFileChange}
             />
           </Form.Group>
-          <Button type="submit" disabled={isLoading}>
-            {isLoading ? "Sending..." : "Send"}
+          <Button type="submit" disabled={fileLimit}>
+            Send
           </Button>
+          {show ?
+            <Alert variant="danger" onClose={() => setShow(false)} dismissible>
+              <Alert.Heading>Oh snap! You got an error!</Alert.Heading>
+              <p>
+                You exceeded the maximum file limit: 5
+              </p>
+            </Alert> :
+            null
+          }
+
         </Form>
       </MDBCol>
     </MDBRow>
