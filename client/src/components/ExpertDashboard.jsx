@@ -17,7 +17,6 @@ function ExpertDashboard({userInfo}) {
     const [errorPresence, setErrorPresence] = useState(false)
     const [clientInfo, setClientInfo] = useState(null)
 
-
     useEffect(() => {
             const getData = async () => {
                 await Promise.all([getTicketsData(), getProductsData()])
@@ -43,12 +42,14 @@ function ExpertDashboard({userInfo}) {
     }
 
     const getTicketsData = () => {
-        API.getTicketsOfExpertsByExpertId(userInfo.id)
-            .then((t) => {
-                setTicketsData(t)
-                resetStatusAlert()
-            })
-            .catch(err => handleApiError(err, showError))
+        return new Promise((resolve, reject) => {
+            API.getTicketsOfExpertsByExpertId(userInfo.id)
+                .then((t) => {
+                    setTicketsData(t)
+                    resolve()
+                })
+                .catch(e => reject(e))
+        })
     }
 
     const getProductsData = async () => {
@@ -58,7 +59,8 @@ function ExpertDashboard({userInfo}) {
                         setProductsData(p)
                         resolve()
                     }
-                ).catch(e => reject(e))
+                )
+                .catch(e => reject(e))
         })
     }
     const getClientInfo = (clientId) => {

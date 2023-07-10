@@ -60,14 +60,14 @@ class ChatServiceImpl(
             expert = ticket.expert
         )
         message.attachments = newMessage.attachments?.map { attachment ->
+            log.info("attachment {}", attachment)
             Attachment(
                 name = attachment.originalFilename ?: "no_name",
                 file = attachment.bytes,
                 type = AttachmentType.fromMimeType(attachment.contentType ?: ""),
                 message = message
             )
-        }?.toSet() ?: emptySet()
-
+        } ?: emptyList()
         messageRepository.save(message)
         return NewMessageIdDTO(message.id!!)
     }

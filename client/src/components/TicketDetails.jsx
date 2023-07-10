@@ -80,14 +80,37 @@ function TicketDetails({userInfo}) {
                     }
                 ).catch(e => reject(e))
         })
+    }
 
+    const handleShowContent = (show) => {
+        return (
+            show
+                ?
+                <>
+                    <TicketDetailComponents
+                        ticketData={ticketData}
+                        purchaseData={purchaseData}
+                        ticketStatusChangesData={ticketStatusChangesData}
+                        update={() => {
+                            setLoad(true);
+                            setConfirmModalShow(true)
+                        }}
+                        userRole={userInfo.role}/>
+                    <CustomModal
+                        show={confirmModalShow}
+                        hide={() => setConfirmModalShow(false)}
+                        type={ModalType.CONFIRM_STATUS_CHANGE}
+                    />
+                </>
+                : null
+        )
     }
 
     return (
         <>
             <Row className='pb-5'>
                 <Col md="auto" className="d-flex align-items-center">
-                    <Button onClick={() => navigate(-1)}> {"Go back"}</Button>
+                    <Button onClick={() => navigate('/')}> {"Go back"}</Button>
                 </Col>
                 <Col md="auto" className="d-flex align-items-center">
                     <h1>Ticket Details</h1>
@@ -96,28 +119,7 @@ function TicketDetails({userInfo}) {
 
             <StatusAlertComponent/>
             {
-                loading ?
-                    <Spinner animation="border" variant="primary"/>
-                    :
-                    !errorPresence ?
-                        <>
-                            <TicketDetailComponents
-                                ticketData={ticketData}
-                                purchaseData={purchaseData}
-                                ticketStatusChangesData={ticketStatusChangesData}
-                                update={() => {
-                                    setLoad(true);
-                                    setConfirmModalShow(true)
-                                }}
-                                userRole={userInfo.role}/>
-                            <CustomModal
-                                show={confirmModalShow}
-                                hide={() => setConfirmModalShow(false)}
-                                type={ModalType.CONFIRM_STATUS_CHANGE}
-                            />
-                        </>
-                        :
-                        null
+                loading ? <Spinner animation="border" variant="primary"/> : handleShowContent(!errorPresence)
             }
         </>
     )
@@ -251,11 +253,11 @@ function PurchaseDataTable({purchase}) {
 }
 
 function TicketChat({ticketId}) {
-    //const navigate = useNavigate()
+    const navigate = useNavigate()
     return (
         <>
             <h2>Ticket chat</h2>
-            <Button onClick={null/*navigate('??')*/}>
+            <Button onClick={() => navigate(`/chats/${ticketId}`)}>
                 Open chat
             </Button>
         </>
