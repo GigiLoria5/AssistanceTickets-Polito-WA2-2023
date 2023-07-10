@@ -98,6 +98,7 @@ function ManagerDashboardAssignableTickets() {
                                          actionName={"Details"}
                                          action={actionGoToTicket}
                                          showClientInfo={handleShowClientInfo}
+                                         hidePriority={true}
                                 />
                                 {clientInfo
                                     ? <ClientInfoCanvas show={showClient} onHide={handleCloseClient}
