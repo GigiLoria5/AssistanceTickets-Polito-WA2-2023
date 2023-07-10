@@ -58,7 +58,7 @@ class ApplicationExceptionHandler {
     }
 
     // 422 - Error message
-    @ExceptionHandler(value = [NotValidStatusChangeException::class, ChatIsInactiveException::class,ProductTokenNotOwnedException::class])
+    @ExceptionHandler(value = [NotValidStatusChangeException::class, ChatIsInactiveException::class,ProductTokenNotOwnedException::class,MaxAttachmentsException::class])
     fun handleValidationFailedExceptionWithErrorMessage(exception: Exception): ResponseEntity<ErrorMessage> {
         val errorMessage = ErrorMessage(exception.message.orEmpty())
         return ResponseEntity(errorMessage, HttpStatus.UNPROCESSABLE_ENTITY)

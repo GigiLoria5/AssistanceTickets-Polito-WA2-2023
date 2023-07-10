@@ -4,6 +4,7 @@ import io.micrometer.observation.annotation.Observed
 import it.polito.wa2.g29.server.dto.MessageDTO
 import it.polito.wa2.g29.server.dto.NewMessageDTO
 import it.polito.wa2.g29.server.dto.NewMessageIdDTO
+import it.polito.wa2.g29.server.exception.MaxAttachmentsException
 import it.polito.wa2.g29.server.service.ChatService
 import it.polito.wa2.g29.server.utils.MediaTypeUtil
 import jakarta.validation.Valid
@@ -41,8 +42,13 @@ class ChatController(private val chatService: ChatService) {
         @RequestParam("content") @NotBlank content: String,
         @RequestPart("attachments") attachments: List<MultipartFile>?
     ): NewMessageIdDTO {
+        val maxAttachments = 5
+        if (attachments != null && attachments.size > maxAttachments) {
+            throw MaxAttachmentsException("Too many attachments. Maximum allowed: $maxAttachments")
+        }
         val newMessage = NewMessageDTO(content, attachments)
         log.info("Send message for ticket: {}", ticketId)
+        log.info("MessageDTO {}", newMessage)
         return chatService.addMessageWithAttachments(ticketId, newMessage)
     }
 
