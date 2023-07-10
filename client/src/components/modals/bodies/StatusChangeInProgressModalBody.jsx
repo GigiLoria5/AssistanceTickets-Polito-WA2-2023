@@ -2,8 +2,8 @@ import {useContext, useState} from "react";
 import Experts from "../../Experts";
 import {Button, Col, Form, Modal, Row} from "react-bootstrap";
 import {CustomModalContext} from "../CustomModal";
-import {TicketPriority} from "../../../../enums/TicketPriority";
-import {TicketStatus} from "../../../../enums/TicketStatus";
+import {TicketPriority} from "../../../enums/TicketPriority";
+import {TicketStatus} from "../../../enums/TicketStatus";
 import {getUpdateStatusApiCall} from "../../../utils/modalUtil";
 
 

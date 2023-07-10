@@ -1,10 +1,11 @@
 import React, {useEffect, useState} from "react";
-import {useStatusAlert} from "../../hooks/useStatusAlert";
+import {useStatusAlert} from "../hooks/useStatusAlert";
 import API from "../API";
 import {handleApiError} from "../utils/utils";
 import {Button, Col, Container, Form, Modal, Row, Spinner, Table} from "react-bootstrap";
-import {Expertise} from "../../enums/Expertise";
-import {Level} from "../../enums/Level";
+import {Expertise} from "../enums/Expertise";
+import {Level} from "../enums/Level";
+import {useNavigate} from "react-router-dom";
 
 function ManagerDashboardExperts() {
     const [experts, setExperts] = useState(null);
@@ -14,17 +15,21 @@ function ManagerDashboardExperts() {
 
     useEffect(() => {
         if (refreshExperts)
-            API.getAllExperts()
-                .then((response) => {
-                        setExperts(response)
-                        resetStatusAlert()
-                    }
-                )
-                .catch(err => handleApiError(err, showError))
-                .finally(_ => {
-                    setRefreshExperts(false)
-                })
+            getAllExperts()
     }, [refreshExperts]);
+
+    const getAllExperts = () => {
+        API.getAllExperts()
+            .then((response) => {
+                    setExperts(response)
+                    resetStatusAlert()
+                }
+            )
+            .catch(err => handleApiError(err, showError))
+            .finally(_ => {
+                setRefreshExperts(false)
+            })
+    }
 
     const handleShowCreateExpert = () => setShowCreateExpert(true);
     const handleHideCreateExpert = () => setShowCreateExpert(false);
@@ -33,18 +38,26 @@ function ManagerDashboardExperts() {
         setRefreshExperts(true);
     };
 
+    const searchExpert = (expertId) => {
+        API.getExpertById(expertId)
+            .then((x) => {
+                    setExperts([x])
+                    resetStatusAlert()
+                }
+            )
+            .catch(err => handleApiError(err, showError))
+    }
+
     return (
         <Container className="h-100">
             <Row className="h-100">
                 <Col className="d-flex flex-column align-items-center justify-content-center">
-                    <h2>Experts Management</h2>
+                    <h2>Experts Management <Button onClick={handleShowCreateExpert}>Create Expert</Button></h2>
                     <StatusAlertComponent/>
                     {
                         experts || !refreshExperts ?
                             <>
-                                <div className="d-flex w-100 justify-content-end mb-3">
-                                    <Button onClick={handleShowCreateExpert}>Create Expert</Button>
-                                </div>
+                                <ExpertSearchBar getAllExperts={getAllExperts} searchExpert={searchExpert}/>
                                 <CreateExpertModal show={showCreateExpert} handleCreate={handleCreateExpert}
                                                    handleClose={handleHideCreateExpert}/>
                                 <ExpertsTable experts={experts}/>
@@ -57,10 +70,62 @@ function ManagerDashboardExperts() {
     );
 }
 
-const ExpertsTable = ({experts}) => {
+const ExpertSearchBar = ({getAllExperts, searchExpert}) => {
+    const [searchValue, setSearchValue] = useState("");
+
+    const handleSearch = () => {
+        const trimmedValue = searchValue.trim();
+        if (trimmedValue) {
+            searchExpert(trimmedValue);
+        }
+    };
+
+    const handleReset = () => {
+        setSearchValue("");
+        getAllExperts()
+    };
+
+    const handleKeyPress = (event) => {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            handleSearch();
+        }
+    };
 
     return (
-        <Table striped bordered hover>
+        <Row className="mt-3 w-100 mb-3">
+            <Col>
+                <Form>
+                    <Form.Group>
+                        <Form.Control
+                            type="search"
+                            placeholder="Search by id"
+                            value={searchValue}
+                            onChange={(event) => setSearchValue(event.target.value)}
+                            onKeyDown={handleKeyPress}
+                        />
+                    </Form.Group>
+                </Form>
+            </Col>
+            <Col xs="auto">
+                <Button variant="primary" className="mx-2" onClick={handleSearch}>
+                    Search
+                </Button>
+                <Button variant="secondary" onClick={handleReset}>
+                    Reset
+                </Button>
+            </Col>
+        </Row>
+    );
+}
+
+
+const ExpertsTable = ({experts}) => {
+
+    const navigate = useNavigate();
+
+    return (
+        <Table>
             <thead>
             <tr>
                 <th>ID</th>
@@ -82,9 +147,12 @@ const ExpertsTable = ({experts}) => {
                     <td>
                         {expert.skills.map((skill, index) => (
                             <span key={index}>
-                                {Expertise[skill.expertise]} {Level[skill.level]}<br/>
-                            </span>
+                                    {Expertise[skill.expertise]} {Level[skill.level]}<br/>
+                                </span>
                         ))}
+                    </td>
+                    <td>
+                        <Button onClick={() => navigate(`/experts/${expert.expertId}`)}>Expert details</Button>
                     </td>
                 </tr>
             ))}

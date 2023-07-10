@@ -1,14 +1,14 @@
 import {useNavigate, useParams} from "react-router-dom";
 import React, {useEffect, useState} from "react";
-import {useStatusAlert} from "../../hooks/useStatusAlert";
+import {useStatusAlert} from "../hooks/useStatusAlert";
 import API from "../API";
 import {Button, Col, Row, Spinner, Table} from "react-bootstrap";
 import * as PropTypes from "prop-types";
 import {dateTimeMillisFormatted, handleApiError} from "../utils/utils";
 import {availableTicketStatusChanges, getTaskToAchieveStatus} from "../utils/ticketUtil";
-import {UserRole} from "../../enums/UserRole";
+import {UserRole} from "../enums/UserRole";
 import {CustomModal} from "./modals/CustomModal";
-import {ModalType} from "../../enums/ModalType";
+import {ModalType} from "../enums/ModalType";
 
 TicketDataTable.propTypes = {ticket: PropTypes.any};
 
@@ -230,11 +230,11 @@ function PurchaseDataTable({purchase}) {
                 </tr>
                 <tr>
                     <th> Price</th>
-                    <td> {product.price}</td>
+                    <td> {product.price} €</td>
                 </tr>
                 <tr>
                     <th> Weight</th>
-                    <td> {product.weight}</td>
+                    <td> {product.weight} kg</td>
                 </tr>
                 <tr>
                     <th> Purchase date</th>

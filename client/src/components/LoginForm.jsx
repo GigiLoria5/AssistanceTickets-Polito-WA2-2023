@@ -2,8 +2,8 @@ import {Button, Container, Form} from 'react-bootstrap';
 import {useEffect, useState} from 'react';
 import {useLocation, useNavigate} from 'react-router-dom';
 import API from "../API";
-import {useStatusAlert} from "../../hooks/useStatusAlert";
-import {HttpStatusCode} from "../../enums/HttpStatusCode";
+import {useStatusAlert} from "../hooks/useStatusAlert";
+import {HttpStatusCode} from "../enums/HttpStatusCode";
 import {getAccessToken} from "../utils/utils";
 import {validateEmail} from "../utils/validators";
 
@@ -106,6 +106,7 @@ function LoginForm() {
                             Don't have an account?
                             <Button
                                 variant="link"
+                                disabled={isLoading}
                                 onClick={() => navigate("/register")}
                                 className="py-0 pb-2 text-decoration-none">
                                 Register

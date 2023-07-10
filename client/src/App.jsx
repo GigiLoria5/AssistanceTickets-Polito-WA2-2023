@@ -6,13 +6,14 @@ import NotFoundPage from "./components/NotFoundPage";
 import ManagerDashboard from "./components/ManagerDashboard";
 import ExpertDashboard from "./components/ExpertDashboard";
 import ClientDashboard from "./components/ClientDashboard";
-import {UserRole} from "../enums/UserRole";
+import {UserRole} from "./enums/UserRole";
 import LoginForm from "./components/LoginForm";
 import ProtectedRoute from "./utils/ProtectedRoute";
 import {UserProfile} from "./components/UserProfile";
 import TicketDetails from "./components/TicketDetails";
 import Chat from "./components/Chat";
 import ClientProfileForm from "./components/ClientProfileForm";
+import ExpertDetails from "./components/ExpertDetails";
 
 function App() {
     return (
@@ -34,10 +35,11 @@ function Root() {
                     rolesAllowed={[UserRole.MANAGER, UserRole.EXPERT, UserRole.CLIENT]}
                 />}>
                 <Route path="" element={<Navbar userInfo={userInfo}/>}>
-                    <Route index element={renderDashboard(userInfo ? userInfo.role : "",userInfo)}/>
+                    <Route index element={renderDashboard(userInfo ? userInfo.role : "", userInfo)}/>
                     <Route path='/products' element={<Products userRole={userInfo ? userInfo.role : ""}/>}/>
-                    <Route path='/profile' element={<UserProfile userInfo={userInfo} setUserInfo={setUserInfo}/>}/>
+                    <Route path='/profile' element={<UserProfile userInfo={userInfo}/>}/>
                     <Route path='/tickets/:ticketId' element={<TicketDetails userInfo={userInfo}/>}/>
+                    <Route path='/experts/:expertId' element={<ExpertDetails userInfo={userInfo}/>}/>
                     <Route path='/chats/:ticketId' element={<Chat userInfo={userInfo}/>}/>
                 </Route>
             </Route>
@@ -49,7 +51,7 @@ function Root() {
     );
 }
 
-function renderDashboard(userRole,userInfo) {
+function renderDashboard(userRole, userInfo) {
     switch (userRole) {
         case UserRole.MANAGER:
             return <ManagerDashboard/>;

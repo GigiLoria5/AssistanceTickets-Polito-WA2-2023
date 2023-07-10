@@ -1,7 +1,7 @@
 import {Button, Container, Form} from "react-bootstrap";
 import {useEffect, useState} from "react";
 import {Profile} from "../models/Profile";
-import {useStatusAlert} from "../../hooks/useStatusAlert";
+import {useStatusAlert} from "../hooks/useStatusAlert";
 import {useNavigate} from "react-router-dom";
 import {
     validateAddress,
@@ -170,6 +170,7 @@ function ClientProfileForm({profile, onSuccess, onCancel}) {
                             <p>
                                 Already have an account?
                                 <Button
+                                    disabled={isLoading}
                                     variant="link"
                                     onClick={() => navigate("/login")}
                                     className="py-0 pb-2 text-decoration-none">

@@ -1,6 +1,6 @@
-import {ModalType} from "../../enums/ModalType";
+import {ModalType} from "../enums/ModalType";
 import {getTaskToAchieveStatus} from "./ticketUtil";
-import {TicketStatus} from "../../enums/TicketStatus";
+import {TicketStatus} from "../enums/TicketStatus";
 import API from "../API";
 
 export function getModalSize(type) {

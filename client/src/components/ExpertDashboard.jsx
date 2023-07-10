@@ -1,11 +1,11 @@
-import { useNavigate } from "react-router-dom";
-import React, { useEffect, useState } from "react";
+import {useNavigate} from "react-router-dom";
+import React, {useEffect, useState} from "react";
 import API from "../API";
 import { Button, Col, Row, Spinner, Tab, Tabs, Offcanvas } from "react-bootstrap";
 import { useStatusAlert } from "../../hooks/useStatusAlert";
 import { handleApiError, handleErrorResponse } from "../utils/utils";
 import Tickets from "./Tickets";
-
+import ClientInfoCanvas from "./ClientInfoCanvas";
 
 
 function ExpertDashboard({ userInfo }) {
@@ -16,22 +16,22 @@ function ExpertDashboard({ userInfo }) {
     const [load, setLoad] = useState(true)
     const [errorPresence, setErrorPresence] = useState(false)
     const [clientInfo, setClientInfo] = useState(null)
-
+    
 
     useEffect(() => {
-        const getData = async () => {
-            await Promise.all([getTicketsData(), getProductsData()])
+            const getData = async () => {
+                await Promise.all([getTicketsData(), getProductsData()])
+            }
+            if (load === true) {
+                setLoading(true)
+                getData().then(() => {
+                    setLoading(false)
+                    resetStatusAlert()
+                }).catch(err => stopAnimationAndShowError(err)).finally(() => {
+                    setLoad(false)
+                })
+            }
         }
-        if (load === true) {
-            setLoading(true)
-            getData().then(() => {
-                setLoading(false)
-                resetStatusAlert()
-            }).catch(err => stopAnimationAndShowError(err)).finally(() => {
-                setLoad(false)
-            })
-        }
-    }
         ,
         [load]
     )
@@ -88,18 +88,19 @@ function ExpertDashboard({ userInfo }) {
         <>
             <Row className='pb-5'>
                 <Col className="d-flex align-items-center">
-                    <h1>Expert dashboard</h1>
+                    <h1>Expert Dashboard</h1>
                 </Col>
             </Row>
-            <StatusAlertComponent />
+            <StatusAlertComponent/>
             {
                 loading ?
-                    <Spinner animation="border" variant="primary" />
+                    <Spinner animation="border" variant="primary"/>
                     :
                     !errorPresence ?
                         <Row>
                             <Col>
-                                <TicketsTable tickets={formatTickets()} getClientInfo={getClientInfo} clientInfo={clientInfo} />
+                                <TicketsTable tickets={formatTickets()} getClientInfo={getClientInfo}
+                                              clientInfo={clientInfo}/>
                             </Col>
                         </Row>
                         :
@@ -109,7 +110,7 @@ function ExpertDashboard({ userInfo }) {
     );
 }
 
-function TicketsTable({ tickets, getClientInfo, clientInfo }) {
+function TicketsTable({tickets, getClientInfo, clientInfo}) {
     const navigate = useNavigate();
     const [show, setShow] = useState(false)
 
@@ -127,22 +128,12 @@ function TicketsTable({ tickets, getClientInfo, clientInfo }) {
     return (
         <>
             <Tickets tickets={tickets} title={`You have ${tickets.length} ticket${tickets.length !== 1 ? "s" : ""}`}
-                actionName={"Details"}
-                action={actionGoToTicket}
-                showClientInfo={handleShowClientInfo}
+                     actionName={"Details"}
+                     action={actionGoToTicket}
+                     showClientInfo={handleShowClientInfo}
             />
             {clientInfo ?
-                <Offcanvas show={show} onHide={handleClose}>
-                    <Offcanvas.Header closeButton>
-                        <Offcanvas.Title >Customer Info</Offcanvas.Title>
-                    </Offcanvas.Header>
-                    <Offcanvas.Body>
-                        {<h4>Name:  {clientInfo.name}</h4>}
-                        {<h4>Surname:  {clientInfo.surname}</h4>}
-                        {<h4>Phone:  {clientInfo.email}</h4>}
-                        {<h4>E-mail:  {clientInfo.phoneNumber}</h4>}
-                    </Offcanvas.Body>
-                </Offcanvas>
+                <ClientInfoCanvas show={show} onHide={handleClose} clientInfo={clientInfo}/>
                 :
                 null
             }

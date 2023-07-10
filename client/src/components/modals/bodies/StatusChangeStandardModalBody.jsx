@@ -1,5 +1,5 @@
 import React, {useContext, useState} from "react";
-import {TicketStatus} from "../../../../enums/TicketStatus";
+import {TicketStatus} from "../../../enums/TicketStatus";
 import {Button, Form, Modal, Row} from "react-bootstrap";
 import {CustomModalContext} from "../CustomModal";
 import {getUpdateStatusApiCall} from "../../../utils/modalUtil";
@@ -17,9 +17,9 @@ function StatusChangeStandardModalBody() {
         const apiCall = getUpdateStatusApiCall(desiredState)
         apiCall(objectId, description)
             .then(() => {
-                    completingAction()
-                })
-            .catch(err => handleApiError(err,showError))
+                completingAction()
+            })
+            .catch(err => handleApiError(err, showError))
     }
 
     const handleSubmit = (event) => {
