@@ -1,9 +1,55 @@
 import React, {useEffect, useState} from "react";
-import {Alert, Row, Col, Form, Button, Table} from "react-bootstrap";
+import {Button, Col, Form, Modal, Row, Spinner, Table} from "react-bootstrap";
 import API from "../API";
+import {useStatusAlert} from "../hooks/useStatusAlert";
+import {UserRole} from "../enums/UserRole";
+import {handleApiError} from "../utils/utils";
+
+const Products = ({userRole}) => {
+    const [data, setData] = useState(null);
+    const {StatusAlertComponent, showError, resetStatusAlert} = useStatusAlert();
+
+    useEffect(() => {
+            getAllProducts()
+        }, []
+    );
+
+    const getAllProducts = () => {
+        API.getAllProducts()
+            .then((x) => {
+                    setData(x)
+                    resetStatusAlert()
+                }
+            )
+            .catch(err => handleApiError(err, showError))
+    }
+
+    const searchProduct = (productId) => {
+        API.searchProduct(productId)
+            .then((x) => {
+                    setData([x])
+                    resetStatusAlert()
+                }
+            )
+            .catch(err => handleApiError(err, showError))
+    }
+
+    return (
+        <>
+            <StatusAlertComponent/>
+            {
+                data ?
+                    <>
+                        <ProdSearchBar getAllProducts={getAllProducts} searchProduct={searchProduct}/>
+                        <ProdTable data={data} allowGeneration={userRole && userRole === UserRole.MANAGER}/>
+                    </>
+                    : <Spinner animation="border" variant="primary"/>
+            }
+        </>
+    );
+};
 
 const ProdSearchBar = ({getAllProducts, searchProduct}) => {
-
     const [searchValue, setSearchValue] = useState("");
 
     const handleSearch = () => {
@@ -52,99 +98,92 @@ const ProdSearchBar = ({getAllProducts, searchProduct}) => {
     );
 };
 
-const ProdTable = ({data}) => {
-    return (
-        <Row className="mt-3">
-            <Col>
-                <Table striped bordered hover>
-                    <thead>
-                    <tr>
-                        <th>productId</th>
-                        <th>asin</th>
-                        <th>brand</th>
-                        <th>category</th>
-                        <th>manufacturerNumber</th>
-                        <th>name</th>
-                        <th>price</th>
-                        <th>weight</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {data.map((item, index) => (
-                        <tr key={index}>
-                            <td>{item.id}</td>
-                            <td>{item.asin}</td>
-                            <td>{item.brand}</td>
-                            <td>{item.category}</td>
-                            <td>{item.manufacturerNumber}</td>
-                            <td>{item.name}</td>
-                            <td>{item.price}</td>
-                            <td>{item.weight}</td>
-                        </tr>
-                    ))}
-                    </tbody>
-                </Table>
-            </Col>
-        </Row>
-    );
-};
+const ProdTable = ({data, allowGeneration}) => {
+    const [show, setShow] = useState(false);
+    const [token, setToken] = useState("");
+    const {StatusAlertComponent, showError, resetStatusAlert} = useStatusAlert();
 
-const ErrorPopup = ({error}) => {
-    return (
-        <Row className="mt-3">
-            <Col>
-                <Alert variant="danger" className="roundedError">
-                    <Alert.Heading>{error}</Alert.Heading>
-                </Alert>
-            </Col>
-        </Row>
-    )
-}
+    const handleShow = () => setShow(true);
 
-const Products = () => {
-    const [data, setData] = useState(null);
-    const [error, setError] = useState("")
-
-    const getAllProducts = () => {
-        API.getAllProducts().then((x) => {
-                setData(x)
-                setError("")
-            }
-        ).catch(err => {
-            setError(err.error);
-        })
+    const handleClose = () => {
+        setShow(false);
+        setToken("");
     }
 
-    const searchProduct = (productId) => {
-        API.searchProduct(productId).then((x) => {
-                setData([x])
-                setError("")
-            }
-        ).catch(err => {
-            setError(err.error);
-        })
-    }
-
-    useEffect(() => {
-            getAllProducts()
-        }, []
-    );
+    const handleGenerateToken = (productId) => {
+        handleShow()
+        API.generateToken(productId)
+            .then(token => {
+                resetStatusAlert();
+                setTimeout(() => {
+                    setToken(token);
+                    navigator.clipboard.writeText(`${token}`).then(_ => {
+                    })
+                }, 500);
+            })
+            .catch(err => {
+                handleClose();
+                setTimeout(() => handleApiError(err, showError), 250);
+            });
+    };
 
     return (
         <>
-            {
-                error ?
-                    <ErrorPopup error={error}/>
-                    : null
-            }
-            {
-                data ?
-                    <>
-                        <ProdSearchBar getAllProducts={getAllProducts} searchProduct={searchProduct}/>
-                        <ProdTable data={data}/>
-                    </>
-                    : null
-            }
+            <Modal
+                show={show}
+                onHide={handleClose}
+                backdrop="static"
+                keyboard={false}
+                centered
+            >
+                <Modal.Header closeButton>
+                    <Modal.Title>{token ? "Token Generated" : "Generating Token..."}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {token ? `${token}` : "Wait for the token to be created"}
+                </Modal.Body>
+                {token && <Modal.Footer>
+                    <p className="text-muted">Token copied to clipboard</p>
+                    <Button variant="primary" onClick={handleClose}>Close</Button>
+                </Modal.Footer>}
+            </Modal>
+            <Row className="mt-3">
+                <Col>
+                    <StatusAlertComponent/>
+                    <Table striped bordered hover>
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Asin</th>
+                            <th>Brand</th>
+                            <th>Category</th>
+                            <th>Manufacturer Number</th>
+                            <th>Name</th>
+                            <th>Price(€)</th>
+                            <th>Weight(kg)</th>
+                            {allowGeneration && <th>Token</th>}
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {data.map((product) => (
+                            <tr key={product.productId}>
+                                <td>{product.productId}</td>
+                                <td>{product.asin}</td>
+                                <td>{product.brand}</td>
+                                <td>{product.category}</td>
+                                <td>{product.manufacturerNumber}</td>
+                                <td>{product.name}</td>
+                                <td>{product.price}</td>
+                                <td>{product.weight}</td>
+                                {allowGeneration &&
+                                    <td><Button
+                                        onClick={() => handleGenerateToken((product.productId))}>Generate</Button></td>}
+                            </tr>
+                        ))}
+                        </tbody>
+                    </Table>
+                </Col>
+            </Row>
         </>
     );
 };

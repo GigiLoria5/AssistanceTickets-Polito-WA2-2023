@@ -12,12 +12,12 @@ import org.springframework.stereotype.Component
 class JwtAuthConverter() : Converter<Jwt, AbstractAuthenticationToken> {
 
     override fun convert(jwt: Jwt): AbstractAuthenticationToken {
-        val username = extractPrincipalNameFromJwt(jwt)
+        val username = extractPrincipalUsernameFromJwt(jwt)
         val authorities = extractAuthoritiesFromJwt(jwt)
         return JwtAuthenticationToken(jwt, authorities, username)
     }
 
-    private fun extractPrincipalNameFromJwt(jwt: Jwt): String {
+    private fun extractPrincipalUsernameFromJwt(jwt: Jwt): String {
         return jwt.getClaim("email")
     }
 

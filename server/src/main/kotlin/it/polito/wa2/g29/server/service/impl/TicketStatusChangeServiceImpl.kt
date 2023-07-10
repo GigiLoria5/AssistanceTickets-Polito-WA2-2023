@@ -72,16 +72,16 @@ class TicketStatusChangeServiceImpl(
         }
 
         if (newStatus == TicketStatus.REOPENED) {
-            val notClosedAndNotResolvedTicket = ticketRepository.findTicketByCustomerAndProductAndStatusNotAndStatusNot(
+            val notClosedAndNotResolvedTicket = ticketRepository.findTicketByCustomerAndProductTokenAndStatusNotAndStatusNot(
                 ticket.customer,
-                ticket.product,
+                ticket.productToken,
                 TicketStatus.CLOSED,
                 TicketStatus.RESOLVED
             )
 
-            //throw an exception if a not closed/resolved ticket for the same customer and product already exists
+            //throw an exception if a not closed/resolved ticket for the same customer and productToken already exists
             if (notClosedAndNotResolvedTicket != null)
-                throw DuplicateTicketException("A not closed ticket with the same customer and product already exists")
+                throw DuplicateTicketException("A not closed ticket with the same customer and productToken already exists")
         }
 
         ticket.changeStatus(newStatus, changedBy, description)

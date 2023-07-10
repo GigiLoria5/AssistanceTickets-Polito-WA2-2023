@@ -12,7 +12,6 @@ import it.polito.wa2.g29.server.model.Profile
 import it.polito.wa2.g29.server.repository.ExpertRepository
 import it.polito.wa2.g29.server.repository.ProductRepository
 import it.polito.wa2.g29.server.repository.ProfileRepository
-import it.polito.wa2.g29.server.repository.TicketRepository
 import it.polito.wa2.g29.server.service.ProfileService
 import it.polito.wa2.g29.server.utils.*
 import org.junit.jupiter.api.*
@@ -30,9 +29,6 @@ class ProfileServiceIT : AbstractTestcontainersTest() {
 
     @Autowired
     private lateinit var expertRepository: ExpertRepository
-
-    @Autowired
-    private lateinit var ticketRepository: TicketRepository
 
     @Autowired
     private lateinit var productRepository: ProductRepository
@@ -62,7 +58,6 @@ class ProfileServiceIT : AbstractTestcontainersTest() {
 
         val actualProfileDTO = profileService.getProfileByEmail(expectedProfileDTO.email)
 
-        assert(actualProfileDTO.ticketsIds?.isEmpty() ?: false)
         assert(actualProfileDTO == expectedProfileDTO)
     }
 
@@ -73,15 +68,11 @@ class ProfileServiceIT : AbstractTestcontainersTest() {
         SecurityTestUtils.setClient(testProfiles[0].email)
         TicketTestUtils.profiles = testProfiles
         TicketTestUtils.products = testProducts
-        val tickets = TicketTestUtils.insertTickets(ticketRepository)
-        testProfiles[0].tickets.add(tickets.first { it.customer.id == testProfiles[0].id })
         profileRepository.save(testProfiles[0])
         val expectedProfileDTO = testProfiles[0].toDTO()
 
         val actualProfileDTO = profileService.getProfileByEmail(expectedProfileDTO.email)
 
-        assert(actualProfileDTO.ticketsIds?.isNotEmpty() ?: false)
-        assert(actualProfileDTO.ticketsIds?.size == expectedProfileDTO.ticketsIds?.size)
         assert(actualProfileDTO == expectedProfileDTO)
     }
 

@@ -27,13 +27,13 @@ class ApplicationExceptionHandler {
     }
 
     // 404 - Not Found
-    @ExceptionHandler(value = [ProductNotFoundException::class, ProfileNotFoundException::class, ExpertNotFoundException::class, TicketNotFoundException::class, MessageNotFoundException::class, AttachmentNotFoundException::class])
+    @ExceptionHandler(value = [ProductNotFoundException::class, ProductTokenNotFoundException::class, ProfileNotFoundException::class, ExpertNotFoundException::class, TicketNotFoundException::class, MessageNotFoundException::class, AttachmentNotFoundException::class])
     fun handleNotFoundException(exception: Exception): ResponseEntity<Unit> {
         return ResponseEntity(HttpStatus.NOT_FOUND)
     }
 
     // 409 - Conflict
-    @ExceptionHandler(value = [DuplicateProfileException::class, DuplicateTicketException::class, DuplicateExpertException::class, DuplicateKeycloakUserException::class])
+    @ExceptionHandler(value = [TokenAlreadyUsedException::class, DuplicateProfileException::class, DuplicateTicketException::class, DuplicateExpertException::class, DuplicateKeycloakUserException::class])
     fun handleDuplicateException(exception: Exception): ResponseEntity<ErrorMessage> {
         val errorMessage = ErrorMessage(exception.message.orEmpty())
         return ResponseEntity(errorMessage, HttpStatus.CONFLICT)
@@ -58,7 +58,7 @@ class ApplicationExceptionHandler {
     }
 
     // 422 - Error message
-    @ExceptionHandler(value = [NotValidStatusChangeException::class, ChatIsInactiveException::class])
+    @ExceptionHandler(value = [NotValidStatusChangeException::class, ChatIsInactiveException::class,ProductTokenNotOwnedException::class,MaxAttachmentsException::class])
     fun handleValidationFailedExceptionWithErrorMessage(exception: Exception): ResponseEntity<ErrorMessage> {
         val errorMessage = ErrorMessage(exception.message.orEmpty())
         return ResponseEntity(errorMessage, HttpStatus.UNPROCESSABLE_ENTITY)

@@ -1,61 +1,67 @@
+import {useState} from "react";
+import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import Products from "./components/Products";
-import Profiles from "./components/Profiles";
-import {Row, Col, Button } from "react-bootstrap";
-import {BrowserRouter as Router, Routes, Route, useNavigate} from 'react-router-dom';
-import CommonTopSide from "./components/CommonTopSide";
+import Navbar from "./components/Navbar";
+import NotFoundPage from "./components/NotFoundPage";
+import ManagerDashboard from "./components/ManagerDashboard";
+import ExpertDashboard from "./components/ExpertDashboard";
+import ClientDashboard from "./components/ClientDashboard";
+import {UserRole} from "./enums/UserRole";
+import LoginForm from "./components/LoginForm";
+import ProtectedRoute from "./utils/ProtectedRoute";
+import {UserProfile} from "./components/UserProfile";
+import TicketDetails from "./components/TicketDetails";
+import Chat from "./components/Chat";
+import ClientProfileForm from "./components/ClientProfileForm";
+import ExpertDetails from "./components/ExpertDetails";
 
 function App() {
     return (
         <Router>
-            <ProductSupportApp/>
+            <Root/>
         </Router>
     );
 }
 
-function ProductSupportApp() {
+function Root() {
+    const [userInfo, setUserInfo] = useState(null);
+
     return (
         <Routes>
-            <Route path="/" element={<CommonTopSide/>}>
-                <Route index element={<Home/>}/>
-                <Route path='/products' element={<Products/>}/>
-                <Route path='/profiles' element={<Profiles/>}/>
-                <Route path="*" element={<NoMatch/>}/>
+            <Route path="/" element={
+                <ProtectedRoute
+                    userInfo={userInfo}
+                    setUserInfo={setUserInfo}
+                    rolesAllowed={[UserRole.MANAGER, UserRole.EXPERT, UserRole.CLIENT]}
+                />}>
+                <Route path="" element={<Navbar userInfo={userInfo}/>}>
+                    <Route index element={renderDashboard(userInfo ? userInfo.role : "", userInfo)}/>
+                    <Route path='/products' element={<Products userRole={userInfo ? userInfo.role : ""}/>}/>
+                    <Route path='/profile' element={<UserProfile userInfo={userInfo}/>}/>
+                    <Route path='/tickets/:ticketId' element={<TicketDetails userInfo={userInfo}/>}/>
+                    <Route path='/experts/:expertId' element={<ExpertDetails userInfo={userInfo}/>}/>
+                    <Route path='/chats/:ticketId' element={<Chat userInfo={userInfo}/>}/>
+                </Route>
             </Route>
+
+            <Route path='/login' element={<LoginForm/>}/>
+            <Route path='/register' element={<ClientProfileForm/>}/>
+            <Route path='*' element={<NotFoundPage/>}/>
         </Routes>
     );
 }
 
-
-function Home() {
-    const navigate = useNavigate();
-
-    return (
-        <Row>
-            <Col className="d-flex justify-content-center">
-                <Button variant="primary" className="mx-2" onClick={() => navigate('/products')}>products</Button>
-                <Button variant="primary" onClick={() => navigate('/profiles')}>profiles</Button>
-            </Col>
-        </Row>
-    )
-}
-
-function NoMatch() {
-
-    const navigate = useNavigate();
-    return (
-        <>
-            <Row className="mb-5">
-                <Col md="auto">
-                    <h1>Questa pagina non esiste</h1>
-                </Col>
-            </Row>
-            <Row>
-                <Col>
-                    <Button variant="primary" onClick={() => navigate('/')}>Torna alla home</Button>
-                </Col>
-            </Row>
-        </>
-    );
+function renderDashboard(userRole, userInfo) {
+    switch (userRole) {
+        case UserRole.MANAGER:
+            return <ManagerDashboard/>;
+        case UserRole.EXPERT:
+            return <ExpertDashboard userInfo={userInfo}/>;
+        case UserRole.CLIENT:
+            return <ClientDashboard userInfo={userInfo}/>;
+        default:
+            return <NotFoundPage/>;
+    }
 }
 
 export default App;

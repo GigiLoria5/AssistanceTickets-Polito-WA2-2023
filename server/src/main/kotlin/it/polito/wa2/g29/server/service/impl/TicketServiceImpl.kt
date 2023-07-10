@@ -8,12 +8,13 @@ import it.polito.wa2.g29.server.dto.toDTO
 import it.polito.wa2.g29.server.enums.TicketStatus
 import it.polito.wa2.g29.server.enums.UserType
 import it.polito.wa2.g29.server.exception.DuplicateTicketException
-import it.polito.wa2.g29.server.exception.ProductNotFoundException
+import it.polito.wa2.g29.server.exception.ProductTokenNotFoundException
+import it.polito.wa2.g29.server.exception.ProductTokenNotOwnedException
 import it.polito.wa2.g29.server.exception.TicketNotFoundException
 import it.polito.wa2.g29.server.model.Ticket
 import it.polito.wa2.g29.server.model.toEntity
 import it.polito.wa2.g29.server.repository.ExpertRepository
-import it.polito.wa2.g29.server.repository.ProductRepository
+import it.polito.wa2.g29.server.repository.ProductTokenRepository
 import it.polito.wa2.g29.server.repository.ProfileRepository
 import it.polito.wa2.g29.server.repository.TicketRepository
 import it.polito.wa2.g29.server.service.TicketService
@@ -26,7 +27,7 @@ import org.springframework.stereotype.Service
 @Service
 class TicketServiceImpl(
     private val ticketRepository: TicketRepository,
-    private val productRepository: ProductRepository,
+    private val productTokenRepository: ProductTokenRepository,
     private val profileRepository: ProfileRepository,
     private val expertRepository: ExpertRepository
 ) : TicketService {
@@ -64,17 +65,20 @@ class TicketServiceImpl(
     override fun createTicket(newTicketDTO: NewTicketDTO): NewTicketIdDTO {
         val username = AuthenticationUtil.getUsername()
         val customer = profileRepository.findProfileByEmail(username)!!
-        val product = productRepository.findByIdOrNull(newTicketDTO.productId) ?: throw ProductNotFoundException()
-        val ticket = newTicketDTO.toEntity(product, customer)
+        val productToken = productTokenRepository.findByIdOrNull(newTicketDTO.productTokenId)
+            ?: throw ProductTokenNotFoundException()
+        if (productToken.user!!.id != customer.id)
+            throw ProductTokenNotOwnedException("Product token not owned")
+        val ticket = newTicketDTO.toEntity(productToken, customer)
 
-        //throw an exception if a not closed ticket for the same customer and product already exists
-        if (ticketRepository.findTicketByCustomerAndProductAndStatusNot(
+        //throw an exception if a not closed ticket for the same customer and productToken already exists
+        if (ticketRepository.findTicketByCustomerAndProductTokenAndStatusNot(
                 ticket.customer,
-                ticket.product,
+                ticket.productToken,
                 TicketStatus.CLOSED
             ) != null
         )
-            throw DuplicateTicketException("A not closed ticket with the same customer and product already exists")
+            throw DuplicateTicketException("A not closed ticket with the same customer and productToken already exists")
         return NewTicketIdDTO(ticketRepository.save(ticket).id!!)
     }
 

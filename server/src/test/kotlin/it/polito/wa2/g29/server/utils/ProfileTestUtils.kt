@@ -28,7 +28,6 @@ object ProfileTestUtils {
             address = "New Address",
             city = "New City",
             country = "New Country",
-            ticketsIds = mutableListOf()
         )
     }
 

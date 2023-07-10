@@ -25,6 +25,9 @@ class Ticket(
     @JoinColumn(updatable = false, nullable = false)
     var product: Product,
     @ManyToOne
+    @JoinColumn(name = "product_token_id",updatable = false, nullable = false)
+    var productToken: ProductToken,
+    @ManyToOne
     @JoinColumn(updatable = false, nullable = false)
     var customer: Profile
 ) : EntityBase<Int>() {
@@ -81,8 +84,8 @@ class Ticket(
 }
 
 fun NewTicketDTO.toEntity(
-    product: Product,
+    productToken: ProductToken,
     customer: Profile
 ): Ticket {
-    return Ticket(title, description, product, customer)
+    return Ticket(title, description, productToken.product,productToken, customer)
 }
