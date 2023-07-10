@@ -105,7 +105,6 @@ function Chat({ userInfo }) {
   }
 
   async function getAttachment(attachmentId, messageId, filename) {
-    console.log(attachmentId, messageId)
     try {
       const blob = await API.getAttachment(ticketId, messageId, attachmentId)
       const url = URL.createObjectURL(blob);
@@ -120,7 +119,7 @@ function Chat({ userInfo }) {
   const addMessage = (content, attachments) => {
     API.addMessageWithAttachments(ticketId, content, attachments)
       .then(x => {
-        onSuccess();
+        setLoad(true)
       })
       .catch(err => {
         handleApiError(err, showError)
@@ -267,6 +266,7 @@ function MessageForm({ onSubmit }) {
             <FloatingLabel controlId="floatingTextarea" label="Leave a comment">
               <Form.Control
                 as="textarea"
+                required={true}
                 placeholder="Leave a comment"
                 value={content}
                 onChange={ev => setContent(ev.target.value)}

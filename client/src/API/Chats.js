@@ -56,8 +56,8 @@ async function addMessageWithAttachments(ticketId,content,attachments=[]) {
     const formData = new FormData();
     formData.append('content', content);
     if(attachments&&attachments.length>0){
-        attachments.forEach((attachment)=>{
-            formData.append('attachment', attachment);
+       Array.from(attachments).forEach((attachment)=>{
+            formData.append('attachments', attachment);
         });
     }
     return new Promise((resolve,reject) =>{
