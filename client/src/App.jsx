@@ -34,9 +34,9 @@ function Root() {
                     rolesAllowed={[UserRole.MANAGER, UserRole.EXPERT, UserRole.CLIENT]}
                 />}>
                 <Route path="" element={<Navbar userInfo={userInfo}/>}>
-                    <Route index element={renderDashboard(userInfo ? userInfo.role : "",userInfo)}/>
+                    <Route index element={renderDashboard(userInfo ? userInfo.role : "", userInfo)}/>
                     <Route path='/products' element={<Products userRole={userInfo ? userInfo.role : ""}/>}/>
-                    <Route path='/profile' element={<UserProfile userInfo={userInfo} setUserInfo={setUserInfo}/>}/>
+                    <Route path='/profile' element={<UserProfile userInfo={userInfo}/>}/>
                     <Route path='/tickets/:ticketId' element={<TicketDetails userInfo={userInfo}/>}/>
                     <Route path='/experts/:expertId' element={<ExpertDetails userInfo={userInfo}/>}/>
                 </Route>
@@ -49,7 +49,7 @@ function Root() {
     );
 }
 
-function renderDashboard(userRole,userInfo) {
+function renderDashboard(userRole, userInfo) {
     switch (userRole) {
         case UserRole.MANAGER:
             return <ManagerDashboard/>;
