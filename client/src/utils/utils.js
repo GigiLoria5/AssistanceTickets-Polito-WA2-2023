@@ -1,4 +1,4 @@
-import {HttpStatusCode} from "../../enums/HttpStatusCode";
+import {HttpStatusCode} from "../enums/HttpStatusCode";
 import dayjs from "dayjs";
 
 export const getErrorMessage = (statusCode) => {

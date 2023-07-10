@@ -1,5 +1,5 @@
-import {UserRole} from "../../enums/UserRole";
-import {TicketStatus} from "../../enums/TicketStatus";
+import {UserRole} from "../enums/UserRole";
+import {TicketStatus} from "../enums/TicketStatus";
 
 const allowedTicketStatusChanges = (ticketStatus) => {
     switch (ticketStatus) {

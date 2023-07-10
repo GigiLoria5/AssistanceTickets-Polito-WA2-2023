@@ -1,18 +1,17 @@
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useStatusAlert} from "../hooks/useStatusAlert";
 import API from "../API";
 import {Col, Container, Dropdown, DropdownButton, Row, Spinner} from "react-bootstrap";
 import {handleApiError} from "../utils/utils";
 import Tickets from "./Tickets";
 import ClientInfoCanvas from "./ClientInfoCanvas";
-import ExpertInfoCanvas from "./ExpertInfoCanvas";
 import useTicketNavigation from "../hooks/useTicketNavigation";
+import {TicketStatus} from "../enums/TicketStatus";
 
-function ManagerDashboardTickets() {
+function ManagerDashboardAssignableTickets() {
     const [tickets, setTickets] = useState(null);
     const [products, setProducts] = useState(null);
     const [clientInfo, setClientInfo] = useState(null)
-    const [expertInfo, setExpertInfo] = useState(null)
     const [loading, setLoading] = useState(true)
     const [load, setLoad] = useState(true)
     const {StatusAlertComponent, showError, resetStatusAlert} = useStatusAlert();
@@ -25,7 +24,7 @@ function ManagerDashboardTickets() {
 
     useEffect(() => {
             const getData = async () => {
-                await Promise.all([getTicketsData(), getProductsData()])
+                await Promise.all([getAssignableTicketsData(), getProductsData()])
             }
             if (load === true) {
                 setLoading(true)
@@ -43,11 +42,11 @@ function ManagerDashboardTickets() {
         [load]
     )
 
-    const getTicketsData = async () => {
+    const getAssignableTicketsData = async () => {
         return new Promise((resolve, reject) => {
             API.getAllTickets()
                 .then((t) => {
-                        setTickets(t)
+                        setTickets(t.filter(ticket => [TicketStatus.OPEN, TicketStatus.REOPENED].includes(ticket.status)))
                         resolve()
                     }
                 ).catch(err => reject(err))
@@ -74,27 +73,11 @@ function ManagerDashboardTickets() {
             .catch(err => handleApiError(err, showError))
     }
 
-    const getExpertInfo = (expertId) => {
-        API.getExpertById(expertId)
-            .then((expert) => {
-                setExpertInfo(expert)
-                resetStatusAlert()
-            })
-            .catch(err => handleApiError(err, showError))
-    }
-    const [showExpert, setShowExpert] = useState(false)
-
     const handleCloseClient = () => setShowClient(false)
-    const handleCloseExpert = () => setShowExpert(false)
 
     const handleShowClientInfo = (clientId) => {
         getClientInfo(clientId);
         setShowClient(true)
-    }
-
-    const handleShowExpertInfo = (expertId) => {
-        getExpertInfo(expertId);
-        setShowExpert(true)
     }
 
     const [sorting, setSorting] = useState("Last Modified At")
@@ -103,25 +86,24 @@ function ManagerDashboardTickets() {
         <Container className="h-100">
             <Row className="h-100">
                 <Col className="d-flex flex-column align-items-center justify-content-center">
-                    <h2>Tickets Management</h2> <FilterDropdown sorting={sorting} setSorting={setSorting}/>
+                    <h2>Tickets to assign</h2>
                     <StatusAlertComponent/>
                     {
                         tickets && !loading ?
                             <>
-
+                                <FilterDropdown sorting={sorting} setSorting={setSorting}/>
                                 <Tickets tickets={formatTickets()}
                                          actionName={"Details"}
                                          action={actionGoToTicket}
                                          showClientInfo={handleShowClientInfo}
-                                         showExpertInfo={handleShowExpertInfo}
+                                         hidePriority={true}
                                          sorting={sorting}
                                 />
-                                {clientInfo ?
-                                    <ClientInfoCanvas show={showClient} onHide={handleCloseClient}
-                                                      clientInfo={clientInfo}/> : null}
-                                {expertInfo ?
-                                    <ExpertInfoCanvas show={showExpert} onHide={handleCloseExpert}
-                                                      expertInfo={expertInfo}/> : null}
+                                {clientInfo
+                                    ? <ClientInfoCanvas show={showClient} onHide={handleCloseClient}
+                                                        clientInfo={clientInfo}/>
+                                    : null
+                                }
                             </>
                             : <Spinner animation="border" variant="primary"/>
                     }
@@ -135,15 +117,12 @@ function FilterDropdown({sorting, setSorting}) {
     return (
         <div className="d-flex mt-2 align-items-center">
             <h5 className="flex-grow-1 me-2 mb-0">Sort By:</h5>
-            <div>
-                <DropdownButton id="dropdown-basic-button" title={sorting}>
-                    <Dropdown.Item onClick={() => setSorting("Last Modified At")}>Last Modified At</Dropdown.Item>
-                    <Dropdown.Item onClick={() => setSorting("Created At")}>Created At</Dropdown.Item>
-                    <Dropdown.Item onClick={() => setSorting("Priority Level")}>Priority Level</Dropdown.Item>
-                </DropdownButton>
-            </div>
+            <DropdownButton id="dropdown-basic-button" title={sorting}>
+                <Dropdown.Item onClick={() => setSorting("Last Modified At")}>Last Modified At</Dropdown.Item>
+                <Dropdown.Item onClick={() => setSorting("Created At")}>Created At</Dropdown.Item>
+            </DropdownButton>
         </div>
     );
 }
 
-export default ManagerDashboardTickets;
+export default ManagerDashboardAssignableTickets;

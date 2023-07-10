@@ -1,8 +1,8 @@
-import {useStatusAlert} from "../../../hooks/useStatusAlert";
+import {useStatusAlert} from "../../hooks/useStatusAlert";
 import {Modal, Row} from "react-bootstrap";
 import React, {createContext, useContext, useMemo} from "react";
-import {ModalType} from "../../../enums/ModalType";
-import {TicketStatus} from "../../../enums/TicketStatus";
+import {ModalType} from "../../enums/ModalType";
+import {TicketStatus} from "../../enums/TicketStatus";
 import {StatusChangeInProgressModalBody} from "./bodies/StatusChangeInProgressModalBody";
 import {StatusChangeStandardModalBody} from "./bodies/StatusChangeStandardModalBody";
 import {CreateTicketModalBody} from "./bodies/CreateTicketModalBody";

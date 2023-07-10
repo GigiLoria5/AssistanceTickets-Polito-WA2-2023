@@ -1,7 +1,7 @@
 import {useEffect, useState} from 'react';
 import {Navigate, Outlet} from 'react-router-dom';
 import API from '../API';
-import {HttpStatusCode} from "../../enums/HttpStatusCode";
+import {HttpStatusCode} from "../enums/HttpStatusCode";
 import {Col, Container, Row, Spinner} from "react-bootstrap";
 import {setAccessToken} from "./utils";
 

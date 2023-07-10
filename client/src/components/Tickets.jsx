@@ -1,11 +1,24 @@
 import {Button, Col, Row, Table} from "react-bootstrap";
 import React from "react";
 import {dateTimeMillisFormatted} from "../utils/utils";
+import {TicketPriority} from "../enums/TicketPriority";
 
-function Tickets({tickets, title, actionName, action, showClientInfo}) {
+function Tickets({tickets, title, actionName, action, showClientInfo, showExpertInfo, hidePriority, sorting}) {
 
     /* Here it is not possible to load the tickets list here, because this component can be used,
     * for example, both from client (which sees only his ticket) and manager (which sees all tickets)*/
+
+    const sortedTickets = (sorting) => {
+        const priorityOrder = Object.values(TicketPriority)
+        switch (sorting) {
+            case "Created At":
+                return tickets.sort((t1, t2) => t2.createdAt - t1.createdAt)
+            case "Priority Level":
+                return tickets.sort((t1, t2) => priorityOrder.indexOf(t2.priorityLevel) - priorityOrder.indexOf(t1.priorityLevel))
+            default:
+                return tickets.sort((t1, t2) => t2.lastModifiedAt - t1.lastModifiedAt)
+        }
+    }
 
     return (
         <>
@@ -14,8 +27,9 @@ function Tickets({tickets, title, actionName, action, showClientInfo}) {
             </h4>
             <Row>
                 <Col>
-                    <TicketsTable tickets={tickets} actionName={actionName}
-                                  action={action} showClientInfo={showClientInfo}/>
+                    <TicketsTable tickets={sortedTickets(sorting)} actionName={actionName} action={action}
+                                  showClientInfo={showClientInfo} showExpertInfo={showExpertInfo}
+                                  hidePriority={hidePriority}/>
                 </Col>
             </Row>
         </>
@@ -23,9 +37,14 @@ function Tickets({tickets, title, actionName, action, showClientInfo}) {
     )
 }
 
-function TicketsTable({tickets, actionName, action, showClientInfo}) {
+function TicketsTable({tickets, actionName, action, showClientInfo, showExpertInfo, hidePriority}) {
+
+    const handleShowExpert = () => {
+        return showExpertInfo ? <td>{null}</td> : null;
+    }
+
     return (
-        (tickets.length) > 0 ?
+        (tickets  && tickets.length) > 0 ?
             <div className="table-responsive">
                 <Table>
                     <thead>
@@ -36,13 +55,10 @@ function TicketsTable({tickets, actionName, action, showClientInfo}) {
                         }
                         <th>Title</th>
                         <th>Description</th>
-                        {showClientInfo ? <th>Customer info</th> : null}
-                        {/*
-                        <th>Expert id</th>
-                        <th>Total Exchanged Messages</th>
-                        */}
+                        {showClientInfo ? <th>Customer Info</th> : null}
+                        {showExpertInfo ? <th>Expert Info</th> : null}
                         <th>Status</th>
-                        <th>Priority Level</th>
+                        {hidePriority ? null : <th>Priority Level</th>}
                         <th>Created At</th>
                         <th>Last Modified At</th>
                         <th></th>
@@ -58,13 +74,16 @@ function TicketsTable({tickets, actionName, action, showClientInfo}) {
                             }
                             <td>{ticket.title}</td>
                             <td>{ticket.description}</td>
-                            {showClientInfo ? <td> <Button onClick={()=>showClientInfo(ticket.customerId)}>Show</Button> </td> : null}
-                            {/*
-                            <td>{ticket.expertId}</td>
-                            <td>{ticket.totalExchangedMessages}</td>
-                            */}
+                            {showClientInfo ?
+                                <td><Button onClick={() => showClientInfo(ticket.customerId)}>Show</Button></td> : null}
+                            {showExpertInfo && ticket.expertId
+                                ? <td>
+                                    <Button onClick={() => showExpertInfo(ticket.expertId)}>Show</Button>
+                                </td>
+                                : handleShowExpert()
+                            }
                             <td>{ticket.status}</td>
-                            <td>{ticket.priorityLevel}</td>
+                            {hidePriority ? null : <td>{ticket.priorityLevel}</td>}
                             <td>{dateTimeMillisFormatted(ticket.createdAt)}</td>
                             <td>{dateTimeMillisFormatted(ticket.lastModifiedAt)}</td>
                             {action !== undefined ?

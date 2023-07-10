@@ -1,9 +1,10 @@
-import {API_URL} from "./APIUrl";
-import {getAccessToken, handleErrorResponse} from "../utils/utils";
-import {SERVER_COMMUNICATION_ERROR} from "../utils/constants";
-import {Expert} from "../models/Expert";
-import {Skill} from "../models/Skill";
+import { API_URL } from "./APIUrl";
+import { getAccessToken, handleErrorResponse } from "../utils/utils";
+import { SERVER_COMMUNICATION_ERROR } from "../utils/constants";
+import { Expert } from "../models/Expert";
+import { Skill } from "../models/Skill";
 import { Ticket } from "../models/Ticket";
+import { TicketStatusChange } from "../models/TicketStatusChange";
 
 // GET /API/experts
 async function getAllExperts() {
@@ -27,7 +28,7 @@ async function getAllExperts() {
     });
 }
 
-// GET /API/experts/expertId
+// GET /API/experts/{expertId}
 async function getExpertById(id) {
     return new Promise((resolve, reject) => {
         fetch(new URL(`experts/${id}`, API_URL), {
@@ -40,6 +41,38 @@ async function getExpertById(id) {
                 if (response.ok) {
                     const body = await response.json();
                     resolve(new Expert(body.expertId, body.name, body.surname, body.email, body.country, body.city, body.skills.map(skill => new Skill(skill.expertise, skill.level))));
+                } else {
+                    const error = await handleErrorResponse(response);
+                    reject(error);
+                }
+            })
+            .catch((_error) => reject(SERVER_COMMUNICATION_ERROR));
+    });
+}
+
+// GET /API/experts/{expertId}/statusChanges
+async function getStatusChangesOfExpertById(id) {
+    return new Promise((resolve, reject) => {
+        fetch(new URL(`experts/${id}/statusChanges`, API_URL), {
+            headers: {
+                Authorization: `Bearer ${getAccessToken()}`
+            },
+            credentials: 'include'
+        })
+            .then(async (response) => {
+                if (response.ok) {
+                    const body = await response.json();
+                    resolve(body.map((statusChange) =>
+                        new TicketStatusChange(
+                            statusChange.ticketId,
+                            statusChange.currentExpertId,
+                            statusChange.oldStatus,
+                            statusChange.newStatus,
+                            statusChange.changedBy,
+                            statusChange.description,
+                            statusChange.time
+                        )
+                    ));
                 } else {
                     const error = await handleErrorResponse(response);
                     reject(error);
@@ -85,7 +118,7 @@ async function getTicketsOfExpertsByExpertId(id) {
             .then(async (response) => {
                 if (response.ok) {
                     const ticketsJson = await response.json();
-                    resolve(ticketsJson.map((ticketJson)=> (
+                    resolve(ticketsJson.map((ticketJson) => (
                         new Ticket(
                             ticketJson.ticketId,
                             ticketJson.title,
@@ -110,4 +143,4 @@ async function getTicketsOfExpertsByExpertId(id) {
     });
 }
 
-export {getAllExperts, getExpertById, createExpert, getTicketsOfExpertsByExpertId};
+export { getAllExperts, getExpertById, createExpert, getTicketsOfExpertsByExpertId, getStatusChangesOfExpertById };
