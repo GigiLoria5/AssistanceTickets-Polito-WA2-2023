@@ -2,8 +2,8 @@ import {Col, Container, Row, Spinner, Table} from "react-bootstrap";
 import {useEffect, useState} from "react";
 import API from "../../API";
 import {handleApiError} from "../../utils/utils";
-import {Expertise} from "../../../enums/Expertise";
-import {Level} from "../../../enums/Level";
+import {Expertise} from "../../enums/Expertise";
+import {Level} from "../../enums/Level";
 
 function ExpertProfile({expertId, showError}) {
     const [expert, setExpert] = useState(null);

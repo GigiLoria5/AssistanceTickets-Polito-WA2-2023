@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from "react";
-import {useStatusAlert} from "../../hooks/useStatusAlert";
+import {useStatusAlert} from "../hooks/useStatusAlert";
 import API from "../API";
 import {Button, Col, Row, Spinner, Tab, Tabs} from "react-bootstrap";
 import {CustomModal} from "./modals/CustomModal";
-import {ModalType} from "../../enums/ModalType";
+import {ModalType} from "../enums/ModalType";
 import Tickets from "./Tickets";
 import {useNavigate} from "react-router-dom";
 import PurchasedProducts from "./PurchasedProducts";
@@ -70,7 +70,7 @@ function ClientDashboard({userInfo}) {
         <>
             <Row className='pb-5'>
                 <Col className="d-flex align-items-center">
-                    <h1>Client dashboard</h1>
+                    <h1>Client Dashboard</h1>
                 </Col>
             </Row>
             <StatusAlertComponent/>

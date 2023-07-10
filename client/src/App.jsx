@@ -6,7 +6,7 @@ import NotFoundPage from "./components/NotFoundPage";
 import ManagerDashboard from "./components/ManagerDashboard";
 import ExpertDashboard from "./components/ExpertDashboard";
 import ClientDashboard from "./components/ClientDashboard";
-import {UserRole} from "../enums/UserRole";
+import {UserRole} from "./enums/UserRole";
 import LoginForm from "./components/LoginForm";
 import ProtectedRoute from "./utils/ProtectedRoute";
 import {UserProfile} from "./components/UserProfile";

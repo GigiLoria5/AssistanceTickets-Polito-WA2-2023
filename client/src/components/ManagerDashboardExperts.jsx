@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from "react";
-import {useStatusAlert} from "../../hooks/useStatusAlert";
+import {useStatusAlert} from "../hooks/useStatusAlert";
 import API from "../API";
 import {handleApiError} from "../utils/utils";
 import {Button, Col, Container, Form, Modal, Row, Spinner, Table} from "react-bootstrap";
-import {Expertise} from "../../enums/Expertise";
-import {Level} from "../../enums/Level";
+import {Expertise} from "../enums/Expertise";
+import {Level} from "../enums/Level";
 import {useNavigate} from "react-router-dom";
 
 function ManagerDashboardExperts() {

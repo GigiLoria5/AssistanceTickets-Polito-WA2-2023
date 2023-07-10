@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from "react";
 import {Button, Col, Form, Modal, Row, Spinner, Table} from "react-bootstrap";
 import API from "../API";
-import {useStatusAlert} from "../../hooks/useStatusAlert";
-import {UserRole} from "../../enums/UserRole";
+import {useStatusAlert} from "../hooks/useStatusAlert";
+import {UserRole} from "../enums/UserRole";
 import {handleApiError} from "../utils/utils";
 
 const Products = ({userRole}) => {

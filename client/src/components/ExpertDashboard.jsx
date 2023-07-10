@@ -2,7 +2,7 @@ import {useNavigate} from "react-router-dom";
 import React, {useEffect, useState} from "react";
 import API from "../API";
 import {Col, Row, Spinner} from "react-bootstrap";
-import {useStatusAlert} from "../../hooks/useStatusAlert";
+import {useStatusAlert} from "../hooks/useStatusAlert";
 import {handleApiError} from "../utils/utils";
 import Tickets from "./Tickets";
 import ClientInfoCanvas from "./ClientInfoCanvas";
@@ -85,7 +85,7 @@ function ExpertDashboard({userInfo}) {
         <>
             <Row className='pb-5'>
                 <Col className="d-flex align-items-center">
-                    <h1>Expert dashboard</h1>
+                    <h1>Expert Dashboard</h1>
                 </Col>
             </Row>
             <StatusAlertComponent/>

@@ -1,10 +1,10 @@
 import {Button, Col, Container, Row, Spinner} from "react-bootstrap";
-import {UserRole} from "../../enums/UserRole";
+import {UserRole} from "../enums/UserRole";
 import {setAccessToken} from "../utils/utils";
-import {useStatusAlert} from "../../hooks/useStatusAlert";
-import ManagerProfile from "./Profiles/ManagerProfile";
-import ExpertProfile from "./Profiles/ExpertProfile";
-import ClientProfile from "./Profiles/ClientProfile";
+import {useStatusAlert} from "../hooks/useStatusAlert";
+import ManagerProfile from "./profiles/ManagerProfile";
+import ExpertProfile from "./profiles/ExpertProfile";
+import ClientProfile from "./profiles/ClientProfile";
 import {useState} from "react";
 import {useNavigate} from "react-router-dom";
 

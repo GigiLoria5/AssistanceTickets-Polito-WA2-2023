@@ -1,36 +1,36 @@
-import React, { useEffect, useState } from "react";
-import { useStatusAlert } from "../../hooks/useStatusAlert";
-import { useNavigate, useParams } from "react-router-dom";
-import { Button, Col, Row, Spinner, Table } from "react-bootstrap";
-import ExpertProfile from "./Profiles/ExpertProfile";
+import React, {useEffect, useState} from "react";
+import {useStatusAlert} from "../hooks/useStatusAlert";
+import {useNavigate, useParams} from "react-router-dom";
+import {Button, Col, Row, Spinner, Table} from "react-bootstrap";
+import ExpertProfile from "./profiles/ExpertProfile";
 import Tickets from "./Tickets";
 import API from "../API";
-import { dateTimeMillisFormatted, handleApiError } from "../utils/utils";
+import {dateTimeMillisFormatted, handleApiError} from "../utils/utils";
 
 function ExpertDetails() {
     const [tickets, setTickets] = useState([]);
     const [products, setProducts] = useState(null);
-    const { expertId } = useParams();
-    const { StatusAlertComponent, showError, resetStatusAlert } = useStatusAlert();
+    const {expertId} = useParams();
+    const {StatusAlertComponent, showError, resetStatusAlert} = useStatusAlert();
     const navigate = useNavigate()
     const [loading, setLoading] = useState(true)
     const [errorPresence, setErrorPresence] = useState(false)
     const [load, setLoad] = useState(true)
 
     useEffect(() => {
-        const getData = async () => {
-            await Promise.all([getTickets(), getProductsData()])
+            const getData = async () => {
+                await Promise.all([getTickets(), getProductsData()])
+            }
+            if (load === true) {
+                setLoading(true)
+                getData().then(() => {
+                    setLoading(false)
+                    resetStatusAlert()
+                }).catch(err => stopAnimationAndShowError(err)).finally(() => {
+                    setLoad(false)
+                })
+            }
         }
-        if (load === true) {
-            setLoading(true)
-            getData().then(() => {
-                setLoading(false)
-                resetStatusAlert()
-            }).catch(err => stopAnimationAndShowError(err)).finally(() => {
-                setLoad(false)
-            })
-        }
-    }
         ,
         [load]
     )
@@ -55,9 +55,9 @@ function ExpertDetails() {
         return new Promise((resolve, reject) => {
             API.getAllProducts()
                 .then((p) => {
-                    setProducts(p)
-                    resolve()
-                }
+                        setProducts(p)
+                        resolve()
+                    }
                 ).catch(e => reject(e))
         })
     }
@@ -71,9 +71,9 @@ function ExpertDetails() {
                 <h1>Expert Details</h1>
             </Col>
         </Row>
-        <StatusAlertComponent />
+        <StatusAlertComponent/>
         {loading ?
-            <Spinner animation="border" variant="primary" />
+            <Spinner animation="border" variant="primary"/>
             :
             !errorPresence ?
                 <>
@@ -81,7 +81,7 @@ function ExpertDetails() {
                         <ExpertProfile expertId={expertId} showError={showError}></ExpertProfile>
                     </Row>
                     <Row className='mb-5'>
-                        <ExpertTickets tickets={tickets} products={products} ></ExpertTickets>
+                        <ExpertTickets tickets={tickets} products={products}></ExpertTickets>
                     </Row>
                     <Row className='mb-5'>
                         <ExpertStatusChanges expertId={expertId} showError={showError}></ExpertStatusChanges>
@@ -91,20 +91,21 @@ function ExpertDetails() {
     </>
 }
 
-function ExpertTickets({ tickets, products }) {
+function ExpertTickets({tickets, products}) {
     const formatTickets = () => {
         return tickets.map(ticket => {
             const product = products ? products.find(p => p.productId === ticket.productId) : ""
-            return { ...ticket, "product": product.name }
+            return {...ticket, "product": product.name}
         })
     }
     return <>
         <h2>Expert Tickets</h2>
-        <Tickets tickets={formatTickets()} title={tickets.length > 0 ? `This expert has ${tickets.length} ticket${tickets.length !== 1 ? "s" : ""}` : ``}></Tickets>
+        <Tickets tickets={formatTickets()}
+                 title={tickets.length > 0 ? `This expert has ${tickets.length} ticket${tickets.length !== 1 ? "s" : ""}` : ``}></Tickets>
     </>
 }
 
-function ExpertStatusChanges({ expertId, showError }) {
+function ExpertStatusChanges({expertId, showError}) {
     const [statusChanges, setStatusChanges] = useState([])
     useEffect(() => {
         API.getStatusChangesOfExpertById(expertId)
@@ -113,7 +114,7 @@ function ExpertStatusChanges({ expertId, showError }) {
             })
             .catch(err => handleApiError(err, showError))
     }, [])
-    
+
     return (
         <>
             <h2>Expert Status Changes</h2>
@@ -124,24 +125,24 @@ function ExpertStatusChanges({ expertId, showError }) {
                             <Col>
                                 <Table>
                                     <thead>
-                                        <tr>
-                                            <th>Ticket Id</th>
-                                            <th>Old Status</th>
-                                            <th>New Status</th>
-                                            <th>Time</th>
-                                            <th>Description</th>
-                                        </tr>
+                                    <tr>
+                                        <th>Ticket Id</th>
+                                        <th>Old Status</th>
+                                        <th>New Status</th>
+                                        <th>Time</th>
+                                        <th>Description</th>
+                                    </tr>
                                     </thead>
                                     <tbody>
-                                        {statusChanges.map((tsc) => (
-                                            <tr key={tsc.time}>
-                                                <td>{tsc.ticketId}</td>
-                                                <td>{tsc.oldStatus}</td>
-                                                <td>{tsc.newStatus}</td>
-                                                <td>{dateTimeMillisFormatted(tsc.time)}</td>
-                                                <td>{tsc.description}</td>
-                                            </tr>
-                                        ))}
+                                    {statusChanges.map((tsc) => (
+                                        <tr key={tsc.time}>
+                                            <td>{tsc.ticketId}</td>
+                                            <td>{tsc.oldStatus}</td>
+                                            <td>{tsc.newStatus}</td>
+                                            <td>{dateTimeMillisFormatted(tsc.time)}</td>
+                                            <td>{tsc.description}</td>
+                                        </tr>
+                                    ))}
                                     </tbody>
                                 </Table>
                             </Col>

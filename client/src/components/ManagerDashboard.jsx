@@ -9,7 +9,7 @@ function ManagerDashboard() {
         <>
             <Row className='pb-3'>
                 <Col className="d-flex align-items-center">
-                    <h1>Manager dashboard</h1>
+                    <h1>Manager Dashboard</h1>
                 </Col>
             </Row>
             <Tabs

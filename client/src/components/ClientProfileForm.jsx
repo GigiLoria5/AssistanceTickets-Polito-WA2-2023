@@ -1,7 +1,7 @@
 import {Button, Container, Form} from "react-bootstrap";
 import {useEffect, useState} from "react";
 import {Profile} from "../models/Profile";
-import {useStatusAlert} from "../../hooks/useStatusAlert";
+import {useStatusAlert} from "../hooks/useStatusAlert";
 import {useNavigate} from "react-router-dom";
 import {
     validateAddress,

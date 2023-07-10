@@ -2,8 +2,8 @@ import {Button, Container, Form} from 'react-bootstrap';
 import {useEffect, useState} from 'react';
 import {useLocation, useNavigate} from 'react-router-dom';
 import API from "../API";
-import {useStatusAlert} from "../../hooks/useStatusAlert";
-import {HttpStatusCode} from "../../enums/HttpStatusCode";
+import {useStatusAlert} from "../hooks/useStatusAlert";
+import {HttpStatusCode} from "../enums/HttpStatusCode";
 import {getAccessToken} from "../utils/utils";
 import {validateEmail} from "../utils/validators";
 

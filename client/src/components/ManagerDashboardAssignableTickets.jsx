@@ -1,11 +1,12 @@
 import React, {useEffect, useState} from "react";
-import {useStatusAlert} from "../../hooks/useStatusAlert";
+import {useStatusAlert} from "../hooks/useStatusAlert";
 import API from "../API";
 import {Col, Container, Row, Spinner} from "react-bootstrap";
 import {handleApiError} from "../utils/utils";
 import Tickets from "./Tickets";
-import {useNavigate} from "react-router-dom";
 import ClientInfoCanvas from "./ClientInfoCanvas";
+import useTicketNavigation from "../hooks/useTicketNavigation";
+import {TicketStatus} from "../enums/TicketStatus";
 
 function ManagerDashboardAssignableTickets() {
     const [tickets, setTickets] = useState(null);
@@ -14,6 +15,12 @@ function ManagerDashboardAssignableTickets() {
     const [loading, setLoading] = useState(true)
     const [load, setLoad] = useState(true)
     const {StatusAlertComponent, showError, resetStatusAlert} = useStatusAlert();
+    const {actionGoToTicket, formatTickets, showClient, setShowClient} = useTicketNavigation(products, tickets);
+
+    const stopAnimationAndShowError = (err) => {
+        setLoading(false)
+        handleApiError(err, showError)
+    }
 
     useEffect(() => {
             const getData = async () => {
@@ -21,12 +28,14 @@ function ManagerDashboardAssignableTickets() {
             }
             if (load === true) {
                 setLoading(true)
-                getData().then(() => {
-                    setLoading(false)
-                    resetStatusAlert()
-                }).catch(err => stopAnimationAndShowError(err)).finally(() => {
-                    setLoad(false)
-                })
+                getData()
+                    .then(() => {
+                        setLoading(false)
+                        resetStatusAlert()
+                    }).catch(err => stopAnimationAndShowError(err))
+                    .finally(() => {
+                        setLoad(false)
+                    })
             }
         }
         ,
@@ -37,7 +46,7 @@ function ManagerDashboardAssignableTickets() {
         return new Promise((resolve, reject) => {
             API.getAllTickets()
                 .then((t) => {
-                        setTickets(t.filter(ticket => !ticket.expertId))
+                        setTickets(t.filter(ticket => [TicketStatus.OPEN, TicketStatus.REOPENED].includes(ticket.status)))
                         resolve()
                     }
                 ).catch(err => reject(err))
@@ -63,21 +72,6 @@ function ManagerDashboardAssignableTickets() {
             })
             .catch(err => handleApiError(err, showError))
     }
-
-    const navigate = useNavigate();
-
-    const actionGoToTicket = (ticket) => {
-        navigate(`/tickets/${ticket.ticketId}`)
-    }
-
-    const formatTickets = () => {
-        return tickets.map(ticket => {
-            const product = products ? products.find(p => p.productId === ticket.productId) : ""
-            return {...ticket, "product": product.name}
-        })
-    }
-
-    const [showClient, setShowClient] = useState(false)
 
     const handleCloseClient = () => setShowClient(false)
 
