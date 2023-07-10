@@ -1,22 +1,21 @@
 import {useNavigate} from "react-router-dom";
 import React, {useEffect, useState} from "react";
 import API from "../API";
-import { Button, Col, Row, Spinner, Tab, Tabs, Offcanvas } from "react-bootstrap";
-import { useStatusAlert } from "../../hooks/useStatusAlert";
-import { handleApiError, handleErrorResponse } from "../utils/utils";
+import {Col, Row, Spinner} from "react-bootstrap";
+import {useStatusAlert} from "../hooks/useStatusAlert";
+import {handleApiError} from "../utils/utils";
 import Tickets from "./Tickets";
 import ClientInfoCanvas from "./ClientInfoCanvas";
 
 
-function ExpertDashboard({ userInfo }) {
-    const { StatusAlertComponent, showError, resetStatusAlert } = useStatusAlert();
+function ExpertDashboard({userInfo}) {
+    const {StatusAlertComponent, showError, resetStatusAlert} = useStatusAlert();
     const [ticketsData, setTicketsData] = useState(null);
     const [productsData, setProductsData] = useState(null);
     const [loading, setLoading] = useState(true)
     const [load, setLoad] = useState(true)
     const [errorPresence, setErrorPresence] = useState(false)
     const [clientInfo, setClientInfo] = useState(null)
-    
 
     useEffect(() => {
             const getData = async () => {
@@ -57,9 +56,9 @@ function ExpertDashboard({ userInfo }) {
         return new Promise((resolve, reject) => {
             API.getAllProducts()
                 .then((p) => {
-                    setProductsData(p)
-                    resolve()
-                }
+                        setProductsData(p)
+                        resolve()
+                    }
                 )
                 .catch(e => reject(e))
         })
@@ -77,7 +76,7 @@ function ExpertDashboard({ userInfo }) {
         if (ticketsData && ticketsData.length > 0) {
             return ticketsData.map(ticket => {
                 const product = productsData.find(p => p.productId === ticket.productId)
-                return { ...ticket, "product": product.name }
+                return {...ticket, "product": product.name}
             })
         } else {
             return [];
@@ -142,10 +141,6 @@ function TicketsTable({tickets, getClientInfo, clientInfo}) {
         </>
     )
 }
-
-
-
-
 
 
 export default ExpertDashboard;

@@ -44,13 +44,14 @@ function TicketsTable({tickets, actionName, action, showClientInfo, showExpertIn
     }
 
     return (
-        (tickets  && tickets.length) > 0 ?
+        (tickets && tickets.length > 0)
+            ?
             <div className="table-responsive">
                 <Table>
                     <thead>
                     <tr>
-                        {tickets[0].product !== undefined ?
-                            <th>Product</th>
+                        {tickets[0].product !== undefined
+                            ? <th>Product</th>
                             : <th>Product id</th>
                         }
                         <th>Title</th>
@@ -68,37 +69,36 @@ function TicketsTable({tickets, actionName, action, showClientInfo, showExpertIn
                     <tbody>
                     {tickets.map((ticket) => (
                         <tr key={ticket.ticketId}>
-                            {ticket.product !== undefined ?
-                                <td>{ticket.product}</td>
+                            {ticket.product !== undefined
+                                ? <td>{ticket.product}</td>
                                 : <td>{ticket.productId}</td>
                             }
                             <td>{ticket.title}</td>
                             <td>{ticket.description}</td>
-                            {showClientInfo ?
-                                <td><Button onClick={() => showClientInfo(ticket.customerId)}>Show</Button></td> : null}
-                            {showExpertInfo && ticket.expertId
-                                ? <td>
-                                    <Button onClick={() => showExpertInfo(ticket.expertId)}>Show</Button>
-                                </td>
-                                : handleShowExpert()
+                            {
+                                showClientInfo
+                                    ? <td><Button onClick={() => showClientInfo(ticket.customerId)}>Show</Button></td>
+                                    : null
+                            }
+                            {
+                                showExpertInfo && ticket.expertId
+                                    ? <td><Button onClick={() => showExpertInfo(ticket.expertId)}>Show</Button></td>
+                                    : handleShowExpert()
                             }
                             <td>{ticket.status}</td>
                             {hidePriority ? null : <td>{ticket.priorityLevel}</td>}
                             <td>{dateTimeMillisFormatted(ticket.createdAt)}</td>
                             <td>{dateTimeMillisFormatted(ticket.lastModifiedAt)}</td>
-                            {action !== undefined ?
-                                <td>
-                                    <Button onClick={() => action(ticket)}>
-                                        {actionName}
-                                    </Button>
-                                </td>
+                            {action !== undefined
+                                ? <td><Button onClick={() => action(ticket)}>{actionName}</Button></td>
                                 : null
                             }
                         </tr>
                     ))}
                     </tbody>
                 </Table>
-            </div> : <div>No tickets found</div>
+            </div>
+            : <div>No tickets found</div>
 
     );
 

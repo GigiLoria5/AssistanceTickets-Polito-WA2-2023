@@ -10,7 +10,6 @@ function Experts({title, actionName, action}) {
     const {StatusAlertComponent, showError, resetStatusAlert} = useStatusAlert();
     const [errorPresence, setErrorPresence] = useState(false)
 
-
     useEffect(() => {
             getAllExperts()
         }, []
@@ -30,8 +29,6 @@ function Experts({title, actionName, action}) {
         setErrorPresence(true)
         handleApiError(err, showError)
     }
-
-    /* TODO EVENTUALLY CREATE A SEARCH BAR BY SOMETHING*/
 
     return (
         <>

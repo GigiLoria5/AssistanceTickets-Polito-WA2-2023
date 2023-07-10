@@ -80,7 +80,30 @@ function TicketDetails({userInfo}) {
                     }
                 ).catch(e => reject(e))
         })
+    }
 
+    const handleShowContent = (show) => {
+        return (
+            show
+                ?
+                <>
+                    <TicketDetailComponents
+                        ticketData={ticketData}
+                        purchaseData={purchaseData}
+                        ticketStatusChangesData={ticketStatusChangesData}
+                        update={() => {
+                            setLoad(true);
+                            setConfirmModalShow(true)
+                        }}
+                        userRole={userInfo.role}/>
+                    <CustomModal
+                        show={confirmModalShow}
+                        hide={() => setConfirmModalShow(false)}
+                        type={ModalType.CONFIRM_STATUS_CHANGE}
+                    />
+                </>
+                : null
+        )
     }
 
     return (
@@ -96,28 +119,7 @@ function TicketDetails({userInfo}) {
 
             <StatusAlertComponent/>
             {
-                loading ?
-                    <Spinner animation="border" variant="primary"/>
-                    :
-                    !errorPresence ?
-                        <>
-                            <TicketDetailComponents
-                                ticketData={ticketData}
-                                purchaseData={purchaseData}
-                                ticketStatusChangesData={ticketStatusChangesData}
-                                update={() => {
-                                    setLoad(true);
-                                    setConfirmModalShow(true)
-                                }}
-                                userRole={userInfo.role}/>
-                            <CustomModal
-                                show={confirmModalShow}
-                                hide={() => setConfirmModalShow(false)}
-                                type={ModalType.CONFIRM_STATUS_CHANGE}
-                            />
-                        </>
-                        :
-                        null
+                loading ? <Spinner animation="border" variant="primary"/> : handleShowContent(!errorPresence)
             }
         </>
     )
