@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import {useStatusAlert} from "../hooks/useStatusAlert";
 import API from "../API";
-import {Col, Container, Row, Spinner, Dropdown, DropdownButton} from "react-bootstrap";
+import {Col, Container, Dropdown, DropdownButton, Row, Spinner} from "react-bootstrap";
 import {handleApiError} from "../utils/utils";
 import Tickets from "./Tickets";
 import ClientInfoCanvas from "./ClientInfoCanvas";
@@ -103,11 +103,12 @@ function ManagerDashboardTickets() {
         <Container className="h-100">
             <Row className="h-100">
                 <Col className="d-flex flex-column align-items-center justify-content-center">
-                    <h2>Tickets Management</h2><StatusAlertComponent/>
+                    <h2>Tickets Management</h2> <FilterDropdown sorting={sorting} setSorting={setSorting}/>
+                    <StatusAlertComponent/>
                     {
                         tickets && !loading ?
                             <>
-                                <FilterDropdown sorting={sorting} setSorting={setSorting}/>
+
                                 <Tickets tickets={formatTickets()}
                                          actionName={"Details"}
                                          action={actionGoToTicket}
@@ -132,14 +133,16 @@ function ManagerDashboardTickets() {
 
 function FilterDropdown({sorting, setSorting}) {
     return (
-        <>
-            <h6>Sort By:</h6>
-            <DropdownButton id="dropdown-basic-button" title={sorting}>
-                <Dropdown.Item onClick={() => setSorting("Last Modified At")}>Last Modified At</Dropdown.Item>
-                <Dropdown.Item onClick={() => setSorting("Created At")}>Created At</Dropdown.Item>
-                <Dropdown.Item onClick={() => setSorting("Priority Level")}>Priority Level</Dropdown.Item>
-            </DropdownButton>
-        </>
+        <div className="d-flex mt-2 align-items-center">
+            <h5 className="flex-grow-1 me-2 mb-0">Sort By:</h5>
+            <div>
+                <DropdownButton id="dropdown-basic-button" title={sorting}>
+                    <Dropdown.Item onClick={() => setSorting("Last Modified At")}>Last Modified At</Dropdown.Item>
+                    <Dropdown.Item onClick={() => setSorting("Created At")}>Created At</Dropdown.Item>
+                    <Dropdown.Item onClick={() => setSorting("Priority Level")}>Priority Level</Dropdown.Item>
+                </DropdownButton>
+            </div>
+        </div>
     );
 }
 

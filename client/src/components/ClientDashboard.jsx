@@ -147,10 +147,10 @@ function ClientDashboardTabs({ticketsData, purchasesData, update}) {
 
     const formatPurchases = () => {
         return purchasesData.map(purchase => {
-            const ticket = ticketsData.find(ticket => ticket.productTokenId === purchase.productTokenId)
+            const ticket = ticketsData.find(ticket => ticket.productTokenId === purchase.productTokenId && ticket.status !== "CLOSED")
             return {
                 ...purchase,
-                "ticketId": ticket && ticket.status !== "CLOSED" ? ticket.ticketId : undefined
+                "ticketId": ticket ? ticket.ticketId : undefined
             }
 
         })

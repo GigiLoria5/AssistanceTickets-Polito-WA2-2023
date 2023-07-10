@@ -86,7 +86,8 @@ function ManagerDashboardAssignableTickets() {
         <Container className="h-100">
             <Row className="h-100">
                 <Col className="d-flex flex-column align-items-center justify-content-center">
-                    <h2>Tickets to assign</h2><StatusAlertComponent/>
+                    <h2>Tickets to assign</h2>
+                    <StatusAlertComponent/>
                     {
                         tickets && !loading ?
                             <>
@@ -114,13 +115,13 @@ function ManagerDashboardAssignableTickets() {
 
 function FilterDropdown({sorting, setSorting}) {
     return (
-        <>
-            <h6>Sort By:</h6>
+        <div className="d-flex mt-2 align-items-center">
+            <h5 className="flex-grow-1 me-2 mb-0">Sort By:</h5>
             <DropdownButton id="dropdown-basic-button" title={sorting}>
                 <Dropdown.Item onClick={() => setSorting("Last Modified At")}>Last Modified At</Dropdown.Item>
                 <Dropdown.Item onClick={() => setSorting("Created At")}>Created At</Dropdown.Item>
             </DropdownButton>
-        </>
+        </div>
     );
 }
 

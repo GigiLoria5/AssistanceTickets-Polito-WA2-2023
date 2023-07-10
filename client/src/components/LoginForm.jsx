@@ -106,6 +106,7 @@ function LoginForm() {
                             Don't have an account?
                             <Button
                                 variant="link"
+                                disabled={isLoading}
                                 onClick={() => navigate("/register")}
                                 className="py-0 pb-2 text-decoration-none">
                                 Register

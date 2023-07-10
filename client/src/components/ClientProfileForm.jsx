@@ -170,6 +170,7 @@ function ClientProfileForm({profile, onSuccess, onCancel}) {
                             <p>
                                 Already have an account?
                                 <Button
+                                    disabled={isLoading}
                                     variant="link"
                                     onClick={() => navigate("/login")}
                                     className="py-0 pb-2 text-decoration-none">
