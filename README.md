@@ -108,5 +108,5 @@ Once a ticket is RESOLVED, the chat is left open for feedback and/or updates bef
 A ticket can be **CLOSED** from any state (except if it is already closed). Once closed, it cannot be modified, but it
 can be reopened later.
 
-![immagine](https://github.com/GigiLoria5/wa22023-G29-AssistanceTickets/assets/41837640/a3cdbd03-24c4-4d06-b23b-2e58d6e230b4)
+![immagine](https://i.imgur.com/Lx3GWQO.png)
 
